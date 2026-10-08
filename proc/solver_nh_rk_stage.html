@@ -1,0 +1,1394 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="GPU-native coastal solver — structured Cartesian and unstructured triangular grids, hydrostatic multilayer + non-hydrostatic, portable across NVHPC/gfortran/ifx.">
+    <meta name="author" content="Jorge Luis Galvez Vallejo" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>solver_nh_rk_stage &ndash; Rakali</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">Rakali </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/absint.html">Abstract Interfaces</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>solver_nh_rk_stage
+      <small>Subroutine</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.1% of total for procedures.">34 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/rki_solver.F90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/rki_solver.f90.html'>rki_solver.F90</a></li>
+                <li class="breadcrumb-item"><a href='../module/rki_solver.html'>rki_solver</a></li>
+            <li class="breadcrumb-item active" aria-current="page">solver_nh_rk_stage</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+  
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#vars-0"
+         aria-expanded="false" aria-controls="vars-0">
+         <h4 class="card-header bg-primary text-white">Variables</h4>
+      </a>
+      <div id="vars-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../proc/solver_nh_rk_stage.html#variable-nh_iter">nh_iter</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../proc/solver_nh_rk_stage.html#src">solver_nh_rk_stage</a>
+      </div>
+    </div>
+
+
+  </div>
+
+    </div>
+    
+    <div class="col-md-9" id='text'>
+    <h2>private  subroutine solver_nh_rk_stage(state, nz, use_nh)  
+</h2>
+    
+
+    <p>One RK stage: BCs, flux, update, friction, then NH correction</p>
+
+
+    <h3>Arguments</h3>
+        <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-state~15"></span>
+              type(<a href='../type/state_t.html'>state_t</a>),
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>state</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nz~35"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nz</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-use_nh~2"></span>
+              logical,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>use_nh</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <br>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Calls</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~solver_nh_rk_stage~~CallsGraph Pages: 1 -->
+<svg id="procsolver_nh_rk_stageCallsGraph" width="641pt" height="809pt"
+ viewBox="0.00 0.00 641.00 808.54" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~solver_nh_rk_stage~~CallsGraph" class="graph" transform="scale(0.83 0.83) rotate(0) translate(4 966)">
+<title>proc~~solver_nh_rk_stage~~CallsGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-966 765,-966 765,4 -4,4"/>
+<!-- proc~solver_nh_rk_stage -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_node1" class="node">
+<title>proc~solver_nh_rk_stage</title>
+<polygon fill="none" stroke="black" points="114,-323 0,-323 0,-299 114,-299 114,-323"/>
+<text text-anchor="middle" x="57" y="-308.6" font-family="Helvetica,sans-Serif" font-size="10.50">solver_nh_rk_stage</text>
+</g>
+<!-- proc~apply_boundary_conditions -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_node2" class="node">
+<title>proc~apply_boundary_conditions</title>
+<g id="a_proc~~solver_nh_rk_stage~~CallsGraph_node2"><a xlink:href="../proc/apply_boundary_conditions.html" xlink:title="apply_boundary_conditions">
+<polygon fill="#d9534f" stroke="#d9534f" points="319.5,-836 161.5,-836 161.5,-812 319.5,-812 319.5,-836"/>
+<text text-anchor="middle" x="240.5" y="-821.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">apply_boundary_conditions</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_nh_rk_stage&#45;&gt;proc~apply_boundary_conditions -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_edge1" class="edge">
+<title>proc~solver_nh_rk_stage&#45;&gt;proc~apply_boundary_conditions</title>
+<path fill="none" stroke="#ff0000" d="M61.21,-323.28C72.17,-364.7 109.6,-502.92 150,-614 175.51,-684.13 211.91,-764.71 229.38,-802.42"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="226.39,-804.29 233.78,-811.88 232.74,-801.33 226.39,-804.29"/>
+</g>
+<!-- proc~apply_coriolis -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_node3" class="node">
+<title>proc~apply_coriolis</title>
+<g id="a_proc~~solver_nh_rk_stage~~CallsGraph_node3"><a xlink:href="../proc/apply_coriolis.html" xlink:title="apply_coriolis">
+<polygon fill="#d9534f" stroke="#d9534f" points="283,-512 198,-512 198,-488 283,-488 283,-512"/>
+<text text-anchor="middle" x="240.5" y="-497.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">apply_coriolis</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_nh_rk_stage&#45;&gt;proc~apply_coriolis -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_edge2" class="edge">
+<title>proc~solver_nh_rk_stage&#45;&gt;proc~apply_coriolis</title>
+<path fill="none" stroke="#ff0000" d="M61.04,-323.43C69.38,-354.83 95.74,-437.74 150,-479 160.83,-487.24 174.38,-492.32 187.63,-495.43"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="187.16,-498.9 197.65,-497.44 188.54,-492.04 187.16,-498.9"/>
+</g>
+<!-- proc~apply_friction -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_node4" class="node">
+<title>proc~apply_friction</title>
+<g id="a_proc~~solver_nh_rk_stage~~CallsGraph_node4"><a xlink:href="../proc/apply_friction.html" xlink:title="apply_friction">
+<polygon fill="#d9534f" stroke="#d9534f" points="283,-470 198,-470 198,-446 283,-446 283,-470"/>
+<text text-anchor="middle" x="240.5" y="-455.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">apply_friction</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_nh_rk_stage&#45;&gt;proc~apply_friction -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_edge3" class="edge">
+<title>proc~solver_nh_rk_stage&#45;&gt;proc~apply_friction</title>
+<path fill="none" stroke="#ff0000" d="M63.32,-323.3C75.02,-348.8 105.52,-407.52 150,-437 161.24,-444.45 174.8,-449.27 187.94,-452.38"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="187.35,-455.83 197.85,-454.45 188.77,-448.98 187.35,-455.83"/>
+</g>
+<!-- proc~apply_nh_boundary_conditions -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_node5" class="node">
+<title>proc~apply_nh_boundary_conditions</title>
+<g id="a_proc~~solver_nh_rk_stage~~CallsGraph_node5"><a xlink:href="../proc/apply_nh_boundary_conditions.html" xlink:title="apply_nh_boundary_conditions">
+<polygon fill="#d9534f" stroke="#d9534f" points="329,-176 152,-176 152,-152 329,-152 329,-176"/>
+<text text-anchor="middle" x="240.5" y="-161.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">apply_nh_boundary_conditions</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_nh_rk_stage&#45;&gt;proc~apply_nh_boundary_conditions -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_edge4" class="edge">
+<title>proc~solver_nh_rk_stage&#45;&gt;proc~apply_nh_boundary_conditions</title>
+<path fill="none" stroke="#ff0000" d="M63.32,-298.7C75.02,-273.2 105.52,-214.48 150,-185 152.58,-183.29 155.28,-181.72 158.07,-180.28"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="159.6,-183.43 167.24,-176.09 156.69,-177.06 159.6,-183.43"/>
+</g>
+<!-- proc~apply_nh_correction -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_node6" class="node">
+<title>proc~apply_nh_correction</title>
+<g id="a_proc~~solver_nh_rk_stage~~CallsGraph_node6"><a xlink:href="../proc/apply_nh_correction.html" xlink:title="apply_nh_correction">
+<polygon fill="#d9534f" stroke="#d9534f" points="300.5,-428 180.5,-428 180.5,-404 300.5,-404 300.5,-428"/>
+<text text-anchor="middle" x="240.5" y="-413.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">apply_nh_correction</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_nh_rk_stage&#45;&gt;proc~apply_nh_correction -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_edge5" class="edge">
+<title>proc~solver_nh_rk_stage&#45;&gt;proc~apply_nh_correction</title>
+<path fill="none" stroke="#ff0000" d="M67.64,-323.09C83.02,-341.55 114.99,-376.54 150,-395 156.41,-398.38 163.35,-401.22 170.45,-403.6"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="169.59,-407 180.18,-406.59 171.64,-400.31 169.59,-407"/>
+</g>
+<!-- proc~apply_sponge -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_node7" class="node">
+<title>proc~apply_sponge</title>
+<g id="a_proc~~solver_nh_rk_stage~~CallsGraph_node7"><a xlink:href="../proc/apply_sponge.html" xlink:title="apply_sponge">
+<polygon fill="#d9534f" stroke="#d9534f" points="283.5,-386 197.5,-386 197.5,-362 283.5,-362 283.5,-386"/>
+<text text-anchor="middle" x="240.5" y="-371.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">apply_sponge</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_nh_rk_stage&#45;&gt;proc~apply_sponge -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_edge6" class="edge">
+<title>proc~solver_nh_rk_stage&#45;&gt;proc~apply_sponge</title>
+<path fill="none" stroke="#ff0000" d="M80.93,-323.01C99.23,-332.21 125.74,-344.71 150,-353 161.92,-357.07 174.99,-360.63 187.38,-363.6"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="186.59,-367.01 197.12,-365.86 188.17,-360.2 186.59,-367.01"/>
+</g>
+<!-- proc~compute_layer_from_barotropic -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_node8" class="node">
+<title>proc~compute_layer_from_barotropic</title>
+<g id="a_proc~~solver_nh_rk_stage~~CallsGraph_node8"><a xlink:href="../proc/compute_layer_from_barotropic.html" xlink:title="compute_layer_from_barotropic">
+<polygon fill="#d9534f" stroke="#d9534f" points="331,-344 150,-344 150,-320 331,-320 331,-344"/>
+<text text-anchor="middle" x="240.5" y="-329.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_layer_from_barotropic</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_nh_rk_stage&#45;&gt;proc~compute_layer_from_barotropic -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_edge7" class="edge">
+<title>proc~solver_nh_rk_stage&#45;&gt;proc~compute_layer_from_barotropic</title>
+<path fill="none" stroke="#ff0000" d="M114.43,-317.53C122.51,-318.46 131.01,-319.45 139.63,-320.44"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="139.44,-323.95 149.77,-321.62 140.24,-316.99 139.44,-323.95"/>
+</g>
+<!-- proc~compute_update -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_node9" class="node">
+<title>proc~compute_update</title>
+<g id="a_proc~~solver_nh_rk_stage~~CallsGraph_node9"><a xlink:href="../proc/compute_update.html" xlink:title="compute_update">
+<polygon fill="#d9534f" stroke="#d9534f" points="292,-302 189,-302 189,-278 292,-278 292,-302"/>
+<text text-anchor="middle" x="240.5" y="-287.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_update</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_nh_rk_stage&#45;&gt;proc~compute_update -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_edge8" class="edge">
+<title>proc~solver_nh_rk_stage&#45;&gt;proc~compute_update</title>
+<path fill="none" stroke="#ff0000" d="M114.43,-304.47C134.91,-302.1 158.13,-299.42 178.95,-297.01"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="179.42,-300.47 188.95,-295.85 178.62,-293.52 179.42,-300.47"/>
+</g>
+<!-- proc~compute_vertical_velocity -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_node10" class="node">
+<title>proc~compute_vertical_velocity</title>
+<g id="a_proc~~solver_nh_rk_stage~~CallsGraph_node10"><a xlink:href="../proc/compute_vertical_velocity.html" xlink:title="compute_vertical_velocity">
+<polygon fill="#d9534f" stroke="#d9534f" points="316,-260 165,-260 165,-236 316,-236 316,-260"/>
+<text text-anchor="middle" x="240.5" y="-245.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_vertical_velocity</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_nh_rk_stage&#45;&gt;proc~compute_vertical_velocity -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_edge9" class="edge">
+<title>proc~solver_nh_rk_stage&#45;&gt;proc~compute_vertical_velocity</title>
+<path fill="none" stroke="#ff0000" d="M80.93,-298.99C99.23,-289.79 125.74,-277.29 150,-269 156.75,-266.69 163.87,-264.55 171.02,-262.59"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="171.99,-265.95 180.77,-260.02 170.21,-259.18 171.99,-265.95"/>
+</g>
+<!-- proc~profiler_start -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_node11" class="node">
+<title>proc~profiler_start</title>
+<g id="a_proc~~solver_nh_rk_stage~~CallsGraph_node11"><a xlink:href="../proc/profiler_start.html" xlink:title="profiler_start">
+<polygon fill="#d9534f" stroke="#d9534f" points="280.5,-122 200.5,-122 200.5,-98 280.5,-98 280.5,-122"/>
+<text text-anchor="middle" x="240.5" y="-107.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">profiler_start</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_nh_rk_stage&#45;&gt;proc~profiler_start -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_edge10" class="edge">
+<title>proc~solver_nh_rk_stage&#45;&gt;proc~profiler_start</title>
+<path fill="none" stroke="#ff0000" d="M61.35,-298.95C70.43,-268.47 98.37,-187.51 150,-143 161.52,-133.07 176.28,-126.02 190.49,-121.06"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="191.73,-124.34 200.19,-117.95 189.6,-117.67 191.73,-124.34"/>
+</g>
+<!-- proc~profiler_stop -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_node12" class="node">
+<title>proc~profiler_stop</title>
+<g id="a_proc~~solver_nh_rk_stage~~CallsGraph_node12"><a xlink:href="../proc/profiler_stop.html" xlink:title="profiler_stop">
+<polygon fill="#d9534f" stroke="#d9534f" points="280,-74 201,-74 201,-50 280,-50 280,-74"/>
+<text text-anchor="middle" x="240.5" y="-59.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">profiler_stop</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_nh_rk_stage&#45;&gt;proc~profiler_stop -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_edge11" class="edge">
+<title>proc~solver_nh_rk_stage&#45;&gt;proc~profiler_stop</title>
+<path fill="none" stroke="#ff0000" d="M59.41,-298.84C64.36,-261.64 84.41,-148.34 150,-89 161.25,-78.83 176.2,-72.48 190.67,-68.53"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="191.65,-71.89 200.55,-66.15 190.01,-65.09 191.65,-71.89"/>
+</g>
+<!-- proc~save_barotropic_state -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_node13" class="node">
+<title>proc~save_barotropic_state</title>
+<g id="a_proc~~solver_nh_rk_stage~~CallsGraph_node13"><a xlink:href="../proc/save_barotropic_state.html" xlink:title="save_barotropic_state">
+<polygon fill="#d9534f" stroke="#d9534f" points="304.5,-32 176.5,-32 176.5,-8 304.5,-8 304.5,-32"/>
+<text text-anchor="middle" x="240.5" y="-17.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">save_barotropic_state</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_nh_rk_stage&#45;&gt;proc~save_barotropic_state -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_edge12" class="edge">
+<title>proc~solver_nh_rk_stage&#45;&gt;proc~save_barotropic_state</title>
+<path fill="none" stroke="#ff0000" d="M58.22,-298.84C59.69,-256.33 70.57,-113.01 150,-41 155.01,-36.46 160.8,-32.85 166.99,-29.98"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="168.29,-33.24 176.3,-26.3 165.71,-26.73 168.29,-33.24"/>
+</g>
+<!-- proc~solve_nh_pressure -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_node14" class="node">
+<title>proc~solve_nh_pressure</title>
+<g id="a_proc~~solver_nh_rk_stage~~CallsGraph_node14"><a xlink:href="../proc/solve_nh_pressure.html" xlink:title="solve_nh_pressure">
+<polygon fill="#d9534f" stroke="#d9534f" points="295,-605 186,-605 186,-581 295,-581 295,-605"/>
+<text text-anchor="middle" x="240.5" y="-590.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solve_nh_pressure</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_nh_rk_stage&#45;&gt;proc~solve_nh_pressure -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_edge13" class="edge">
+<title>proc~solver_nh_rk_stage&#45;&gt;proc~solve_nh_pressure</title>
+<path fill="none" stroke="#ff0000" d="M61.18,-323.45C70.4,-357.71 99.69,-455.25 150,-521 166.81,-542.97 191.69,-562.28 210.96,-575.35"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="209.09,-578.32 219.36,-580.91 212.95,-572.48 209.09,-578.32"/>
+</g>
+<!-- proc~solver_compute_barotropic_flux -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_node15" class="node">
+<title>proc~solver_compute_barotropic_flux</title>
+<g id="a_proc~~solver_nh_rk_stage~~CallsGraph_node15"><a xlink:href="../proc/solver_compute_barotropic_flux.html" xlink:title="solver_compute_barotropic_flux">
+<polygon fill="#d9534f" stroke="#d9534f" points="331,-218 150,-218 150,-194 331,-194 331,-218"/>
+<text text-anchor="middle" x="240.5" y="-203.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_compute_barotropic_flux</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_nh_rk_stage&#45;&gt;proc~solver_compute_barotropic_flux -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_edge14" class="edge">
+<title>proc~solver_nh_rk_stage&#45;&gt;proc~solver_compute_barotropic_flux</title>
+<path fill="none" stroke="#ff0000" d="M67.64,-298.91C83.02,-280.45 114.99,-245.46 150,-227 153.73,-225.03 157.65,-223.25 161.67,-221.63"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="163.02,-224.86 171.21,-218.14 160.62,-218.29 163.02,-224.86"/>
+</g>
+<!-- proc~bc_chapman_edge -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_node19" class="node">
+<title>proc~bc_chapman_edge</title>
+<g id="a_proc~~solver_nh_rk_stage~~CallsGraph_node19"><a xlink:href="../proc/bc_chapman_edge.html" xlink:title="bc_chapman_edge">
+<polygon fill="#d9534f" stroke="#d9534f" points="508.5,-752 395.5,-752 395.5,-728 508.5,-728 508.5,-752"/>
+<text text-anchor="middle" x="452" y="-737.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">bc_chapman_edge</text>
+</a>
+</g>
+</g>
+<!-- proc~apply_boundary_conditions&#45;&gt;proc~bc_chapman_edge -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_edge15" class="edge">
+<title>proc~apply_boundary_conditions&#45;&gt;proc~bc_chapman_edge</title>
+<path fill="none" stroke="#ff0000" d="M262.18,-811.83C286.55,-797.92 328.6,-775.24 367,-761 372.92,-758.8 379.16,-756.76 385.45,-754.89"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="386.69,-758.18 395.35,-752.07 384.77,-751.44 386.69,-758.18"/>
+</g>
+<!-- proc~bc_clamped_edge -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_node20" class="node">
+<title>proc~bc_clamped_edge</title>
+<g id="a_proc~~solver_nh_rk_stage~~CallsGraph_node20"><a xlink:href="../proc/bc_clamped_edge.html" xlink:title="bc_clamped_edge">
+<polygon fill="#d9534f" stroke="#d9534f" points="506.5,-962 397.5,-962 397.5,-938 506.5,-938 506.5,-962"/>
+<text text-anchor="middle" x="452" y="-947.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">bc_clamped_edge</text>
+</a>
+</g>
+</g>
+<!-- proc~apply_boundary_conditions&#45;&gt;proc~bc_clamped_edge -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_edge16" class="edge">
+<title>proc~apply_boundary_conditions&#45;&gt;proc~bc_clamped_edge</title>
+<path fill="none" stroke="#ff0000" d="M252.31,-836.11C272.58,-858.05 318.64,-904.39 367,-929 373.45,-932.28 380.44,-935.07 387.54,-937.44"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="386.67,-940.83 397.26,-940.41 388.72,-934.14 386.67,-940.83"/>
+</g>
+<!-- proc~bc_disch_edge -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_node21" class="node">
+<title>proc~bc_disch_edge</title>
+<g id="a_proc~~solver_nh_rk_stage~~CallsGraph_node21"><a xlink:href="../proc/bc_disch_edge.html" xlink:title="bc_disch_edge">
+<polygon fill="#d9534f" stroke="#d9534f" points="497.5,-920 406.5,-920 406.5,-896 497.5,-896 497.5,-920"/>
+<text text-anchor="middle" x="452" y="-905.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">bc_disch_edge</text>
+</a>
+</g>
+</g>
+<!-- proc~apply_boundary_conditions&#45;&gt;proc~bc_disch_edge -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_edge17" class="edge">
+<title>proc~apply_boundary_conditions&#45;&gt;proc~bc_disch_edge</title>
+<path fill="none" stroke="#ff0000" d="M262.18,-836.17C286.55,-850.08 328.6,-872.76 367,-887 376.41,-890.49 386.62,-893.59 396.58,-896.26"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="395.86,-899.69 406.41,-898.79 397.6,-892.91 395.86,-899.69"/>
+</g>
+<!-- proc~bc_flather_edge -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_node22" class="node">
+<title>proc~bc_flather_edge</title>
+<g id="a_proc~~solver_nh_rk_stage~~CallsGraph_node22"><a xlink:href="../proc/bc_flather_edge.html" xlink:title="bc_flather_edge">
+<polygon fill="#d9534f" stroke="#d9534f" points="501,-878 403,-878 403,-854 501,-854 501,-878"/>
+<text text-anchor="middle" x="452" y="-863.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">bc_flather_edge</text>
+</a>
+</g>
+</g>
+<!-- proc~apply_boundary_conditions&#45;&gt;proc~bc_flather_edge -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_edge18" class="edge">
+<title>proc~apply_boundary_conditions&#45;&gt;proc~bc_flather_edge</title>
+<path fill="none" stroke="#ff0000" d="M301.53,-836.04C330.3,-841.8 364.62,-848.68 393.1,-854.39"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="392.43,-857.83 402.92,-856.36 393.8,-850.96 392.43,-857.83"/>
+</g>
+<!-- proc~bc_inflow_edge -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_node23" class="node">
+<title>proc~bc_inflow_edge</title>
+<g id="a_proc~~solver_nh_rk_stage~~CallsGraph_node23"><a xlink:href="../proc/bc_inflow_edge.html" xlink:title="bc_inflow_edge">
+<polygon fill="#d9534f" stroke="#d9534f" points="499,-836 405,-836 405,-812 499,-812 499,-836"/>
+<text text-anchor="middle" x="452" y="-821.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">bc_inflow_edge</text>
+</a>
+</g>
+</g>
+<!-- proc~apply_boundary_conditions&#45;&gt;proc~bc_inflow_edge -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_edge19" class="edge">
+<title>proc~apply_boundary_conditions&#45;&gt;proc~bc_inflow_edge</title>
+<path fill="none" stroke="#ff0000" d="M319.51,-824C344.43,-824 371.51,-824 394.59,-824"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="394.88,-827.5 404.88,-824 394.88,-820.5 394.88,-827.5"/>
+</g>
+<!-- proc~bc_wall_edge -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_node24" class="node">
+<title>proc~bc_wall_edge</title>
+<g id="a_proc~~solver_nh_rk_stage~~CallsGraph_node24"><a xlink:href="../proc/bc_wall_edge.html" xlink:title="bc_wall_edge">
+<polygon fill="#d9534f" stroke="#d9534f" points="494,-794 410,-794 410,-770 494,-770 494,-794"/>
+<text text-anchor="middle" x="452" y="-779.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">bc_wall_edge</text>
+</a>
+</g>
+</g>
+<!-- proc~apply_boundary_conditions&#45;&gt;proc~bc_wall_edge -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_edge20" class="edge">
+<title>proc~apply_boundary_conditions&#45;&gt;proc~bc_wall_edge</title>
+<path fill="none" stroke="#ff0000" d="M301.53,-811.96C332.58,-805.74 370.07,-798.23 399.74,-792.28"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="400.76,-795.64 409.88,-790.24 399.39,-788.78 400.76,-795.64"/>
+</g>
+<!-- local -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_node16" class="node">
+<title>local</title>
+<polygon fill="#777777" stroke="#777777" points="628,-522 574,-522 574,-498 628,-498 628,-522"/>
+<text text-anchor="middle" x="601" y="-507.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">local</text>
+</g>
+<!-- proc~apply_coriolis&#45;&gt;local -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_edge21" class="edge">
+<title>proc~apply_coriolis&#45;&gt;local</title>
+<path fill="none" stroke="#ff6d00" d="M283.33,-501.17C354.16,-503.14 496.54,-507.11 563.55,-508.98"/>
+<polygon fill="#ff6d00" stroke="#ff6d00" points="563.54,-512.48 573.63,-509.26 563.74,-505.49 563.54,-512.48"/>
+</g>
+<!-- proc~apply_friction&#45;&gt;local -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_edge22" class="edge">
+<title>proc~apply_friction&#45;&gt;local</title>
+<path fill="none" stroke="#ffda00" d="M283.16,-463.31C340.44,-470.73 446.69,-484.85 537,-499 545.75,-500.37 555.17,-501.96 563.98,-503.49"/>
+<polygon fill="#ffda00" stroke="#ffda00" points="563.52,-506.96 573.98,-505.25 564.74,-500.07 563.52,-506.96"/>
+</g>
+<!-- proc~apply_nh_correction&#45;&gt;local -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_edge23" class="edge">
+<title>proc~apply_nh_correction&#45;&gt;local</title>
+<path fill="none" stroke="#48ff00" d="M300.51,-420.09C361.49,-425.84 458.57,-439.29 537,-470 550.71,-475.37 564.66,-483.85 575.94,-491.63"/>
+<polygon fill="#48ff00" stroke="#48ff00" points="574.18,-494.67 584.35,-497.64 578.25,-488.98 574.18,-494.67"/>
+</g>
+<!-- proc~apply_sponge&#45;&gt;local -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_edge24" class="edge">
+<title>proc~apply_sponge&#45;&gt;local</title>
+<path fill="none" stroke="#00ff24" d="M283.6,-371.58C344.22,-370.1 457.53,-374.94 537,-424 562.04,-439.46 580.28,-468.88 590.5,-488.97"/>
+<polygon fill="#00ff24" stroke="#00ff24" points="587.36,-490.51 594.87,-497.97 593.66,-487.45 587.36,-490.51"/>
+</g>
+<!-- proc~compute_layer_from_barotropic&#45;&gt;local -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_edge25" class="edge">
+<title>proc~compute_layer_from_barotropic&#45;&gt;local</title>
+<path fill="none" stroke="#00ff91" d="M331.01,-321.83C394.42,-319.43 478.31,-326.49 537,-370 575.5,-398.54 591,-456.05 596.81,-487.76"/>
+<polygon fill="#00ff91" stroke="#00ff91" points="593.39,-488.52 598.49,-497.81 600.29,-487.37 593.39,-488.52"/>
+</g>
+<!-- proc~compute_update&#45;&gt;local -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_edge26" class="edge">
+<title>proc~compute_update&#45;&gt;local</title>
+<path fill="none" stroke="#00ffff" d="M292.11,-288.14C366.46,-286.46 500.35,-287.77 537,-317 589.76,-359.07 598.84,-446.16 600.07,-487.4"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="596.57,-487.58 600.23,-497.52 603.57,-487.46 596.57,-487.58"/>
+</g>
+<!-- proc~compute_vertical_velocity&#45;&gt;local -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_edge27" class="edge">
+<title>proc~compute_vertical_velocity&#45;&gt;local</title>
+<path fill="none" stroke="#0091ff" d="M316.11,-247.9C392.63,-249.37 504.86,-256.37 537,-284 568.22,-310.84 589.42,-436.23 596.96,-487.78"/>
+<polygon fill="#0091ff" stroke="#0091ff" points="593.52,-488.46 598.39,-497.87 600.45,-487.47 593.52,-488.46"/>
+</g>
+<!-- proc~find_or_create_region -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_node29" class="node">
+<title>proc~find_or_create_region</title>
+<g id="a_proc~~solver_nh_rk_stage~~CallsGraph_node29"><a xlink:href="../proc/find_or_create_region.html" xlink:title="find_or_create_region">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="515.5,-150 388.5,-150 388.5,-126 515.5,-126 515.5,-150"/>
+<text text-anchor="middle" x="452" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">find_or_create_region</text>
+</a>
+</g>
+</g>
+<!-- proc~profiler_start&#45;&gt;proc~find_or_create_region -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_edge28" class="edge">
+<title>proc~profiler_start&#45;&gt;proc~find_or_create_region</title>
+<path fill="none" stroke="#0024ff" d="M280.91,-115.27C308.3,-118.93 345.61,-123.91 378.32,-128.29"/>
+<polygon fill="#0024ff" stroke="#0024ff" points="377.92,-131.76 388.3,-129.62 378.85,-124.83 377.92,-131.76"/>
+</g>
+<!-- proc~get_wall_time -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_node30" class="node">
+<title>proc~get_wall_time</title>
+<g id="a_proc~~solver_nh_rk_stage~~CallsGraph_node30"><a xlink:href="../proc/get_wall_time.html" xlink:title="get_wall_time">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="494.5,-66 409.5,-66 409.5,-42 494.5,-42 494.5,-66"/>
+<text text-anchor="middle" x="452" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">get_wall_time</text>
+</a>
+</g>
+</g>
+<!-- proc~profiler_start&#45;&gt;proc~get_wall_time -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_edge29" class="edge">
+<title>proc~profiler_start&#45;&gt;proc~get_wall_time</title>
+<path fill="none" stroke="#0024ff" d="M280.71,-98.77C305.42,-91.77 338.02,-82.66 367,-75 377.57,-72.21 388.91,-69.3 399.74,-66.58"/>
+<polygon fill="#0024ff" stroke="#0024ff" points="400.65,-69.96 409.5,-64.14 398.95,-63.17 400.65,-69.96"/>
+</g>
+<!-- proc~nvtx_range_push -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_node32" class="node">
+<title>proc~nvtx_range_push</title>
+<g id="a_proc~~solver_nh_rk_stage~~CallsGraph_node32"><a xlink:href="../proc/nvtx_range_push.html" xlink:title="nvtx_range_push">
+<polygon fill="#d9534f" stroke="#d9534f" points="503.5,-108 400.5,-108 400.5,-84 503.5,-84 503.5,-108"/>
+<text text-anchor="middle" x="452" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nvtx_range_push</text>
+</a>
+</g>
+</g>
+<!-- proc~profiler_start&#45;&gt;proc~nvtx_range_push -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_edge30" class="edge">
+<title>proc~profiler_start&#45;&gt;proc~nvtx_range_push</title>
+<path fill="none" stroke="#0024ff" d="M280.91,-107.37C311.65,-105.31 354.9,-102.42 390.1,-100.07"/>
+<polygon fill="#0024ff" stroke="#0024ff" points="390.52,-103.55 400.26,-99.39 390.05,-96.57 390.52,-103.55"/>
+</g>
+<!-- proc~profiler_stop&#45;&gt;proc~get_wall_time -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_edge31" class="edge">
+<title>proc~profiler_stop&#45;&gt;proc~get_wall_time</title>
+<path fill="none" stroke="#4800ff" d="M280.41,-60.51C313.94,-59.23 362.61,-57.38 399.39,-55.97"/>
+<polygon fill="#4800ff" stroke="#4800ff" points="399.56,-59.47 409.42,-55.59 399.3,-52.47 399.56,-59.47"/>
+</g>
+<!-- proc~nvtx_range_pop -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_node31" class="node">
+<title>proc~nvtx_range_pop</title>
+<g id="a_proc~~solver_nh_rk_stage~~CallsGraph_node31"><a xlink:href="../proc/nvtx_range_pop.html" xlink:title="nvtx_range_pop">
+<polygon fill="#d9534f" stroke="#d9534f" points="500.5,-24 403.5,-24 403.5,0 500.5,0 500.5,-24"/>
+<text text-anchor="middle" x="452" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nvtx_range_pop</text>
+</a>
+</g>
+</g>
+<!-- proc~profiler_stop&#45;&gt;proc~nvtx_range_pop -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_edge32" class="edge">
+<title>proc~profiler_stop&#45;&gt;proc~nvtx_range_pop</title>
+<path fill="none" stroke="#4800ff" d="M280.28,-52.96C296.03,-49.27 314.39,-44.96 331,-41 351.42,-36.14 373.79,-30.75 393.61,-25.95"/>
+<polygon fill="#4800ff" stroke="#4800ff" points="394.53,-29.33 403.42,-23.57 392.88,-22.53 394.53,-29.33"/>
+</g>
+<!-- proc~apply_poisson_operator_fast -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_node17" class="node">
+<title>proc~apply_poisson_operator_fast</title>
+<g id="a_proc~~solver_nh_rk_stage~~CallsGraph_node17"><a xlink:href="../proc/apply_poisson_operator_fast.html" xlink:title="apply_poisson_operator_fast">
+<polygon fill="#d9534f" stroke="#d9534f" points="534,-710 370,-710 370,-686 534,-686 534,-710"/>
+<text text-anchor="middle" x="452" y="-695.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">apply_poisson_operator_fast</text>
+</a>
+</g>
+</g>
+<!-- proc~solve_nh_pressure&#45;&gt;proc~apply_poisson_operator_fast -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_edge33" class="edge">
+<title>proc~solve_nh_pressure&#45;&gt;proc~apply_poisson_operator_fast</title>
+<path fill="none" stroke="#ff00da" d="M255.96,-605.15C278.35,-623.36 323.38,-657.66 367,-677 371.77,-679.12 376.8,-681.05 381.92,-682.8"/>
+<polygon fill="#ff00da" stroke="#ff00da" points="381.25,-686.26 391.84,-685.96 383.37,-679.59 381.25,-686.26"/>
+</g>
+<!-- proc~apply_vertical_preconditioner -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_node18" class="node">
+<title>proc~apply_vertical_preconditioner</title>
+<g id="a_proc~~solver_nh_rk_stage~~CallsGraph_node18"><a xlink:href="../proc/apply_vertical_preconditioner.html" xlink:title="apply_vertical_preconditioner">
+<polygon fill="#d9534f" stroke="#d9534f" points="537,-668 367,-668 367,-644 537,-644 537,-668"/>
+<text text-anchor="middle" x="452" y="-653.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">apply_vertical_preconditioner</text>
+</a>
+</g>
+</g>
+<!-- proc~solve_nh_pressure&#45;&gt;proc~apply_vertical_preconditioner -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_edge34" class="edge">
+<title>proc~solve_nh_pressure&#45;&gt;proc~apply_vertical_preconditioner</title>
+<path fill="none" stroke="#ff00da" d="M275.1,-605.04C300.24,-613.85 335.57,-625.83 367,-635 374.51,-637.19 382.43,-639.36 390.3,-641.42"/>
+<polygon fill="#ff00da" stroke="#ff00da" points="389.63,-644.87 400.19,-643.98 391.38,-638.09 389.63,-644.87"/>
+</g>
+<!-- proc~compute_nh_rhs -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_node27" class="node">
+<title>proc~compute_nh_rhs</title>
+<g id="a_proc~~solver_nh_rk_stage~~CallsGraph_node27"><a xlink:href="../proc/compute_nh_rhs.html" xlink:title="compute_nh_rhs">
+<polygon fill="#d9534f" stroke="#d9534f" points="502,-542 402,-542 402,-518 502,-518 502,-542"/>
+<text text-anchor="middle" x="452" y="-527.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_nh_rhs</text>
+</a>
+</g>
+</g>
+<!-- proc~solve_nh_pressure&#45;&gt;proc~compute_nh_rhs -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_edge35" class="edge">
+<title>proc~solve_nh_pressure&#45;&gt;proc~compute_nh_rhs</title>
+<path fill="none" stroke="#ff00da" d="M275.1,-580.96C300.24,-572.15 335.57,-560.17 367,-551 375.09,-548.64 383.67,-546.3 392.12,-544.1"/>
+<polygon fill="#ff00da" stroke="#ff00da" points="393.15,-547.45 401.97,-541.58 391.41,-540.67 393.15,-547.45"/>
+</g>
+<!-- proc~compute_vert_coefficients -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_node28" class="node">
+<title>proc~compute_vert_coefficients</title>
+<g id="a_proc~~solver_nh_rk_stage~~CallsGraph_node28"><a xlink:href="../proc/compute_vert_coefficients.html" xlink:title="compute_vert_coefficients">
+<polygon fill="#d9534f" stroke="#d9534f" points="528.5,-626 375.5,-626 375.5,-602 528.5,-602 528.5,-626"/>
+<text text-anchor="middle" x="452" y="-611.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_vert_coefficients</text>
+</a>
+</g>
+</g>
+<!-- proc~solve_nh_pressure&#45;&gt;proc~compute_vert_coefficients -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_edge36" class="edge">
+<title>proc~solve_nh_pressure&#45;&gt;proc~compute_vert_coefficients</title>
+<path fill="none" stroke="#ff00da" d="M295.18,-598.38C316.5,-600.52 341.56,-603.03 365.28,-605.41"/>
+<polygon fill="#ff00da" stroke="#ff00da" points="365.04,-608.9 375.34,-606.42 365.74,-601.94 365.04,-608.9"/>
+</g>
+<!-- reduce -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_node33" class="node">
+<title>reduce</title>
+<polygon fill="#777777" stroke="#777777" points="479,-584 425,-584 425,-560 479,-560 479,-584"/>
+<text text-anchor="middle" x="452" y="-569.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">reduce</text>
+</g>
+<!-- proc~solve_nh_pressure&#45;&gt;reduce -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_edge37" class="edge">
+<title>proc~solve_nh_pressure&#45;&gt;reduce</title>
+<path fill="none" stroke="#ff00da" d="M295.18,-587.62C332.7,-583.86 381.8,-578.94 414.77,-575.63"/>
+<polygon fill="#ff00da" stroke="#ff00da" points="415.27,-579.1 424.87,-574.62 414.57,-572.13 415.27,-579.1"/>
+</g>
+<!-- proc~compute_flux_hll -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_node25" class="node">
+<title>proc~compute_flux_hll</title>
+<g id="a_proc~~solver_nh_rk_stage~~CallsGraph_node25"><a xlink:href="../proc/compute_flux_hll.html" xlink:title="compute_flux_hll">
+<polygon fill="#d9534f" stroke="#d9534f" points="503.5,-234 400.5,-234 400.5,-210 503.5,-210 503.5,-234"/>
+<text text-anchor="middle" x="452" y="-219.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_flux_hll</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_compute_barotropic_flux&#45;&gt;proc~compute_flux_hll -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_edge38" class="edge">
+<title>proc~solver_compute_barotropic_flux&#45;&gt;proc~compute_flux_hll</title>
+<path fill="none" stroke="#ff006d" d="M331.26,-212.86C351.22,-214.38 371.92,-215.96 390.38,-217.37"/>
+<polygon fill="#ff006d" stroke="#ff006d" points="390.15,-220.86 400.39,-218.13 390.68,-213.88 390.15,-220.86"/>
+</g>
+<!-- proc~compute_flux_hllc -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_node26" class="node">
+<title>proc~compute_flux_hllc</title>
+<g id="a_proc~~solver_nh_rk_stage~~CallsGraph_node26"><a xlink:href="../proc/compute_flux_hllc.html" xlink:title="compute_flux_hllc">
+<polygon fill="#d9534f" stroke="#d9534f" points="506.5,-192 397.5,-192 397.5,-168 506.5,-168 506.5,-192"/>
+<text text-anchor="middle" x="452" y="-177.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_flux_hllc</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_compute_barotropic_flux&#45;&gt;proc~compute_flux_hllc -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_edge39" class="edge">
+<title>proc~solver_compute_barotropic_flux&#45;&gt;proc~compute_flux_hllc</title>
+<path fill="none" stroke="#ff006d" d="M331.26,-194.86C350.1,-192.52 369.61,-190.1 387.27,-187.91"/>
+<polygon fill="#ff006d" stroke="#ff006d" points="387.94,-191.35 397.44,-186.65 387.08,-184.41 387.94,-191.35"/>
+</g>
+<!-- proc~apply_poisson_operator_fast&#45;&gt;local -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_edge40" class="edge">
+<title>proc~apply_poisson_operator_fast&#45;&gt;local</title>
+<path fill="none" stroke="#ff5400" d="M523.93,-685.89C528.65,-683.43 533.07,-680.5 537,-677 579.99,-638.72 593.76,-568.05 598.08,-532.16"/>
+<polygon fill="#ff5400" stroke="#ff5400" points="601.57,-532.53 599.14,-522.21 594.6,-531.79 601.57,-532.53"/>
+</g>
+<!-- proc~apply_vertical_preconditioner&#45;&gt;local -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_edge41" class="edge">
+<title>proc~apply_vertical_preconditioner&#45;&gt;local</title>
+<path fill="none" stroke="#ffaa00" d="M522.71,-643.81C527.81,-641.38 532.66,-638.47 537,-635 570.16,-608.49 587.4,-559.96 595,-531.8"/>
+<polygon fill="#ffaa00" stroke="#ffaa00" points="598.4,-532.65 597.46,-522.09 591.61,-530.93 598.4,-532.65"/>
+</g>
+<!-- proc~bc_chapman_edge&#45;&gt;local -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_edge42" class="edge">
+<title>proc~bc_chapman_edge&#45;&gt;local</title>
+<path fill="none" stroke="#ffff00" d="M508.66,-734.62C519.09,-731.4 529.17,-726.47 537,-719 590,-668.47 598.89,-575.15 600.05,-532.42"/>
+<polygon fill="#ffff00" stroke="#ffff00" points="603.56,-532.3 600.21,-522.24 596.56,-532.19 603.56,-532.3"/>
+</g>
+<!-- proc~bc_clamped_edge&#45;&gt;local -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_edge43" class="edge">
+<title>proc~bc_clamped_edge&#45;&gt;local</title>
+<path fill="none" stroke="#aaff00" d="M506.92,-946.25C518.24,-943.02 529.12,-937.68 537,-929 590.63,-869.97 598.61,-610.33 599.79,-532.27"/>
+<polygon fill="#aaff00" stroke="#aaff00" points="603.29,-532.16 599.92,-522.12 596.3,-532.07 603.29,-532.16"/>
+</g>
+<!-- proc~bc_disch_edge&#45;&gt;local -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_edge44" class="edge">
+<title>proc~bc_disch_edge&#45;&gt;local</title>
+<path fill="none" stroke="#54ff00" d="M497.64,-906.33C512.05,-903.55 526.9,-897.93 537,-887 585.29,-834.71 596.89,-605.32 599.38,-532.36"/>
+<polygon fill="#54ff00" stroke="#54ff00" points="602.89,-532.15 599.7,-522.05 595.89,-531.93 602.89,-532.15"/>
+</g>
+<!-- proc~bc_flather_edge&#45;&gt;local -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_edge45" class="edge">
+<title>proc~bc_flather_edge&#45;&gt;local</title>
+<path fill="none" stroke="#00ff00" d="M501.01,-863.48C514.29,-860.49 527.62,-854.95 537,-845 579.98,-799.41 594.96,-600.04 598.86,-532.48"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="602.37,-532.31 599.42,-522.13 595.38,-531.93 602.37,-532.31"/>
+</g>
+<!-- proc~bc_inflow_edge&#45;&gt;local -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_edge46" class="edge">
+<title>proc~bc_inflow_edge&#45;&gt;local</title>
+<path fill="none" stroke="#00ff55" d="M499.1,-821.71C512.94,-818.8 527.07,-813.26 537,-803 574.72,-764.01 592.79,-594.14 598.19,-532.47"/>
+<polygon fill="#00ff55" stroke="#00ff55" points="601.7,-532.53 599.06,-522.27 594.73,-531.94 601.7,-532.53"/>
+</g>
+<!-- proc~bc_wall_edge&#45;&gt;local -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_edge47" class="edge">
+<title>proc~bc_wall_edge&#45;&gt;local</title>
+<path fill="none" stroke="#00ffa9" d="M494.11,-780.42C509.39,-777.8 525.73,-772.26 537,-761 569.56,-728.47 590.36,-587.24 597.36,-532.13"/>
+<polygon fill="#00ffa9" stroke="#00ffa9" points="600.86,-532.39 598.61,-522.04 593.91,-531.53 600.86,-532.39"/>
+</g>
+<!-- proc~compute_flux_hll&#45;&gt;local -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_edge48" class="edge">
+<title>proc~compute_flux_hll&#45;&gt;local</title>
+<path fill="none" stroke="#00ffff" d="M503.92,-228.77C516.17,-232.63 528.23,-238.65 537,-248 569.93,-283.11 590.63,-431.07 597.48,-487.76"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="594.02,-488.3 598.67,-497.82 600.97,-487.48 594.02,-488.3"/>
+</g>
+<!-- proc~flux_cell -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_node34" class="node">
+<title>proc~flux_cell</title>
+<g id="a_proc~~solver_nh_rk_stage~~CallsGraph_node34"><a xlink:href="../proc/flux_cell.html" xlink:title="flux_cell">
+<polygon fill="#d9534f" stroke="#d9534f" points="629,-213 573,-213 573,-189 629,-189 629,-213"/>
+<text text-anchor="middle" x="601" y="-198.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">flux_cell</text>
+</a>
+</g>
+</g>
+<!-- proc~compute_flux_hll&#45;&gt;proc~flux_cell -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_edge49" class="edge">
+<title>proc~compute_flux_hll&#45;&gt;proc~flux_cell</title>
+<path fill="none" stroke="#00ffff" d="M503.59,-214.77C523.03,-212 544.84,-208.88 562.8,-206.31"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="563.47,-209.75 572.88,-204.87 562.48,-202.82 563.47,-209.75"/>
+</g>
+<!-- proc~compute_flux_hllc&#45;&gt;local -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_edge50" class="edge">
+<title>proc~compute_flux_hllc&#45;&gt;local</title>
+<path fill="none" stroke="#00a9ff" d="M506.6,-184.05C517.93,-187.27 528.89,-192.53 537,-201 576.73,-242.51 593.66,-423.68 598.47,-487.58"/>
+<polygon fill="#00a9ff" stroke="#00a9ff" points="595,-488.05 599.21,-497.77 601.98,-487.54 595,-488.05"/>
+</g>
+<!-- proc~compute_flux_hllc&#45;&gt;proc~flux_cell -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_edge51" class="edge">
+<title>proc~compute_flux_hllc&#45;&gt;proc~flux_cell</title>
+<path fill="none" stroke="#00a9ff" d="M506.9,-187.7C525.5,-190.36 545.89,-193.27 562.84,-195.69"/>
+<polygon fill="#00a9ff" stroke="#00a9ff" points="562.51,-199.18 572.91,-197.13 563.5,-192.25 562.51,-199.18"/>
+</g>
+<!-- proc~compute_nh_rhs&#45;&gt;local -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_edge52" class="edge">
+<title>proc~compute_nh_rhs&#45;&gt;local</title>
+<path fill="none" stroke="#0054ff" d="M502.36,-523.28C522.39,-520.56 545.12,-517.47 563.6,-514.95"/>
+<polygon fill="#0054ff" stroke="#0054ff" points="564.23,-518.4 573.67,-513.58 563.28,-511.46 564.23,-518.4"/>
+</g>
+<!-- proc~extract_velocity -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_node35" class="node">
+<title>proc~extract_velocity</title>
+<g id="a_proc~~solver_nh_rk_stage~~CallsGraph_node35"><a xlink:href="../proc/extract_velocity.html" xlink:title="extract_velocity">
+<polygon fill="#d9534f" stroke="#d9534f" points="761,-318 665,-318 665,-294 761,-294 761,-318"/>
+<text text-anchor="middle" x="713" y="-303.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">extract_velocity</text>
+</a>
+</g>
+</g>
+<!-- proc~flux_cell&#45;&gt;proc~extract_velocity -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_edge53" class="edge">
+<title>proc~flux_cell&#45;&gt;proc~extract_velocity</title>
+<path fill="none" stroke="#ff0000" d="M608.41,-213.1C618.4,-230.95 639.21,-264.41 665,-285 666.57,-286.25 668.23,-287.45 669.95,-288.59"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="668.5,-291.8 678.9,-293.8 672.02,-285.75 668.5,-291.8"/>
+</g>
+<!-- proc~hll_flux_x -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_node36" class="node">
+<title>proc~hll_flux_x</title>
+<g id="a_proc~~solver_nh_rk_stage~~CallsGraph_node36"><a xlink:href="../proc/hll_flux_x.html" xlink:title="hll_flux_x">
+<polygon fill="#d9534f" stroke="#d9534f" points="743.5,-276 682.5,-276 682.5,-252 743.5,-252 743.5,-276"/>
+<text text-anchor="middle" x="713" y="-261.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">hll_flux_x</text>
+</a>
+</g>
+</g>
+<!-- proc~flux_cell&#45;&gt;proc~hll_flux_x -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_edge54" class="edge">
+<title>proc~flux_cell&#45;&gt;proc~hll_flux_x</title>
+<path fill="none" stroke="#ff0000" d="M618.37,-213.02C630.81,-221.88 648.54,-233.92 665,-243 667.73,-244.51 670.59,-245.99 673.49,-247.43"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="672.26,-250.73 682.79,-251.87 675.27,-244.41 672.26,-250.73"/>
+</g>
+<!-- proc~hll_flux_y -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_node37" class="node">
+<title>proc~hll_flux_y</title>
+<g id="a_proc~~solver_nh_rk_stage~~CallsGraph_node37"><a xlink:href="../proc/hll_flux_y.html" xlink:title="hll_flux_y">
+<polygon fill="#d9534f" stroke="#d9534f" points="743.5,-234 682.5,-234 682.5,-210 743.5,-210 743.5,-234"/>
+<text text-anchor="middle" x="713" y="-219.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">hll_flux_y</text>
+</a>
+</g>
+</g>
+<!-- proc~flux_cell&#45;&gt;proc~hll_flux_y -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_edge55" class="edge">
+<title>proc~flux_cell&#45;&gt;proc~hll_flux_y</title>
+<path fill="none" stroke="#ff0000" d="M629.19,-206.19C642.19,-208.67 658.01,-211.69 672.33,-214.43"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="671.94,-217.92 682.42,-216.35 673.25,-211.04 671.94,-217.92"/>
+</g>
+<!-- proc~hllc_flux_x -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_node38" class="node">
+<title>proc~hllc_flux_x</title>
+<g id="a_proc~~solver_nh_rk_stage~~CallsGraph_node38"><a xlink:href="../proc/hllc_flux_x.html" xlink:title="hllc_flux_x">
+<polygon fill="#d9534f" stroke="#d9534f" points="746.5,-192 679.5,-192 679.5,-168 746.5,-168 746.5,-192"/>
+<text text-anchor="middle" x="713" y="-177.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">hllc_flux_x</text>
+</a>
+</g>
+</g>
+<!-- proc~flux_cell&#45;&gt;proc~hllc_flux_x -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_edge56" class="edge">
+<title>proc~flux_cell&#45;&gt;proc~hllc_flux_x</title>
+<path fill="none" stroke="#ff0000" d="M629.19,-195.81C641.26,-193.51 655.75,-190.74 669.21,-188.17"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="670.08,-191.57 679.25,-186.25 668.77,-184.69 670.08,-191.57"/>
+</g>
+<!-- proc~hllc_flux_y -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_node39" class="node">
+<title>proc~hllc_flux_y</title>
+<g id="a_proc~~solver_nh_rk_stage~~CallsGraph_node39"><a xlink:href="../proc/hllc_flux_y.html" xlink:title="hllc_flux_y">
+<polygon fill="#d9534f" stroke="#d9534f" points="746.5,-150 679.5,-150 679.5,-126 746.5,-126 746.5,-150"/>
+<text text-anchor="middle" x="713" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">hllc_flux_y</text>
+</a>
+</g>
+</g>
+<!-- proc~flux_cell&#45;&gt;proc~hllc_flux_y -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_edge57" class="edge">
+<title>proc~flux_cell&#45;&gt;proc~hllc_flux_y</title>
+<path fill="none" stroke="#ff0000" d="M618.37,-188.98C630.81,-180.12 648.54,-168.08 665,-159 667.73,-157.49 670.59,-156.01 673.49,-154.57"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="675.27,-157.59 682.79,-150.13 672.26,-151.27 675.27,-157.59"/>
+</g>
+<!-- proc~minmod -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_node40" class="node">
+<title>proc~minmod</title>
+<g id="a_proc~~solver_nh_rk_stage~~CallsGraph_node40"><a xlink:href="../proc/minmod.html" xlink:title="minmod">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="741.5,-108 684.5,-108 684.5,-84 741.5,-84 741.5,-108"/>
+<text text-anchor="middle" x="713" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">minmod</text>
+</a>
+</g>
+</g>
+<!-- proc~flux_cell&#45;&gt;proc~minmod -->
+<g id="proc~~solver_nh_rk_stage~~CallsGraph_edge58" class="edge">
+<title>proc~flux_cell&#45;&gt;proc~minmod</title>
+<path fill="none" stroke="#ff0000" d="M608.41,-188.9C618.4,-171.05 639.21,-137.59 665,-117 668.13,-114.5 671.61,-112.23 675.21,-110.19"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="676.98,-113.22 684.31,-105.58 673.81,-106.98 676.98,-113.22"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var panprocsolver_nh_rk_stageCallsGraph = svgPanZoom('#procsolver_nh_rk_stageCallsGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CallsGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CallsGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Called by</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~solver_nh_rk_stage~~CalledByGraph Pages: 1 -->
+<svg id="procsolver_nh_rk_stageCalledByGraph" width="618pt" height="116pt"
+ viewBox="0.00 0.00 618.00 116.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~solver_nh_rk_stage~~CalledByGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 112)">
+<title>proc~~solver_nh_rk_stage~~CalledByGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-112 614,-112 614,4 -4,4"/>
+<!-- proc~solver_nh_rk_stage -->
+<g id="proc~~solver_nh_rk_stage~~CalledByGraph_node1" class="node">
+<title>proc~solver_nh_rk_stage</title>
+<polygon fill="none" stroke="black" points="610,-66 496,-66 496,-42 610,-42 610,-66"/>
+<text text-anchor="middle" x="553" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50">solver_nh_rk_stage</text>
+</g>
+<!-- proc~solver_step_impl -->
+<g id="proc~~solver_nh_rk_stage~~CalledByGraph_node2" class="node">
+<title>proc~solver_step_impl</title>
+<g id="a_proc~~solver_nh_rk_stage~~CalledByGraph_node2"><a xlink:href="../proc/solver_step_impl.html" xlink:title="solver_step_impl">
+<polygon fill="#d9534f" stroke="#d9534f" points="460,-66 359,-66 359,-42 460,-42 460,-66"/>
+<text text-anchor="middle" x="409.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_step_impl</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_step_impl&#45;&gt;proc~solver_nh_rk_stage -->
+<g id="proc~~solver_nh_rk_stage~~CalledByGraph_edge1" class="edge">
+<title>proc~solver_step_impl&#45;&gt;proc~solver_nh_rk_stage</title>
+<path fill="none" stroke="#ff0000" d="M460.39,-54C468.53,-54 477.08,-54 485.55,-54"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="485.81,-57.5 495.81,-54 485.81,-50.5 485.81,-57.5"/>
+</g>
+<!-- proc~solver_step -->
+<g id="proc~~solver_nh_rk_stage~~CalledByGraph_node3" class="node">
+<title>proc~solver_step</title>
+<g id="a_proc~~solver_nh_rk_stage~~CalledByGraph_node3"><a xlink:href="../proc/solver_step.html" xlink:title="solver_step">
+<polygon fill="#d9534f" stroke="#d9534f" points="323,-66 250,-66 250,-42 323,-42 323,-66"/>
+<text text-anchor="middle" x="286.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_step</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_step&#45;&gt;proc~solver_step_impl -->
+<g id="proc~~solver_nh_rk_stage~~CalledByGraph_edge2" class="edge">
+<title>proc~solver_step&#45;&gt;proc~solver_step_impl</title>
+<path fill="none" stroke="#ff0000" d="M323.15,-54C331.17,-54 339.89,-54 348.59,-54"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="348.76,-57.5 358.76,-54 348.76,-50.5 348.76,-57.5"/>
+</g>
+<!-- proc~driver_run_coastal -->
+<g id="proc~~solver_nh_rk_stage~~CalledByGraph_node4" class="node">
+<title>proc~driver_run_coastal</title>
+<g id="a_proc~~solver_nh_rk_stage~~CalledByGraph_node4"><a xlink:href="../proc/driver_run_coastal.html" xlink:title="driver_run_coastal">
+<polygon fill="#d9534f" stroke="#d9534f" points="214,-108 103,-108 103,-84 214,-84 214,-108"/>
+<text text-anchor="middle" x="158.5" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">driver_run_coastal</text>
+</a>
+</g>
+</g>
+<!-- proc~driver_run_coastal&#45;&gt;proc~solver_step -->
+<g id="proc~~solver_nh_rk_stage~~CalledByGraph_edge3" class="edge">
+<title>proc~driver_run_coastal&#45;&gt;proc~solver_step</title>
+<path fill="none" stroke="#ff0000" d="M195.61,-83.96C209.43,-79.36 225.39,-74.04 239.98,-69.17"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="241.44,-72.37 249.82,-65.89 239.23,-65.73 241.44,-72.37"/>
+</g>
+<!-- proc~rki_advance -->
+<g id="proc~~solver_nh_rk_stage~~CalledByGraph_node5" class="node">
+<title>proc~rki_advance</title>
+<g id="a_proc~~solver_nh_rk_stage~~CalledByGraph_node5"><a xlink:href="../proc/rki_advance.html" xlink:title="rki_advance">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="197,-66 120,-66 120,-42 197,-42 197,-66"/>
+<text text-anchor="middle" x="158.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_advance</text>
+</a>
+</g>
+</g>
+<!-- proc~rki_advance&#45;&gt;proc~solver_step -->
+<g id="proc~~solver_nh_rk_stage~~CalledByGraph_edge4" class="edge">
+<title>proc~rki_advance&#45;&gt;proc~solver_step</title>
+<path fill="none" stroke="#ff0000" d="M197.3,-54C210.59,-54 225.67,-54 239.55,-54"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="239.88,-57.5 249.88,-54 239.88,-50.5 239.88,-57.5"/>
+</g>
+<!-- proc~rki_step -->
+<g id="proc~~solver_nh_rk_stage~~CalledByGraph_node6" class="node">
+<title>proc~rki_step</title>
+<g id="a_proc~~solver_nh_rk_stage~~CalledByGraph_node6"><a xlink:href="../proc/rki_step.html" xlink:title="rki_step">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="185.5,-24 131.5,-24 131.5,0 185.5,0 185.5,-24"/>
+<text text-anchor="middle" x="158.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_step</text>
+</a>
+</g>
+</g>
+<!-- proc~rki_step&#45;&gt;proc~solver_step -->
+<g id="proc~~solver_nh_rk_stage~~CalledByGraph_edge5" class="edge">
+<title>proc~rki_step&#45;&gt;proc~solver_step</title>
+<path fill="none" stroke="#ff0000" d="M185.61,-20.7C201.37,-25.96 221.89,-32.8 240.23,-38.91"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="239.28,-42.28 249.87,-42.12 241.49,-35.64 239.28,-42.28"/>
+</g>
+<!-- proc~driver_run -->
+<g id="proc~~solver_nh_rk_stage~~CalledByGraph_node7" class="node">
+<title>proc~driver_run</title>
+<g id="a_proc~~solver_nh_rk_stage~~CalledByGraph_node7"><a xlink:href="../proc/driver_run.html" xlink:title="driver_run">
+<polygon fill="#d9534f" stroke="#d9534f" points="67,-108 0,-108 0,-84 67,-84 67,-108"/>
+<text text-anchor="middle" x="33.5" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">driver_run</text>
+</a>
+</g>
+</g>
+<!-- proc~driver_run&#45;&gt;proc~driver_run_coastal -->
+<g id="proc~~solver_nh_rk_stage~~CalledByGraph_edge6" class="edge">
+<title>proc~driver_run&#45;&gt;proc~driver_run_coastal</title>
+<path fill="none" stroke="#ff0000" d="M67.14,-96C75.1,-96 83.9,-96 92.79,-96"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="92.82,-99.5 102.82,-96 92.82,-92.5 92.82,-99.5"/>
+</g>
+</g>
+</svg>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CalledByGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CalledByGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+
+
+    <section>    
+      <h2>Variables</h2>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Visibility</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+<th></th><th scope="col">Initial</th>        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nh_iter"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nh_iter</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    </section>
+    <br>
+    
+    
+
+    
+    
+
+
+
+    
+    <section>
+    <h2><span class="anchor" id="src"></span>Source Code</h2>
+    <div class="hl codehilite"><pre><span></span><span class="w">   </span><span class="k">subroutine </span><span class="n">solver_nh_rk_stage</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="w"> </span><span class="n">nz</span><span class="p">,</span><span class="w"> </span><span class="n">use_nh</span><span class="p">)</span>
+<span class="w">      </span><span class="c">!! One RK stage: BCs, flux, update, friction, then NH correction</span>
+<span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="n">state_t</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">state</span>
+<span class="w">      </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">nz</span>
+<span class="w">      </span><span class="kt">logical</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">use_nh</span>
+
+<span class="w">      </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">nh_iter</span>
+
+<span class="w">      </span><span class="c">! Save barotropic state before HLL update</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">use_nh</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">         call </span><span class="n">save_barotropic_state</span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hu</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hv</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                    </span><span class="n">state</span><span class="p">%</span><span class="n">nh</span><span class="p">%</span><span class="n">hu_pre</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">nh</span><span class="p">%</span><span class="n">hv_pre</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">grid</span><span class="p">)</span>
+<span class="w">      </span><span class="k">end if</span>
+
+<span class="k">      call </span><span class="n">profiler_start</span><span class="p">(</span><span class="s2">"boundary"</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">apply_boundary_conditions</span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">h</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hu</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hv</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                     </span><span class="n">state</span><span class="p">%</span><span class="n">grid</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">bc</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">profiler_stop</span><span class="p">(</span><span class="s2">"boundary"</span><span class="p">)</span>
+
+<span class="w">      </span><span class="k">call </span><span class="n">profiler_start</span><span class="p">(</span><span class="s2">"flux"</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">solver_compute_barotropic_flux</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">profiler_stop</span><span class="p">(</span><span class="s2">"flux"</span><span class="p">)</span>
+
+<span class="w">      </span><span class="k">call </span><span class="n">profiler_start</span><span class="p">(</span><span class="s2">"update"</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">compute_update</span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">h</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hu</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hv</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                          </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">flux_h</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">flux_hu</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">flux_hv</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                          </span><span class="n">state</span><span class="p">%</span><span class="n">grid</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">dt</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">profiler_stop</span><span class="p">(</span><span class="s2">"update"</span><span class="p">)</span>
+
+<span class="w">      </span><span class="c">! Distribute barotropic acceleration to layers</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">use_nh</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">         call </span><span class="n">compute_layer_from_barotropic</span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">h</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hu</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hv</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                            </span><span class="n">state</span><span class="p">%</span><span class="n">nh</span><span class="p">%</span><span class="n">hu_pre</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">nh</span><span class="p">%</span><span class="n">hv_pre</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                            </span><span class="n">state</span><span class="p">%</span><span class="n">nh</span><span class="p">%</span><span class="n">u_layer</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">nh</span><span class="p">%</span><span class="n">v_layer</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                            </span><span class="n">state</span><span class="p">%</span><span class="n">nh</span><span class="p">%</span><span class="n">dsig</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">grid</span><span class="p">,</span><span class="w"> </span><span class="n">nz</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">dt</span><span class="p">)</span>
+
+<span class="w">         </span><span class="c">! Compute vertical velocity from continuity</span>
+<span class="w">         </span><span class="k">call </span><span class="n">compute_vertical_velocity</span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">h</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">nh</span><span class="p">%</span><span class="n">u_layer</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">nh</span><span class="p">%</span><span class="n">v_layer</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                        </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">nh</span><span class="p">%</span><span class="n">dsig</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">nh</span><span class="p">%</span><span class="n">w</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                        </span><span class="n">state</span><span class="p">%</span><span class="n">grid</span><span class="p">,</span><span class="w"> </span><span class="n">nz</span><span class="p">)</span>
+
+<span class="w">         </span><span class="c">! Solve NH pressure (CG) and apply correction</span>
+<span class="w">         </span><span class="k">call </span><span class="n">profiler_start</span><span class="p">(</span><span class="s2">"nh_pressure"</span><span class="p">)</span>
+<span class="w">         </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">mod</span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">step_count</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">nh</span><span class="p">%</span><span class="n">nh_solve_interval</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            call </span><span class="n">solve_nh_pressure</span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">h</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">nh</span><span class="p">%</span><span class="n">u_layer</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">nh</span><span class="p">%</span><span class="n">v_layer</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                   </span><span class="n">state</span><span class="p">%</span><span class="n">nh</span><span class="p">%</span><span class="n">w</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">nh</span><span class="p">%</span><span class="n">q_nh</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">nh</span><span class="p">%</span><span class="n">dsig</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                   </span><span class="n">state</span><span class="p">%</span><span class="n">nh</span><span class="p">%</span><span class="n">cg_r</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">nh</span><span class="p">%</span><span class="n">cg_p</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">nh</span><span class="p">%</span><span class="n">cg_Ap</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">nh</span><span class="p">%</span><span class="n">cg_z</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                   </span><span class="n">state</span><span class="p">%</span><span class="n">grid</span><span class="p">,</span><span class="w"> </span><span class="n">nz</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                   </span><span class="n">state</span><span class="p">%</span><span class="n">nh</span><span class="p">%</span><span class="n">nh_max_iterations</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">nh</span><span class="p">%</span><span class="n">nh_tolerance</span><span class="p">,</span><span class="w"> </span><span class="n">nh_iter</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                   </span><span class="n">state</span><span class="p">%</span><span class="n">nh</span><span class="p">%</span><span class="n">nh_preconditioner</span><span class="p">)</span>
+<span class="w">         </span><span class="k">end if</span>
+
+<span class="w">         </span><span class="c">! NH BCs for q_nh before applying correction</span>
+<span class="w">         </span><span class="k">call </span><span class="n">apply_nh_boundary_conditions</span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">nh</span><span class="p">%</span><span class="n">q_nh</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">nh</span><span class="p">%</span><span class="n">u_layer</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                           </span><span class="n">state</span><span class="p">%</span><span class="n">nh</span><span class="p">%</span><span class="n">v_layer</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">nh</span><span class="p">%</span><span class="n">w</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                           </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">h</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                           </span><span class="n">state</span><span class="p">%</span><span class="n">grid</span><span class="p">,</span><span class="w"> </span><span class="n">nz</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">bc</span><span class="p">)</span>
+
+<span class="w">         </span><span class="k">call </span><span class="n">apply_nh_correction</span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">h</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">nh</span><span class="p">%</span><span class="n">u_layer</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">nh</span><span class="p">%</span><span class="n">v_layer</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                  </span><span class="n">state</span><span class="p">%</span><span class="n">nh</span><span class="p">%</span><span class="n">w</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">nh</span><span class="p">%</span><span class="n">q_nh</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">nh</span><span class="p">%</span><span class="n">dsig</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                  </span><span class="n">state</span><span class="p">%</span><span class="n">grid</span><span class="p">,</span><span class="w"> </span><span class="n">nz</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">dt</span><span class="p">)</span>
+<span class="w">         </span><span class="k">call </span><span class="n">profiler_stop</span><span class="p">(</span><span class="s2">"nh_pressure"</span><span class="p">)</span>
+<span class="w">      </span><span class="k">end if</span>
+
+<span class="k">      call </span><span class="n">profiler_start</span><span class="p">(</span><span class="s2">"friction"</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">apply_friction</span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">h</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hu</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hv</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                          </span><span class="n">state</span><span class="p">%</span><span class="n">grid</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                          </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">manning_n</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">forcing</span><span class="p">%</span><span class="n">wind_x</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">forcing</span><span class="p">%</span><span class="n">wind_y</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                          </span><span class="n">state</span><span class="p">%</span><span class="n">forcing</span><span class="p">%</span><span class="n">atm_pressure</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">forcing</span><span class="p">%</span><span class="n">precipitation</span><span class="p">,</span><span class="w"> </span><span class="n">forcing_active</span><span class="o">=</span><span class="n">state</span><span class="p">%</span><span class="n">forcing</span><span class="p">%</span><span class="n">active</span><span class="p">)</span>
+
+<span class="w">      </span><span class="k">call </span><span class="n">apply_coriolis</span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">h</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hu</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hv</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                          </span><span class="n">state</span><span class="p">%</span><span class="n">grid</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">coriolis_f</span><span class="p">)</span>
+
+<span class="w">      </span><span class="k">call </span><span class="n">profiler_stop</span><span class="p">(</span><span class="s2">"friction"</span><span class="p">)</span>
+
+<span class="w">      </span><span class="c">! Sponge layer relaxation (no-op when sponge_width &lt;= 0)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">apply_sponge</span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">h</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hu</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hv</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                        </span><span class="n">state</span><span class="p">%</span><span class="n">grid</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">bc</span><span class="p">)</span>
+
+<span class="w">   </span><span class="k">end subroutine </span><span class="n">solver_nh_rk_stage</span>
+</pre></div>
+
+    </section>
+    <br>
+    
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Rakali
+ was developed by Jorge Luis Galvez Vallejo<br>              &copy; 2026 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+ on 2026-10-08 12:55 +0000             </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>

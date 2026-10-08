@@ -1,0 +1,944 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="GPU-native coastal solver — structured Cartesian and unstructured triangular grids, hydrostatic multilayer + non-hydrostatic, portable across NVHPC/gfortran/ifx.">
+    <meta name="author" content="Jorge Luis Galvez Vallejo" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>reduce_barotropic &ndash; Rakali</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">Rakali </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/absint.html">Abstract Interfaces</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>reduce_barotropic
+      <small>Subroutine</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.1% of total for procedures.">19 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/rki_coastal_console_stats.F90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/rki_coastal_console_stats.f90.html'>rki_coastal_console_stats.F90</a></li>
+                <li class="breadcrumb-item"><a href='../module/rki_coastal_console_stats.html'>rki_coastal_console_stats</a></li>
+            <li class="breadcrumb-item active" aria-current="page">reduce_barotropic</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+  
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#vars-0"
+         aria-expanded="false" aria-controls="vars-0">
+         <h4 class="card-header bg-primary text-white">Variables</h4>
+      </a>
+      <div id="vars-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../proc/reduce_barotropic.html#variable-cfl_acc">cfl_acc</a>
+            <a class="list-group-item" href="../proc/reduce_barotropic.html#variable-i~161">i</a>
+            <a class="list-group-item" href="../proc/reduce_barotropic.html#variable-i_hi~6">i_hi</a>
+            <a class="list-group-item" href="../proc/reduce_barotropic.html#variable-i_lo~6">i_lo</a>
+            <a class="list-group-item" href="../proc/reduce_barotropic.html#variable-j~120">j</a>
+            <a class="list-group-item" href="../proc/reduce_barotropic.html#variable-j_hi~6">j_hi</a>
+            <a class="list-group-item" href="../proc/reduce_barotropic.html#variable-j_lo~6">j_lo</a>
+            <a class="list-group-item" href="../proc/reduce_barotropic.html#variable-ke_acc">ke_acc</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../proc/reduce_barotropic.html#src">reduce_barotropic</a>
+      </div>
+    </div>
+
+
+  </div>
+
+    </div>
+    
+    <div class="col-md-9" id='text'>
+    <h2>private  subroutine reduce_barotropic(h, hu, hv, grid, area, dt, idx, idy, ke, mcfl)  
+</h2>
+    
+
+    <p>Single fused sweep over the 2D interior.</p>
+
+
+    <h3>Arguments</h3>
+        <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-h~183"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>h</strong>(grid%nx_total,grid%ny_total)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-hu~37"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>hu</strong>(grid%nx_total,grid%ny_total)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-hv~37"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>hv</strong>(grid%nx_total,grid%ny_total)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-grid~102"></span>
+              type(<a href='../type/hgrid_t.html'>hgrid_t</a>),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>grid</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-area~10"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>area</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-dt~92"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>dt</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-idx~8"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>idx</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-idy~2"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>idy</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ke~11"></span>
+              real(kind=wp),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>ke</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mcfl~4"></span>
+              real(kind=wp),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>mcfl</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <br>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Calls</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~reduce_barotropic~~CallsGraph Pages: 1 -->
+<svg id="procreduce_barotropicCallsGraph" width="249pt" height="158pt"
+ viewBox="0.00 0.00 249.00 158.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~reduce_barotropic~~CallsGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 154)">
+<title>proc~~reduce_barotropic~~CallsGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-154 245,-154 245,4 -4,4"/>
+<!-- proc~reduce_barotropic -->
+<g id="proc~~reduce_barotropic~~CallsGraph_node1" class="node">
+<title>proc~reduce_barotropic</title>
+<polygon fill="none" stroke="black" points="109,-87 0,-87 0,-63 109,-63 109,-87"/>
+<text text-anchor="middle" x="54.5" y="-72.6" font-family="Helvetica,sans-Serif" font-size="10.50">reduce_barotropic</text>
+</g>
+<!-- proc~cfl_cell -->
+<g id="proc~~reduce_barotropic~~CallsGraph_node2" class="node">
+<title>proc~cfl_cell</title>
+<g id="a_proc~~reduce_barotropic~~CallsGraph_node2"><a xlink:href="../proc/cfl_cell.html" xlink:title="cfl_cell">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="220,-150 166,-150 166,-126 220,-126 220,-150"/>
+<text text-anchor="middle" x="193" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">cfl_cell</text>
+</a>
+</g>
+</g>
+<!-- proc~reduce_barotropic&#45;&gt;proc~cfl_cell -->
+<g id="proc~~reduce_barotropic~~CallsGraph_edge1" class="edge">
+<title>proc~reduce_barotropic&#45;&gt;proc~cfl_cell</title>
+<path fill="none" stroke="#ff0000" d="M80.9,-87.07C98.79,-95.54 123.31,-107.07 145,-117 148.64,-118.67 152.45,-120.4 156.26,-122.11"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="155.06,-125.41 165.61,-126.31 157.92,-119.02 155.06,-125.41"/>
+</g>
+<!-- proc~interior_bounds -->
+<g id="proc~~reduce_barotropic~~CallsGraph_node3" class="node">
+<title>proc~interior_bounds</title>
+<g id="a_proc~~reduce_barotropic~~CallsGraph_node3"><a xlink:href="../proc/interior_bounds.html" xlink:title="interior_bounds">
+<polygon fill="#d9534f" stroke="#d9534f" points="241,-108 145,-108 145,-84 241,-84 241,-108"/>
+<text text-anchor="middle" x="193" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">interior_bounds</text>
+</a>
+</g>
+</g>
+<!-- proc~reduce_barotropic&#45;&gt;proc~interior_bounds -->
+<g id="proc~~reduce_barotropic~~CallsGraph_edge2" class="edge">
+<title>proc~reduce_barotropic&#45;&gt;proc~interior_bounds</title>
+<path fill="none" stroke="#ff0000" d="M109.06,-83.24C117.54,-84.54 126.34,-85.9 134.9,-87.22"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="134.39,-90.68 144.8,-88.74 135.45,-83.76 134.39,-90.68"/>
+</g>
+<!-- proc~ke_cell -->
+<g id="proc~~reduce_barotropic~~CallsGraph_node4" class="node">
+<title>proc~ke_cell</title>
+<g id="a_proc~~reduce_barotropic~~CallsGraph_node4"><a xlink:href="../proc/ke_cell.html" xlink:title="ke_cell">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="220,-66 166,-66 166,-42 220,-42 220,-66"/>
+<text text-anchor="middle" x="193" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">ke_cell</text>
+</a>
+</g>
+</g>
+<!-- proc~reduce_barotropic&#45;&gt;proc~ke_cell -->
+<g id="proc~~reduce_barotropic~~CallsGraph_edge3" class="edge">
+<title>proc~reduce_barotropic&#45;&gt;proc~ke_cell</title>
+<path fill="none" stroke="#ff0000" d="M109.06,-66.76C124.8,-64.34 141.65,-61.75 156.01,-59.54"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="156.63,-62.98 165.98,-58 155.57,-56.06 156.63,-62.98"/>
+</g>
+<!-- reduce -->
+<g id="proc~~reduce_barotropic~~CallsGraph_node5" class="node">
+<title>reduce</title>
+<polygon fill="#777777" stroke="#777777" points="220,-24 166,-24 166,0 220,0 220,-24"/>
+<text text-anchor="middle" x="193" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">reduce</text>
+</g>
+<!-- proc~reduce_barotropic&#45;&gt;reduce -->
+<g id="proc~~reduce_barotropic~~CallsGraph_edge4" class="edge">
+<title>proc~reduce_barotropic&#45;&gt;reduce</title>
+<path fill="none" stroke="#ff0000" d="M80.9,-62.93C98.79,-54.46 123.31,-42.93 145,-33 148.64,-31.33 152.45,-29.6 156.26,-27.89"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="157.92,-30.98 165.61,-23.69 155.06,-24.59 157.92,-30.98"/>
+</g>
+</g>
+</svg>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CallsGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CallsGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Called by</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~reduce_barotropic~~CalledByGraph Pages: 1 -->
+<svg id="procreduce_barotropicCalledByGraph" width="641pt" height="84pt"
+ viewBox="0.00 0.00 641.00 84.02" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~reduce_barotropic~~CalledByGraph" class="graph" transform="scale(0.72 0.72) rotate(0) translate(4 112)">
+<title>proc~~reduce_barotropic~~CalledByGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-112 881,-112 881,4 -4,4"/>
+<!-- proc~reduce_barotropic -->
+<g id="proc~~reduce_barotropic~~CalledByGraph_node1" class="node">
+<title>proc~reduce_barotropic</title>
+<polygon fill="none" stroke="black" points="877,-66 768,-66 768,-42 877,-42 877,-66"/>
+<text text-anchor="middle" x="822.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50">reduce_barotropic</text>
+</g>
+<!-- proc~coastal_reduce_stats -->
+<g id="proc~~reduce_barotropic~~CalledByGraph_node2" class="node">
+<title>proc~coastal_reduce_stats</title>
+<g id="a_proc~~reduce_barotropic~~CalledByGraph_node2"><a xlink:href="../proc/coastal_reduce_stats.html" xlink:title="coastal_reduce_stats">
+<polygon fill="#d9534f" stroke="#d9534f" points="732,-66 609,-66 609,-42 732,-42 732,-66"/>
+<text text-anchor="middle" x="670.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">coastal_reduce_stats</text>
+</a>
+</g>
+</g>
+<!-- proc~coastal_reduce_stats&#45;&gt;proc~reduce_barotropic -->
+<g id="proc~~reduce_barotropic~~CalledByGraph_edge1" class="edge">
+<title>proc~coastal_reduce_stats&#45;&gt;proc~reduce_barotropic</title>
+<path fill="none" stroke="#ff0000" d="M732.08,-54C740.52,-54 749.21,-54 757.71,-54"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="757.94,-57.5 767.94,-54 757.94,-50.5 757.94,-57.5"/>
+</g>
+<!-- proc~coastal_console_stats_report -->
+<g id="proc~~reduce_barotropic~~CalledByGraph_node3" class="node">
+<title>proc~coastal_console_stats_report</title>
+<g id="a_proc~~reduce_barotropic~~CalledByGraph_node3"><a xlink:href="../proc/coastal_console_stats_report.html" xlink:title="coastal_console_stats_report">
+<polygon fill="#d9534f" stroke="#d9534f" points="573,-108 408,-108 408,-84 573,-84 573,-108"/>
+<text text-anchor="middle" x="490.5" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">coastal_console_stats_report</text>
+</a>
+</g>
+</g>
+<!-- proc~coastal_console_stats_report&#45;&gt;proc~coastal_reduce_stats -->
+<g id="proc~~reduce_barotropic~~CalledByGraph_edge2" class="edge">
+<title>proc~coastal_console_stats_report&#45;&gt;proc~coastal_reduce_stats</title>
+<path fill="none" stroke="#ff0000" d="M542.51,-83.96C563.08,-79.11 586.99,-73.47 608.48,-68.4"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="609.56,-71.74 618.48,-66.04 607.95,-64.93 609.56,-71.74"/>
+</g>
+<!-- proc~coastal_max_cfl -->
+<g id="proc~~reduce_barotropic~~CalledByGraph_node4" class="node">
+<title>proc~coastal_max_cfl</title>
+<g id="a_proc~~reduce_barotropic~~CalledByGraph_node4"><a xlink:href="../proc/coastal_max_cfl.html" xlink:title="coastal_max_cfl">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="539,-66 442,-66 442,-42 539,-42 539,-66"/>
+<text text-anchor="middle" x="490.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">coastal_max_cfl</text>
+</a>
+</g>
+</g>
+<!-- proc~coastal_max_cfl&#45;&gt;proc~coastal_reduce_stats -->
+<g id="proc~~reduce_barotropic~~CalledByGraph_edge3" class="edge">
+<title>proc~coastal_max_cfl&#45;&gt;proc~coastal_reduce_stats</title>
+<path fill="none" stroke="#ff0000" d="M539.2,-54C557.52,-54 578.85,-54 598.88,-54"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="598.9,-57.5 608.9,-54 598.9,-50.5 598.9,-57.5"/>
+</g>
+<!-- proc~coastal_total_ke -->
+<g id="proc~~reduce_barotropic~~CalledByGraph_node5" class="node">
+<title>proc~coastal_total_ke</title>
+<g id="a_proc~~reduce_barotropic~~CalledByGraph_node5"><a xlink:href="../proc/coastal_total_ke.html" xlink:title="coastal_total_ke">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="539.5,-24 441.5,-24 441.5,0 539.5,0 539.5,-24"/>
+<text text-anchor="middle" x="490.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">coastal_total_ke</text>
+</a>
+</g>
+</g>
+<!-- proc~coastal_total_ke&#45;&gt;proc~coastal_reduce_stats -->
+<g id="proc~~reduce_barotropic~~CalledByGraph_edge4" class="edge">
+<title>proc~coastal_total_ke&#45;&gt;proc~coastal_reduce_stats</title>
+<path fill="none" stroke="#ff0000" d="M539.67,-23.37C560.93,-28.38 586.15,-34.33 608.68,-39.65"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="607.95,-43.07 618.49,-41.96 609.56,-36.26 607.95,-43.07"/>
+</g>
+<!-- proc~emit_periodic_status -->
+<g id="proc~~reduce_barotropic~~CalledByGraph_node6" class="node">
+<title>proc~emit_periodic_status</title>
+<g id="a_proc~~reduce_barotropic~~CalledByGraph_node6"><a xlink:href="../proc/emit_periodic_status.html" xlink:title="emit_periodic_status">
+<polygon fill="#d9534f" stroke="#d9534f" points="372,-108 250,-108 250,-84 372,-84 372,-108"/>
+<text text-anchor="middle" x="311" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">emit_periodic_status</text>
+</a>
+</g>
+</g>
+<!-- proc~emit_periodic_status&#45;&gt;proc~coastal_console_stats_report -->
+<g id="proc~~reduce_barotropic~~CalledByGraph_edge5" class="edge">
+<title>proc~emit_periodic_status&#45;&gt;proc~coastal_console_stats_report</title>
+<path fill="none" stroke="#ff0000" d="M372.09,-96C380.33,-96 388.94,-96 397.59,-96"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="397.75,-99.5 407.75,-96 397.75,-92.5 397.75,-99.5"/>
+</g>
+<!-- proc~driver_run_coastal -->
+<g id="proc~~reduce_barotropic~~CalledByGraph_node7" class="node">
+<title>proc~driver_run_coastal</title>
+<g id="a_proc~~reduce_barotropic~~CalledByGraph_node7"><a xlink:href="../proc/driver_run_coastal.html" xlink:title="driver_run_coastal">
+<polygon fill="#d9534f" stroke="#d9534f" points="214,-108 103,-108 103,-84 214,-84 214,-108"/>
+<text text-anchor="middle" x="158.5" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">driver_run_coastal</text>
+</a>
+</g>
+</g>
+<!-- proc~driver_run_coastal&#45;&gt;proc~emit_periodic_status -->
+<g id="proc~~reduce_barotropic~~CalledByGraph_edge6" class="edge">
+<title>proc~driver_run_coastal&#45;&gt;proc~emit_periodic_status</title>
+<path fill="none" stroke="#ff0000" d="M214.26,-96C222.6,-96 231.3,-96 239.9,-96"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="239.94,-99.5 249.94,-96 239.94,-92.5 239.94,-99.5"/>
+</g>
+<!-- proc~driver_run -->
+<g id="proc~~reduce_barotropic~~CalledByGraph_node8" class="node">
+<title>proc~driver_run</title>
+<g id="a_proc~~reduce_barotropic~~CalledByGraph_node8"><a xlink:href="../proc/driver_run.html" xlink:title="driver_run">
+<polygon fill="#d9534f" stroke="#d9534f" points="67,-108 0,-108 0,-84 67,-84 67,-108"/>
+<text text-anchor="middle" x="33.5" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">driver_run</text>
+</a>
+</g>
+</g>
+<!-- proc~driver_run&#45;&gt;proc~driver_run_coastal -->
+<g id="proc~~reduce_barotropic~~CalledByGraph_edge7" class="edge">
+<title>proc~driver_run&#45;&gt;proc~driver_run_coastal</title>
+<path fill="none" stroke="#ff0000" d="M67.14,-96C75.1,-96 83.9,-96 92.79,-96"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="92.82,-99.5 102.82,-96 92.82,-92.5 92.82,-99.5"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var panprocreduce_barotropicCalledByGraph = svgPanZoom('#procreduce_barotropicCalledByGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CalledByGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CalledByGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+
+
+    <section>    
+      <h2>Variables</h2>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Visibility</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+<th></th><th scope="col">Initial</th>        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-cfl_acc"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>cfl_acc</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-i~161"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>i</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-i_hi~6"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>i_hi</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-i_lo~6"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>i_lo</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-j~120"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>j</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-j_hi~6"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>j_hi</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-j_lo~6"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>j_lo</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ke_acc"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>ke_acc</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    </section>
+    <br>
+    
+    
+
+    
+    
+
+
+
+    
+    <section>
+    <h2><span class="anchor" id="src"></span>Source Code</h2>
+    <div class="hl codehilite"><pre><span></span><span class="w">   </span><span class="k">subroutine </span><span class="n">reduce_barotropic</span><span class="p">(</span><span class="n">h</span><span class="p">,</span><span class="w"> </span><span class="n">hu</span><span class="p">,</span><span class="w"> </span><span class="n">hv</span><span class="p">,</span><span class="w"> </span><span class="n">grid</span><span class="p">,</span><span class="w"> </span><span class="n">area</span><span class="p">,</span><span class="w"> </span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="n">idy</span><span class="p">,</span><span class="w"> </span><span class="n">ke</span><span class="p">,</span><span class="w"> </span><span class="n">mcfl</span><span class="p">)</span>
+<span class="w">      </span><span class="c">!! Single fused sweep over the 2D interior.</span>
+<span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="n">hgrid_t</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">grid</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">h</span><span class="p">(</span><span class="n">grid</span><span class="p">%</span><span class="n">nx_total</span><span class="p">,</span><span class="w"> </span><span class="n">grid</span><span class="p">%</span><span class="n">ny_total</span><span class="p">)</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">hu</span><span class="p">(</span><span class="n">grid</span><span class="p">%</span><span class="n">nx_total</span><span class="p">,</span><span class="w"> </span><span class="n">grid</span><span class="p">%</span><span class="n">ny_total</span><span class="p">)</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">hv</span><span class="p">(</span><span class="n">grid</span><span class="p">%</span><span class="n">nx_total</span><span class="p">,</span><span class="w"> </span><span class="n">grid</span><span class="p">%</span><span class="n">ny_total</span><span class="p">)</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">area</span><span class="p">,</span><span class="w"> </span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="n">idy</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">ke</span><span class="p">,</span><span class="w"> </span><span class="n">mcfl</span>
+<span class="w">      </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">,</span><span class="w"> </span><span class="n">i_lo</span><span class="p">,</span><span class="w"> </span><span class="n">i_hi</span><span class="p">,</span><span class="w"> </span><span class="n">j_lo</span><span class="p">,</span><span class="w"> </span><span class="n">j_hi</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">ke_acc</span><span class="p">,</span><span class="w"> </span><span class="n">cfl_acc</span>
+<span class="w">      </span><span class="k">call </span><span class="n">interior_bounds</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span><span class="w"> </span><span class="n">i_lo</span><span class="p">,</span><span class="w"> </span><span class="n">i_hi</span><span class="p">,</span><span class="w"> </span><span class="n">j_lo</span><span class="p">,</span><span class="w"> </span><span class="n">j_hi</span><span class="p">)</span>
+<span class="w">      </span><span class="n">ke_acc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">      </span><span class="n">cfl_acc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">      </span><span class="k">do</span><span class="w"> </span><span class="k">concurrent</span><span class="p">(</span><span class="n">j</span><span class="o">=</span><span class="n">j_lo</span><span class="p">:</span><span class="n">j_hi</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="o">=</span><span class="n">i_lo</span><span class="p">:</span><span class="n">i_hi</span><span class="p">)</span><span class="w"> </span><span class="n">reduce</span><span class="p">(</span><span class="o">+</span><span class="p">:</span><span class="n">ke_acc</span><span class="p">)</span><span class="w"> </span><span class="n">reduce</span><span class="p">(</span><span class="nb">max</span><span class="p">:</span><span class="n">cfl_acc</span><span class="p">)</span>
+<span class="w">         </span><span class="n">ke_acc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ke_acc</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">ke_cell</span><span class="p">(</span><span class="n">h</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">),</span><span class="w"> </span><span class="n">hu</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">),</span><span class="w"> </span><span class="n">hv</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">),</span><span class="w"> </span><span class="n">area</span><span class="p">)</span>
+<span class="w">         </span><span class="n">cfl_acc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">max</span><span class="p">(</span><span class="n">cfl_acc</span><span class="p">,</span><span class="w"> </span><span class="n">cfl_cell</span><span class="p">(</span><span class="n">h</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">),</span><span class="w"> </span><span class="n">hu</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">),</span><span class="w"> </span><span class="n">hv</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">),</span><span class="w"> </span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="n">idy</span><span class="p">))</span>
+<span class="w">      </span><span class="k">end do</span>
+<span class="k">      </span><span class="n">ke</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ke_acc</span>
+<span class="w">      </span><span class="n">mcfl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cfl_acc</span>
+<span class="w">   </span><span class="k">end subroutine </span><span class="n">reduce_barotropic</span>
+</pre></div>
+
+    </section>
+    <br>
+    
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Rakali
+ was developed by Jorge Luis Galvez Vallejo<br>              &copy; 2026 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+ on 2026-10-08 12:55 +0000             </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,867 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="GPU-native coastal solver — structured Cartesian and unstructured triangular grids, hydrostatic multilayer + non-hydrostatic, portable across NVHPC/gfortran/ifx.">
+    <meta name="author" content="Jorge Luis Galvez Vallejo" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>rki_load_restart &ndash; Rakali</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">Rakali </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/absint.html">Abstract Interfaces</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>rki_load_restart
+      <small>Function</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.1% of total for procedures.">32 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/rki_api.F90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/rki_api.f90.html'>rki_api.F90</a></li>
+                <li class="breadcrumb-item"><a href='../module/rki_api.html'>rki_api</a></li>
+            <li class="breadcrumb-item active" aria-current="page">rki_load_restart</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+  
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#vars-0"
+         aria-expanded="false" aria-controls="vars-0">
+         <h4 class="card-header bg-primary text-white">Variables</h4>
+      </a>
+      <div id="vars-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../proc/rki_load_restart.html#variable-filename~4">filename</a>
+            <a class="list-group-item" href="../proc/rki_load_restart.html#variable-h~124">h</a>
+            <a class="list-group-item" href="../proc/rki_load_restart.html#variable-loaded_ml">loaded_ml</a>
+            <a class="list-group-item" href="../proc/rki_load_restart.html#variable-read_ierr~2">read_ierr</a>
+            <a class="list-group-item" href="../proc/rki_load_restart.html#variable-t_restart~2">t_restart</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../proc/rki_load_restart.html#src">rki_load_restart</a>
+      </div>
+    </div>
+
+
+  </div>
+
+    </div>
+    
+    <div class="col-md-9" id='text'>
+    <h2>private  function rki_load_restart(c_handle, c_filename, c_len) result(ierr) bind(c, name="rki_load_restart")  
+</h2>
+    
+
+
+
+    <h3>Arguments</h3>
+        <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-c_handle~116"></span>
+              type(c_ptr),
+            </td>
+<td>intent(in),</td>
+              <td></td>            <td>
+              value
+            </td>
+            <td>::</td>
+            <td><strong>c_handle</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-c_filename~7"></span>
+              character(kind=c_char, len=1),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>c_filename</strong>(c_len)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-c_len~11"></span>
+              integer(kind=c_int),
+            </td>
+<td>intent(in),</td>
+              <td></td>            <td>
+              value
+            </td>
+            <td>::</td>
+            <td><strong>c_len</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+      <h3>Return Value
+        <small>
+          <span class="anchor" id="variable-ierr~98"></span>
+          integer(kind=c_int)
+        </small>
+      </h3>
+      
+    <br>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Calls</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~rki_load_restart~~CallsGraph Pages: 1 -->
+<svg id="procrki_load_restartCallsGraph" width="640pt" height="515pt"
+ viewBox="0.00 0.00 640.00 515.48" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~rki_load_restart~~CallsGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 511.48)">
+<title>proc~~rki_load_restart~~CallsGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-511.48 636,-511.48 636,4 -4,4"/>
+<!-- proc~rki_load_restart -->
+<g id="proc~~rki_load_restart~~CallsGraph_node1" class="node">
+<title>proc~rki_load_restart</title>
+<polygon fill="none" stroke="black" points="94,-404.48 0,-404.48 0,-380.48 94,-380.48 94,-404.48"/>
+<text text-anchor="middle" x="47" y="-390.08" font-family="Helvetica,sans-Serif" font-size="10.50">rki_load_restart</text>
+</g>
+<!-- proc~c_to_f_string -->
+<g id="proc~~rki_load_restart~~CallsGraph_node2" class="node">
+<title>proc~c_to_f_string</title>
+<g id="a_proc~~rki_load_restart~~CallsGraph_node2"><a xlink:href="../proc/c_to_f_string.html" xlink:title="c_to_f_string">
+<polygon fill="#d9534f" stroke="#d9534f" points="209,-446.48 130,-446.48 130,-422.48 209,-422.48 209,-446.48"/>
+<text text-anchor="middle" x="169.5" y="-432.08" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">c_to_f_string</text>
+</a>
+</g>
+</g>
+<!-- proc~rki_load_restart&#45;&gt;proc~c_to_f_string -->
+<g id="proc~~rki_load_restart~~CallsGraph_edge1" class="edge">
+<title>proc~rki_load_restart&#45;&gt;proc~c_to_f_string</title>
+<path fill="none" stroke="#ff0000" d="M82.53,-404.51C95.51,-409.04 110.46,-414.25 124.21,-419.04"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="123.37,-422.46 133.96,-422.44 125.67,-415.85 123.37,-422.46"/>
+</g>
+<!-- proc~resolve~2 -->
+<g id="proc~~rki_load_restart~~CallsGraph_node3" class="node">
+<title>proc~resolve~2</title>
+<g id="a_proc~~rki_load_restart~~CallsGraph_node3"><a xlink:href="../proc/resolve~2.html" xlink:title="resolve">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="196.5,-404.48 142.5,-404.48 142.5,-380.48 196.5,-380.48 196.5,-404.48"/>
+<text text-anchor="middle" x="169.5" y="-390.08" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">resolve</text>
+</a>
+</g>
+</g>
+<!-- proc~rki_load_restart&#45;&gt;proc~resolve~2 -->
+<g id="proc~~rki_load_restart~~CallsGraph_edge2" class="edge">
+<title>proc~rki_load_restart&#45;&gt;proc~resolve~2</title>
+<path fill="none" stroke="#ff0000" d="M94.24,-392.48C106.87,-392.48 120.37,-392.48 132.35,-392.48"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="132.42,-395.98 142.42,-392.48 132.42,-388.98 132.42,-395.98"/>
+</g>
+<!-- proc~restart_read -->
+<g id="proc~~rki_load_restart~~CallsGraph_node4" class="node">
+<title>proc~restart_read</title>
+<g id="a_proc~~rki_load_restart~~CallsGraph_node4"><a xlink:href="../proc/restart_read.html" xlink:title="restart_read">
+<polygon fill="#d9534f" stroke="#d9534f" points="207.5,-259.48 131.5,-259.48 131.5,-235.48 207.5,-235.48 207.5,-259.48"/>
+<text text-anchor="middle" x="169.5" y="-245.08" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">restart_read</text>
+</a>
+</g>
+</g>
+<!-- proc~rki_load_restart&#45;&gt;proc~restart_read -->
+<g id="proc~~rki_load_restart~~CallsGraph_edge3" class="edge">
+<title>proc~rki_load_restart&#45;&gt;proc~restart_read</title>
+<path fill="none" stroke="#ff0000" d="M58.27,-380.12C79.08,-355.08 126.38,-298.16 151.73,-267.66"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="154.55,-269.74 158.25,-259.81 149.17,-265.26 154.55,-269.74"/>
+</g>
+<!-- proc~handle_check -->
+<g id="proc~~rki_load_restart~~CallsGraph_node9" class="node">
+<title>proc~handle_check</title>
+<g id="a_proc~~rki_load_restart~~CallsGraph_node9"><a xlink:href="../proc/handle_check.html" xlink:title="handle_check">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="335.5,-507.48 249.5,-507.48 249.5,-483.48 335.5,-483.48 335.5,-507.48"/>
+<text text-anchor="middle" x="292.5" y="-493.08" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">handle_check</text>
+</a>
+</g>
+</g>
+<!-- proc~resolve~2&#45;&gt;proc~handle_check -->
+<g id="proc~~rki_load_restart~~CallsGraph_edge4" class="edge">
+<title>proc~resolve~2&#45;&gt;proc~handle_check</title>
+<path fill="none" stroke="#00ff00" d="M196.67,-404.24C201.08,-406.9 205.39,-409.99 209,-413.48 231.63,-435.36 221.56,-453.46 245,-474.48 246.31,-475.66 247.71,-476.78 249.16,-477.85"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="247.62,-481.01 257.94,-483.38 251.35,-475.09 247.62,-481.01"/>
+</g>
+<!-- error -->
+<g id="proc~~rki_load_restart~~CallsGraph_node5" class="node">
+<title>error</title>
+<polygon fill="#777777" stroke="#777777" points="618.5,-281.48 564.5,-281.48 564.5,-257.48 618.5,-257.48 618.5,-281.48"/>
+<text text-anchor="middle" x="591.5" y="-267.08" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">error</text>
+</g>
+<!-- proc~restart_read&#45;&gt;error -->
+<g id="proc~~rki_load_restart~~CallsGraph_edge5" class="edge">
+<title>proc~restart_read&#45;&gt;error</title>
+<path fill="none" stroke="#0000ff" d="M180.04,-259.55C192.9,-274.75 217.4,-300.13 245,-310.48 357.37,-352.6 398.99,-343.2 515,-312.48 533.54,-307.57 552.29,-296.93 566.46,-287.46"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="568.86,-290.06 575.07,-281.48 564.86,-284.31 568.86,-290.06"/>
+</g>
+<!-- info -->
+<g id="proc~~rki_load_restart~~CallsGraph_node6" class="node">
+<title>info</title>
+<polygon fill="#777777" stroke="#777777" points="319.5,-465.48 265.5,-465.48 265.5,-441.48 319.5,-441.48 319.5,-465.48"/>
+<text text-anchor="middle" x="292.5" y="-451.08" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">info</text>
+</g>
+<!-- proc~restart_read&#45;&gt;info -->
+<g id="proc~~rki_load_restart~~CallsGraph_edge6" class="edge">
+<title>proc~restart_read&#45;&gt;info</title>
+<path fill="none" stroke="#0000ff" d="M174.09,-259.65C185.17,-296.5 219.59,-406 245,-432.48 248.19,-435.8 252.01,-438.65 256.06,-441.06"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="254.66,-444.28 265.16,-445.7 257.84,-438.04 254.66,-444.28"/>
+</g>
+<!-- nf90_get_var -->
+<g id="proc~~rki_load_restart~~CallsGraph_node7" class="node">
+<title>nf90_get_var</title>
+<polygon fill="#777777" stroke="#777777" points="486.5,-93.48 404.5,-93.48 404.5,-69.48 486.5,-69.48 486.5,-93.48"/>
+<text text-anchor="middle" x="445.5" y="-79.08" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nf90_get_var</text>
+</g>
+<!-- proc~restart_read&#45;&gt;nf90_get_var -->
+<g id="proc~~rki_load_restart~~CallsGraph_edge7" class="edge">
+<title>proc~restart_read&#45;&gt;nf90_get_var</title>
+<path fill="none" stroke="#0000ff" d="M172.83,-235.35C178.96,-207.04 198.41,-136.53 245,-104.48 288.74,-74.38 351.04,-71.95 394.34,-74.93"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="394.12,-78.42 404.37,-75.73 394.68,-71.44 394.12,-78.42"/>
+</g>
+<!-- nf90_inq_varid -->
+<g id="proc~~rki_load_restart~~CallsGraph_node8" class="node">
+<title>nf90_inq_varid</title>
+<polygon fill="#777777" stroke="#777777" points="491,-33.48 400,-33.48 400,-9.48 491,-9.48 491,-33.48"/>
+<text text-anchor="middle" x="445.5" y="-19.08" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nf90_inq_varid</text>
+</g>
+<!-- proc~restart_read&#45;&gt;nf90_inq_varid -->
+<g id="proc~~rki_load_restart~~CallsGraph_edge8" class="edge">
+<title>proc~restart_read&#45;&gt;nf90_inq_varid</title>
+<path fill="none" stroke="#0000ff" d="M170.16,-235.34C169.83,-196.67 174.67,-75.94 245,-24.48 287.66,6.74 350.36,1.8 394.04,-7.28"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="393.36,-10.71 403.88,-9.46 394.88,-3.88 393.36,-10.71"/>
+</g>
+<!-- proc~nc_check -->
+<g id="proc~~rki_load_restart~~CallsGraph_node10" class="node">
+<title>proc~nc_check</title>
+<g id="a_proc~~rki_load_restart~~CallsGraph_node10"><a xlink:href="../proc/nc_check.html" xlink:title="nc_check">
+<polygon fill="#d9534f" stroke="#d9534f" points="476.5,-177.48 414.5,-177.48 414.5,-153.48 476.5,-153.48 476.5,-177.48"/>
+<text text-anchor="middle" x="445.5" y="-163.08" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nc_check</text>
+</a>
+</g>
+</g>
+<!-- proc~restart_read&#45;&gt;proc~nc_check -->
+<g id="proc~~rki_load_restart~~CallsGraph_edge9" class="edge">
+<title>proc~restart_read&#45;&gt;proc~nc_check</title>
+<path fill="none" stroke="#0000ff" d="M207.74,-236.33C259.15,-220.95 351.5,-193.31 404.39,-177.48"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="405.52,-180.8 414.1,-174.58 403.51,-174.09 405.52,-180.8"/>
+</g>
+<!-- proc~nc_close -->
+<g id="proc~~rki_load_restart~~CallsGraph_node11" class="node">
+<title>proc~nc_close</title>
+<g id="a_proc~~rki_load_restart~~CallsGraph_node11"><a xlink:href="../proc/nc_close.html" xlink:title="nc_close">
+<polygon fill="#d9534f" stroke="#d9534f" points="321.5,-301.48 263.5,-301.48 263.5,-277.48 321.5,-277.48 321.5,-301.48"/>
+<text text-anchor="middle" x="292.5" y="-287.08" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nc_close</text>
+</a>
+</g>
+</g>
+<!-- proc~restart_read&#45;&gt;proc~nc_close -->
+<g id="proc~~rki_load_restart~~CallsGraph_edge10" class="edge">
+<title>proc~restart_read&#45;&gt;proc~nc_close</title>
+<path fill="none" stroke="#0000ff" d="M205.17,-259.51C220.3,-264.76 238.07,-270.93 253.55,-276.31"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="252.74,-279.73 263.34,-279.7 255.04,-273.12 252.74,-279.73"/>
+</g>
+<!-- proc~nc_get_dim_len -->
+<g id="proc~~rki_load_restart~~CallsGraph_node12" class="node">
+<title>proc~nc_get_dim_len</title>
+<g id="a_proc~~rki_load_restart~~CallsGraph_node12"><a xlink:href="../proc/nc_get_dim_len.html" xlink:title="nc_get_dim_len">
+<polygon fill="#d9534f" stroke="#d9534f" points="340,-259.48 245,-259.48 245,-235.48 340,-235.48 340,-259.48"/>
+<text text-anchor="middle" x="292.5" y="-245.08" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nc_get_dim_len</text>
+</a>
+</g>
+</g>
+<!-- proc~restart_read&#45;&gt;proc~nc_get_dim_len -->
+<g id="proc~~rki_load_restart~~CallsGraph_edge11" class="edge">
+<title>proc~restart_read&#45;&gt;proc~nc_get_dim_len</title>
+<path fill="none" stroke="#0000ff" d="M207.79,-247.48C216.27,-247.48 225.46,-247.48 234.54,-247.48"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="234.71,-250.98 244.71,-247.48 234.71,-243.98 234.71,-250.98"/>
+</g>
+<!-- proc~nc_get_var_2d -->
+<g id="proc~~rki_load_restart~~CallsGraph_node13" class="node">
+<title>proc~nc_get_var_2d</title>
+<g id="a_proc~~rki_load_restart~~CallsGraph_node13"><a xlink:href="../proc/nc_get_var_2d.html" xlink:title="nc_get_var_2d">
+<polygon fill="#d9534f" stroke="#d9534f" points="337,-137.48 248,-137.48 248,-113.48 337,-113.48 337,-137.48"/>
+<text text-anchor="middle" x="292.5" y="-123.08" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nc_get_var_2d</text>
+</a>
+</g>
+</g>
+<!-- proc~restart_read&#45;&gt;proc~nc_get_var_2d -->
+<g id="proc~~rki_load_restart~~CallsGraph_edge12" class="edge">
+<title>proc~restart_read&#45;&gt;proc~nc_get_var_2d</title>
+<path fill="none" stroke="#0000ff" d="M176.73,-235.34C187.9,-214.63 213.14,-172.23 245,-146.48 246.55,-145.23 248.19,-144.03 249.88,-142.89"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="251.89,-145.77 258.73,-137.68 248.34,-139.74 251.89,-145.77"/>
+</g>
+<!-- proc~nc_get_varid -->
+<g id="proc~~rki_load_restart~~CallsGraph_node14" class="node">
+<title>proc~nc_get_varid</title>
+<g id="a_proc~~rki_load_restart~~CallsGraph_node14"><a xlink:href="../proc/nc_get_varid.html" xlink:title="nc_get_varid">
+<polygon fill="#d9534f" stroke="#d9534f" points="332.5,-57.48 252.5,-57.48 252.5,-33.48 332.5,-33.48 332.5,-57.48"/>
+<text text-anchor="middle" x="292.5" y="-43.08" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nc_get_varid</text>
+</a>
+</g>
+</g>
+<!-- proc~restart_read&#45;&gt;proc~nc_get_varid -->
+<g id="proc~~rki_load_restart~~CallsGraph_edge13" class="edge">
+<title>proc~restart_read&#45;&gt;proc~nc_get_varid</title>
+<path fill="none" stroke="#0000ff" d="M172.79,-235.34C179.14,-204.52 199.6,-122.13 245,-71.48 247.7,-68.47 250.84,-65.72 254.18,-63.25"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="256.32,-66.03 262.79,-57.63 252.5,-60.16 256.32,-66.03"/>
+</g>
+<!-- proc~nc_open_read -->
+<g id="proc~~rki_load_restart~~CallsGraph_node15" class="node">
+<title>proc~nc_open_read</title>
+<g id="a_proc~~rki_load_restart~~CallsGraph_node15"><a xlink:href="../proc/nc_open_read.html" xlink:title="nc_open_read">
+<polygon fill="#d9534f" stroke="#d9534f" points="336,-179.48 249,-179.48 249,-155.48 336,-155.48 336,-179.48"/>
+<text text-anchor="middle" x="292.5" y="-165.08" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nc_open_read</text>
+</a>
+</g>
+</g>
+<!-- proc~restart_read&#45;&gt;proc~nc_open_read -->
+<g id="proc~~rki_load_restart~~CallsGraph_edge14" class="edge">
+<title>proc~restart_read&#45;&gt;proc~nc_open_read</title>
+<path fill="none" stroke="#0000ff" d="M186.11,-235.34C200.93,-224.01 224,-206.9 245,-193.48 249.68,-190.49 254.72,-187.48 259.69,-184.61"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="261.49,-187.61 268.48,-179.65 258.05,-181.51 261.49,-187.61"/>
+</g>
+<!-- to_string -->
+<g id="proc~~rki_load_restart~~CallsGraph_node16" class="node">
+<title>to_string</title>
+<polygon fill="#777777" stroke="#777777" points="321.5,-423.48 263.5,-423.48 263.5,-399.48 321.5,-399.48 321.5,-423.48"/>
+<text text-anchor="middle" x="292.5" y="-409.08" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">to_string</text>
+</g>
+<!-- proc~restart_read&#45;&gt;to_string -->
+<g id="proc~~rki_load_restart~~CallsGraph_edge15" class="edge">
+<title>proc~restart_read&#45;&gt;to_string</title>
+<path fill="none" stroke="#0000ff" d="M173.79,-259.49C181.73,-286.37 204.32,-352.02 245,-390.48 247.74,-393.06 250.84,-395.37 254.13,-397.42"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="252.62,-400.59 263.09,-402.25 255.95,-394.42 252.62,-400.59"/>
+</g>
+<!-- warning -->
+<g id="proc~~rki_load_restart~~CallsGraph_node17" class="node">
+<title>warning</title>
+<polygon fill="#777777" stroke="#777777" points="320,-381.48 265,-381.48 265,-357.48 320,-357.48 320,-381.48"/>
+<text text-anchor="middle" x="292.5" y="-367.08" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">warning</text>
+</g>
+<!-- proc~restart_read&#45;&gt;warning -->
+<g id="proc~~rki_load_restart~~CallsGraph_edge16" class="edge">
+<title>proc~restart_read&#45;&gt;warning</title>
+<path fill="none" stroke="#0000ff" d="M177.68,-259.66C189.68,-279.23 215.41,-318.03 245,-343.48 248.66,-346.63 252.77,-349.58 256.98,-352.27"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="255.29,-355.34 265.68,-357.44 258.87,-349.32 255.29,-355.34"/>
+</g>
+<!-- proc~nc_check&#45;&gt;error -->
+<g id="proc~~rki_load_restart~~CallsGraph_edge17" class="edge">
+<title>proc~nc_check&#45;&gt;error</title>
+<path fill="none" stroke="#00ff4e" d="M476.65,-171.03C489.17,-174.24 503.44,-179.15 515,-186.48 540.85,-202.87 563.41,-230.4 576.98,-249.23"/>
+<polygon fill="#00ff4e" stroke="#00ff4e" points="574.12,-251.26 582.73,-257.44 579.86,-247.24 574.12,-251.26"/>
+</g>
+<!-- nf90_strerror -->
+<g id="proc~~rki_load_restart~~CallsGraph_node22" class="node">
+<title>nf90_strerror</title>
+<polygon fill="#777777" stroke="#777777" points="632,-177.48 551,-177.48 551,-153.48 632,-153.48 632,-177.48"/>
+<text text-anchor="middle" x="591.5" y="-163.08" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nf90_strerror</text>
+</g>
+<!-- proc~nc_check&#45;&gt;nf90_strerror -->
+<g id="proc~~rki_load_restart~~CallsGraph_edge18" class="edge">
+<title>proc~nc_check&#45;&gt;nf90_strerror</title>
+<path fill="none" stroke="#00ff4e" d="M476.69,-165.48C495.19,-165.48 519.32,-165.48 540.6,-165.48"/>
+<polygon fill="#00ff4e" stroke="#00ff4e" points="540.78,-168.98 550.78,-165.48 540.78,-161.98 540.78,-168.98"/>
+</g>
+<!-- proc~nc_close&#45;&gt;proc~nc_check -->
+<g id="proc~~rki_load_restart~~CallsGraph_edge20" class="edge">
+<title>proc~nc_close&#45;&gt;proc~nc_check</title>
+<path fill="none" stroke="#00ffc4" d="M321.66,-280.72C328.28,-277.65 334.89,-273.64 340,-268.48 368,-240.19 346.27,-212.94 376,-186.48 384.03,-179.33 394.44,-174.62 404.71,-171.51"/>
+<polygon fill="#00ffc4" stroke="#00ffc4" points="405.63,-174.89 414.43,-168.99 403.87,-168.11 405.63,-174.89"/>
+</g>
+<!-- nf90_close -->
+<g id="proc~~rki_load_restart~~CallsGraph_node18" class="node">
+<title>nf90_close</title>
+<polygon fill="#777777" stroke="#777777" points="480.5,-303.48 410.5,-303.48 410.5,-279.48 480.5,-279.48 480.5,-303.48"/>
+<text text-anchor="middle" x="445.5" y="-289.08" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nf90_close</text>
+</g>
+<!-- proc~nc_close&#45;&gt;nf90_close -->
+<g id="proc~~rki_load_restart~~CallsGraph_edge19" class="edge">
+<title>proc~nc_close&#45;&gt;nf90_close</title>
+<path fill="none" stroke="#00ffc4" d="M321.55,-289.85C343.59,-290.14 374.7,-290.55 400.11,-290.89"/>
+<polygon fill="#00ffc4" stroke="#00ffc4" points="400.2,-294.39 410.25,-291.02 400.3,-287.39 400.2,-294.39"/>
+</g>
+<!-- proc~nc_get_dim_len&#45;&gt;proc~nc_check -->
+<g id="proc~~rki_load_restart~~CallsGraph_edge23" class="edge">
+<title>proc~nc_get_dim_len&#45;&gt;proc~nc_check</title>
+<path fill="none" stroke="#00c4ff" d="M317.9,-235.4C325.25,-231.35 333.18,-226.56 340,-221.48 357.89,-208.14 356.8,-197.84 376,-186.48 384.66,-181.35 394.69,-177.37 404.35,-174.32"/>
+<polygon fill="#00c4ff" stroke="#00c4ff" points="405.59,-177.61 414.22,-171.47 403.64,-170.88 405.59,-177.61"/>
+</g>
+<!-- nf90_inq_dimid -->
+<g id="proc~~rki_load_restart~~CallsGraph_node19" class="node">
+<title>nf90_inq_dimid</title>
+<polygon fill="#777777" stroke="#777777" points="492.5,-261.48 398.5,-261.48 398.5,-237.48 492.5,-237.48 492.5,-261.48"/>
+<text text-anchor="middle" x="445.5" y="-247.08" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nf90_inq_dimid</text>
+</g>
+<!-- proc~nc_get_dim_len&#45;&gt;nf90_inq_dimid -->
+<g id="proc~~rki_load_restart~~CallsGraph_edge21" class="edge">
+<title>proc~nc_get_dim_len&#45;&gt;nf90_inq_dimid</title>
+<path fill="none" stroke="#00c4ff" d="M340.04,-248.1C355.25,-248.3 372.31,-248.52 388.16,-248.73"/>
+<polygon fill="#00c4ff" stroke="#00c4ff" points="388.33,-252.23 398.38,-248.87 388.42,-245.24 388.33,-252.23"/>
+</g>
+<!-- nf90_inquire_dimension -->
+<g id="proc~~rki_load_restart~~CallsGraph_node20" class="node">
+<title>nf90_inquire_dimension</title>
+<polygon fill="#777777" stroke="#777777" points="515,-219.48 376,-219.48 376,-195.48 515,-195.48 515,-219.48"/>
+<text text-anchor="middle" x="445.5" y="-205.08" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nf90_inquire_dimension</text>
+</g>
+<!-- proc~nc_get_dim_len&#45;&gt;nf90_inquire_dimension -->
+<g id="proc~~rki_load_restart~~CallsGraph_edge22" class="edge">
+<title>proc~nc_get_dim_len&#45;&gt;nf90_inquire_dimension</title>
+<path fill="none" stroke="#00c4ff" d="M338.8,-235.48C354.56,-231.3 372.41,-226.57 388.91,-222.21"/>
+<polygon fill="#00c4ff" stroke="#00c4ff" points="390.2,-225.48 398.97,-219.54 388.4,-218.72 390.2,-225.48"/>
+</g>
+<!-- proc~nc_get_var_2d&#45;&gt;nf90_get_var -->
+<g id="proc~~rki_load_restart~~CallsGraph_edge24" class="edge">
+<title>proc~nc_get_var_2d&#45;&gt;nf90_get_var</title>
+<path fill="none" stroke="#004eff" d="M334.76,-113.46C353.2,-108.08 375.1,-101.7 394.47,-96.06"/>
+<polygon fill="#004eff" stroke="#004eff" points="395.71,-99.34 404.33,-93.18 393.75,-92.62 395.71,-99.34"/>
+</g>
+<!-- proc~nc_get_var_2d&#45;&gt;proc~nc_check -->
+<g id="proc~~rki_load_restart~~CallsGraph_edge25" class="edge">
+<title>proc~nc_get_var_2d&#45;&gt;proc~nc_check</title>
+<path fill="none" stroke="#004eff" d="M337.18,-137.05C358.43,-142.68 383.81,-149.4 404.55,-154.9"/>
+<polygon fill="#004eff" stroke="#004eff" points="403.76,-158.31 414.32,-157.48 405.55,-151.54 403.76,-158.31"/>
+</g>
+<!-- proc~nc_get_varid&#45;&gt;nf90_inq_varid -->
+<g id="proc~~rki_load_restart~~CallsGraph_edge26" class="edge">
+<title>proc~nc_get_varid&#45;&gt;nf90_inq_varid</title>
+<path fill="none" stroke="#2700ff" d="M332.78,-39.24C350.19,-36.47 370.96,-33.17 389.84,-30.17"/>
+<polygon fill="#2700ff" stroke="#2700ff" points="390.49,-33.61 399.81,-28.58 389.39,-26.69 390.49,-33.61"/>
+</g>
+<!-- proc~nc_get_varid&#45;&gt;proc~nc_check -->
+<g id="proc~~rki_load_restart~~CallsGraph_edge27" class="edge">
+<title>proc~nc_get_varid&#45;&gt;proc~nc_check</title>
+<path fill="none" stroke="#2700ff" d="M303.16,-57.86C322.92,-83.04 366.82,-138.38 376,-144.48 384.55,-150.16 394.7,-154.36 404.53,-157.45"/>
+<polygon fill="#2700ff" stroke="#2700ff" points="403.62,-160.82 414.19,-160.17 405.52,-154.09 403.62,-160.82"/>
+</g>
+<!-- proc~nc_open_read&#45;&gt;proc~nc_check -->
+<g id="proc~~rki_load_restart~~CallsGraph_edge29" class="edge">
+<title>proc~nc_open_read&#45;&gt;proc~nc_check</title>
+<path fill="none" stroke="#9c00ff" d="M336.37,-166.91C357.7,-166.63 383.34,-166.29 404.29,-166.01"/>
+<polygon fill="#9c00ff" stroke="#9c00ff" points="404.52,-169.51 414.47,-165.88 404.42,-162.51 404.52,-169.51"/>
+</g>
+<!-- nf90_open -->
+<g id="proc~~rki_load_restart~~CallsGraph_node21" class="node">
+<title>nf90_open</title>
+<polygon fill="#777777" stroke="#777777" points="480,-135.48 411,-135.48 411,-111.48 480,-111.48 480,-135.48"/>
+<text text-anchor="middle" x="445.5" y="-121.08" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nf90_open</text>
+</g>
+<!-- proc~nc_open_read&#45;&gt;nf90_open -->
+<g id="proc~~rki_load_restart~~CallsGraph_edge28" class="edge">
+<title>proc~nc_open_read&#45;&gt;nf90_open</title>
+<path fill="none" stroke="#9c00ff" d="M334.76,-155.46C355.32,-149.46 380.18,-142.22 401.04,-136.14"/>
+<polygon fill="#9c00ff" stroke="#9c00ff" points="402.3,-139.42 410.92,-133.26 400.34,-132.7 402.3,-139.42"/>
+</g>
+</g>
+</svg>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CallsGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CallsGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+
+
+    <section>    
+      <h2>Variables</h2>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Visibility</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+<th></th><th scope="col">Initial</th>        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-filename~4"></span>
+              character(len=:),
+            </td>
+              <td>private,</td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>filename</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-h~124"></span>
+              type(<a href='../type/solver_handle_t.html'>solver_handle_t</a>),
+            </td>
+              <td>private,</td>
+            <td>
+              pointer
+            </td>
+            <td>::</td>
+            <td><strong>h</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-loaded_ml"></span>
+              logical,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>loaded_ml</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-read_ierr~2"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>read_ierr</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-t_restart~2"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>t_restart</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    </section>
+    <br>
+    
+    
+
+    
+    
+
+
+
+    
+    <section>
+    <h2><span class="anchor" id="src"></span>Source Code</h2>
+    <div class="hl codehilite"><pre><span></span><span class="w">   </span><span class="k">function </span><span class="n">rki_load_restart</span><span class="p">(</span><span class="n">c_handle</span><span class="p">,</span><span class="w"> </span><span class="n">c_filename</span><span class="p">,</span><span class="w"> </span><span class="n">c_len</span><span class="p">)</span><span class="w"> </span><span class="k">result</span><span class="p">(</span><span class="n">ierr</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">      </span><span class="k">bind</span><span class="p">(</span><span class="n">c</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="o">=</span><span class="s2">"rki_load_restart"</span><span class="p">)</span>
+<span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="kt">c_ptr</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">),</span><span class="w"> </span><span class="k">value</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">c_handle</span>
+<span class="w">      </span><span class="kt">integer</span><span class="p">(</span><span class="kt">c_int</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">),</span><span class="w"> </span><span class="k">value</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">c_len</span>
+<span class="w">      </span><span class="kt">character</span><span class="p">(</span><span class="nb">kind</span><span class="o">=</span><span class="kt">c_char</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">c_filename</span><span class="p">(</span><span class="n">c_len</span><span class="p">)</span>
+<span class="w">      </span><span class="kt">integer</span><span class="p">(</span><span class="kt">c_int</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">ierr</span>
+<span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="n">solver_handle_t</span><span class="p">),</span><span class="w"> </span><span class="k">pointer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">h</span>
+<span class="w">      </span><span class="kt">character</span><span class="p">(</span><span class="nb">len</span><span class="o">=</span><span class="p">:),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">filename</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">t_restart</span>
+<span class="w">      </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">read_ierr</span>
+<span class="w">      </span><span class="kt">logical</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">loaded_ml</span>
+
+<span class="w">      </span><span class="n">ierr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">resolve</span><span class="p">(</span><span class="n">c_handle</span><span class="p">,</span><span class="w"> </span><span class="n">h</span><span class="p">)</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ierr</span><span class="w"> </span><span class="o">/=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">return</span>
+<span class="k">      if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="w"> </span><span class="n">h</span><span class="p">%</span><span class="n">is_initialised</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">         </span><span class="n">ierr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">-</span><span class="mi">1</span>
+<span class="w">         </span><span class="k">return</span>
+<span class="k">      end if</span>
+<span class="k">      if</span><span class="w"> </span><span class="p">(</span><span class="n">h</span><span class="p">%</span><span class="n">is_finalised</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">         </span><span class="n">ierr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">-</span><span class="mi">2</span>
+<span class="w">         </span><span class="k">return</span>
+<span class="k">      end if</span>
+
+<span class="k">      call </span><span class="n">c_to_f_string</span><span class="p">(</span><span class="n">c_filename</span><span class="p">,</span><span class="w"> </span><span class="n">c_len</span><span class="p">,</span><span class="w"> </span><span class="n">filename</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">restart_read</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="w"> </span><span class="n">h</span><span class="p">%</span><span class="n">state</span><span class="p">,</span><span class="w"> </span><span class="n">t_restart</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                        </span><span class="n">ierr</span><span class="o">=</span><span class="n">read_ierr</span><span class="p">,</span><span class="w"> </span><span class="n">loaded_multilayer</span><span class="o">=</span><span class="n">loaded_ml</span><span class="p">)</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">read_ierr</span><span class="w"> </span><span class="o">/=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">         </span><span class="n">ierr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">-</span><span class="mi">3</span>
+<span class="w">         </span><span class="k">return</span>
+<span class="k">      end if</span>
+
+<span class="k">      </span><span class="n">h</span><span class="p">%</span><span class="n">t_current</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">t_restart</span>
+<span class="w">      </span><span class="n">h</span><span class="p">%</span><span class="n">user_set_h</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+<span class="w">      </span><span class="n">h</span><span class="p">%</span><span class="n">user_set_bathymetry</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+<span class="w">      </span><span class="n">h</span><span class="p">%</span><span class="n">user_set_layers</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">loaded_ml</span>
+<span class="w">      </span><span class="n">ierr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">   </span><span class="k">end function </span><span class="n">rki_load_restart</span>
+</pre></div>
+
+    </section>
+    <br>
+    
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Rakali
+ was developed by Jorge Luis Galvez Vallejo<br>              &copy; 2026 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+ on 2026-10-08 12:55 +0000             </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>

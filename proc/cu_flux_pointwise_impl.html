@@ -1,0 +1,1310 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="GPU-native coastal solver — structured Cartesian and unstructured triangular grids, hydrostatic multilayer + non-hydrostatic, portable across NVHPC/gfortran/ifx.">
+    <meta name="author" content="Jorge Luis Galvez Vallejo" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>cu_flux_pointwise_impl &ndash; Rakali</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">Rakali </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/absint.html">Abstract Interfaces</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>cu_flux_pointwise_impl
+      <small>Subroutine</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.2% of total for procedures.">51 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/rki_kernel_flux_unstr.F90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/rki_kernel_flux_unstr.f90.html'>rki_kernel_flux_unstr.F90</a></li>
+                <li class="breadcrumb-item"><a href='../module/rki_kernel_flux_unstr.html'>rki_kernel_flux_unstr</a></li>
+            <li class="breadcrumb-item active" aria-current="page">cu_flux_pointwise_impl</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+  
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#vars-0"
+         aria-expanded="false" aria-controls="vars-0">
+         <h4 class="card-header bg-primary text-white">Variables</h4>
+      </a>
+      <div id="vars-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../proc/cu_flux_pointwise_impl.html#variable-c_left~4">c_left</a>
+            <a class="list-group-item" href="../proc/cu_flux_pointwise_impl.html#variable-c_right~4">c_right</a>
+            <a class="list-group-item" href="../proc/cu_flux_pointwise_impl.html#variable-denom~18">denom</a>
+            <a class="list-group-item" href="../proc/cu_flux_pointwise_impl.html#variable-flux_left~2">flux_left</a>
+            <a class="list-group-item" href="../proc/cu_flux_pointwise_impl.html#variable-flux_right~2">flux_right</a>
+            <a class="list-group-item" href="../proc/cu_flux_pointwise_impl.html#variable-inv_denom">inv_denom</a>
+            <a class="list-group-item" href="../proc/cu_flux_pointwise_impl.html#variable-local_fr">local_fr</a>
+            <a class="list-group-item" href="../proc/cu_flux_pointwise_impl.html#variable-q_left_rot">q_left_rot</a>
+            <a class="list-group-item" href="../proc/cu_flux_pointwise_impl.html#variable-q_right_rot">q_right_rot</a>
+            <a class="list-group-item" href="../proc/cu_flux_pointwise_impl.html#variable-s_max">s_max</a>
+            <a class="list-group-item" href="../proc/cu_flux_pointwise_impl.html#variable-s_max_s_min">s_max_s_min</a>
+            <a class="list-group-item" href="../proc/cu_flux_pointwise_impl.html#variable-s_min">s_min</a>
+            <a class="list-group-item" href="../proc/cu_flux_pointwise_impl.html#variable-u_left~4">u_left</a>
+            <a class="list-group-item" href="../proc/cu_flux_pointwise_impl.html#variable-u_right~4">u_right</a>
+            <a class="list-group-item" href="../proc/cu_flux_pointwise_impl.html#variable-uh_left">uh_left</a>
+            <a class="list-group-item" href="../proc/cu_flux_pointwise_impl.html#variable-uh_right">uh_right</a>
+            <a class="list-group-item" href="../proc/cu_flux_pointwise_impl.html#variable-v_left~2">v_left</a>
+            <a class="list-group-item" href="../proc/cu_flux_pointwise_impl.html#variable-v_right~2">v_right</a>
+            <a class="list-group-item" href="../proc/cu_flux_pointwise_impl.html#variable-vh_left">vh_left</a>
+            <a class="list-group-item" href="../proc/cu_flux_pointwise_impl.html#variable-vh_right">vh_right</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../proc/cu_flux_pointwise_impl.html#src">cu_flux_pointwise_impl</a>
+      </div>
+    </div>
+
+
+  </div>
+
+    </div>
+    
+    <div class="col-md-9" id='text'>
+    <h2>private pure subroutine cu_flux_pointwise_impl(q_left, q_right, h_left, h_right, hle, hre, n1, n2, low_froude_mode, edgeflux, max_speed, pressure_flux)  
+</h2>
+    
+
+
+
+    <h3>Arguments</h3>
+        <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-q_left~2"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>q_left</strong>(3)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-q_right~2"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>q_right</strong>(3)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-h_left~2"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>h_left</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-h_right~2"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>h_right</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-hle~3"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>hle</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-hre~2"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>hre</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-n1~5"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>n1</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-n2~6"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>n2</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-low_froude_mode~2"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>low_froude_mode</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-edgeflux~2"></span>
+              real(kind=wp),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>edgeflux</strong>(3)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-max_speed~4"></span>
+              real(kind=wp),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>max_speed</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-pressure_flux~2"></span>
+              real(kind=wp),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>pressure_flux</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <br>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Calls</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~cu_flux_pointwise_impl~~CallsGraph Pages: 1 -->
+<svg id="proccu_flux_pointwise_implCallsGraph" width="349pt" height="200pt"
+ viewBox="0.00 0.00 349.00 200.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~cu_flux_pointwise_impl~~CallsGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 196)">
+<title>proc~~cu_flux_pointwise_impl~~CallsGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-196 345,-196 345,4 -4,4"/>
+<!-- proc~cu_flux_pointwise_impl -->
+<g id="proc~~cu_flux_pointwise_impl~~CallsGraph_node1" class="node">
+<title>proc~cu_flux_pointwise_impl</title>
+<polygon fill="none" stroke="black" points="134,-108 0,-108 0,-84 134,-84 134,-108"/>
+<text text-anchor="middle" x="67" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50">cu_flux_pointwise_impl</text>
+</g>
+<!-- proc~compute_local_froude_impl -->
+<g id="proc~~cu_flux_pointwise_impl~~CallsGraph_node2" class="node">
+<title>proc~compute_local_froude_impl</title>
+<g id="a_proc~~cu_flux_pointwise_impl~~CallsGraph_node2"><a xlink:href="../proc/compute_local_froude_impl.html" xlink:title="compute_local_froude_impl">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="335,-192 176,-192 176,-168 335,-168 335,-192"/>
+<text text-anchor="middle" x="255.5" y="-177.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_local_froude_impl</text>
+</a>
+</g>
+</g>
+<!-- proc~cu_flux_pointwise_impl&#45;&gt;proc~compute_local_froude_impl -->
+<g id="proc~~cu_flux_pointwise_impl~~CallsGraph_edge1" class="edge">
+<title>proc~cu_flux_pointwise_impl&#45;&gt;proc~compute_local_froude_impl</title>
+<path fill="none" stroke="#ff0000" d="M84.1,-108.15C103.51,-122.27 137.58,-145.35 170,-159 175.14,-161.16 180.55,-163.14 186.05,-164.94"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="185.41,-168.4 196,-167.98 187.46,-161.71 185.41,-168.4"/>
+</g>
+<!-- proc~compute_s_max_impl -->
+<g id="proc~~cu_flux_pointwise_impl~~CallsGraph_node3" class="node">
+<title>proc~compute_s_max_impl</title>
+<g id="a_proc~~cu_flux_pointwise_impl~~CallsGraph_node3"><a xlink:href="../proc/compute_s_max_impl.html" xlink:title="compute_s_max_impl">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="319,-150 192,-150 192,-126 319,-126 319,-150"/>
+<text text-anchor="middle" x="255.5" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_s_max_impl</text>
+</a>
+</g>
+</g>
+<!-- proc~cu_flux_pointwise_impl&#45;&gt;proc~compute_s_max_impl -->
+<g id="proc~~cu_flux_pointwise_impl~~CallsGraph_edge2" class="edge">
+<title>proc~cu_flux_pointwise_impl&#45;&gt;proc~compute_s_max_impl</title>
+<path fill="none" stroke="#ff0000" d="M121.44,-108.04C143.2,-112.93 168.51,-118.63 191.18,-123.74"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="190.52,-127.18 201.05,-125.96 192.06,-120.35 190.52,-127.18"/>
+</g>
+<!-- proc~compute_s_min_impl -->
+<g id="proc~~cu_flux_pointwise_impl~~CallsGraph_node4" class="node">
+<title>proc~compute_s_min_impl</title>
+<g id="a_proc~~cu_flux_pointwise_impl~~CallsGraph_node4"><a xlink:href="../proc/compute_s_min_impl.html" xlink:title="compute_s_min_impl">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="317.5,-108 193.5,-108 193.5,-84 317.5,-84 317.5,-108"/>
+<text text-anchor="middle" x="255.5" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_s_min_impl</text>
+</a>
+</g>
+</g>
+<!-- proc~cu_flux_pointwise_impl&#45;&gt;proc~compute_s_min_impl -->
+<g id="proc~~cu_flux_pointwise_impl~~CallsGraph_edge3" class="edge">
+<title>proc~cu_flux_pointwise_impl&#45;&gt;proc~compute_s_min_impl</title>
+<path fill="none" stroke="#ff0000" d="M134.02,-96C149.83,-96 166.79,-96 182.85,-96"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="183.25,-99.5 193.25,-96 183.25,-92.5 183.25,-99.5"/>
+</g>
+<!-- proc~compute_velocity_terms_impl -->
+<g id="proc~~cu_flux_pointwise_impl~~CallsGraph_node5" class="node">
+<title>proc~compute_velocity_terms_impl</title>
+<g id="a_proc~~cu_flux_pointwise_impl~~CallsGraph_node5"><a xlink:href="../proc/compute_velocity_terms_impl.html" xlink:title="compute_velocity_terms_impl">
+<polygon fill="#d9534f" stroke="#d9534f" points="341,-66 170,-66 170,-42 341,-42 341,-66"/>
+<text text-anchor="middle" x="255.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_velocity_terms_impl</text>
+</a>
+</g>
+</g>
+<!-- proc~cu_flux_pointwise_impl&#45;&gt;proc~compute_velocity_terms_impl -->
+<g id="proc~~cu_flux_pointwise_impl~~CallsGraph_edge4" class="edge">
+<title>proc~cu_flux_pointwise_impl&#45;&gt;proc~compute_velocity_terms_impl</title>
+<path fill="none" stroke="#ff0000" d="M121.44,-83.96C143.2,-79.07 168.51,-73.37 191.18,-68.26"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="192.06,-71.65 201.05,-66.04 190.52,-64.82 192.06,-71.65"/>
+</g>
+<!-- proc~rotate_to_normal_impl -->
+<g id="proc~~cu_flux_pointwise_impl~~CallsGraph_node6" class="node">
+<title>proc~rotate_to_normal_impl</title>
+<g id="a_proc~~cu_flux_pointwise_impl~~CallsGraph_node6"><a xlink:href="../proc/rotate_to_normal_impl.html" xlink:title="rotate_to_normal_impl">
+<polygon fill="#d9534f" stroke="#d9534f" points="321.5,-24 189.5,-24 189.5,0 321.5,0 321.5,-24"/>
+<text text-anchor="middle" x="255.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rotate_to_normal_impl</text>
+</a>
+</g>
+</g>
+<!-- proc~cu_flux_pointwise_impl&#45;&gt;proc~rotate_to_normal_impl -->
+<g id="proc~~cu_flux_pointwise_impl~~CallsGraph_edge5" class="edge">
+<title>proc~cu_flux_pointwise_impl&#45;&gt;proc~rotate_to_normal_impl</title>
+<path fill="none" stroke="#ff0000" d="M84.1,-83.85C103.51,-69.73 137.58,-46.65 170,-33 175.14,-30.84 180.55,-28.86 186.05,-27.06"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="187.46,-30.29 196,-24.02 185.41,-23.6 187.46,-30.29"/>
+</g>
+</g>
+</svg>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CallsGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CallsGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Called by</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~cu_flux_pointwise_impl~~CalledByGraph Pages: 1 -->
+<svg id="proccu_flux_pointwise_implCalledByGraph" width="641pt" height="55pt"
+ viewBox="0.00 0.00 641.00 55.33" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~cu_flux_pointwise_impl~~CalledByGraph" class="graph" transform="scale(0.52 0.52) rotate(0) translate(4 103.2)">
+<title>proc~~cu_flux_pointwise_impl~~CalledByGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-103.2 1238,-103.2 1238,4 -4,4"/>
+<!-- proc~cu_flux_pointwise_impl -->
+<g id="proc~~cu_flux_pointwise_impl~~CalledByGraph_node1" class="node">
+<title>proc~cu_flux_pointwise_impl</title>
+<polygon fill="none" stroke="black" points="1234,-85 1100,-85 1100,-61 1234,-61 1234,-85"/>
+<text text-anchor="middle" x="1167" y="-70.6" font-family="Helvetica,sans-Serif" font-size="10.50">cu_flux_pointwise_impl</text>
+</g>
+<!-- proc~flux_one_cell -->
+<g id="proc~~cu_flux_pointwise_impl~~CalledByGraph_node2" class="node">
+<title>proc~flux_one_cell</title>
+<g id="a_proc~~cu_flux_pointwise_impl~~CalledByGraph_node2"><a xlink:href="../proc/flux_one_cell.html" xlink:title="flux_one_cell">
+<polygon fill="#d9534f" stroke="#d9534f" points="1064,-85 982,-85 982,-61 1064,-61 1064,-85"/>
+<text text-anchor="middle" x="1023" y="-70.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">flux_one_cell</text>
+</a>
+</g>
+</g>
+<!-- proc~flux_one_cell&#45;&gt;proc~cu_flux_pointwise_impl -->
+<g id="proc~~cu_flux_pointwise_impl~~CalledByGraph_edge1" class="edge">
+<title>proc~flux_one_cell&#45;&gt;proc~cu_flux_pointwise_impl</title>
+<path fill="none" stroke="#ff0000" d="M1064.31,-73C1072.27,-73 1080.86,-73 1089.56,-73"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="1089.8,-76.5 1099.8,-73 1089.8,-69.5 1089.8,-76.5"/>
+</g>
+<!-- proc~compute_fluxes_central_unstr -->
+<g id="proc~~cu_flux_pointwise_impl~~CalledByGraph_node3" class="node">
+<title>proc~compute_fluxes_central_unstr</title>
+<g id="a_proc~~cu_flux_pointwise_impl~~CalledByGraph_node3"><a xlink:href="../proc/compute_fluxes_central_unstr.html" xlink:title="compute_fluxes_central_unstr">
+<polygon fill="#d9534f" stroke="#d9534f" points="946,-85 774,-85 774,-61 946,-61 946,-85"/>
+<text text-anchor="middle" x="860" y="-70.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_fluxes_central_unstr</text>
+</a>
+</g>
+</g>
+<!-- proc~compute_fluxes_central_unstr&#45;&gt;proc~flux_one_cell -->
+<g id="proc~~cu_flux_pointwise_impl~~CalledByGraph_edge2" class="edge">
+<title>proc~compute_fluxes_central_unstr&#45;&gt;proc~flux_one_cell</title>
+<path fill="none" stroke="#ff0000" d="M946.21,-73C954.91,-73 963.54,-73 971.68,-73"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="971.7,-76.5 981.7,-73 971.7,-69.5 971.7,-76.5"/>
+</g>
+<!-- proc~solver_unstr_advance -->
+<g id="proc~~cu_flux_pointwise_impl~~CalledByGraph_node4" class="node">
+<title>proc~solver_unstr_advance</title>
+<g id="a_proc~~cu_flux_pointwise_impl~~CalledByGraph_node4"><a xlink:href="../proc/solver_unstr_advance.html" xlink:title="solver_unstr_advance">
+<polygon fill="#d9534f" stroke="#d9534f" points="410,-45 282,-45 282,-21 410,-21 410,-45"/>
+<text text-anchor="middle" x="346" y="-30.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_unstr_advance</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_unstr_advance&#45;&gt;proc~compute_fluxes_central_unstr -->
+<g id="proc~~cu_flux_pointwise_impl~~CalledByGraph_edge3" class="edge">
+<title>proc~solver_unstr_advance&#45;&gt;proc~compute_fluxes_central_unstr</title>
+<path fill="none" stroke="#ff0000" d="M410.17,-33.68C487.63,-35.06 622.83,-39.26 738,-52 754.32,-53.81 771.77,-56.43 788.2,-59.21"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="787.82,-62.69 798.27,-60.95 789.02,-55.8 787.82,-62.69"/>
+</g>
+<!-- proc~solver_unstr_step -->
+<g id="proc~~cu_flux_pointwise_impl~~CalledByGraph_node5" class="node">
+<title>proc~solver_unstr_step</title>
+<g id="a_proc~~cu_flux_pointwise_impl~~CalledByGraph_node5"><a xlink:href="../proc/solver_unstr_step.html" xlink:title="solver_unstr_step">
+<polygon fill="#d9534f" stroke="#d9534f" points="551,-86 446,-86 446,-62 551,-62 551,-86"/>
+<text text-anchor="middle" x="498.5" y="-71.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_unstr_step</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_unstr_advance&#45;&gt;proc~solver_unstr_step -->
+<g id="proc~~cu_flux_pointwise_impl~~CalledByGraph_edge9" class="edge">
+<title>proc~solver_unstr_advance&#45;&gt;proc~solver_unstr_step</title>
+<path fill="none" stroke="#00ff00" d="M391.34,-45.08C407.65,-49.52 426.3,-54.6 443.38,-59.26"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="442.65,-62.68 453.22,-61.94 444.49,-55.93 442.65,-62.68"/>
+</g>
+<!-- proc~solver_unstr_step&#45;&gt;proc~compute_fluxes_central_unstr -->
+<g id="proc~~cu_flux_pointwise_impl~~CalledByGraph_edge4" class="edge">
+<title>proc~solver_unstr_step&#45;&gt;proc~compute_fluxes_central_unstr</title>
+<path fill="none" stroke="#ff0000" d="M543.23,-86.02C557.11,-89.29 572.6,-92.38 587,-94 653.69,-101.52 671.14,-99.76 738,-94 755.49,-92.49 774.25,-89.78 791.65,-86.8"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="792.48,-90.21 801.71,-85.02 791.26,-83.31 792.48,-90.21"/>
+</g>
+<!-- proc~solver_unstr_step_generic -->
+<g id="proc~~cu_flux_pointwise_impl~~CalledByGraph_node6" class="node">
+<title>proc~solver_unstr_step_generic</title>
+<g id="a_proc~~cu_flux_pointwise_impl~~CalledByGraph_node6"><a xlink:href="../proc/solver_unstr_step_generic.html" xlink:title="solver_unstr_step_generic">
+<polygon fill="#d9534f" stroke="#d9534f" points="738,-85 587,-85 587,-61 738,-61 738,-85"/>
+<text text-anchor="middle" x="662.5" y="-70.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_unstr_step_generic</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_unstr_step&#45;&gt;proc~solver_unstr_step_generic -->
+<g id="proc~~cu_flux_pointwise_impl~~CalledByGraph_edge10" class="edge">
+<title>proc~solver_unstr_step&#45;&gt;proc~solver_unstr_step_generic</title>
+<path fill="none" stroke="#0000ff" d="M551.2,-73.68C559.39,-73.63 568.04,-73.58 576.74,-73.52"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="576.99,-77.02 586.97,-73.46 576.94,-70.02 576.99,-77.02"/>
+</g>
+<!-- proc~solver_unstr_step_generic&#45;&gt;proc~compute_fluxes_central_unstr -->
+<g id="proc~~cu_flux_pointwise_impl~~CalledByGraph_edge5" class="edge">
+<title>proc~solver_unstr_step_generic&#45;&gt;proc~compute_fluxes_central_unstr</title>
+<path fill="none" stroke="#ff0000" d="M738.25,-73C746.61,-73 755.22,-73 763.8,-73"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="763.84,-76.5 773.84,-73 763.84,-69.5 763.84,-76.5"/>
+</g>
+<!-- proc~driver_run_coastal_unstr -->
+<g id="proc~~cu_flux_pointwise_impl~~CalledByGraph_node7" class="node">
+<title>proc~driver_run_coastal_unstr</title>
+<g id="a_proc~~cu_flux_pointwise_impl~~CalledByGraph_node7"><a xlink:href="../proc/driver_run_coastal_unstr.html" xlink:title="driver_run_coastal_unstr">
+<polygon fill="#d9534f" stroke="#d9534f" points="246,-66 103,-66 103,-42 246,-42 246,-66"/>
+<text text-anchor="middle" x="174.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">driver_run_coastal_unstr</text>
+</a>
+</g>
+</g>
+<!-- proc~driver_run_coastal_unstr&#45;&gt;proc~solver_unstr_advance -->
+<g id="proc~~cu_flux_pointwise_impl~~CalledByGraph_edge6" class="edge">
+<title>proc~driver_run_coastal_unstr&#45;&gt;proc~solver_unstr_advance</title>
+<path fill="none" stroke="#ff0000" d="M246.4,-45.22C254.79,-44.18 263.36,-43.12 271.77,-42.07"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="272.44,-45.52 281.94,-40.81 271.58,-38.57 272.44,-45.52"/>
+</g>
+<!-- proc~rki_unstr_advance -->
+<g id="proc~~cu_flux_pointwise_impl~~CalledByGraph_node8" class="node">
+<title>proc~rki_unstr_advance</title>
+<g id="a_proc~~cu_flux_pointwise_impl~~CalledByGraph_node8"><a xlink:href="../proc/rki_unstr_advance.html" xlink:title="rki_unstr_advance">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="229,-24 120,-24 120,0 229,0 229,-24"/>
+<text text-anchor="middle" x="174.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_unstr_advance</text>
+</a>
+</g>
+</g>
+<!-- proc~rki_unstr_advance&#45;&gt;proc~solver_unstr_advance -->
+<g id="proc~~cu_flux_pointwise_impl~~CalledByGraph_edge7" class="edge">
+<title>proc~rki_unstr_advance&#45;&gt;proc~solver_unstr_advance</title>
+<path fill="none" stroke="#ff0000" d="M229.13,-18.64C242.63,-20.32 257.36,-22.14 271.64,-23.91"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="271.59,-27.43 281.94,-25.19 272.45,-20.48 271.59,-27.43"/>
+</g>
+<!-- proc~rki_unstr_step -->
+<g id="proc~~cu_flux_pointwise_impl~~CalledByGraph_node9" class="node">
+<title>proc~rki_unstr_step</title>
+<g id="a_proc~~cu_flux_pointwise_impl~~CalledByGraph_node9"><a xlink:href="../proc/rki_unstr_step.html" xlink:title="rki_unstr_step">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="389,-87 303,-87 303,-63 389,-63 389,-87"/>
+<text text-anchor="middle" x="346" y="-72.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_unstr_step</text>
+</a>
+</g>
+</g>
+<!-- proc~rki_unstr_step&#45;&gt;proc~solver_unstr_step -->
+<g id="proc~~cu_flux_pointwise_impl~~CalledByGraph_edge8" class="edge">
+<title>proc~rki_unstr_step&#45;&gt;proc~solver_unstr_step</title>
+<path fill="none" stroke="#00ff00" d="M389.32,-74.72C403.73,-74.62 420.14,-74.51 435.75,-74.41"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="435.89,-77.91 445.87,-74.34 435.84,-70.91 435.89,-77.91"/>
+</g>
+<!-- proc~driver_run -->
+<g id="proc~~cu_flux_pointwise_impl~~CalledByGraph_node10" class="node">
+<title>proc~driver_run</title>
+<g id="a_proc~~cu_flux_pointwise_impl~~CalledByGraph_node10"><a xlink:href="../proc/driver_run.html" xlink:title="driver_run">
+<polygon fill="#d9534f" stroke="#d9534f" points="67,-66 0,-66 0,-42 67,-42 67,-66"/>
+<text text-anchor="middle" x="33.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">driver_run</text>
+</a>
+</g>
+</g>
+<!-- proc~driver_run&#45;&gt;proc~driver_run_coastal_unstr -->
+<g id="proc~~cu_flux_pointwise_impl~~CalledByGraph_edge11" class="edge">
+<title>proc~driver_run&#45;&gt;proc~driver_run_coastal_unstr</title>
+<path fill="none" stroke="#ff0000" d="M67.09,-54C74.9,-54 83.59,-54 92.54,-54"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="92.72,-57.5 102.72,-54 92.72,-50.5 92.72,-57.5"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var panproccu_flux_pointwise_implCalledByGraph = svgPanZoom('#proccu_flux_pointwise_implCalledByGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CalledByGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CalledByGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+
+
+    <section>    
+      <h2>Variables</h2>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Visibility</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+<th></th><th scope="col">Initial</th>        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-c_left~4"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>c_left</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-c_right~4"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>c_right</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-denom~18"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>denom</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-flux_left~2"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>flux_left</strong>(3)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-flux_right~2"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>flux_right</strong>(3)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-inv_denom"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>inv_denom</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-local_fr"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>local_fr</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-q_left_rot"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>q_left_rot</strong>(3)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-q_right_rot"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>q_right_rot</strong>(3)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-s_max"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>s_max</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-s_max_s_min"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>s_max_s_min</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-s_min"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>s_min</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-u_left~4"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>u_left</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-u_right~4"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>u_right</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-uh_left"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>uh_left</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-uh_right"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>uh_right</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-v_left~2"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>v_left</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-v_right~2"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>v_right</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-vh_left"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>vh_left</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-vh_right"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>vh_right</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    </section>
+    <br>
+    
+    
+
+    
+    
+
+
+
+    
+    <section>
+    <h2><span class="anchor" id="src"></span>Source Code</h2>
+    <div class="hl codehilite"><pre><span></span><span class="w">   </span><span class="k">pure subroutine </span><span class="n">cu_flux_pointwise_impl</span><span class="p">(</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">      </span><span class="n">q_left</span><span class="p">,</span><span class="w"> </span><span class="n">q_right</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">      </span><span class="n">h_left</span><span class="p">,</span><span class="w"> </span><span class="n">h_right</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">      </span><span class="n">hle</span><span class="p">,</span><span class="w"> </span><span class="n">hre</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">      </span><span class="n">n1</span><span class="p">,</span><span class="w"> </span><span class="n">n2</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">      </span><span class="n">low_froude_mode</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">      </span><span class="n">edgeflux</span><span class="p">,</span><span class="w"> </span><span class="n">max_speed</span><span class="p">,</span><span class="w"> </span><span class="n">pressure_flux</span><span class="p">)</span>
+<span class="w">      </span><span class="c">!$acc routine seq</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">q_left</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span><span class="w"> </span><span class="n">q_right</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">h_left</span><span class="p">,</span><span class="w"> </span><span class="n">h_right</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">hle</span><span class="p">,</span><span class="w"> </span><span class="n">hre</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">n1</span><span class="p">,</span><span class="w"> </span><span class="n">n2</span>
+<span class="w">      </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">low_froude_mode</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">edgeflux</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">max_speed</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">pressure_flux</span>
+
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">q_left_rot</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span><span class="w"> </span><span class="n">q_right_rot</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">u_left</span><span class="p">,</span><span class="w"> </span><span class="n">uh_left</span><span class="p">,</span><span class="w"> </span><span class="n">v_left</span><span class="p">,</span><span class="w"> </span><span class="n">vh_left</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">u_right</span><span class="p">,</span><span class="w"> </span><span class="n">uh_right</span><span class="p">,</span><span class="w"> </span><span class="n">v_right</span><span class="p">,</span><span class="w"> </span><span class="n">vh_right</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">c_left</span><span class="p">,</span><span class="w"> </span><span class="n">c_right</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">s_max</span><span class="p">,</span><span class="w"> </span><span class="n">s_min</span><span class="p">,</span><span class="w"> </span><span class="n">denom</span><span class="p">,</span><span class="w"> </span><span class="n">inv_denom</span><span class="p">,</span><span class="w"> </span><span class="n">s_max_s_min</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">flux_left</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span><span class="w"> </span><span class="n">flux_right</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">local_fr</span>
+
+<span class="w">      </span><span class="n">q_left_rot</span><span class="p">(:)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">q_left</span><span class="p">(:)</span>
+<span class="w">      </span><span class="n">q_right_rot</span><span class="p">(:)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">q_right</span><span class="p">(:)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">rotate_to_normal_impl</span><span class="p">(</span><span class="n">q_left_rot</span><span class="p">,</span><span class="w"> </span><span class="n">n1</span><span class="p">,</span><span class="w"> </span><span class="n">n2</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">rotate_to_normal_impl</span><span class="p">(</span><span class="n">q_right_rot</span><span class="p">,</span><span class="w"> </span><span class="n">n1</span><span class="p">,</span><span class="w"> </span><span class="n">n2</span><span class="p">)</span>
+
+<span class="w">      </span><span class="k">call </span><span class="n">compute_velocity_terms_impl</span><span class="p">(</span><span class="n">h_left</span><span class="p">,</span><span class="w"> </span><span class="n">hle</span><span class="p">,</span><span class="w"> </span><span class="n">q_left_rot</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span><span class="w"> </span><span class="n">q_left_rot</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                       </span><span class="n">u_left</span><span class="p">,</span><span class="w"> </span><span class="n">uh_left</span><span class="p">,</span><span class="w"> </span><span class="n">v_left</span><span class="p">,</span><span class="w"> </span><span class="n">vh_left</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">compute_velocity_terms_impl</span><span class="p">(</span><span class="n">h_right</span><span class="p">,</span><span class="w"> </span><span class="n">hre</span><span class="p">,</span><span class="w"> </span><span class="n">q_right_rot</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span><span class="w"> </span><span class="n">q_right_rot</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                       </span><span class="n">u_right</span><span class="p">,</span><span class="w"> </span><span class="n">uh_right</span><span class="p">,</span><span class="w"> </span><span class="n">v_right</span><span class="p">,</span><span class="w"> </span><span class="n">vh_right</span><span class="p">)</span>
+
+<span class="w">      </span><span class="n">c_left</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">sqrt</span><span class="p">(</span><span class="n">GRAVITY</span><span class="o">*</span><span class="n">h_left</span><span class="p">)</span>
+<span class="w">      </span><span class="n">c_right</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">sqrt</span><span class="p">(</span><span class="n">GRAVITY</span><span class="o">*</span><span class="n">h_right</span><span class="p">)</span>
+<span class="w">      </span><span class="n">s_max</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">compute_s_max_impl</span><span class="p">(</span><span class="n">u_left</span><span class="p">,</span><span class="w"> </span><span class="n">u_right</span><span class="p">,</span><span class="w"> </span><span class="n">c_left</span><span class="p">,</span><span class="w"> </span><span class="n">c_right</span><span class="p">)</span>
+<span class="w">      </span><span class="n">s_min</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">compute_s_min_impl</span><span class="p">(</span><span class="n">u_left</span><span class="p">,</span><span class="w"> </span><span class="n">u_right</span><span class="p">,</span><span class="w"> </span><span class="n">c_left</span><span class="p">,</span><span class="w"> </span><span class="n">c_right</span><span class="p">)</span>
+
+<span class="w">      </span><span class="n">local_fr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">compute_local_froude_impl</span><span class="p">(</span><span class="n">low_froude_mode</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                           </span><span class="n">u_left</span><span class="p">,</span><span class="w"> </span><span class="n">u_right</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                           </span><span class="n">v_left</span><span class="p">,</span><span class="w"> </span><span class="n">v_right</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                           </span><span class="n">c_left</span><span class="p">,</span><span class="w"> </span><span class="n">c_right</span><span class="p">)</span>
+
+<span class="w">      </span><span class="n">flux_left</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">u_left</span><span class="o">*</span><span class="n">h_left</span>
+<span class="w">      </span><span class="n">flux_left</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">u_left</span><span class="o">*</span><span class="n">uh_left</span>
+<span class="w">      </span><span class="n">flux_left</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">u_left</span><span class="o">*</span><span class="n">vh_left</span>
+
+<span class="w">      </span><span class="n">flux_right</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">u_right</span><span class="o">*</span><span class="n">h_right</span>
+<span class="w">      </span><span class="n">flux_right</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">u_right</span><span class="o">*</span><span class="n">uh_right</span>
+<span class="w">      </span><span class="n">flux_right</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">u_right</span><span class="o">*</span><span class="n">vh_right</span>
+
+<span class="w">      </span><span class="n">denom</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s_max</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">s_min</span>
+
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">denom</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">FLUX_EPSILON</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">         </span><span class="n">edgeflux</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">         </span><span class="n">edgeflux</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">         </span><span class="n">edgeflux</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">         </span><span class="n">max_speed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">         </span><span class="n">pressure_flux</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.5_wp</span><span class="o">*</span><span class="n">GRAVITY</span><span class="o">*</span><span class="mf">0.5_wp</span><span class="o">*</span><span class="p">(</span><span class="n">h_left</span><span class="o">*</span><span class="n">h_left</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">h_right</span><span class="o">*</span><span class="n">h_right</span><span class="p">)</span>
+<span class="w">      </span><span class="k">else</span>
+<span class="k">         </span><span class="n">max_speed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">max</span><span class="p">(</span><span class="n">s_max</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="n">s_min</span><span class="p">)</span>
+<span class="w">         </span><span class="n">inv_denom</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0_wp</span><span class="o">/</span><span class="nb">max</span><span class="p">(</span><span class="n">denom</span><span class="p">,</span><span class="w"> </span><span class="n">FLUX_DENOM_FLOOR</span><span class="p">)</span>
+<span class="w">         </span><span class="n">s_max_s_min</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s_max</span><span class="o">*</span><span class="n">s_min</span>
+
+<span class="w">         </span><span class="n">edgeflux</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">s_max</span><span class="o">*</span><span class="n">flux_left</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">s_min</span><span class="o">*</span><span class="n">flux_right</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                        </span><span class="o">+</span><span class="w"> </span><span class="n">s_max_s_min</span><span class="o">*</span><span class="p">(</span><span class="n">h_right</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">h_left</span><span class="p">))</span><span class="o">*</span><span class="n">inv_denom</span>
+
+<span class="w">         </span><span class="n">edgeflux</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">s_max</span><span class="o">*</span><span class="n">flux_left</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">s_min</span><span class="o">*</span><span class="n">flux_right</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                        </span><span class="o">+</span><span class="w"> </span><span class="n">local_fr</span><span class="o">*</span><span class="n">s_max_s_min</span><span class="o">*</span><span class="p">(</span><span class="n">uh_right</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">uh_left</span><span class="p">))</span><span class="o">*</span><span class="n">inv_denom</span>
+
+<span class="w">         </span><span class="n">edgeflux</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">s_max</span><span class="o">*</span><span class="n">flux_left</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">s_min</span><span class="o">*</span><span class="n">flux_right</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                        </span><span class="o">+</span><span class="w"> </span><span class="n">local_fr</span><span class="o">*</span><span class="n">s_max_s_min</span><span class="o">*</span><span class="p">(</span><span class="n">vh_right</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">vh_left</span><span class="p">))</span><span class="o">*</span><span class="n">inv_denom</span>
+
+<span class="w">         </span><span class="n">pressure_flux</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.5_wp</span><span class="o">*</span><span class="n">GRAVITY</span><span class="o">*</span><span class="p">(</span><span class="n">s_max</span><span class="o">*</span><span class="n">h_left</span><span class="o">*</span><span class="n">h_left</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                         </span><span class="o">-</span><span class="w"> </span><span class="n">s_min</span><span class="o">*</span><span class="n">h_right</span><span class="o">*</span><span class="n">h_right</span><span class="p">)</span><span class="o">*</span><span class="n">inv_denom</span>
+
+<span class="w">         </span><span class="k">call </span><span class="n">rotate_to_normal_impl</span><span class="p">(</span><span class="n">edgeflux</span><span class="p">,</span><span class="w"> </span><span class="n">n1</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="n">n2</span><span class="p">)</span>
+<span class="w">      </span><span class="k">end if</span>
+<span class="k">   end subroutine </span><span class="n">cu_flux_pointwise_impl</span>
+</pre></div>
+
+    </section>
+    <br>
+    
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Rakali
+ was developed by Jorge Luis Galvez Vallejo<br>              &copy; 2026 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+ on 2026-10-08 12:55 +0000             </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>

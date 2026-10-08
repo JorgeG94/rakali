@@ -1,0 +1,1352 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="GPU-native coastal solver — structured Cartesian and unstructured triangular grids, hydrostatic multilayer + non-hydrostatic, portable across NVHPC/gfortran/ifx.">
+    <meta name="author" content="Jorge Luis Galvez Vallejo" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>remap_column_ppm &ndash; Rakali</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">Rakali </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/absint.html">Abstract Interfaces</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>remap_column_ppm
+      <small>Subroutine</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.4% of total for procedures.">103 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/rki_remap_column.F90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/rki_remap_column.f90.html'>rki_remap_column.F90</a></li>
+                <li class="breadcrumb-item"><a href='../module/rki_remap_column.html'>rki_remap_column</a></li>
+            <li class="breadcrumb-item active" aria-current="page">remap_column_ppm</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+  
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#vars-0"
+         aria-expanded="false" aria-controls="vars-0">
+         <h4 class="card-header bg-primary text-white">Variables</h4>
+      </a>
+      <div id="vars-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../proc/remap_column_ppm.html#variable-dq~2">dq</a>
+            <a class="list-group-item" href="../proc/remap_column_ppm.html#variable-dq_l~2">dq_l</a>
+            <a class="list-group-item" href="../proc/remap_column_ppm.html#variable-dq_r~2">dq_r</a>
+            <a class="list-group-item" href="../proc/remap_column_ppm.html#variable-edge">edge</a>
+            <a class="list-group-item" href="../proc/remap_column_ppm.html#variable-integral~3">integral</a>
+            <a class="list-group-item" href="../proc/remap_column_ppm.html#variable-k~90">k</a>
+            <a class="list-group-item" href="../proc/remap_column_ppm.html#variable-ko~3">ko</a>
+            <a class="list-group-item" href="../proc/remap_column_ppm.html#variable-ko_start~3">ko_start</a>
+            <a class="list-group-item" href="../proc/remap_column_ppm.html#variable-overlap~3">overlap</a>
+            <a class="list-group-item" href="../proc/remap_column_ppm.html#variable-q6~2">q6</a>
+            <a class="list-group-item" href="../proc/remap_column_ppm.html#variable-q_l~2">q_L</a>
+            <a class="list-group-item" href="../proc/remap_column_ppm.html#variable-q_r~2">q_R</a>
+            <a class="list-group-item" href="../proc/remap_column_ppm.html#variable-q_max">q_max</a>
+            <a class="list-group-item" href="../proc/remap_column_ppm.html#variable-q_min">q_min</a>
+            <a class="list-group-item" href="../proc/remap_column_ppm.html#variable-xi_hi~2">xi_hi</a>
+            <a class="list-group-item" href="../proc/remap_column_ppm.html#variable-xi_lo~2">xi_lo</a>
+            <a class="list-group-item" href="../proc/remap_column_ppm.html#variable-z_hi~3">z_hi</a>
+            <a class="list-group-item" href="../proc/remap_column_ppm.html#variable-z_lo~3">z_lo</a>
+            <a class="list-group-item" href="../proc/remap_column_ppm.html#variable-z_new~3">z_new</a>
+            <a class="list-group-item" href="../proc/remap_column_ppm.html#variable-z_old~3">z_old</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../proc/remap_column_ppm.html#src">remap_column_ppm</a>
+      </div>
+    </div>
+
+
+  </div>
+
+    </div>
+    
+    <div class="col-md-9" id='text'>
+    <h2>public pure subroutine remap_column_ppm(nz, dz_old, dz_new, q_old, q_new)  
+</h2>
+    
+
+    <p>Piecewise-parabolic (Colella &amp; Woodward 1984) remap.
+Per old layer k, xi in [0,1]:
+  q_hat(xi) = q_L + xi<em>(q_R - q_L + q6</em>(1 - xi)), q6 = 6<em>q_bar - 3</em>(q_L+q_R)
+Edge values: 4th-order interp + CW monotonicity limiting; boundary
+layers fall back to PLM-quality edges.</p>
+
+
+    <h3>Arguments</h3>
+        <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nz~91"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nz</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-dz_old~4"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>dz_old</strong>(nz)</td>
+            <td>
+                <p>Old layer thicknesses</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-dz_new~4"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>dz_new</strong>(nz)</td>
+            <td>
+                <p>New layer thicknesses</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-q_old~4"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>q_old</strong>(nz)</td>
+            <td>
+                <p>Old cell-average scalar values</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-q_new~4"></span>
+              real(kind=wp),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>q_new</strong>(nz)</td>
+            <td>
+                <p>New cell-average scalar values (conservative)</p>
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <br>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Calls</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~remap_column_ppm~~CallsGraph Pages: 1 -->
+<svg id="procremap_column_ppmCallsGraph" width="283pt" height="32pt"
+ viewBox="0.00 0.00 283.00 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~remap_column_ppm~~CallsGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<title>proc~~remap_column_ppm~~CallsGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 279,-28 279,4 -4,4"/>
+<!-- proc~remap_column_ppm -->
+<g id="proc~~remap_column_ppm~~CallsGraph_node1" class="node">
+<title>proc~remap_column_ppm</title>
+<polygon fill="none" stroke="black" points="121,-24 0,-24 0,0 121,0 121,-24"/>
+<text text-anchor="middle" x="60.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">remap_column_ppm</text>
+</g>
+<!-- proc~remap_column_plm -->
+<g id="proc~~remap_column_ppm~~CallsGraph_node2" class="node">
+<title>proc~remap_column_plm</title>
+<g id="a_proc~~remap_column_ppm~~CallsGraph_node2"><a xlink:href="../proc/remap_column_plm.html" xlink:title="remap_column_plm">
+<polygon fill="#d9534f" stroke="#d9534f" points="275,-24 157,-24 157,0 275,0 275,-24"/>
+<text text-anchor="middle" x="216" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">remap_column_plm</text>
+</a>
+</g>
+</g>
+<!-- proc~remap_column_ppm&#45;&gt;proc~remap_column_plm -->
+<g id="proc~~remap_column_ppm~~CallsGraph_edge1" class="edge">
+<title>proc~remap_column_ppm&#45;&gt;proc~remap_column_plm</title>
+<path fill="none" stroke="#ff0000" d="M121.29,-12C129.61,-12 138.2,-12 146.66,-12"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="146.89,-15.5 156.89,-12 146.89,-8.5 146.89,-15.5"/>
+</g>
+</g>
+</svg>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CallsGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CallsGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Called by</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~remap_column_ppm~~CalledByGraph Pages: 1 -->
+<svg id="procremap_column_ppmCalledByGraph" width="641pt" height="76pt"
+ viewBox="0.00 0.00 641.00 76.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~remap_column_ppm~~CalledByGraph" class="graph" transform="scale(0.45 0.45) rotate(0) translate(4 164)">
+<title>proc~~remap_column_ppm~~CalledByGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-164 1413,-164 1413,4 -4,4"/>
+<!-- proc~remap_column_ppm -->
+<g id="proc~~remap_column_ppm~~CalledByGraph_node1" class="node">
+<title>proc~remap_column_ppm</title>
+<polygon fill="none" stroke="black" points="1409,-84 1288,-84 1288,-60 1409,-60 1409,-84"/>
+<text text-anchor="middle" x="1348.5" y="-69.6" font-family="Helvetica,sans-Serif" font-size="10.50">remap_column_ppm</text>
+</g>
+<!-- proc~ml_settling_tracer -->
+<g id="proc~~remap_column_ppm~~CalledByGraph_node2" class="node">
+<title>proc~ml_settling_tracer</title>
+<g id="a_proc~~remap_column_ppm~~CalledByGraph_node2"><a xlink:href="../proc/ml_settling_tracer.html" xlink:title="ml_settling_tracer">
+<polygon fill="#d9534f" stroke="#d9534f" points="1095,-46 987,-46 987,-22 1095,-22 1095,-46"/>
+<text text-anchor="middle" x="1041" y="-31.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">ml_settling_tracer</text>
+</a>
+</g>
+</g>
+<!-- proc~ml_settling_tracer&#45;&gt;proc~remap_column_ppm -->
+<g id="proc~~remap_column_ppm~~CalledByGraph_edge1" class="edge">
+<title>proc~ml_settling_tracer&#45;&gt;proc~remap_column_ppm</title>
+<path fill="none" stroke="#ff0000" d="M1095.21,-40.62C1145.83,-46.91 1222.27,-56.42 1277.74,-63.32"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="1277.49,-66.82 1287.84,-64.58 1278.35,-59.87 1277.49,-66.82"/>
+</g>
+<!-- proc~remap_column -->
+<g id="proc~~remap_column_ppm~~CalledByGraph_node3" class="node">
+<title>proc~remap_column</title>
+<g id="a_proc~~remap_column_ppm~~CalledByGraph_node3"><a xlink:href="../proc/remap_column.html" xlink:title="remap_column">
+<polygon fill="#d9534f" stroke="#d9534f" points="1087,-106 995,-106 995,-82 1087,-82 1087,-106"/>
+<text text-anchor="middle" x="1041" y="-91.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">remap_column</text>
+</a>
+</g>
+</g>
+<!-- proc~remap_column&#45;&gt;proc~remap_column_ppm -->
+<g id="proc~~remap_column_ppm~~CalledByGraph_edge2" class="edge">
+<title>proc~remap_column&#45;&gt;proc~remap_column_ppm</title>
+<path fill="none" stroke="#ff0000" d="M1087.08,-90.75C1137.26,-87.14 1218.99,-81.25 1277.51,-77.04"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="1278.06,-80.51 1287.78,-76.3 1277.56,-73.53 1278.06,-80.51"/>
+</g>
+<!-- proc~remap_column_pqm -->
+<g id="proc~~remap_column_ppm~~CalledByGraph_node4" class="node">
+<title>proc~remap_column_pqm</title>
+<g id="a_proc~~remap_column_ppm~~CalledByGraph_node4"><a xlink:href="../proc/remap_column_pqm.html" xlink:title="remap_column_pqm">
+<polygon fill="#d9534f" stroke="#d9534f" points="1252,-124 1131,-124 1131,-100 1252,-100 1252,-124"/>
+<text text-anchor="middle" x="1191.5" y="-109.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">remap_column_pqm</text>
+</a>
+</g>
+</g>
+<!-- proc~remap_column&#45;&gt;proc~remap_column_pqm -->
+<g id="proc~~remap_column_ppm~~CalledByGraph_edge7" class="edge">
+<title>proc~remap_column&#45;&gt;proc~remap_column_pqm</title>
+<path fill="none" stroke="#0000ff" d="M1087.36,-99.5C1097.98,-100.79 1109.54,-102.19 1120.95,-103.57"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="1120.56,-107.05 1130.9,-104.78 1121.4,-100.1 1120.56,-107.05"/>
+</g>
+<!-- proc~remap_column_pqm&#45;&gt;proc~remap_column_ppm -->
+<g id="proc~~remap_column_ppm~~CalledByGraph_edge3" class="edge">
+<title>proc~remap_column_pqm&#45;&gt;proc~remap_column_ppm</title>
+<path fill="none" stroke="#ff0000" d="M1239.01,-100C1255.33,-95.79 1273.85,-91.01 1290.91,-86.6"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="1291.95,-89.95 1300.76,-84.06 1290.2,-83.17 1291.95,-89.95"/>
+</g>
+<!-- proc~ml_remap_tracer -->
+<g id="proc~~remap_column_ppm~~CalledByGraph_node5" class="node">
+<title>proc~ml_remap_tracer</title>
+<g id="a_proc~~remap_column_ppm~~CalledByGraph_node5"><a xlink:href="../proc/ml_remap_tracer.html" xlink:title="ml_remap_tracer">
+<polygon fill="#d9534f" stroke="#d9534f" points="934.5,-86 831.5,-86 831.5,-62 934.5,-62 934.5,-86"/>
+<text text-anchor="middle" x="883" y="-71.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">ml_remap_tracer</text>
+</a>
+</g>
+</g>
+<!-- proc~ml_remap_tracer&#45;&gt;proc~remap_column -->
+<g id="proc~~remap_column_ppm~~CalledByGraph_edge5" class="edge">
+<title>proc~ml_remap_tracer&#45;&gt;proc~remap_column</title>
+<path fill="none" stroke="#00ff00" d="M934.65,-80.49C950.71,-82.55 968.54,-84.84 984.9,-86.94"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="984.5,-90.41 994.87,-88.21 985.39,-83.47 984.5,-90.41"/>
+</g>
+<!-- proc~ml_remap_tracer_unstr -->
+<g id="proc~~remap_column_ppm~~CalledByGraph_node6" class="node">
+<title>proc~ml_remap_tracer_unstr</title>
+<g id="a_proc~~remap_column_ppm~~CalledByGraph_node6"><a xlink:href="../proc/ml_remap_tracer_unstr.html" xlink:title="ml_remap_tracer_unstr">
+<polygon fill="#d9534f" stroke="#d9534f" points="951,-128 815,-128 815,-104 951,-104 951,-128"/>
+<text text-anchor="middle" x="883" y="-113.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">ml_remap_tracer_unstr</text>
+</a>
+</g>
+</g>
+<!-- proc~ml_remap_tracer_unstr&#45;&gt;proc~remap_column -->
+<g id="proc~~remap_column_ppm~~CalledByGraph_edge6" class="edge">
+<title>proc~ml_remap_tracer_unstr&#45;&gt;proc~remap_column</title>
+<path fill="none" stroke="#00ff00" d="M951.06,-106.54C962.2,-104.97 973.65,-103.36 984.46,-101.83"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="985.19,-105.26 994.6,-100.4 984.21,-98.33 985.19,-105.26"/>
+</g>
+<!-- proc~solver_step_multilayer_impl -->
+<g id="proc~~remap_column_ppm~~CalledByGraph_node7" class="node">
+<title>proc~solver_step_multilayer_impl</title>
+<g id="a_proc~~remap_column_ppm~~CalledByGraph_node7"><a xlink:href="../proc/solver_step_multilayer_impl.html" xlink:title="solver_step_multilayer_impl">
+<polygon fill="#d9534f" stroke="#d9534f" points="589,-66 429,-66 429,-42 589,-42 589,-66"/>
+<text text-anchor="middle" x="509" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_step_multilayer_impl</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_step_multilayer_impl&#45;&gt;proc~ml_settling_tracer -->
+<g id="proc~~remap_column_ppm~~CalledByGraph_edge4" class="edge">
+<title>proc~solver_step_multilayer_impl&#45;&gt;proc~ml_settling_tracer</title>
+<path fill="none" stroke="#ff0000" d="M589.06,-51.02C694.58,-47.03 879.4,-40.06 976.42,-36.4"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="976.8,-39.89 986.66,-36.01 976.54,-32.89 976.8,-39.89"/>
+</g>
+<!-- proc~solver_multilayer_rk_stage -->
+<g id="proc~~remap_column_ppm~~CalledByGraph_node8" class="node">
+<title>proc~solver_multilayer_rk_stage</title>
+<g id="a_proc~~remap_column_ppm~~CalledByGraph_node8"><a xlink:href="../proc/solver_multilayer_rk_stage.html" xlink:title="solver_multilayer_rk_stage">
+<polygon fill="#d9534f" stroke="#d9534f" points="779,-86 625,-86 625,-62 779,-62 779,-86"/>
+<text text-anchor="middle" x="702" y="-71.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_multilayer_rk_stage</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_step_multilayer_impl&#45;&gt;proc~solver_multilayer_rk_stage -->
+<g id="proc~~remap_column_ppm~~CalledByGraph_edge11" class="edge">
+<title>proc~solver_step_multilayer_impl&#45;&gt;proc~solver_multilayer_rk_stage</title>
+<path fill="none" stroke="#ff0000" d="M589.07,-62.28C597.55,-63.17 606.21,-64.07 614.77,-64.97"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="614.45,-68.46 624.76,-66.02 615.18,-61.49 614.45,-68.46"/>
+</g>
+<!-- proc~solver_multilayer_rk_stage&#45;&gt;proc~ml_remap_tracer -->
+<g id="proc~~remap_column_ppm~~CalledByGraph_edge8" class="edge">
+<title>proc~solver_multilayer_rk_stage&#45;&gt;proc~ml_remap_tracer</title>
+<path fill="none" stroke="#ff0000" d="M779.17,-74C793.2,-74 807.67,-74 821.18,-74"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="821.29,-77.5 831.29,-74 821.29,-70.5 821.29,-77.5"/>
+</g>
+<!-- proc~solver_step -->
+<g id="proc~~remap_column_ppm~~CalledByGraph_node9" class="node">
+<title>proc~solver_step</title>
+<g id="a_proc~~remap_column_ppm~~CalledByGraph_node9"><a xlink:href="../proc/solver_step.html" xlink:title="solver_step">
+<polygon fill="#d9534f" stroke="#d9534f" points="358,-66 285,-66 285,-42 358,-42 358,-66"/>
+<text text-anchor="middle" x="321.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_step</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_step&#45;&gt;proc~solver_step_multilayer_impl -->
+<g id="proc~~remap_column_ppm~~CalledByGraph_edge10" class="edge">
+<title>proc~solver_step&#45;&gt;proc~solver_step_multilayer_impl</title>
+<path fill="none" stroke="#0000ff" d="M358.27,-54C375.63,-54 397.33,-54 418.79,-54"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="418.94,-57.5 428.94,-54 418.94,-50.5 418.94,-57.5"/>
+</g>
+<!-- proc~solver_unstr_step -->
+<g id="proc~~remap_column_ppm~~CalledByGraph_node10" class="node">
+<title>proc~solver_unstr_step</title>
+<g id="a_proc~~remap_column_ppm~~CalledByGraph_node10"><a xlink:href="../proc/solver_unstr_step.html" xlink:title="solver_unstr_step">
+<polygon fill="#d9534f" stroke="#d9534f" points="754.5,-128 649.5,-128 649.5,-104 754.5,-104 754.5,-128"/>
+<text text-anchor="middle" x="702" y="-113.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_unstr_step</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_unstr_step&#45;&gt;proc~ml_remap_tracer_unstr -->
+<g id="proc~~remap_column_ppm~~CalledByGraph_edge9" class="edge">
+<title>proc~solver_unstr_step&#45;&gt;proc~ml_remap_tracer_unstr</title>
+<path fill="none" stroke="#00ff00" d="M754.77,-116C770.34,-116 787.76,-116 804.6,-116"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="804.99,-119.5 814.99,-116 804.99,-112.5 804.99,-119.5"/>
+</g>
+<!-- proc~driver_run_coastal -->
+<g id="proc~~remap_column_ppm~~CalledByGraph_node11" class="node">
+<title>proc~driver_run_coastal</title>
+<g id="a_proc~~remap_column_ppm~~CalledByGraph_node11"><a xlink:href="../proc/driver_run_coastal.html" xlink:title="driver_run_coastal">
+<polygon fill="#d9534f" stroke="#d9534f" points="214,-108 103,-108 103,-84 214,-84 214,-108"/>
+<text text-anchor="middle" x="158.5" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">driver_run_coastal</text>
+</a>
+</g>
+</g>
+<!-- proc~driver_run_coastal&#45;&gt;proc~solver_step -->
+<g id="proc~~remap_column_ppm~~CalledByGraph_edge12" class="edge">
+<title>proc~driver_run_coastal&#45;&gt;proc~solver_step</title>
+<path fill="none" stroke="#00ff00" d="M205.64,-83.96C227.37,-78.29 253.23,-71.55 274.9,-65.9"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="276.06,-69.21 284.85,-63.3 274.29,-62.44 276.06,-69.21"/>
+</g>
+<!-- proc~rki_advance -->
+<g id="proc~~remap_column_ppm~~CalledByGraph_node12" class="node">
+<title>proc~rki_advance</title>
+<g id="a_proc~~remap_column_ppm~~CalledByGraph_node12"><a xlink:href="../proc/rki_advance.html" xlink:title="rki_advance">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="197,-66 120,-66 120,-42 197,-42 197,-66"/>
+<text text-anchor="middle" x="158.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_advance</text>
+</a>
+</g>
+</g>
+<!-- proc~rki_advance&#45;&gt;proc~solver_step -->
+<g id="proc~~remap_column_ppm~~CalledByGraph_edge13" class="edge">
+<title>proc~rki_advance&#45;&gt;proc~solver_step</title>
+<path fill="none" stroke="#00ff00" d="M197.25,-54C220.42,-54 250.26,-54 274.78,-54"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="274.92,-57.5 284.92,-54 274.92,-50.5 274.92,-57.5"/>
+</g>
+<!-- proc~rki_step -->
+<g id="proc~~remap_column_ppm~~CalledByGraph_node13" class="node">
+<title>proc~rki_step</title>
+<g id="a_proc~~remap_column_ppm~~CalledByGraph_node13"><a xlink:href="../proc/rki_step.html" xlink:title="rki_step">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="185.5,-24 131.5,-24 131.5,0 185.5,0 185.5,-24"/>
+<text text-anchor="middle" x="158.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_step</text>
+</a>
+</g>
+</g>
+<!-- proc~rki_step&#45;&gt;proc~solver_step -->
+<g id="proc~~remap_column_ppm~~CalledByGraph_edge14" class="edge">
+<title>proc~rki_step&#45;&gt;proc~solver_step</title>
+<path fill="none" stroke="#00ff00" d="M185.73,-18.84C209.88,-25.14 246.23,-34.62 275.09,-42.15"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="274.4,-45.59 284.96,-44.73 276.17,-38.82 274.4,-45.59"/>
+</g>
+<!-- proc~rki_unstr_step -->
+<g id="proc~~remap_column_ppm~~CalledByGraph_node14" class="node">
+<title>proc~rki_unstr_step</title>
+<g id="a_proc~~remap_column_ppm~~CalledByGraph_node14"><a xlink:href="../proc/rki_unstr_step.html" xlink:title="rki_unstr_step">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="552,-160 466,-160 466,-136 552,-136 552,-160"/>
+<text text-anchor="middle" x="509" y="-145.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_unstr_step</text>
+</a>
+</g>
+</g>
+<!-- proc~rki_unstr_step&#45;&gt;proc~solver_unstr_step -->
+<g id="proc~~remap_column_ppm~~CalledByGraph_edge15" class="edge">
+<title>proc~rki_unstr_step&#45;&gt;proc~solver_unstr_step</title>
+<path fill="none" stroke="#0000ff" d="M552.39,-140.9C577.84,-136.63 610.67,-131.13 638.99,-126.39"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="639.92,-129.78 649.2,-124.68 638.76,-122.88 639.92,-129.78"/>
+</g>
+<!-- proc~solver_unstr_advance -->
+<g id="proc~~remap_column_ppm~~CalledByGraph_node15" class="node">
+<title>proc~solver_unstr_advance</title>
+<g id="a_proc~~remap_column_ppm~~CalledByGraph_node15"><a xlink:href="../proc/solver_unstr_advance.html" xlink:title="solver_unstr_advance">
+<polygon fill="#d9534f" stroke="#d9534f" points="573,-118 445,-118 445,-94 573,-94 573,-118"/>
+<text text-anchor="middle" x="509" y="-103.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_unstr_advance</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_unstr_advance&#45;&gt;proc~solver_unstr_step -->
+<g id="proc~~remap_column_ppm~~CalledByGraph_edge16" class="edge">
+<title>proc~solver_unstr_advance&#45;&gt;proc~solver_unstr_step</title>
+<path fill="none" stroke="#0000ff" d="M573.07,-109.3C594.36,-110.42 618.09,-111.66 639.28,-112.77"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="639.28,-116.27 649.45,-113.3 639.65,-109.28 639.28,-116.27"/>
+</g>
+<!-- proc~driver_run -->
+<g id="proc~~remap_column_ppm~~CalledByGraph_node16" class="node">
+<title>proc~driver_run</title>
+<g id="a_proc~~remap_column_ppm~~CalledByGraph_node16"><a xlink:href="../proc/driver_run.html" xlink:title="driver_run">
+<polygon fill="#d9534f" stroke="#d9534f" points="67,-108 0,-108 0,-84 67,-84 67,-108"/>
+<text text-anchor="middle" x="33.5" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">driver_run</text>
+</a>
+</g>
+</g>
+<!-- proc~driver_run&#45;&gt;proc~driver_run_coastal -->
+<g id="proc~~remap_column_ppm~~CalledByGraph_edge17" class="edge">
+<title>proc~driver_run&#45;&gt;proc~driver_run_coastal</title>
+<path fill="none" stroke="#ff0000" d="M67.14,-96C75.1,-96 83.9,-96 92.79,-96"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="92.82,-99.5 102.82,-96 92.82,-92.5 92.82,-99.5"/>
+</g>
+<!-- proc~driver_run_coastal_unstr -->
+<g id="proc~~remap_column_ppm~~CalledByGraph_node17" class="node">
+<title>proc~driver_run_coastal_unstr</title>
+<g id="a_proc~~remap_column_ppm~~CalledByGraph_node17"><a xlink:href="../proc/driver_run_coastal_unstr.html" xlink:title="driver_run_coastal_unstr">
+<polygon fill="#d9534f" stroke="#d9534f" points="393,-155 250,-155 250,-131 393,-131 393,-155"/>
+<text text-anchor="middle" x="321.5" y="-140.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">driver_run_coastal_unstr</text>
+</a>
+</g>
+</g>
+<!-- proc~driver_run_coastal_unstr&#45;&gt;proc~solver_unstr_advance -->
+<g id="proc~~remap_column_ppm~~CalledByGraph_edge18" class="edge">
+<title>proc~driver_run_coastal_unstr&#45;&gt;proc~solver_unstr_advance</title>
+<path fill="none" stroke="#cc00ff" d="M382.73,-130.99C400.31,-127.48 419.68,-123.62 437.82,-120"/>
+<polygon fill="#cc00ff" stroke="#cc00ff" points="438.64,-123.4 447.76,-118.02 437.27,-116.54 438.64,-123.4"/>
+</g>
+<!-- proc~rki_unstr_advance -->
+<g id="proc~~remap_column_ppm~~CalledByGraph_node18" class="node">
+<title>proc~rki_unstr_advance</title>
+<g id="a_proc~~remap_column_ppm~~CalledByGraph_node18"><a xlink:href="../proc/rki_unstr_advance.html" xlink:title="rki_unstr_advance">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="376,-113 267,-113 267,-89 376,-89 376,-113"/>
+<text text-anchor="middle" x="321.5" y="-98.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_unstr_advance</text>
+</a>
+</g>
+</g>
+<!-- proc~rki_unstr_advance&#45;&gt;proc~solver_unstr_advance -->
+<g id="proc~~remap_column_ppm~~CalledByGraph_edge19" class="edge">
+<title>proc~rki_unstr_advance&#45;&gt;proc~solver_unstr_advance</title>
+<path fill="none" stroke="#cc00ff" d="M376.15,-102.45C394.47,-102.94 415.27,-103.5 434.86,-104.03"/>
+<polygon fill="#cc00ff" stroke="#cc00ff" points="434.87,-107.53 444.97,-104.3 435.06,-100.53 434.87,-107.53"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var panprocremap_column_ppmCalledByGraph = svgPanZoom('#procremap_column_ppmCalledByGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CalledByGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CalledByGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+
+
+    <section>    
+      <h2>Variables</h2>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Visibility</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+<th></th><th scope="col">Initial</th>        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-dq~2"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>dq</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-dq_l~2"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>dq_l</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-dq_r~2"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>dq_r</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-edge"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>edge</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-integral~3"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>integral</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-k~90"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>k</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ko~3"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>ko</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ko_start~3"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>ko_start</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-overlap~3"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>overlap</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-q6~2"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>q6</strong>(NZ_STACK_MAX)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-q_l~2"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>q_L</strong>(NZ_STACK_MAX)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-q_r~2"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>q_R</strong>(NZ_STACK_MAX)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-q_max"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>q_max</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-q_min"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>q_min</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-xi_hi~2"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>xi_hi</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-xi_lo~2"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>xi_lo</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-z_hi~3"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>z_hi</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-z_lo~3"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>z_lo</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-z_new~3"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>z_new</strong>(0:NZ_STACK_MAX)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-z_old~3"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>z_old</strong>(0:NZ_STACK_MAX)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    </section>
+    <br>
+    
+    
+
+    
+    
+
+
+
+    
+    <section>
+    <h2><span class="anchor" id="src"></span>Source Code</h2>
+    <div class="hl codehilite"><pre><span></span><span class="w">   </span><span class="k">pure subroutine </span><span class="n">remap_column_ppm</span><span class="p">(</span><span class="n">nz</span><span class="p">,</span><span class="w"> </span><span class="n">dz_old</span><span class="p">,</span><span class="w"> </span><span class="n">dz_new</span><span class="p">,</span><span class="w"> </span><span class="n">q_old</span><span class="p">,</span><span class="w"> </span><span class="n">q_new</span><span class="p">)</span>
+<span class="w">      </span><span class="c">!$acc routine seq</span>
+<span class="w">      </span><span class="c">!! Piecewise-parabolic (Colella &amp; Woodward 1984) remap.</span>
+<span class="w">      </span><span class="c">!! Per old layer k, xi in [0,1]:</span>
+<span class="w">      </span><span class="c">!!   q_hat(xi) = q_L + xi*(q_R - q_L + q6*(1 - xi)), q6 = 6*q_bar - 3*(q_L+q_R)</span>
+<span class="w">      </span><span class="c">!! Edge values: 4th-order interp + CW monotonicity limiting; boundary</span>
+<span class="w">      </span><span class="c">!! layers fall back to PLM-quality edges.</span>
+<span class="w">      </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">nz</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">dz_old</span><span class="p">(</span><span class="n">nz</span><span class="p">)</span>
+<span class="w">         </span><span class="c">!! Old layer thicknesses</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">dz_new</span><span class="p">(</span><span class="n">nz</span><span class="p">)</span>
+<span class="w">         </span><span class="c">!! New layer thicknesses</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">q_old</span><span class="p">(</span><span class="n">nz</span><span class="p">)</span>
+<span class="w">         </span><span class="c">!! Old cell-average scalar values</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">q_new</span><span class="p">(</span><span class="n">nz</span><span class="p">)</span>
+<span class="w">         </span><span class="c">!! New cell-average scalar values (conservative)</span>
+
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">z_old</span><span class="p">(</span><span class="mi">0</span><span class="p">:</span><span class="n">NZ_STACK_MAX</span><span class="p">),</span><span class="w"> </span><span class="n">z_new</span><span class="p">(</span><span class="mi">0</span><span class="p">:</span><span class="n">NZ_STACK_MAX</span><span class="p">)</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">q_L</span><span class="p">(</span><span class="n">NZ_STACK_MAX</span><span class="p">),</span><span class="w"> </span><span class="n">q_R</span><span class="p">(</span><span class="n">NZ_STACK_MAX</span><span class="p">),</span><span class="w"> </span><span class="n">q6</span><span class="p">(</span><span class="n">NZ_STACK_MAX</span><span class="p">)</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">z_lo</span><span class="p">,</span><span class="w"> </span><span class="n">z_hi</span><span class="p">,</span><span class="w"> </span><span class="n">overlap</span><span class="p">,</span><span class="w"> </span><span class="n">integral</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">xi_lo</span><span class="p">,</span><span class="w"> </span><span class="n">xi_hi</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">edge</span><span class="p">,</span><span class="w"> </span><span class="n">dq</span><span class="p">,</span><span class="w"> </span><span class="n">dq_l</span><span class="p">,</span><span class="w"> </span><span class="n">dq_r</span><span class="p">,</span><span class="w"> </span><span class="n">q_min</span><span class="p">,</span><span class="w"> </span><span class="n">q_max</span>
+<span class="w">      </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="n">ko</span><span class="p">,</span><span class="w"> </span><span class="n">ko_start</span>
+
+<span class="w">      </span><span class="c">! Trivial cases</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">nz</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">         </span><span class="n">q_new</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">q_old</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">         </span><span class="k">return</span>
+<span class="k">      end if</span>
+<span class="k">      if</span><span class="w"> </span><span class="p">(</span><span class="n">nz</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="w">         </span><span class="c">! With only 2 layers, PPM reduces to PLM</span>
+<span class="w">         </span><span class="k">call </span><span class="n">remap_column_plm</span><span class="p">(</span><span class="n">nz</span><span class="p">,</span><span class="w"> </span><span class="n">dz_old</span><span class="p">,</span><span class="w"> </span><span class="n">dz_new</span><span class="p">,</span><span class="w"> </span><span class="n">q_old</span><span class="p">,</span><span class="w"> </span><span class="n">q_new</span><span class="p">)</span>
+<span class="w">         </span><span class="k">return</span>
+<span class="k">      end if</span>
+
+<span class="w">      </span><span class="c">! Build interface positions</span>
+<span class="w">      </span><span class="n">z_old</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">      </span><span class="n">z_new</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">      </span><span class="k">do </span><span class="n">k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">nz</span>
+<span class="w">         </span><span class="n">z_old</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">z_old</span><span class="p">(</span><span class="n">k</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">dz_old</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+<span class="w">         </span><span class="n">z_new</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">z_new</span><span class="p">(</span><span class="n">k</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">dz_new</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+<span class="w">      </span><span class="k">end do</span>
+
+<span class="w">      </span><span class="c">! ---- Step 1: Compute unlimited edge values via 4th-order interp ----</span>
+<span class="w">      </span><span class="c">! Interior edges (between layers k and k+1) use the 4-cell stencil.</span>
+<span class="w">      </span><span class="c">! Store in q_R(k) = right edge of layer k = left edge of layer k+1.</span>
+
+<span class="w">      </span><span class="c">! Boundary: PCM (layer 1 left, layer nz right)</span>
+<span class="w">      </span><span class="n">q_L</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">q_old</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">      </span><span class="n">q_R</span><span class="p">(</span><span class="n">nz</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">q_old</span><span class="p">(</span><span class="n">nz</span><span class="p">)</span>
+
+<span class="w">      </span><span class="c">! Layer 1 right edge = layer 2 left edge: use 3-cell stencil (one-sided)</span>
+<span class="w">      </span><span class="n">q_R</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.5_wp</span><span class="o">*</span><span class="p">(</span><span class="n">q_old</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">q_old</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+<span class="w">      </span><span class="c">! Layer nz left edge = layer nz-1 right edge: use 3-cell stencil</span>
+<span class="w">      </span><span class="n">q_L</span><span class="p">(</span><span class="n">nz</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.5_wp</span><span class="o">*</span><span class="p">(</span><span class="n">q_old</span><span class="p">(</span><span class="n">nz</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">q_old</span><span class="p">(</span><span class="n">nz</span><span class="p">))</span>
+
+<span class="w">      </span><span class="c">! Interior edges: 4th-order Colella-Woodward interpolation</span>
+<span class="w">      </span><span class="c">! For uniform layers this gives (7/12)(q_k + q_{k+1}) - (1/12)(q_{k-1} + q_{k+2})</span>
+<span class="w">      </span><span class="c">! For non-uniform layers, use the simpler weighted average</span>
+<span class="w">      </span><span class="k">do </span><span class="n">k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">nz</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">         </span><span class="n">edge</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.5_wp</span><span class="o">*</span><span class="p">(</span><span class="n">q_old</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">q_old</span><span class="p">(</span><span class="n">k</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">))</span>
+<span class="w">         </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">k</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">nz</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="w">            </span><span class="c">! Add 4th-order correction when stencil is available</span>
+<span class="w">            </span><span class="n">dq_l</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">q_old</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">q_old</span><span class="p">(</span><span class="n">k</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="w">            </span><span class="n">dq_r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">q_old</span><span class="p">(</span><span class="n">k</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">q_old</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">k</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">nz</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">               </span><span class="n">edge</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="mf">7.0_wp</span><span class="o">/</span><span class="mi">1</span><span class="mf">2.0_wp</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">q_old</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">q_old</span><span class="p">(</span><span class="n">k</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">))</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                      </span><span class="o">-</span><span class="w"> </span><span class="p">(</span><span class="mf">1.0_wp</span><span class="o">/</span><span class="mi">1</span><span class="mf">2.0_wp</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">q_old</span><span class="p">(</span><span class="n">k</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">q_old</span><span class="p">(</span><span class="n">k</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">2</span><span class="p">))</span>
+<span class="w">            </span><span class="k">end if</span>
+<span class="k">         end if</span>
+<span class="k">         </span><span class="n">q_R</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">edge</span>
+<span class="w">         </span><span class="n">q_L</span><span class="p">(</span><span class="n">k</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">edge</span>
+<span class="w">      </span><span class="k">end do</span>
+
+<span class="w">      </span><span class="c">! Layer 2 left edge (if nz &gt;= 3, was set above; otherwise use average)</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">nz</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">3</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">         </span><span class="n">q_L</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">q_R</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">      </span><span class="k">end if</span>
+
+<span class="w">      </span><span class="c">! ---- Step 2: Colella-Woodward monotonicity limiting ----</span>
+<span class="w">      </span><span class="k">do </span><span class="n">k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">nz</span>
+<span class="w">         </span><span class="n">q_min</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">q_old</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+<span class="w">         </span><span class="n">q_max</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">q_old</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+<span class="w">         </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">k</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            </span><span class="n">q_min</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">min</span><span class="p">(</span><span class="n">q_min</span><span class="p">,</span><span class="w"> </span><span class="n">q_old</span><span class="p">(</span><span class="n">k</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">))</span>
+<span class="w">            </span><span class="n">q_max</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">max</span><span class="p">(</span><span class="n">q_max</span><span class="p">,</span><span class="w"> </span><span class="n">q_old</span><span class="p">(</span><span class="n">k</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">))</span>
+<span class="w">         </span><span class="k">end if</span>
+<span class="k">         if</span><span class="w"> </span><span class="p">(</span><span class="n">k</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">nz</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            </span><span class="n">q_min</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">min</span><span class="p">(</span><span class="n">q_min</span><span class="p">,</span><span class="w"> </span><span class="n">q_old</span><span class="p">(</span><span class="n">k</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">))</span>
+<span class="w">            </span><span class="n">q_max</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">max</span><span class="p">(</span><span class="n">q_max</span><span class="p">,</span><span class="w"> </span><span class="n">q_old</span><span class="p">(</span><span class="n">k</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">))</span>
+<span class="w">         </span><span class="k">end if</span>
+
+<span class="w">         </span><span class="c">! Clip edges to local bounds</span>
+<span class="w">         </span><span class="n">q_L</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">max</span><span class="p">(</span><span class="n">q_min</span><span class="p">,</span><span class="w"> </span><span class="nb">min</span><span class="p">(</span><span class="n">q_max</span><span class="p">,</span><span class="w"> </span><span class="n">q_L</span><span class="p">(</span><span class="n">k</span><span class="p">)))</span>
+<span class="w">         </span><span class="n">q_R</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">max</span><span class="p">(</span><span class="n">q_min</span><span class="p">,</span><span class="w"> </span><span class="nb">min</span><span class="p">(</span><span class="n">q_max</span><span class="p">,</span><span class="w"> </span><span class="n">q_R</span><span class="p">(</span><span class="n">k</span><span class="p">)))</span>
+
+<span class="w">         </span><span class="c">! CW monotonicity: if the cell is a local extremum, flatten</span>
+<span class="w">         </span><span class="n">dq</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">q_R</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">q_L</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+<span class="w">         </span><span class="n">dq_l</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">q_old</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">q_L</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+<span class="w">         </span><span class="n">dq_r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">q_R</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">q_old</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+<span class="w">         </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">dq_l</span><span class="o">*</span><span class="n">dq_r</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mf">0.0_wp</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="w">            </span><span class="c">! Local extremum: flatten to PCM</span>
+<span class="w">            </span><span class="n">q_L</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">q_old</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+<span class="w">            </span><span class="n">q_R</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">q_old</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+<span class="w">         </span><span class="k">else</span>
+<span class="w">            </span><span class="c">! Check if parabola overshoots</span>
+<span class="w">            </span><span class="c">! q6 = 6*q_bar - 3*(q_L + q_R)</span>
+<span class="w">            </span><span class="c">! The parabola has an extremum inside [0,1] if q6*(q_R - q_L) &lt; 0</span>
+<span class="w">            </span><span class="c">! and the extremum value exceeds the local bounds.</span>
+<span class="w">            </span><span class="n">q6</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">6.0_wp</span><span class="o">*</span><span class="n">q_old</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mf">3.0_wp</span><span class="o">*</span><span class="p">(</span><span class="n">q_L</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">q_R</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">q6</span><span class="p">(</span><span class="n">k</span><span class="p">))</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="nb">abs</span><span class="p">(</span><span class="n">dq</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+<span class="k">               if</span><span class="w"> </span><span class="p">(</span><span class="n">q6</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">*</span><span class="n">dq</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mf">0.0_wp</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="w">                  </span><span class="c">! Overshoot near left edge: adjust q_L</span>
+<span class="w">                  </span><span class="n">q_L</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">3.0_wp</span><span class="o">*</span><span class="n">q_old</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mf">2.0_wp</span><span class="o">*</span><span class="n">q_R</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+<span class="w">               </span><span class="k">else</span>
+<span class="w">                  </span><span class="c">! Overshoot near right edge: adjust q_R</span>
+<span class="w">                  </span><span class="n">q_R</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">3.0_wp</span><span class="o">*</span><span class="n">q_old</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mf">2.0_wp</span><span class="o">*</span><span class="n">q_L</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+<span class="w">               </span><span class="k">end if</span>
+<span class="k">            end if</span>
+<span class="k">         end if</span>
+
+<span class="w">         </span><span class="c">! Recompute q6 after limiting</span>
+<span class="w">         </span><span class="n">q6</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">6.0_wp</span><span class="o">*</span><span class="n">q_old</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mf">3.0_wp</span><span class="o">*</span><span class="p">(</span><span class="n">q_L</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">q_R</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
+<span class="w">      </span><span class="k">end do</span>
+
+<span class="w">      </span><span class="c">! ---- Step 3: Integrate parabolic reconstruction over new layers ----</span>
+<span class="w">      </span><span class="n">ko_start</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">      </span><span class="k">do </span><span class="n">k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">nz</span>
+<span class="w">         </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">dz_new</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mf">0.0_wp</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            </span><span class="n">q_new</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">            </span><span class="k">cycle</span>
+<span class="k">         end if</span>
+
+<span class="k">         </span><span class="n">integral</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">         </span><span class="k">do </span><span class="n">ko</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ko_start</span><span class="p">,</span><span class="w"> </span><span class="n">nz</span>
+<span class="w">            </span><span class="n">z_lo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">max</span><span class="p">(</span><span class="n">z_new</span><span class="p">(</span><span class="n">k</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">),</span><span class="w"> </span><span class="n">z_old</span><span class="p">(</span><span class="n">ko</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">))</span>
+<span class="w">            </span><span class="n">z_hi</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">min</span><span class="p">(</span><span class="n">z_new</span><span class="p">(</span><span class="n">k</span><span class="p">),</span><span class="w"> </span><span class="n">z_old</span><span class="p">(</span><span class="n">ko</span><span class="p">))</span>
+<span class="w">            </span><span class="n">overlap</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">z_hi</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">z_lo</span>
+
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">overlap</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mf">0.0_wp</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">               if</span><span class="w"> </span><span class="p">(</span><span class="n">z_old</span><span class="p">(</span><span class="n">ko</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">z_new</span><span class="p">(</span><span class="n">k</span><span class="p">))</span><span class="w"> </span><span class="k">exit</span>
+<span class="k">               cycle</span>
+<span class="k">            end if</span>
+
+<span class="k">            if</span><span class="w"> </span><span class="p">(</span><span class="n">dz_old</span><span class="p">(</span><span class="n">ko</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mf">0.0_wp</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">               </span><span class="n">xi_lo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">z_lo</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">z_old</span><span class="p">(</span><span class="n">ko</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">))</span><span class="o">/</span><span class="n">dz_old</span><span class="p">(</span><span class="n">ko</span><span class="p">)</span>
+<span class="w">               </span><span class="n">xi_hi</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">z_hi</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">z_old</span><span class="p">(</span><span class="n">ko</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">))</span><span class="o">/</span><span class="n">dz_old</span><span class="p">(</span><span class="n">ko</span><span class="p">)</span>
+
+<span class="w">               </span><span class="c">! Parabolic integral</span>
+<span class="w">               </span><span class="n">integral</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">integral</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">dz_old</span><span class="p">(</span><span class="n">ko</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                          </span><span class="p">(</span><span class="n">xi_hi</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">xi_lo</span><span class="p">)</span><span class="o">*</span><span class="n">q_L</span><span class="p">(</span><span class="n">ko</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                          </span><span class="o">+</span><span class="w"> </span><span class="mf">0.5_wp</span><span class="o">*</span><span class="p">(</span><span class="n">xi_hi</span><span class="o">*</span><span class="n">xi_hi</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">xi_lo</span><span class="o">*</span><span class="n">xi_lo</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">q_R</span><span class="p">(</span><span class="n">ko</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">q_L</span><span class="p">(</span><span class="n">ko</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">q6</span><span class="p">(</span><span class="n">ko</span><span class="p">))</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                          </span><span class="o">-</span><span class="w"> </span><span class="p">(</span><span class="n">xi_hi</span><span class="o">*</span><span class="n">xi_hi</span><span class="o">*</span><span class="n">xi_hi</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">xi_lo</span><span class="o">*</span><span class="n">xi_lo</span><span class="o">*</span><span class="n">xi_lo</span><span class="p">)</span><span class="o">*</span><span class="n">q6</span><span class="p">(</span><span class="n">ko</span><span class="p">)</span><span class="o">/</span><span class="mf">3.0_wp</span><span class="p">)</span>
+<span class="w">            </span><span class="k">else</span>
+<span class="k">               </span><span class="n">integral</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">integral</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">q_old</span><span class="p">(</span><span class="n">ko</span><span class="p">)</span><span class="o">*</span><span class="n">overlap</span>
+<span class="w">            </span><span class="k">end if</span>
+
+<span class="k">            if</span><span class="w"> </span><span class="p">(</span><span class="n">z_old</span><span class="p">(</span><span class="n">ko</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">z_new</span><span class="p">(</span><span class="n">k</span><span class="p">))</span><span class="w"> </span><span class="n">ko_start</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ko</span>
+<span class="w">         </span><span class="k">end do</span>
+
+<span class="k">         </span><span class="n">q_new</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">integral</span><span class="o">/</span><span class="n">dz_new</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+<span class="w">      </span><span class="k">end do</span>
+<span class="k">   end subroutine </span><span class="n">remap_column_ppm</span>
+</pre></div>
+
+    </section>
+    <br>
+    
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Rakali
+ was developed by Jorge Luis Galvez Vallejo<br>              &copy; 2026 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+ on 2026-10-08 12:55 +0000             </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,1757 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="GPU-native coastal solver — structured Cartesian and unstructured triangular grids, hydrostatic multilayer + non-hydrostatic, portable across NVHPC/gfortran/ifx.">
+    <meta name="author" content="Jorge Luis Galvez Vallejo" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>rki_si_unstr_wetdry &ndash; Rakali</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">Rakali </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/absint.html">Abstract Interfaces</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>rki_si_unstr_wetdry
+      <small>Module</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.7% of total for modules and submodules.">188 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/rki_si_unstr_wetdry.F90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/rki_si_unstr_wetdry.f90.html'>rki_si_unstr_wetdry.F90</a></li>
+            <li class="breadcrumb-item active" aria-current="page">rki_si_unstr_wetdry</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+
+  <div class="row">
+    <div class="col-md-3">
+        <div id="sidebar">
+      <h3>Contents</h3>
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#vars-0"
+         aria-expanded="false" aria-controls="vars-0">
+         <h4 class="card-header bg-primary text-white">Variables</h4>
+      </a>
+      <div id="vars-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../module/rki_si_unstr_wetdry.html#variable-edges_per_tri~3">EDGES_PER_TRI</a>
+            <a class="list-group-item" href="../module/rki_si_unstr_wetdry.html#variable-wetdry_floor_tol">WETDRY_FLOOR_TOL</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#funcs-0"
+         aria-expanded="false" aria-controls="funcs-0">
+         <h4 class="card-header bg-primary text-white">Functions</h4>
+      </a>
+      <div id="funcs-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../module/rki_si_unstr_wetdry.html#proc-edge_depth_wetdry">edge_depth_wetdry</a>
+        </div>
+      </div>
+    </div>
+
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#subs-0"
+         aria-expanded="false" aria-controls="subs-0">
+         <h4 class="card-header bg-primary text-white">Subroutines</h4>
+      </a>
+      <div id="subs-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../module/rki_si_unstr_wetdry.html#proc-si_unstr_wetdry_face_depths">si_unstr_wetdry_face_depths</a>
+            <a class="list-group-item" href="../module/rki_si_unstr_wetdry.html#proc-si_unstr_wetdry_fill_bsub">si_unstr_wetdry_fill_bsub</a>
+            <a class="list-group-item" href="../module/rki_si_unstr_wetdry.html#proc-si_unstr_wetdry_mass_diag">si_unstr_wetdry_mass_diag</a>
+            <a class="list-group-item" href="../module/rki_si_unstr_wetdry.html#proc-si_unstr_wetdry_newton_residual">si_unstr_wetdry_newton_residual</a>
+            <a class="list-group-item" href="../module/rki_si_unstr_wetdry.html#proc-si_unstr_wetdry_volume">si_unstr_wetdry_volume</a>
+            <a class="list-group-item" href="../module/rki_si_unstr_wetdry.html#proc-si_unstr_wetdry_wetcount">si_unstr_wetdry_wetcount</a>
+            <a class="list-group-item" href="../module/rki_si_unstr_wetdry.html#proc-si_unstr_wetdry_wetfrac">si_unstr_wetdry_wetfrac</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+
+
+  </div>
+
+    </div>
+
+    <div class="col-md-9" id='text'>
+      <p>Casulli (2009) subgrid wetting/drying for the unstructured
+semi-implicit free-surface mode — ported per-cell (<code>(n_sub, ncells)</code> sub-bottom
+layout) exactly as the prototype confirmed mesh-agnostic
+(<code>si_unstr_proto.py</code> study 2: V/a/Newton + the edge sill rule ran
+UNCHANGED on triangles).  Replaces the linear solver&rsquo;s constant
+<code>1.0</code> cell-mass term by the exact wetted-volume function per unit
+cell area (depth units):</p>
+<p>v_c(eta) = (1/n_sub) sum_s max(eta - b_c^(s), 0)   (mean wet depth)
+  a_c(eta) = v&rsquo;_c(eta) in [0,1]                      (wet fraction)</p>
+<p>driving a PLAIN Newton outer loop (V convex =&gt; monotone finite
+convergence) around the SAME area-weighted TPFA CG, with the
+operator&rsquo;s mass term replaced per cell by <code>a(eta) + floor</code> (the
+<code>mass_diag</code> argument already threaded through
+<code>si_unstr_apply_helmholtz</code> / <code>si_unstr_cg_solve</code>).</p>
+<p>FROZEN edge rule (Casulli, rule R1) — the GATED-MEAN conveyance:
+  Hf_e = 0.5<em>(max(eta_L-b_L,0) + max(eta_R-b_R,0))
+         gated to 0 unless  max(eta_L,eta_R) &gt; max(b_L,b_R)
+built ONCE from eta^n and held over the step, shared by the
+operator, back-substitution and RHS (R2).  Where both cells are wet
+this reduces EXACTLY to the linear edge depth 0.5</em>(h_L+h_R) — the
+all-wet self-consistency invariant.  Dead edges (higher surface
+below the sill) become walls; their U^n edge transports are zeroed
+at step start (R3 — structural on this backend: the RHS consumes
+per-edge transports directly, so zeroing u_star/u_n_edge on Hf=0
+edges closes the dead-edge flux exactly; no cell-momentum
+reconstruction masking is needed, unlike the structured path).
+Dry-cell eta is NOT clamped at the bed — Newton lets it settle
+below (V = 0 regardless).</p>
+<p>References: Casulli (2009) IJNMF 60:391-408; Casulli &amp; Zanolli
+(2010) SISC 32(4):2255-2273.</p>
+<p>All kernels explicit-shape <code>(n_sub|3, ncells)</code>, device-resident,
+cell-index-last per the unstructured convention.</p>
+<br>          <div class="card mb-4">
+      <h3 class="card-header card-title bg-light">Uses</h3>
+      <div class="card-body">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <ul class="list-inline">
+                  <li class="list-inline-item"><a href='rki_mesh_unstr.html'>rki_mesh_unstr</a></li>
+                  <li class="list-inline-item"><a href='rki_constants.html'>rki_constants</a></li>
+              </ul>
+            </li>
+            <li class="list-group-item">
+              <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: module~~rki_si_unstr_wetdry~~UsesGraph Pages: 1 -->
+<svg id="modulerki_si_unstr_wetdryUsesGraph" width="466pt" height="133pt"
+ viewBox="0.00 0.00 466.00 133.39" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="module~~rki_si_unstr_wetdry~~UsesGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 129.39)">
+<title>module~~rki_si_unstr_wetdry~~UsesGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-129.39 462,-129.39 462,4 -4,4"/>
+<!-- module~rki_si_unstr_wetdry -->
+<g id="module~~rki_si_unstr_wetdry~~UsesGraph_node1" class="node">
+<title>module~rki_si_unstr_wetdry</title>
+<polygon fill="none" stroke="black" points="458,-103.39 345,-103.39 345,-79.39 458,-79.39 458,-103.39"/>
+<text text-anchor="middle" x="401.5" y="-88.99" font-family="Helvetica,sans-Serif" font-size="10.50">rki_si_unstr_wetdry</text>
+</g>
+<!-- module~rki_constants -->
+<g id="module~~rki_si_unstr_wetdry~~UsesGraph_node2" class="node">
+<title>module~rki_constants</title>
+<g id="a_module~~rki_si_unstr_wetdry~~UsesGraph_node2"><a xlink:href="../module/rki_constants.html" xlink:title="rki_constants">
+<polygon fill="#337ab7" stroke="#337ab7" points="180,-125.39 98,-125.39 98,-101.39 180,-101.39 180,-125.39"/>
+<text text-anchor="middle" x="139" y="-110.99" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_constants</text>
+</a>
+</g>
+</g>
+<!-- module~rki_si_unstr_wetdry&#45;&gt;module~rki_constants -->
+<g id="module~~rki_si_unstr_wetdry~~UsesGraph_edge1" class="edge">
+<title>module~rki_si_unstr_wetdry&#45;&gt;module~rki_constants</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M344.94,-96.09C299.05,-99.96 234.49,-105.42 190.16,-109.16"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="189.85,-105.67 180.18,-110 190.44,-112.65 189.85,-105.67"/>
+</g>
+<!-- module~rki_mesh_unstr -->
+<g id="module~~rki_si_unstr_wetdry~~UsesGraph_node3" class="node">
+<title>module~rki_mesh_unstr</title>
+<g id="a_module~~rki_si_unstr_wetdry~~UsesGraph_node3"><a xlink:href="../module/rki_mesh_unstr.html" xlink:title="rki_mesh_unstr">
+<polygon fill="#337ab7" stroke="#337ab7" points="309,-83.39 216,-83.39 216,-59.39 309,-59.39 309,-83.39"/>
+<text text-anchor="middle" x="262.5" y="-68.99" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_mesh_unstr</text>
+</a>
+</g>
+</g>
+<!-- module~rki_si_unstr_wetdry&#45;&gt;module~rki_mesh_unstr -->
+<g id="module~~rki_si_unstr_wetdry~~UsesGraph_edge2" class="edge">
+<title>module~rki_si_unstr_wetdry&#45;&gt;module~rki_mesh_unstr</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M344.78,-83.26C336.35,-82.03 327.66,-80.76 319.23,-79.53"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="319.52,-76.04 309.12,-78.05 318.51,-82.96 319.52,-76.04"/>
+</g>
+<!-- pic_types -->
+<g id="module~~rki_si_unstr_wetdry~~UsesGraph_node6" class="node">
+<title>pic_types</title>
+<polygon fill="#337ab7" stroke="#337ab7" points="62,-63.39 0,-63.39 0,-39.39 62,-39.39 62,-63.39"/>
+<text text-anchor="middle" x="31" y="-48.99" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">pic_types</text>
+</g>
+<!-- module~rki_constants&#45;&gt;pic_types -->
+<g id="module~~rki_si_unstr_wetdry~~UsesGraph_edge3" class="edge">
+<title>module~rki_constants&#45;&gt;pic_types</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M114.16,-101.24C108.8,-98.41 103.17,-95.35 98,-92.39 85.03,-84.98 70.93,-76.3 59.1,-68.85"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="60.88,-65.83 50.56,-63.42 57.13,-71.74 60.88,-65.83"/>
+</g>
+<!-- module~rki_mesh_unstr&#45;&gt;module~rki_constants -->
+<g id="module~~rki_si_unstr_wetdry~~UsesGraph_edge4" class="edge">
+<title>module~rki_mesh_unstr&#45;&gt;module~rki_constants</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M226.68,-83.43C213.59,-87.96 198.52,-93.16 184.66,-97.96"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="183.13,-94.78 174.82,-101.36 185.42,-101.4 183.13,-94.78"/>
+</g>
+<!-- pic_io -->
+<g id="module~~rki_si_unstr_wetdry~~UsesGraph_node4" class="node">
+<title>pic_io</title>
+<polygon fill="#337ab7" stroke="#337ab7" points="166,-83.39 112,-83.39 112,-59.39 166,-59.39 166,-83.39"/>
+<text text-anchor="middle" x="139" y="-68.99" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">pic_io</text>
+</g>
+<!-- module~rki_mesh_unstr&#45;&gt;pic_io -->
+<g id="module~~rki_si_unstr_wetdry~~UsesGraph_edge5" class="edge">
+<title>module~rki_mesh_unstr&#45;&gt;pic_io</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M215.91,-71.39C202.76,-71.39 188.6,-71.39 176.11,-71.39"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="176.07,-67.89 166.07,-71.39 176.07,-74.89 176.07,-67.89"/>
+</g>
+<!-- pic_logger -->
+<g id="module~~rki_si_unstr_wetdry~~UsesGraph_node5" class="node">
+<title>pic_logger</title>
+<polygon fill="#337ab7" stroke="#337ab7" points="173,-41.39 105,-41.39 105,-17.39 173,-17.39 173,-41.39"/>
+<text text-anchor="middle" x="139" y="-26.99" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">pic_logger</text>
+</g>
+<!-- module~rki_mesh_unstr&#45;&gt;pic_logger -->
+<g id="module~~rki_si_unstr_wetdry~~UsesGraph_edge6" class="edge">
+<title>module~rki_mesh_unstr&#45;&gt;pic_logger</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M226.68,-59.36C213.01,-54.63 197.18,-49.16 182.81,-44.19"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="183.74,-40.81 173.15,-40.85 181.46,-47.43 183.74,-40.81"/>
+</g>
+<!-- module~rki_mesh_unstr&#45;&gt;pic_types -->
+<g id="module~~rki_si_unstr_wetdry~~UsesGraph_edge7" class="edge">
+<title>module~rki_mesh_unstr&#45;&gt;pic_types</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M250.84,-59.24C236.52,-43.94 209.45,-18.45 180,-8.39 145.51,3.38 132.94,1.98 98,-8.39 81.75,-13.22 65.77,-23.45 53.6,-32.72"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="51.1,-30.24 45.47,-39.21 55.47,-35.71 51.1,-30.24"/>
+</g>
+</g>
+</svg>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#UsesGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="UsesGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="518pt" height="32pt"
+ viewBox="0.00 0.00 517.50 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 513.5,-28 513.5,4 -4,4"/>
+<!-- Module -->
+<g id="node1" class="node">
+<title>Module</title>
+<polygon fill="#337ab7" stroke="#337ab7" points="54,-24 0,-24 0,0 54,0 54,-24"/>
+<text text-anchor="middle" x="27" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Module</text>
+</g>
+<!-- Submodule -->
+<g id="node2" class="node">
+<title>Submodule</title>
+<polygon fill="#5bc0de" stroke="#5bc0de" points="145.5,-24 72.5,-24 72.5,0 145.5,0 145.5,-24"/>
+<text text-anchor="middle" x="109" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Submodule</text>
+</g>
+<!-- Subroutine -->
+<g id="node3" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="234,-24 164,-24 164,0 234,0 234,-24"/>
+<text text-anchor="middle" x="199" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node4" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="310,-24 252,-24 252,0 310,0 310,-24"/>
+<text text-anchor="middle" x="281" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Program -->
+<g id="node5" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="386,-24 328,-24 328,0 386,0 386,-24"/>
+<text text-anchor="middle" x="357" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node6" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="509.5,-24 404.5,-24 404.5,0 509.5,0 509.5,-24"/>
+<text text-anchor="middle" x="457" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a submodule to the (sub)module which it is
+descended from. Dashed arrows point from a module or program unit to 
+modules which it uses.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+            </li>
+        </ul>
+      </div>
+    </div>
+
+          <div class="card">
+      <h3 class="card-header card-title bg-light">Used by</h3>
+      <div class="card-body">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: module~~rki_si_unstr_wetdry~~UsedByGraph Pages: 1 -->
+<svg id="modulerki_si_unstr_wetdryUsedByGraph" width="641pt" height="72pt"
+ viewBox="0.00 0.00 641.00 71.98" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="module~~rki_si_unstr_wetdry~~UsedByGraph" class="graph" transform="scale(0.97 0.97) rotate(0) translate(4 70)">
+<title>module~~rki_si_unstr_wetdry~~UsedByGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-70 655,-70 655,4 -4,4"/>
+<!-- module~rki_si_unstr_wetdry -->
+<g id="module~~rki_si_unstr_wetdry~~UsedByGraph_node1" class="node">
+<title>module~rki_si_unstr_wetdry</title>
+<polygon fill="none" stroke="black" points="113,-45 0,-45 0,-21 113,-21 113,-45"/>
+<text text-anchor="middle" x="56.5" y="-30.6" font-family="Helvetica,sans-Serif" font-size="10.50">rki_si_unstr_wetdry</text>
+</g>
+<!-- module~rki_si_unstr_step -->
+<g id="module~~rki_si_unstr_wetdry~~UsedByGraph_node2" class="node">
+<title>module~rki_si_unstr_step</title>
+<g id="a_module~~rki_si_unstr_wetdry~~UsedByGraph_node2"><a xlink:href="../module/rki_si_unstr_step.html" xlink:title="rki_si_unstr_step">
+<polygon fill="#337ab7" stroke="#337ab7" points="249,-65 149,-65 149,-41 249,-41 249,-65"/>
+<text text-anchor="middle" x="199" y="-50.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_si_unstr_step</text>
+</a>
+</g>
+</g>
+<!-- module~rki_si_unstr_step&#45;&gt;module~rki_si_unstr_wetdry -->
+<g id="module~~rki_si_unstr_wetdry~~UsedByGraph_edge1" class="edge">
+<title>module~rki_si_unstr_step&#45;&gt;module~rki_si_unstr_wetdry</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M148.86,-46C140.56,-44.82 131.82,-43.58 123.17,-42.35"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="123.49,-38.86 113.1,-40.91 122.51,-45.79 123.49,-38.86"/>
+</g>
+<!-- module~rki_si_unstr_step_ml -->
+<g id="module~~rki_si_unstr_wetdry~~UsedByGraph_node3" class="node">
+<title>module~rki_si_unstr_step_ml</title>
+<g id="a_module~~rki_si_unstr_wetdry~~UsedByGraph_node3"><a xlink:href="../module/rki_si_unstr_step_ml.html" xlink:title="rki_si_unstr_step_ml">
+<polygon fill="#337ab7" stroke="#337ab7" points="403,-25 285,-25 285,-1 403,-1 403,-25"/>
+<text text-anchor="middle" x="344" y="-10.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_si_unstr_step_ml</text>
+</a>
+</g>
+</g>
+<!-- module~rki_si_unstr_step_ml&#45;&gt;module~rki_si_unstr_wetdry -->
+<g id="module~~rki_si_unstr_wetdry~~UsedByGraph_edge2" class="edge">
+<title>module~rki_si_unstr_step_ml&#45;&gt;module~rki_si_unstr_wetdry</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M284.88,-17.07C238,-20.36 172.06,-24.97 123.25,-28.39"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="122.84,-24.91 113.11,-29.1 123.33,-31.9 122.84,-24.91"/>
+</g>
+<!-- module~rki_si_unstr_step_ml&#45;&gt;module~rki_si_unstr_step -->
+<g id="module~~rki_si_unstr_wetdry~~UsedByGraph_edge3" class="edge">
+<title>module~rki_si_unstr_step_ml&#45;&gt;module~rki_si_unstr_step</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M300.1,-25C285.38,-29.12 268.74,-33.77 253.3,-38.09"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="252.06,-34.8 243.37,-40.87 253.94,-41.55 252.06,-34.8"/>
+</g>
+<!-- module~rki_solver_unstr -->
+<g id="module~~rki_si_unstr_wetdry~~UsedByGraph_node4" class="node">
+<title>module~rki_solver_unstr</title>
+<g id="a_module~~rki_si_unstr_wetdry~~UsedByGraph_node4"><a xlink:href="../module/rki_solver_unstr.html" xlink:title="rki_solver_unstr">
+<polygon fill="#337ab7" stroke="#337ab7" points="535,-45 439,-45 439,-21 535,-21 535,-45"/>
+<text text-anchor="middle" x="487" y="-30.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_solver_unstr</text>
+</a>
+</g>
+</g>
+<!-- module~rki_solver_unstr&#45;&gt;module~rki_si_unstr_step -->
+<g id="module~~rki_si_unstr_wetdry~~UsedByGraph_edge4" class="edge">
+<title>module~rki_solver_unstr&#45;&gt;module~rki_si_unstr_step</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M438.77,-36.3C389.59,-39.74 312.42,-45.14 259.2,-48.86"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="258.95,-45.37 249.22,-49.56 259.44,-52.35 258.95,-45.37"/>
+</g>
+<!-- module~rki_solver_unstr&#45;&gt;module~rki_si_unstr_step_ml -->
+<g id="module~~rki_si_unstr_wetdry~~UsedByGraph_edge5" class="edge">
+<title>module~rki_solver_unstr&#45;&gt;module~rki_si_unstr_step_ml</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M438.66,-26.28C430.49,-25.13 421.86,-23.9 413.27,-22.68"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="413.63,-19.2 403.24,-21.26 412.65,-26.13 413.63,-19.2"/>
+</g>
+<!-- module~rki_api_unstr -->
+<g id="module~~rki_si_unstr_wetdry~~UsedByGraph_node5" class="node">
+<title>module~rki_api_unstr</title>
+<g id="a_module~~rki_si_unstr_wetdry~~UsedByGraph_node5"><a xlink:href="../module/rki_api_unstr.html" xlink:title="rki_api_unstr">
+<polygon fill="#337ab7" stroke="#337ab7" points="651,-66 571,-66 571,-42 651,-42 651,-66"/>
+<text text-anchor="middle" x="611" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_api_unstr</text>
+</a>
+</g>
+</g>
+<!-- module~rki_api_unstr&#45;&gt;module~rki_solver_unstr -->
+<g id="module~~rki_si_unstr_wetdry~~UsedByGraph_edge6" class="edge">
+<title>module~rki_api_unstr&#45;&gt;module~rki_solver_unstr</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M570.73,-47.24C562.62,-45.84 553.92,-44.35 545.31,-42.87"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="545.75,-39.39 535.3,-41.14 544.56,-46.29 545.75,-39.39"/>
+</g>
+<!-- module~rki_driver -->
+<g id="module~~rki_si_unstr_wetdry~~UsedByGraph_node6" class="node">
+<title>module~rki_driver</title>
+<g id="a_module~~rki_si_unstr_wetdry~~UsedByGraph_node6"><a xlink:href="../module/rki_driver.html" xlink:title="rki_driver">
+<polygon fill="#337ab7" stroke="#337ab7" points="642.5,-24 579.5,-24 579.5,0 642.5,0 642.5,-24"/>
+<text text-anchor="middle" x="611" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_driver</text>
+</a>
+</g>
+</g>
+<!-- module~rki_driver&#45;&gt;module~rki_solver_unstr -->
+<g id="module~~rki_si_unstr_wetdry~~UsedByGraph_edge7" class="edge">
+<title>module~rki_driver&#45;&gt;module~rki_solver_unstr</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M579.21,-17.3C568.95,-19.07 557.16,-21.1 545.54,-23.1"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="544.67,-19.69 535.41,-24.84 545.86,-26.59 544.67,-19.69"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var panmodulerki_si_unstr_wetdryUsedByGraph = svgPanZoom('#modulerki_si_unstr_wetdryUsedByGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#UsedByGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="UsedByGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="518pt" height="32pt"
+ viewBox="0.00 0.00 517.50 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 513.5,-28 513.5,4 -4,4"/>
+<!-- Module -->
+<g id="node1" class="node">
+<title>Module</title>
+<polygon fill="#337ab7" stroke="#337ab7" points="54,-24 0,-24 0,0 54,0 54,-24"/>
+<text text-anchor="middle" x="27" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Module</text>
+</g>
+<!-- Submodule -->
+<g id="node2" class="node">
+<title>Submodule</title>
+<polygon fill="#5bc0de" stroke="#5bc0de" points="145.5,-24 72.5,-24 72.5,0 145.5,0 145.5,-24"/>
+<text text-anchor="middle" x="109" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Submodule</text>
+</g>
+<!-- Subroutine -->
+<g id="node3" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="234,-24 164,-24 164,0 234,0 234,-24"/>
+<text text-anchor="middle" x="199" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node4" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="310,-24 252,-24 252,0 310,0 310,-24"/>
+<text text-anchor="middle" x="281" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Program -->
+<g id="node5" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="386,-24 328,-24 328,0 386,0 386,-24"/>
+<text text-anchor="middle" x="357" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node6" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="509.5,-24 404.5,-24 404.5,0 509.5,0 509.5,-24"/>
+<text text-anchor="middle" x="457" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a submodule to the (sub)module which it is
+descended from. Dashed arrows point from a module or program unit to 
+modules which it uses.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+            </li>
+        </ul>
+      </div>
+    </div>
+
+      <br>
+
+
+        <section>
+          <h2>Variables</h2>
+            <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Visibility</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+<th></th><th scope="col">Initial</th>        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-edges_per_tri~3"></span>
+              integer,
+            </td>
+              <td>private,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>EDGES_PER_TRI</strong></td>
+<td> =</td>
+                <td>3</td>
+            <td>
+                <p>Triangles only.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-wetdry_floor_tol"></span>
+              real(kind=wp),
+            </td>
+              <td>private,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>WETDRY_FLOOR_TOL</strong></td>
+<td> =</td>
+                <td>1.0e-14_wp</td>
+            <td>
+                <p>Threshold below which a cell&rsquo;s wet fraction AND its three edge
+stiffness coefficients count as zero =&gt; a fully-decoupled dry row
+that receives the +1 identity floor (Casulli rule R5): keeps the
+Newton Jacobian SPD with O(1) conditioning where a would be 0.</p>
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+        </section>
+        <br>
+
+
+
+
+
+        <section>
+          <h2>Functions</h2>
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-edge_depth_wetdry"></span> <h3>private pure function <a href='../proc/edge_depth_wetdry.html'>edge_depth_wetdry</a>(eta_l, eta_r, b_l, b_r) result(hf)  
+</h3></div>
+    <div class="card-body">
+          
+  <p>Frozen wet/dry edge conveyance: the arithmetic-mean water depth of
+the two adjacent cells, gated to 0 by the max-eta/sill wet test.
+<code>!$acc routine seq</code> so device do-concurrent bodies can call it.</p>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-eta_l"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>eta_l</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-eta_r"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>eta_r</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-b_l"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>b_l</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-b_r"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>b_r</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <h4>
+    Return Value
+    <small>real(kind=wp)</small>
+    </h4>
+    
+
+    </div>
+  </div>
+
+        </section>
+        <br>
+
+        <section>
+          <h2>Subroutines</h2>
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-si_unstr_wetdry_face_depths"></span> <h3>public pure subroutine <a href='../proc/si_unstr_wetdry_face_depths.html'>si_unstr_wetdry_face_depths</a>(mesh, nct, nco, n_bc, eta, b_min, bc_type, bc_eta_ext, Hf_edge, eta_ghost_edge)  
+</h3></div>
+    <div class="card-body">
+          
+  <p>FROZEN wet/dry edge depths — the GATED-MEAN conveyance rule per
+edge (Casulli rule R1, prototype-verified mesh-agnostic):
+  wet  &lt;=&gt;  max(eta_L, eta_R) &gt; max(b_L, b_R)     (max-eta/sill)
+  Hf   = 0.5<em>(max(eta_L-b_L,0) + max(eta_R-b_R,0))  where wet
+Where BOTH cells are wet this is EXACTLY the linear edge depth
+0.5</em>(h_L+h_R) — an all-wet basin reproduces the linear operator&rsquo;s
+Hf bit-for-bit (NOT a raw max-eta or bare sill depth, which would
+change the all-wet answer — the load-bearing structured lesson).
+Dead edges (higher surface below the higher bed — a wet cell
+cannot &ldquo;see&rdquo; through a dry one over the sill) are walls (Hf=0).</p><a href="../proc/si_unstr_wetdry_face_depths.html" class="pull-right"><emph>Read more&hellip;</emph></a>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mesh~16"></span>
+              type(<a href='../type/mesh_unstr_t.html'>mesh_unstr_t</a>),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>mesh</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nct~8"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nct</strong></td>
+            <td>
+<p>Cell array extent (ncells_total).</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nco~12"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nco</strong></td>
+            <td>
+<p>Owned-cell loop bound.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-n_bc"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>n_bc</strong></td>
+            <td>
+<p>BC group table size.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-eta~5"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>eta</strong>(nct)</td>
+            <td>
+<p>eta^n at circumcentres (the FROZEN surface).</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-b_min~2"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>b_min</strong>(nct)</td>
+            <td>
+<p>Sill bed elevation (deepest sub-bottom) at cells (m).</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-bc_type~2"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>bc_type</strong>(n_bc)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-bc_eta_ext"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>bc_eta_ext</strong>(n_bc)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-hf_edge~4"></span>
+              real(kind=wp),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Hf_edge</strong>(EDGES_PER_TRI,nct)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-eta_ghost_edge"></span>
+              real(kind=wp),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>eta_ghost_edge</strong>(EDGES_PER_TRI,nct)</td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+    </div>
+  </div>
+
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-si_unstr_wetdry_fill_bsub"></span> <h3>public pure subroutine <a href='../proc/si_unstr_wetdry_fill_bsub.html'>si_unstr_wetdry_fill_bsub</a>(mesh, nsub, nct, nco, bed, bsub_fill, b_sub, b_min)  
+</h3></div>
+    <div class="card-body">
+          
+  <p>Fill the per-cell sub-bottom table from the plain bed.  v1
+(n_sub=1): b_sub(1,:) = bed, b_min = bed — always, regardless of
+mode.  Subgrid (n_sub&gt;=2):
+  FLAT (default): all sub-bottoms = bed =&gt; BIT-IDENTICAL to n_sub=1.
+  LINEAR: <code>nsub</code> equal-area sub-bottoms evenly spaced across the
+    per-cell relief band <code>[bed-half, bed+half]</code>, <code>half = 0.5*max</code>
+    edge-neighbour |Δbed| (a linear sub-cell bed ramp; Casulli 2009
+    subgrid bathymetry, prototype <code>subgrid_bathy_from_bed</code>).
+    Sub-bottoms ascending; mean == bed (still-water volume
+    unchanged); wet fraction staircases 1/nsub per breakpoint so a
+    coarse tidal flat drains/floods SMOOTHLY.  Boundary edges (no
+    neighbour) contribute 0 to the relief so a shore cell falls back
+    toward FLAT.  On flat bed (half=0) =&gt; == FLAT.  b_min = the
+    deepest (first, sill) sub-bottom.</p>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mesh~15"></span>
+              type(<a href='../type/mesh_unstr_t.html'>mesh_unstr_t</a>),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>mesh</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nsub"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nsub</strong></td>
+            <td>
+<p>Sub-bottoms per cell (&gt;= 1).</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nct~4"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nct</strong></td>
+            <td>
+<p>Cell array extent (ncells_total).</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nco~8"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nco</strong></td>
+            <td>
+<p>Owned-cell loop bound.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-bed~4"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>bed</strong>(nct)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-bsub_fill"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>bsub_fill</strong></td>
+            <td>
+<p><code>SI_BSUB_FILL_*</code>.  FLAT =&gt; flat fill; LINEAR =&gt; the ramp.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-b_sub"></span>
+              real(kind=wp),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>b_sub</strong>(nsub,nct)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-b_min"></span>
+              real(kind=wp),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>b_min</strong>(nct)</td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+    </div>
+  </div>
+
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-si_unstr_wetdry_mass_diag"></span> <h3>public pure subroutine <a href='../proc/si_unstr_wetdry_mass_diag.html'>si_unstr_wetdry_mass_diag</a>(nct, nco, a_cell, Hf_edge, mass_diag)  
+</h3></div>
+    <div class="card-body">
+          
+  <p>Assemble the Newton mass diagonal M = a + floor (Casulli R5): the
+wet fraction a plus a +1 identity for a fully-decoupled dry row
+(a &lt;= tol AND all three edge stiffness coefficients Hf &lt;= tol).
+The <code>+1</code> matches the linear operator&rsquo;s constant mass exactly at
+wet cells where a == 1 and no floor fires.</p>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nct~7"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nct</strong></td>
+            <td>
+<p>Cell array extent (ncells_total).</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nco~11"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nco</strong></td>
+            <td>
+<p>Owned-cell loop bound.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-a_cell~2"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>a_cell</strong>(nct)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-hf_edge~3"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Hf_edge</strong>(EDGES_PER_TRI,nct)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mass_diag"></span>
+              real(kind=wp),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>mass_diag</strong>(nct)</td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+    </div>
+  </div>
+
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-si_unstr_wetdry_newton_residual"></span> <h3>public  subroutine <a href='../proc/si_unstr_wetdry_newton_residual.html'>si_unstr_wetdry_newton_residual</a>(nct, nco, eta, Jeta, mass_diag, v_cell, rhs, res, res2_out)  
+</h3></div>
+    <div class="card-body">
+          
+  <p>Form the Newton nonlinear residual and its squared interior norm:
+  F_c = v_c(eta) + [T eta]_c - rhs_c,
+with the stiffness recovered matmul-free from the full mass-diag
+operator apply:  T<em>eta = Jeta - mass_diag</em>eta.  Returns sum(F^2)
+over the owned cells (the Newton convergence norm — plain, not
+area-weighted, matching the prototype/structured gate; it is a
+convergence heuristic, not the CG inner product).</p>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nct~9"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nct</strong></td>
+            <td>
+<p>Cell array extent (ncells_total).</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nco~13"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nco</strong></td>
+            <td>
+<p>Owned-cell loop bound.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-eta~6"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>eta</strong>(nct)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-jeta"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Jeta</strong>(nct)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mass_diag~2"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>mass_diag</strong>(nct)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-v_cell~2"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>v_cell</strong>(nct)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-rhs"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>rhs</strong>(nct)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-res~2"></span>
+              real(kind=wp),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>res</strong>(nct)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-res2_out"></span>
+              real(kind=wp),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>res2_out</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+    </div>
+  </div>
+
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-si_unstr_wetdry_volume"></span> <h3>public pure subroutine <a href='../proc/si_unstr_wetdry_volume.html'>si_unstr_wetdry_volume</a>(nsub, nct, nco, eta, b_sub, v_cell)  
+</h3></div>
+    <div class="card-body">
+          
+  <p>Per-cell wetted mean depth v_c(eta) = (1/n_sub) sum_s max(eta-b^s,0)
+(m; per unit cell area).  n_sub=1: v = max(eta-b,0) = the
+still-water total depth.</p>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nsub~2"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nsub</strong></td>
+            <td>
+<p>Sub-bottoms per cell.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nct~5"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nct</strong></td>
+            <td>
+<p>Cell array extent (ncells_total).</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nco~9"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nco</strong></td>
+            <td>
+<p>Owned-cell loop bound.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-eta~3"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>eta</strong>(nct)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-b_sub~2"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>b_sub</strong>(nsub,nct)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-v_cell"></span>
+              real(kind=wp),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>v_cell</strong>(nct)</td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+    </div>
+  </div>
+
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-si_unstr_wetdry_wetcount"></span> <h3>public  subroutine <a href='../proc/si_unstr_wetdry_wetcount.html'>si_unstr_wetdry_wetcount</a>(nsub, nct, nco, eta, b_sub, count_out)  
+</h3></div>
+    <div class="card-body">
+          
+  <p>Total owned wet-sub-bottom count — the active-set fingerprint the
+Newton loop watches (frozen set + small residual = converged).
+Integer so equality is exact.</p>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nsub~4"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nsub</strong></td>
+            <td>
+<p>Sub-bottoms per cell.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nct~10"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nct</strong></td>
+            <td>
+<p>Cell array extent (ncells_total).</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nco~14"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nco</strong></td>
+            <td>
+<p>Owned-cell loop bound.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-eta~7"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>eta</strong>(nct)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-b_sub~4"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>b_sub</strong>(nsub,nct)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-count_out"></span>
+              integer,
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>count_out</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+    </div>
+  </div>
+
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-si_unstr_wetdry_wetfrac"></span> <h3>public pure subroutine <a href='../proc/si_unstr_wetdry_wetfrac.html'>si_unstr_wetdry_wetfrac</a>(nsub, nct, nco, eta, b_sub, a_cell)  
+</h3></div>
+    <div class="card-body">
+          
+  <p>Per-cell wet fraction a_c(eta) = v&rsquo; in [0,1] — the Newton diagonal.
+RIGHT-continuous at breakpoints (<code>eta &gt;= b_sub</code> counts wet), the
+sub-derivative that keeps Newton-on-convex-V monotone.</p>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nsub~3"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nsub</strong></td>
+            <td>
+<p>Sub-bottoms per cell.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nct~6"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nct</strong></td>
+            <td>
+<p>Cell array extent (ncells_total).</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nco~10"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nco</strong></td>
+            <td>
+<p>Owned-cell loop bound.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-eta~4"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>eta</strong>(nct)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-b_sub~3"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>b_sub</strong>(nsub,nct)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-a_cell"></span>
+              real(kind=wp),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>a_cell</strong>(nct)</td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+    </div>
+  </div>
+
+        </section>
+        <br>
+
+
+
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Rakali
+ was developed by Jorge Luis Galvez Vallejo<br>              &copy; 2026 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+ on 2026-10-08 12:55 +0000             </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>

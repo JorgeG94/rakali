@@ -1,0 +1,1634 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="GPU-native coastal solver — structured Cartesian and unstructured triangular grids, hydrostatic multilayer + non-hydrostatic, portable across NVHPC/gfortran/ifx.">
+    <meta name="author" content="Jorge Luis Galvez Vallejo" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>solver_multilayer_rk_stage_nz1 &ndash; Rakali</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">Rakali </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/absint.html">Abstract Interfaces</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>solver_multilayer_rk_stage_nz1
+      <small>Subroutine</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.2% of total for procedures.">53 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/rki_solver.F90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/rki_solver.f90.html'>rki_solver.F90</a></li>
+                <li class="breadcrumb-item"><a href='../module/rki_solver.html'>rki_solver</a></li>
+            <li class="breadcrumb-item active" aria-current="page">solver_multilayer_rk_stage_nz1</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+  
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#vars-0"
+         aria-expanded="false" aria-controls="vars-0">
+         <h4 class="card-header bg-primary text-white">Variables</h4>
+      </a>
+      <div id="vars-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../proc/solver_multilayer_rk_stage_nz1.html#variable-it~8">it</a>
+            <a class="list-group-item" href="../proc/solver_multilayer_rk_stage_nz1.html#variable-nz_local">nz_local</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../proc/solver_multilayer_rk_stage_nz1.html#src">solver_multilayer_rk_stage_nz1</a>
+      </div>
+    </div>
+
+
+  </div>
+
+    </div>
+    
+    <div class="col-md-9" id='text'>
+    <h2>private  subroutine solver_multilayer_rk_stage_nz1(state, is_stage1)  
+</h2>
+    
+
+    <p>Fused RK-stage path specialised for nz_ml=1 (depth-averaged
+2D with optional tracers).</p>
+<p>Reorders the tracer pipeline to run before the per-cell post-
+update sequence so that (compute_update + distribute_barotropic
++ bottom_friction + truncate_velocity + recompute_barotropic +
+wind / atm_pressure / precip + coriolis) collapses into a
+single fused kernel <code>ml_fused_post_update</code>. Mirrors what the
+2D HLL path does with <code>fused_update_stage1/2</code>. At nz_ml=1 the
+vertical-mixing block (vert_exchange, EOS, vmix, BPG) is
+definitionally empty, so this path is complete; for nz_ml&gt;1
+the un-fused stage above runs instead.</p>
+<p>When <code>is_stage1</code> is true the fused kernel additionally saves
+the pre-update barotropic and layer state into the <code>*_0</code>
+arrays, absorbing <code>solver_save_state</code> and <code>ml_save_layer_state</code>.</p>
+
+
+    <h3>Arguments</h3>
+        <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-state~18"></span>
+              type(<a href='../type/state_t.html'>state_t</a>),
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>state</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-is_stage1~2"></span>
+              logical,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>is_stage1</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <br>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Calls</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~solver_multilayer_rk_stage_nz1~~CallsGraph Pages: 1 -->
+<svg id="procsolver_multilayer_rk_stage_nz1CallsGraph" width="641pt" height="882pt"
+ viewBox="0.00 0.00 641.00 882.04" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph" class="graph" transform="scale(0.66 0.66) rotate(0) translate(4 1328)">
+<title>proc~~solver_multilayer_rk_stage_nz1~~CallsGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-1328 964,-1328 964,4 -4,4"/>
+<!-- proc~solver_multilayer_rk_stage_nz1 -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node1" class="node">
+<title>proc~solver_multilayer_rk_stage_nz1</title>
+<polygon fill="none" stroke="black" points="178,-636 0,-636 0,-612 178,-612 178,-636"/>
+<text text-anchor="middle" x="89" y="-621.6" font-family="Helvetica,sans-Serif" font-size="10.50">solver_multilayer_rk_stage_nz1</text>
+</g>
+<!-- proc~apply_boundary_conditions -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node2" class="node">
+<title>proc~apply_boundary_conditions</title>
+<g id="a_proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node2"><a xlink:href="../proc/apply_boundary_conditions.html" xlink:title="apply_boundary_conditions">
+<polygon fill="#d9534f" stroke="#d9534f" points="395.5,-1198 237.5,-1198 237.5,-1174 395.5,-1174 395.5,-1198"/>
+<text text-anchor="middle" x="316.5" y="-1183.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">apply_boundary_conditions</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_multilayer_rk_stage_nz1&#45;&gt;proc~apply_boundary_conditions -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge1" class="edge">
+<title>proc~solver_multilayer_rk_stage_nz1&#45;&gt;proc~apply_boundary_conditions</title>
+<path fill="none" stroke="#ff0000" d="M91.39,-636.06C97.94,-689.73 129.14,-911.11 214,-1069 234.95,-1107.99 270.92,-1145.21 293.93,-1166.81"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="291.77,-1169.58 301.49,-1173.78 296.51,-1164.43 291.77,-1169.58"/>
+</g>
+<!-- proc~apply_sponge -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node3" class="node">
+<title>proc~apply_sponge</title>
+<g id="a_proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node3"><a xlink:href="../proc/apply_sponge.html" xlink:title="apply_sponge">
+<polygon fill="#d9534f" stroke="#d9534f" points="359.5,-1060 273.5,-1060 273.5,-1036 359.5,-1036 359.5,-1060"/>
+<text text-anchor="middle" x="316.5" y="-1045.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">apply_sponge</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_multilayer_rk_stage_nz1&#45;&gt;proc~apply_sponge -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge2" class="edge">
+<title>proc~solver_multilayer_rk_stage_nz1&#45;&gt;proc~apply_sponge</title>
+<path fill="none" stroke="#ff0000" d="M90.67,-636.03C94.08,-686.6 113.6,-884.57 214,-999 227.12,-1013.95 245.83,-1024.76 263.62,-1032.35"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="262.78,-1035.79 273.36,-1036.25 265.38,-1029.29 262.78,-1035.79"/>
+</g>
+<!-- proc~ml_advect_tracer -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node4" class="node">
+<title>proc~ml_advect_tracer</title>
+<g id="a_proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node4"><a xlink:href="../proc/ml_advect_tracer.html" xlink:title="ml_advect_tracer">
+<polygon fill="#d9534f" stroke="#d9534f" points="369,-990 264,-990 264,-966 369,-966 369,-990"/>
+<text text-anchor="middle" x="316.5" y="-975.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">ml_advect_tracer</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_multilayer_rk_stage_nz1&#45;&gt;proc~ml_advect_tracer -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge3" class="edge">
+<title>proc~solver_multilayer_rk_stage_nz1&#45;&gt;proc~ml_advect_tracer</title>
+<path fill="none" stroke="#ff0000" d="M93.1,-636.21C103.97,-677.21 143.53,-812.3 214,-901 233.59,-925.66 262.79,-946.71 284.84,-960.53"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="283.15,-963.6 293.51,-965.83 286.8,-957.63 283.15,-963.6"/>
+</g>
+<!-- proc~ml_advect_tracer_ppm -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node5" class="node">
+<title>proc~ml_advect_tracer_ppm</title>
+<g id="a_proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node5"><a xlink:href="../proc/ml_advect_tracer_ppm.html" xlink:title="ml_advect_tracer_ppm">
+<polygon fill="#d9534f" stroke="#d9534f" points="383.5,-892 249.5,-892 249.5,-868 383.5,-868 383.5,-892"/>
+<text text-anchor="middle" x="316.5" y="-877.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">ml_advect_tracer_ppm</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_multilayer_rk_stage_nz1&#45;&gt;proc~ml_advect_tracer_ppm -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge4" class="edge">
+<title>proc~solver_multilayer_rk_stage_nz1&#45;&gt;proc~ml_advect_tracer_ppm</title>
+<path fill="none" stroke="#ff0000" d="M93.39,-636.04C104.35,-672.89 142.41,-785.22 214,-845 223.82,-853.2 235.67,-859.52 247.76,-864.38"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="246.88,-867.78 257.47,-867.97 249.31,-861.22 246.88,-867.78"/>
+</g>
+<!-- proc~ml_advect_tracer_weno -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node6" class="node">
+<title>proc~ml_advect_tracer_weno</title>
+<g id="a_proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node6"><a xlink:href="../proc/ml_advect_tracer_weno.html" xlink:title="ml_advect_tracer_weno">
+<polygon fill="#d9534f" stroke="#d9534f" points="386,-836 247,-836 247,-812 386,-812 386,-836"/>
+<text text-anchor="middle" x="316.5" y="-821.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">ml_advect_tracer_weno</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_multilayer_rk_stage_nz1&#45;&gt;proc~ml_advect_tracer_weno -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge5" class="edge">
+<title>proc~solver_multilayer_rk_stage_nz1&#45;&gt;proc~ml_advect_tracer_weno</title>
+<path fill="none" stroke="#ff0000" d="M97.72,-636.03C115.52,-663.01 161.89,-729.24 214,-771 232.66,-785.96 256.2,-798.56 275.91,-807.72"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="274.69,-811.01 285.24,-811.94 277.57,-804.63 274.69,-811.01"/>
+</g>
+<!-- proc~ml_apply_layer_bcs -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node7" class="node">
+<title>proc~ml_apply_layer_bcs</title>
+<g id="a_proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node7"><a xlink:href="../proc/ml_apply_layer_bcs.html" xlink:title="ml_apply_layer_bcs">
+<polygon fill="#d9534f" stroke="#d9534f" points="374.5,-762 258.5,-762 258.5,-738 374.5,-738 374.5,-762"/>
+<text text-anchor="middle" x="316.5" y="-747.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">ml_apply_layer_bcs</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_multilayer_rk_stage_nz1&#45;&gt;proc~ml_apply_layer_bcs -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge6" class="edge">
+<title>proc~solver_multilayer_rk_stage_nz1&#45;&gt;proc~ml_apply_layer_bcs</title>
+<path fill="none" stroke="#ff0000" d="M100.55,-636.31C120.38,-658.57 165.56,-705.4 214,-729 224.68,-734.2 236.6,-738.12 248.41,-741.07"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="247.75,-744.5 258.28,-743.32 249.31,-737.68 247.75,-744.5"/>
+</g>
+<!-- proc~ml_apply_tracer_bcs -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node8" class="node">
+<title>proc~ml_apply_tracer_bcs</title>
+<g id="a_proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node8"><a xlink:href="../proc/ml_apply_tracer_bcs.html" xlink:title="ml_apply_tracer_bcs">
+<polygon fill="#d9534f" stroke="#d9534f" points="377,-720 256,-720 256,-696 377,-696 377,-720"/>
+<text text-anchor="middle" x="316.5" y="-705.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">ml_apply_tracer_bcs</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_multilayer_rk_stage_nz1&#45;&gt;proc~ml_apply_tracer_bcs -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge7" class="edge">
+<title>proc~solver_multilayer_rk_stage_nz1&#45;&gt;proc~ml_apply_tracer_bcs</title>
+<path fill="none" stroke="#ff0000" d="M109.89,-636.21C133.78,-650.37 175.49,-673.5 214,-687 224.14,-690.55 235.08,-693.59 245.88,-696.16"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="245.21,-699.6 255.74,-698.39 246.76,-692.77 245.21,-699.6"/>
+</g>
+<!-- proc~ml_clamp_tracer -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node9" class="node">
+<title>proc~ml_clamp_tracer</title>
+<g id="a_proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node9"><a xlink:href="../proc/ml_clamp_tracer.html" xlink:title="ml_clamp_tracer">
+<polygon fill="#d9534f" stroke="#d9534f" points="367.5,-678 265.5,-678 265.5,-654 367.5,-654 367.5,-678"/>
+<text text-anchor="middle" x="316.5" y="-663.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">ml_clamp_tracer</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_multilayer_rk_stage_nz1&#45;&gt;proc~ml_clamp_tracer -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge8" class="edge">
+<title>proc~solver_multilayer_rk_stage_nz1&#45;&gt;proc~ml_clamp_tracer</title>
+<path fill="none" stroke="#ff0000" d="M154.62,-636.04C186.33,-641.94 224.29,-649.01 255.37,-654.8"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="254.73,-658.24 265.2,-656.63 256.01,-651.36 254.73,-658.24"/>
+</g>
+<!-- proc~ml_compute_barotropic_momentum -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node10" class="node">
+<title>proc~ml_compute_barotropic_momentum</title>
+<g id="a_proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node10"><a xlink:href="../proc/ml_compute_barotropic_momentum.html" xlink:title="ml_compute_barotropic_momentum">
+<polygon fill="#d9534f" stroke="#d9534f" points="419,-636 214,-636 214,-612 419,-612 419,-636"/>
+<text text-anchor="middle" x="316.5" y="-621.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">ml_compute_barotropic_momentum</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_multilayer_rk_stage_nz1&#45;&gt;proc~ml_compute_barotropic_momentum -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge9" class="edge">
+<title>proc~solver_multilayer_rk_stage_nz1&#45;&gt;proc~ml_compute_barotropic_momentum</title>
+<path fill="none" stroke="#ff0000" d="M178.15,-624C186.59,-624 195.22,-624 203.83,-624"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="203.94,-627.5 213.94,-624 203.94,-620.5 203.94,-627.5"/>
+</g>
+<!-- proc~ml_fused_post_update -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node11" class="node">
+<title>proc~ml_fused_post_update</title>
+<g id="a_proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node11"><a xlink:href="../proc/ml_fused_post_update.html" xlink:title="ml_fused_post_update">
+<polygon fill="#d9534f" stroke="#d9534f" points="382,-594 251,-594 251,-570 382,-570 382,-594"/>
+<text text-anchor="middle" x="316.5" y="-579.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">ml_fused_post_update</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_multilayer_rk_stage_nz1&#45;&gt;proc~ml_fused_post_update -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge10" class="edge">
+<title>proc~solver_multilayer_rk_stage_nz1&#45;&gt;proc~ml_fused_post_update</title>
+<path fill="none" stroke="#ff0000" d="M154.62,-611.96C181.51,-606.96 212.9,-601.11 240.77,-595.92"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="241.68,-599.31 250.87,-594.04 240.4,-592.43 241.68,-599.31"/>
+</g>
+<!-- proc~ml_fused_tracer_post -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node12" class="node">
+<title>proc~ml_fused_tracer_post</title>
+<g id="a_proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node12"><a xlink:href="../proc/ml_fused_tracer_post.html" xlink:title="ml_fused_tracer_post">
+<polygon fill="#d9534f" stroke="#d9534f" points="379.5,-552 253.5,-552 253.5,-528 379.5,-528 379.5,-552"/>
+<text text-anchor="middle" x="316.5" y="-537.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">ml_fused_tracer_post</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_multilayer_rk_stage_nz1&#45;&gt;proc~ml_fused_tracer_post -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge11" class="edge">
+<title>proc~solver_multilayer_rk_stage_nz1&#45;&gt;proc~ml_fused_tracer_post</title>
+<path fill="none" stroke="#ff0000" d="M109.89,-611.79C133.78,-597.63 175.49,-574.5 214,-561 223.36,-557.72 233.4,-554.88 243.38,-552.44"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="244.38,-555.8 253.33,-550.13 242.79,-548.98 244.38,-555.8"/>
+</g>
+<!-- proc~ml_horizontal_diffusion_tracer -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node13" class="node">
+<title>proc~ml_horizontal_diffusion_tracer</title>
+<g id="a_proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node13"><a xlink:href="../proc/ml_horizontal_diffusion_tracer.html" xlink:title="ml_horizontal_diffusion_tracer">
+<polygon fill="#d9534f" stroke="#d9534f" points="403,-510 230,-510 230,-486 403,-486 403,-510"/>
+<text text-anchor="middle" x="316.5" y="-495.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">ml_horizontal_diffusion_tracer</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_multilayer_rk_stage_nz1&#45;&gt;proc~ml_horizontal_diffusion_tracer -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge12" class="edge">
+<title>proc~solver_multilayer_rk_stage_nz1&#45;&gt;proc~ml_horizontal_diffusion_tracer</title>
+<path fill="none" stroke="#ff0000" d="M100.55,-611.69C120.38,-589.43 165.56,-542.6 214,-519 218.32,-516.89 222.85,-515 227.49,-513.29"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="228.78,-516.55 237.14,-510.05 226.55,-509.92 228.78,-516.55"/>
+</g>
+<!-- proc~ml_horizontal_viscosity_biharmonic -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node14" class="node">
+<title>proc~ml_horizontal_viscosity_biharmonic</title>
+<g id="a_proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node14"><a xlink:href="../proc/ml_horizontal_viscosity_biharmonic.html" xlink:title="ml_horizontal_viscosity_biharmonic">
+<polygon fill="#d9534f" stroke="#d9534f" points="417,-468 216,-468 216,-444 417,-444 417,-468"/>
+<text text-anchor="middle" x="316.5" y="-453.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">ml_horizontal_viscosity_biharmonic</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_multilayer_rk_stage_nz1&#45;&gt;proc~ml_horizontal_viscosity_biharmonic -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge13" class="edge">
+<title>proc~solver_multilayer_rk_stage_nz1&#45;&gt;proc~ml_horizontal_viscosity_biharmonic</title>
+<path fill="none" stroke="#ff0000" d="M96.49,-611.74C112.35,-583.08 156.05,-511.5 214,-477 217.07,-475.17 220.27,-473.5 223.57,-471.98"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="225.18,-475.1 233.09,-468.04 222.51,-468.63 225.18,-475.1"/>
+</g>
+<!-- proc~ml_horizontal_viscosity_smag -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node15" class="node">
+<title>proc~ml_horizontal_viscosity_smag</title>
+<g id="a_proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node15"><a xlink:href="../proc/ml_horizontal_viscosity_smag.html" xlink:title="ml_horizontal_viscosity_smag">
+<polygon fill="#d9534f" stroke="#d9534f" points="401,-400 232,-400 232,-376 401,-376 401,-400"/>
+<text text-anchor="middle" x="316.5" y="-385.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">ml_horizontal_viscosity_smag</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_multilayer_rk_stage_nz1&#45;&gt;proc~ml_horizontal_viscosity_smag -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge14" class="edge">
+<title>proc~solver_multilayer_rk_stage_nz1&#45;&gt;proc~ml_horizontal_viscosity_smag</title>
+<path fill="none" stroke="#ff0000" d="M95.13,-611.71C109.38,-578.89 152.5,-488.07 214,-435 229.38,-421.73 249.15,-411.45 267.14,-403.94"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="268.92,-407 276.91,-400.05 266.33,-400.5 268.92,-407"/>
+</g>
+<!-- proc~profiler_start -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node16" class="node">
+<title>proc~profiler_start</title>
+<g id="a_proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node16"><a xlink:href="../proc/profiler_start.html" xlink:title="profiler_start">
+<polygon fill="#d9534f" stroke="#d9534f" points="356.5,-297 276.5,-297 276.5,-273 356.5,-273 356.5,-297"/>
+<text text-anchor="middle" x="316.5" y="-282.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">profiler_start</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_multilayer_rk_stage_nz1&#45;&gt;proc~profiler_start -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge15" class="edge">
+<title>proc~solver_multilayer_rk_stage_nz1&#45;&gt;proc~profiler_start</title>
+<path fill="none" stroke="#ff0000" d="M93.68,-611.95C105.94,-573.27 148.29,-449.88 214,-367 234.66,-340.95 264.99,-317.81 287.12,-302.81"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="289.35,-305.54 295.75,-297.09 285.48,-299.7 289.35,-305.54"/>
+</g>
+<!-- proc~profiler_stop -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node17" class="node">
+<title>proc~profiler_stop</title>
+<g id="a_proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node17"><a xlink:href="../proc/profiler_stop.html" xlink:title="profiler_stop">
+<polygon fill="#d9534f" stroke="#d9534f" points="356,-234 277,-234 277,-210 356,-210 356,-234"/>
+<text text-anchor="middle" x="316.5" y="-219.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">profiler_stop</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_multilayer_rk_stage_nz1&#45;&gt;proc~profiler_stop -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge16" class="edge">
+<title>proc~solver_multilayer_rk_stage_nz1&#45;&gt;proc~profiler_stop</title>
+<path fill="none" stroke="#ff0000" d="M90.68,-611.96C94.12,-562.25 113.65,-370.62 214,-264 228.14,-248.98 248.44,-239.16 267.18,-232.82"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="268.3,-236.14 276.8,-229.81 266.21,-229.45 268.3,-236.14"/>
+</g>
+<!-- proc~solver_compute_barotropic_flux -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node18" class="node">
+<title>proc~solver_compute_barotropic_flux</title>
+<g id="a_proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node18"><a xlink:href="../proc/solver_compute_barotropic_flux.html" xlink:title="solver_compute_barotropic_flux">
+<polygon fill="#d9534f" stroke="#d9534f" points="407,-150 226,-150 226,-126 407,-126 407,-150"/>
+<text text-anchor="middle" x="316.5" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_compute_barotropic_flux</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_multilayer_rk_stage_nz1&#45;&gt;proc~solver_compute_barotropic_flux -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge17" class="edge">
+<title>proc~solver_multilayer_rk_stage_nz1&#45;&gt;proc~solver_compute_barotropic_flux</title>
+<path fill="none" stroke="#ff0000" d="M90.48,-611.86C93.2,-557.98 110.46,-337.14 214,-201 229.64,-180.44 254.09,-164.97 275.08,-154.51"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="276.61,-157.65 284.12,-150.19 273.59,-151.34 276.61,-157.65"/>
+</g>
+<!-- proc~bc_chapman_edge -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node20" class="node">
+<title>proc~bc_chapman_edge</title>
+<g id="a_proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node20"><a xlink:href="../proc/bc_chapman_edge.html" xlink:title="bc_chapman_edge">
+<polygon fill="#d9534f" stroke="#d9534f" points="588.5,-1240 475.5,-1240 475.5,-1216 588.5,-1216 588.5,-1240"/>
+<text text-anchor="middle" x="532" y="-1225.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">bc_chapman_edge</text>
+</a>
+</g>
+</g>
+<!-- proc~apply_boundary_conditions&#45;&gt;proc~bc_chapman_edge -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge18" class="edge">
+<title>proc~apply_boundary_conditions&#45;&gt;proc~bc_chapman_edge</title>
+<path fill="none" stroke="#ff0000" d="M378.68,-1198.04C405.79,-1203.37 437.72,-1209.65 465.33,-1215.08"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="464.8,-1218.54 475.29,-1217.04 466.15,-1211.68 464.8,-1218.54"/>
+</g>
+<!-- proc~bc_clamped_edge -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node21" class="node">
+<title>proc~bc_clamped_edge</title>
+<g id="a_proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node21"><a xlink:href="../proc/bc_clamped_edge.html" xlink:title="bc_clamped_edge">
+<polygon fill="#d9534f" stroke="#d9534f" points="586.5,-1198 477.5,-1198 477.5,-1174 586.5,-1174 586.5,-1198"/>
+<text text-anchor="middle" x="532" y="-1183.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">bc_clamped_edge</text>
+</a>
+</g>
+</g>
+<!-- proc~apply_boundary_conditions&#45;&gt;proc~bc_clamped_edge -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge19" class="edge">
+<title>proc~apply_boundary_conditions&#45;&gt;proc~bc_clamped_edge</title>
+<path fill="none" stroke="#ff0000" d="M395.79,-1186C419.32,-1186 444.84,-1186 467.3,-1186"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="467.39,-1189.5 477.39,-1186 467.39,-1182.5 467.39,-1189.5"/>
+</g>
+<!-- proc~bc_disch_edge -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node22" class="node">
+<title>proc~bc_disch_edge</title>
+<g id="a_proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node22"><a xlink:href="../proc/bc_disch_edge.html" xlink:title="bc_disch_edge">
+<polygon fill="#d9534f" stroke="#d9534f" points="577.5,-1156 486.5,-1156 486.5,-1132 577.5,-1132 577.5,-1156"/>
+<text text-anchor="middle" x="532" y="-1141.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">bc_disch_edge</text>
+</a>
+</g>
+</g>
+<!-- proc~apply_boundary_conditions&#45;&gt;proc~bc_disch_edge -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge20" class="edge">
+<title>proc~apply_boundary_conditions&#45;&gt;proc~bc_disch_edge</title>
+<path fill="none" stroke="#ff0000" d="M378.68,-1173.96C409.57,-1167.89 446.72,-1160.58 476.6,-1154.7"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="477.3,-1158.13 486.44,-1152.77 475.95,-1151.26 477.3,-1158.13"/>
+</g>
+<!-- proc~bc_flather_edge -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node23" class="node">
+<title>proc~bc_flather_edge</title>
+<g id="a_proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node23"><a xlink:href="../proc/bc_flather_edge.html" xlink:title="bc_flather_edge">
+<polygon fill="#d9534f" stroke="#d9534f" points="581,-1114 483,-1114 483,-1090 581,-1090 581,-1114"/>
+<text text-anchor="middle" x="532" y="-1099.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">bc_flather_edge</text>
+</a>
+</g>
+</g>
+<!-- proc~apply_boundary_conditions&#45;&gt;proc~bc_flather_edge -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge21" class="edge">
+<title>proc~apply_boundary_conditions&#45;&gt;proc~bc_flather_edge</title>
+<path fill="none" stroke="#ff0000" d="M340.86,-1173.9C367.84,-1160.25 413.8,-1138.02 455,-1123 460.82,-1120.88 466.96,-1118.85 473.13,-1116.95"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="474.21,-1120.28 482.79,-1114.07 472.21,-1113.57 474.21,-1120.28"/>
+</g>
+<!-- proc~bc_inflow_edge -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node24" class="node">
+<title>proc~bc_inflow_edge</title>
+<g id="a_proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node24"><a xlink:href="../proc/bc_inflow_edge.html" xlink:title="bc_inflow_edge">
+<polygon fill="#d9534f" stroke="#d9534f" points="579,-1324 485,-1324 485,-1300 579,-1300 579,-1324"/>
+<text text-anchor="middle" x="532" y="-1309.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">bc_inflow_edge</text>
+</a>
+</g>
+</g>
+<!-- proc~apply_boundary_conditions&#45;&gt;proc~bc_inflow_edge -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge22" class="edge">
+<title>proc~apply_boundary_conditions&#45;&gt;proc~bc_inflow_edge</title>
+<path fill="none" stroke="#ff0000" d="M330.01,-1198.28C352.9,-1220.07 403.89,-1265.62 455,-1291 461.41,-1294.18 468.36,-1296.94 475.38,-1299.31"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="474.35,-1302.66 484.94,-1302.32 476.45,-1295.98 474.35,-1302.66"/>
+</g>
+<!-- proc~bc_wall_edge -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node25" class="node">
+<title>proc~bc_wall_edge</title>
+<g id="a_proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node25"><a xlink:href="../proc/bc_wall_edge.html" xlink:title="bc_wall_edge">
+<polygon fill="#d9534f" stroke="#d9534f" points="574,-1282 490,-1282 490,-1258 574,-1258 574,-1282"/>
+<text text-anchor="middle" x="532" y="-1267.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">bc_wall_edge</text>
+</a>
+</g>
+</g>
+<!-- proc~apply_boundary_conditions&#45;&gt;proc~bc_wall_edge -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge23" class="edge">
+<title>proc~apply_boundary_conditions&#45;&gt;proc~bc_wall_edge</title>
+<path fill="none" stroke="#ff0000" d="M340.86,-1198.1C367.84,-1211.75 413.8,-1233.98 455,-1249 463.04,-1251.93 471.69,-1254.68 480.17,-1257.17"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="479.42,-1260.6 490,-1259.96 481.33,-1253.86 479.42,-1260.6"/>
+</g>
+<!-- local -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node19" class="node">
+<title>local</title>
+<polygon fill="#777777" stroke="#777777" points="763.5,-876 709.5,-876 709.5,-852 763.5,-852 763.5,-876"/>
+<text text-anchor="middle" x="736.5" y="-861.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">local</text>
+</g>
+<!-- proc~apply_sponge&#45;&gt;local -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge24" class="edge">
+<title>proc~apply_sponge&#45;&gt;local</title>
+<path fill="none" stroke="#ff5900" d="M359.92,-1051.76C419.33,-1055.09 529.02,-1053.99 609,-1011 663.79,-981.55 705.39,-918.04 724.29,-884.97"/>
+<polygon fill="#ff5900" stroke="#ff5900" points="727.41,-886.57 729.22,-876.13 721.29,-883.16 727.41,-886.57"/>
+</g>
+<!-- proc~ml_advect_tracer&#45;&gt;local -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge25" class="edge">
+<title>proc~ml_advect_tracer&#45;&gt;local</title>
+<path fill="none" stroke="#ffb300" d="M360.44,-990.07C419.05,-1004.23 526.26,-1021.79 609,-988 660.35,-967.03 702.13,-914.07 722.34,-884.59"/>
+<polygon fill="#ffb300" stroke="#ffb300" points="725.26,-886.52 727.91,-876.26 719.44,-882.63 725.26,-886.52"/>
+</g>
+<!-- proc~ml_advect_tracer_ppm&#45;&gt;local -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge26" class="edge">
+<title>proc~ml_advect_tracer_ppm&#45;&gt;local</title>
+<path fill="none" stroke="#f0ff00" d="M330.65,-892.03C353.75,-912.23 403.99,-952.22 455,-967 520.74,-986.05 544.51,-989.93 609,-967 655.27,-950.55 696.9,-909.13 718.94,-884.11"/>
+<polygon fill="#f0ff00" stroke="#f0ff00" points="721.78,-886.18 725.64,-876.32 716.47,-881.62 721.78,-886.18"/>
+</g>
+<!-- proc~ml_advect_tracer_weno&#45;&gt;local -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge27" class="edge">
+<title>proc~ml_advect_tracer_weno&#45;&gt;local</title>
+<path fill="none" stroke="#96ff00" d="M386.24,-835.66C408.17,-839.06 432.56,-842.53 455,-845 542.33,-854.61 645.53,-860.1 699.1,-862.51"/>
+<polygon fill="#96ff00" stroke="#96ff00" points="698.99,-866.01 709.14,-862.95 699.3,-859.02 698.99,-866.01"/>
+</g>
+<!-- proc~plm_face_swept -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node35" class="node">
+<title>proc~plm_face_swept</title>
+<g id="a_proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node35"><a xlink:href="../proc/plm_face_swept.html" xlink:title="plm_face_swept">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="580.5,-836 483.5,-836 483.5,-812 580.5,-812 580.5,-836"/>
+<text text-anchor="middle" x="532" y="-821.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">plm_face_swept</text>
+</a>
+</g>
+</g>
+<!-- proc~ml_advect_tracer_weno&#45;&gt;proc~plm_face_swept -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge28" class="edge">
+<title>proc~ml_advect_tracer_weno&#45;&gt;proc~plm_face_swept</title>
+<path fill="none" stroke="#96ff00" d="M386.23,-824C414.33,-824 446.48,-824 473.33,-824"/>
+<polygon fill="#96ff00" stroke="#96ff00" points="473.34,-827.5 483.34,-824 473.34,-820.5 473.34,-827.5"/>
+</g>
+<!-- proc~recon_rung_for_face -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node36" class="node">
+<title>proc~recon_rung_for_face</title>
+<g id="a_proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node36"><a xlink:href="../proc/recon_rung_for_face.html" xlink:title="recon_rung_for_face">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="592.5,-794 471.5,-794 471.5,-770 592.5,-770 592.5,-794"/>
+<text text-anchor="middle" x="532" y="-779.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">recon_rung_for_face</text>
+</a>
+</g>
+</g>
+<!-- proc~ml_advect_tracer_weno&#45;&gt;proc~recon_rung_for_face -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge29" class="edge">
+<title>proc~ml_advect_tracer_weno&#45;&gt;proc~recon_rung_for_face</title>
+<path fill="none" stroke="#96ff00" d="M378.68,-811.96C404.47,-806.89 434.62,-800.96 461.26,-795.72"/>
+<polygon fill="#96ff00" stroke="#96ff00" points="462.15,-799.11 471.28,-793.75 460.8,-792.24 462.15,-799.11"/>
+</g>
+<!-- proc~weno5_face_swept -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node37" class="node">
+<title>proc~weno5_face_swept</title>
+<g id="a_proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node37"><a xlink:href="../proc/weno5_face_swept.html" xlink:title="weno5_face_swept">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="588,-752 476,-752 476,-728 588,-728 588,-752"/>
+<text text-anchor="middle" x="532" y="-737.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">weno5_face_swept</text>
+</a>
+</g>
+</g>
+<!-- proc~ml_advect_tracer_weno&#45;&gt;proc~weno5_face_swept -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge30" class="edge">
+<title>proc~ml_advect_tracer_weno&#45;&gt;proc~weno5_face_swept</title>
+<path fill="none" stroke="#96ff00" d="M340.86,-811.9C367.84,-798.25 413.8,-776.02 455,-761 460.82,-758.88 466.96,-756.85 473.13,-754.95"/>
+<polygon fill="#96ff00" stroke="#96ff00" points="474.21,-758.28 482.79,-752.07 472.21,-751.57 474.21,-758.28"/>
+</g>
+<!-- proc~weno7_face_swept -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node38" class="node">
+<title>proc~weno7_face_swept</title>
+<g id="a_proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node38"><a xlink:href="../proc/weno7_face_swept.html" xlink:title="weno7_face_swept">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="588,-958 476,-958 476,-934 588,-934 588,-958"/>
+<text text-anchor="middle" x="532" y="-943.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">weno7_face_swept</text>
+</a>
+</g>
+</g>
+<!-- proc~ml_advect_tracer_weno&#45;&gt;proc~weno7_face_swept -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge31" class="edge">
+<title>proc~ml_advect_tracer_weno&#45;&gt;proc~weno7_face_swept</title>
+<path fill="none" stroke="#96ff00" d="M375.87,-836.02C391.11,-841.22 406.69,-848.59 419,-859 444.52,-880.57 428.82,-904.24 455,-925 458.53,-927.8 462.42,-930.23 466.5,-932.34"/>
+<polygon fill="#96ff00" stroke="#96ff00" points="465.15,-935.57 475.71,-936.45 468,-929.18 465.15,-935.57"/>
+</g>
+<!-- proc~weno9_face_swept -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node39" class="node">
+<title>proc~weno9_face_swept</title>
+<g id="a_proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node39"><a xlink:href="../proc/weno9_face_swept.html" xlink:title="weno9_face_swept">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="588,-916 476,-916 476,-892 588,-892 588,-916"/>
+<text text-anchor="middle" x="532" y="-901.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">weno9_face_swept</text>
+</a>
+</g>
+</g>
+<!-- proc~ml_advect_tracer_weno&#45;&gt;proc~weno9_face_swept -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge32" class="edge">
+<title>proc~ml_advect_tracer_weno&#45;&gt;proc~weno9_face_swept</title>
+<path fill="none" stroke="#96ff00" d="M357.08,-836.08C376.07,-842.27 398.99,-850.33 419,-859 435.6,-866.19 438.39,-870.83 455,-878 463.74,-881.77 473.23,-885.39 482.44,-888.65"/>
+<polygon fill="#96ff00" stroke="#96ff00" points="481.3,-891.96 491.89,-891.92 483.59,-885.35 481.3,-891.96"/>
+</g>
+<!-- proc~edge_prescribes -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node29" class="node">
+<title>proc~edge_prescribes</title>
+<g id="a_proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node29"><a xlink:href="../proc/edge_prescribes.html" xlink:title="edge_prescribes">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="582,-710 482,-710 482,-686 582,-686 582,-710"/>
+<text text-anchor="middle" x="532" y="-695.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">edge_prescribes</text>
+</a>
+</g>
+</g>
+<!-- proc~ml_apply_tracer_bcs&#45;&gt;proc~edge_prescribes -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge33" class="edge">
+<title>proc~ml_apply_tracer_bcs&#45;&gt;proc~edge_prescribes</title>
+<path fill="none" stroke="#00ff1e" d="M377.26,-705.2C406.72,-703.82 442.15,-702.16 471.57,-700.78"/>
+<polygon fill="#00ff1e" stroke="#00ff1e" points="471.88,-704.27 481.71,-700.31 471.55,-697.28 471.88,-704.27"/>
+</g>
+<!-- proc~ml_clamp_tracer&#45;&gt;local -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge34" class="edge">
+<title>proc~ml_clamp_tracer&#45;&gt;local</title>
+<path fill="none" stroke="#00ff78" d="M367.53,-654.93C428.66,-644.17 533.29,-634.96 609,-677 675.2,-713.76 713.52,-801.53 728.35,-842.39"/>
+<polygon fill="#00ff78" stroke="#00ff78" points="725.08,-843.64 731.69,-851.93 731.68,-841.33 725.08,-843.64"/>
+</g>
+<!-- proc~ml_compute_barotropic_momentum&#45;&gt;local -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge35" class="edge">
+<title>proc~ml_compute_barotropic_momentum&#45;&gt;local</title>
+<path fill="none" stroke="#00ffd1" d="M376.03,-611.99C438.63,-602.46 538.41,-597.08 609,-641 683.7,-687.47 718.46,-795.12 730.42,-841.77"/>
+<polygon fill="#00ffd1" stroke="#00ffd1" points="727.09,-842.87 732.87,-851.75 733.89,-841.21 727.09,-842.87"/>
+</g>
+<!-- proc~ml_fused_post_update&#45;&gt;local -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge36" class="edge">
+<title>proc~ml_fused_post_update&#45;&gt;local</title>
+<path fill="none" stroke="#00d1ff" d="M374.1,-569.97C437.06,-559.91 539.12,-553.83 609,-601 694.08,-658.43 723.72,-789.67 732.39,-841.93"/>
+<polygon fill="#00d1ff" stroke="#00d1ff" points="728.93,-842.49 733.93,-851.83 735.85,-841.41 728.93,-842.49"/>
+</g>
+<!-- proc~ml_fused_tracer_post&#45;&gt;local -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge37" class="edge">
+<title>proc~ml_fused_tracer_post&#45;&gt;local</title>
+<path fill="none" stroke="#0078ff" d="M379.6,-536.36C454.13,-533.24 573.52,-532.66 609,-558 705.48,-626.91 728.61,-783.41 733.96,-841.63"/>
+<polygon fill="#0078ff" stroke="#0078ff" points="730.49,-842.23 734.8,-851.91 737.47,-841.65 730.49,-842.23"/>
+</g>
+<!-- proc~ml_horizontal_diffusion_tracer&#45;&gt;local -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge38" class="edge">
+<title>proc~ml_horizontal_diffusion_tracer&#45;&gt;local</title>
+<path fill="none" stroke="#001dff" d="M393.72,-485.98C457.73,-480.25 548.22,-482.92 609,-530 710.99,-609 730.76,-780.19 734.58,-841.55"/>
+<polygon fill="#001dff" stroke="#001dff" points="731.1,-841.89 735.13,-851.68 738.09,-841.51 731.1,-841.89"/>
+</g>
+<!-- proc~ml_horizontal_viscosity_biharmonic&#45;&gt;local -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge39" class="edge">
+<title>proc~ml_horizontal_viscosity_biharmonic&#45;&gt;local</title>
+<path fill="none" stroke="#3c00ff" d="M417.35,-453.52C489.82,-453.79 580.03,-459.05 609,-482 724.69,-573.66 735.59,-774.21 735.86,-841.49"/>
+<polygon fill="#3c00ff" stroke="#3c00ff" points="732.36,-841.77 735.82,-851.78 739.36,-841.8 732.36,-841.77"/>
+</g>
+<!-- proc~bih_workspace_ensure -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node26" class="node">
+<title>proc~bih_workspace_ensure</title>
+<g id="a_proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node26"><a xlink:href="../proc/bih_workspace_ensure.html" xlink:title="bih_workspace_ensure">
+<polygon fill="#d9534f" stroke="#d9534f" points="598.5,-440 465.5,-440 465.5,-416 598.5,-416 598.5,-440"/>
+<text text-anchor="middle" x="532" y="-425.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">bih_workspace_ensure</text>
+</a>
+</g>
+</g>
+<!-- proc~ml_horizontal_viscosity_biharmonic&#45;&gt;proc~bih_workspace_ensure -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge40" class="edge">
+<title>proc~ml_horizontal_viscosity_biharmonic&#45;&gt;proc~bih_workspace_ensure</title>
+<path fill="none" stroke="#3c00ff" d="M409.28,-443.96C424.62,-441.95 440.37,-439.89 455.25,-437.93"/>
+<polygon fill="#3c00ff" stroke="#3c00ff" points="455.93,-441.38 465.39,-436.6 455.02,-434.43 455.93,-441.38"/>
+</g>
+<!-- proc~ml_horizontal_viscosity_smag&#45;&gt;local -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge41" class="edge">
+<title>proc~ml_horizontal_viscosity_smag&#45;&gt;local</title>
+<path fill="none" stroke="#9500ff" d="M401.07,-383.04C475.8,-380.43 578.17,-381.92 609,-407 678.98,-463.93 721.85,-758.32 732.74,-841.87"/>
+<polygon fill="#9500ff" stroke="#9500ff" points="729.27,-842.33 734.02,-851.81 736.22,-841.44 729.27,-842.33"/>
+</g>
+<!-- proc~horvisc_workspace_ensure -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node32" class="node">
+<title>proc~horvisc_workspace_ensure</title>
+<g id="a_proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node32"><a xlink:href="../proc/horvisc_workspace_ensure.html" xlink:title="horvisc_workspace_ensure">
+<polygon fill="#d9534f" stroke="#d9534f" points="609,-360 455,-360 455,-336 609,-336 609,-360"/>
+<text text-anchor="middle" x="532" y="-345.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">horvisc_workspace_ensure</text>
+</a>
+</g>
+</g>
+<!-- proc~ml_horizontal_viscosity_smag&#45;&gt;proc~horvisc_workspace_ensure -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge42" class="edge">
+<title>proc~ml_horizontal_viscosity_smag&#45;&gt;proc~horvisc_workspace_ensure</title>
+<path fill="none" stroke="#9500ff" d="M381.56,-376C405.2,-371.57 432.19,-366.51 456.66,-361.93"/>
+<polygon fill="#9500ff" stroke="#9500ff" points="457.44,-365.34 466.62,-360.06 456.15,-358.46 457.44,-365.34"/>
+</g>
+<!-- proc~find_or_create_region -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node30" class="node">
+<title>proc~find_or_create_region</title>
+<g id="a_proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node30"><a xlink:href="../proc/find_or_create_region.html" xlink:title="find_or_create_region">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="595.5,-318 468.5,-318 468.5,-294 595.5,-294 595.5,-318"/>
+<text text-anchor="middle" x="532" y="-303.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">find_or_create_region</text>
+</a>
+</g>
+</g>
+<!-- proc~profiler_start&#45;&gt;proc~find_or_create_region -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge43" class="edge">
+<title>proc~profiler_start&#45;&gt;proc~find_or_create_region</title>
+<path fill="none" stroke="#f000ff" d="M356.66,-288.85C384.92,-291.63 423.9,-295.47 457.85,-298.8"/>
+<polygon fill="#f000ff" stroke="#f000ff" points="457.91,-302.33 468.2,-299.82 458.59,-295.36 457.91,-302.33"/>
+</g>
+<!-- proc~get_wall_time -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node31" class="node">
+<title>proc~get_wall_time</title>
+<g id="a_proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node31"><a xlink:href="../proc/get_wall_time.html" xlink:title="get_wall_time">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="574.5,-234 489.5,-234 489.5,-210 574.5,-210 574.5,-234"/>
+<text text-anchor="middle" x="532" y="-219.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">get_wall_time</text>
+</a>
+</g>
+</g>
+<!-- proc~profiler_start&#45;&gt;proc~get_wall_time -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge44" class="edge">
+<title>proc~profiler_start&#45;&gt;proc~get_wall_time</title>
+<path fill="none" stroke="#f000ff" d="M355.94,-272.96C383.47,-264.4 421.45,-252.76 455,-243 462.85,-240.72 471.17,-238.36 479.32,-236.08"/>
+<polygon fill="#f000ff" stroke="#f000ff" points="480.43,-239.4 489.13,-233.35 478.56,-232.66 480.43,-239.4"/>
+</g>
+<!-- proc~nvtx_range_push -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node34" class="node">
+<title>proc~nvtx_range_push</title>
+<g id="a_proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node34"><a xlink:href="../proc/nvtx_range_push.html" xlink:title="nvtx_range_push">
+<polygon fill="#d9534f" stroke="#d9534f" points="583.5,-276 480.5,-276 480.5,-252 583.5,-252 583.5,-276"/>
+<text text-anchor="middle" x="532" y="-261.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nvtx_range_push</text>
+</a>
+</g>
+</g>
+<!-- proc~profiler_start&#45;&gt;proc~nvtx_range_push -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge45" class="edge">
+<title>proc~profiler_start&#45;&gt;proc~nvtx_range_push</title>
+<path fill="none" stroke="#f000ff" d="M356.66,-281.15C388.46,-278.02 433.86,-273.56 470.35,-269.97"/>
+<polygon fill="#f000ff" stroke="#f000ff" points="470.78,-273.44 480.39,-268.98 470.1,-266.47 470.78,-273.44"/>
+</g>
+<!-- proc~profiler_stop&#45;&gt;proc~get_wall_time -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge46" class="edge">
+<title>proc~profiler_stop&#45;&gt;proc~get_wall_time</title>
+<path fill="none" stroke="#ff00b4" d="M356.16,-222C390.54,-222 441.09,-222 479.01,-222"/>
+<polygon fill="#ff00b4" stroke="#ff00b4" points="479.34,-225.5 489.34,-222 479.34,-218.5 479.34,-225.5"/>
+</g>
+<!-- proc~nvtx_range_pop -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node33" class="node">
+<title>proc~nvtx_range_pop</title>
+<g id="a_proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node33"><a xlink:href="../proc/nvtx_range_pop.html" xlink:title="nvtx_range_pop">
+<polygon fill="#d9534f" stroke="#d9534f" points="580.5,-192 483.5,-192 483.5,-168 580.5,-168 580.5,-192"/>
+<text text-anchor="middle" x="532" y="-177.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nvtx_range_pop</text>
+</a>
+</g>
+</g>
+<!-- proc~profiler_stop&#45;&gt;proc~nvtx_range_pop -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge47" class="edge">
+<title>proc~profiler_stop&#45;&gt;proc~nvtx_range_pop</title>
+<path fill="none" stroke="#ff00b4" d="M356.16,-214.39C388.79,-207.98 435.97,-198.7 473.1,-191.39"/>
+<polygon fill="#ff00b4" stroke="#ff00b4" points="474.15,-194.75 483.28,-189.39 472.8,-187.88 474.15,-194.75"/>
+</g>
+<!-- proc~compute_flux_hll -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node27" class="node">
+<title>proc~compute_flux_hll</title>
+<g id="a_proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node27"><a xlink:href="../proc/compute_flux_hll.html" xlink:title="compute_flux_hll">
+<polygon fill="#d9534f" stroke="#d9534f" points="583.5,-150 480.5,-150 480.5,-126 583.5,-126 583.5,-150"/>
+<text text-anchor="middle" x="532" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_flux_hll</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_compute_barotropic_flux&#45;&gt;proc~compute_flux_hll -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge48" class="edge">
+<title>proc~solver_compute_barotropic_flux&#45;&gt;proc~compute_flux_hll</title>
+<path fill="none" stroke="#ff005a" d="M407.12,-138C428.4,-138 450.61,-138 470.26,-138"/>
+<polygon fill="#ff005a" stroke="#ff005a" points="470.28,-141.5 480.28,-138 470.27,-134.5 470.28,-141.5"/>
+</g>
+<!-- proc~compute_flux_hllc -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node28" class="node">
+<title>proc~compute_flux_hllc</title>
+<g id="a_proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node28"><a xlink:href="../proc/compute_flux_hllc.html" xlink:title="compute_flux_hllc">
+<polygon fill="#d9534f" stroke="#d9534f" points="586.5,-108 477.5,-108 477.5,-84 586.5,-84 586.5,-108"/>
+<text text-anchor="middle" x="532" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_flux_hllc</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_compute_barotropic_flux&#45;&gt;proc~compute_flux_hllc -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge49" class="edge">
+<title>proc~solver_compute_barotropic_flux&#45;&gt;proc~compute_flux_hllc</title>
+<path fill="none" stroke="#ff005a" d="M378.68,-125.96C406.45,-120.5 439.27,-114.04 467.33,-108.53"/>
+<polygon fill="#ff005a" stroke="#ff005a" points="468.3,-111.9 477.43,-106.54 466.95,-105.03 468.3,-111.9"/>
+</g>
+<!-- proc~bc_chapman_edge&#45;&gt;local -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge50" class="edge">
+<title>proc~bc_chapman_edge&#45;&gt;local</title>
+<path fill="none" stroke="#ff4800" d="M588.58,-1219.39C596.06,-1216.39 603.16,-1212.37 609,-1207 706.2,-1117.62 728.96,-946.97 734.08,-886.18"/>
+<polygon fill="#ff4800" stroke="#ff4800" points="737.57,-886.39 734.84,-876.16 730.59,-885.86 737.57,-886.39"/>
+</g>
+<!-- proc~bc_clamped_edge&#45;&gt;local -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge51" class="edge">
+<title>proc~bc_clamped_edge&#45;&gt;local</title>
+<path fill="none" stroke="#ff9100" d="M586.81,-1177.75C594.88,-1174.73 602.63,-1170.6 609,-1165 696.02,-1088.49 724.72,-942.25 732.76,-886.42"/>
+<polygon fill="#ff9100" stroke="#ff9100" points="736.27,-886.6 734.14,-876.22 729.33,-885.66 736.27,-886.6"/>
+</g>
+<!-- proc~bc_disch_edge&#45;&gt;local -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge52" class="edge">
+<title>proc~bc_disch_edge&#45;&gt;local</title>
+<path fill="none" stroke="#ffda00" d="M577.84,-1138.25C588.93,-1135.13 600.15,-1130.35 609,-1123 686.13,-1058.95 720.01,-936.52 731.1,-886.32"/>
+<polygon fill="#ffda00" stroke="#ffda00" points="734.59,-886.73 733.23,-876.22 727.74,-885.28 734.59,-886.73"/>
+</g>
+<!-- proc~bc_flather_edge&#45;&gt;local -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge53" class="edge">
+<title>proc~bc_flather_edge&#45;&gt;local</title>
+<path fill="none" stroke="#daff00" d="M581.07,-1091.26C590.99,-1087.55 600.88,-1082.59 609,-1076 673.76,-1023.5 713.14,-928.39 728.32,-885.73"/>
+<polygon fill="#daff00" stroke="#daff00" points="731.7,-886.66 731.66,-876.07 725.08,-884.38 731.7,-886.66"/>
+</g>
+<!-- proc~bc_inflow_edge&#45;&gt;local -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge54" class="edge">
+<title>proc~bc_inflow_edge&#45;&gt;local</title>
+<path fill="none" stroke="#91ff00" d="M579.11,-1307.1C590.05,-1303.97 600.89,-1298.96 609,-1291 726.33,-1175.81 736.02,-957.34 735.94,-886.67"/>
+<polygon fill="#91ff00" stroke="#91ff00" points="739.44,-886.25 735.85,-876.28 732.44,-886.31 739.44,-886.25"/>
+</g>
+<!-- proc~bc_wall_edge&#45;&gt;local -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge55" class="edge">
+<title>proc~bc_wall_edge&#45;&gt;local</title>
+<path fill="none" stroke="#48ff00" d="M574.2,-1266.18C586.69,-1263.18 599.59,-1257.97 609,-1249 716.35,-1146.67 732.68,-951.81 735.1,-886.19"/>
+<polygon fill="#48ff00" stroke="#48ff00" points="738.6,-886.25 735.4,-876.15 731.6,-886.04 738.6,-886.25"/>
+</g>
+<!-- proc~compute_flux_hll&#45;&gt;local -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge56" class="edge">
+<title>proc~compute_flux_hll&#45;&gt;local</title>
+<path fill="none" stroke="#00ff48" d="M583.71,-143.49C593.23,-146.7 602.3,-151.59 609,-159 672.54,-229.22 628.48,-275.76 645,-369 677.33,-551.53 718.24,-771.54 731.3,-841.51"/>
+<polygon fill="#00ff48" stroke="#00ff48" points="727.94,-842.58 733.21,-851.76 734.82,-841.29 727.94,-842.58"/>
+</g>
+<!-- proc~flux_cell -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node40" class="node">
+<title>proc~flux_cell</title>
+<g id="a_proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node40"><a xlink:href="../proc/flux_cell.html" xlink:title="flux_cell">
+<polygon fill="#d9534f" stroke="#d9534f" points="764.5,-129 708.5,-129 708.5,-105 764.5,-105 764.5,-129"/>
+<text text-anchor="middle" x="736.5" y="-114.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">flux_cell</text>
+</a>
+</g>
+</g>
+<!-- proc~compute_flux_hll&#45;&gt;proc~flux_cell -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge57" class="edge">
+<title>proc~compute_flux_hll&#45;&gt;proc~flux_cell</title>
+<path fill="none" stroke="#00ff48" d="M583.58,-132.75C619.05,-129.08 665.69,-124.24 697.89,-120.9"/>
+<polygon fill="#00ff48" stroke="#00ff48" points="698.64,-124.34 708.22,-119.83 697.92,-117.38 698.64,-124.34"/>
+</g>
+<!-- proc~compute_flux_hllc&#45;&gt;local -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge58" class="edge">
+<title>proc~compute_flux_hllc&#45;&gt;local</title>
+<path fill="none" stroke="#00ff91" d="M586.59,-102.32C595.09,-105.54 603.03,-110.22 609,-117 646.37,-159.47 635.91,-313.17 645,-369 674.78,-551.96 717.37,-771.69 731.07,-841.54"/>
+<polygon fill="#00ff91" stroke="#00ff91" points="727.72,-842.65 733.09,-851.78 734.59,-841.3 727.72,-842.65"/>
+</g>
+<!-- proc~compute_flux_hllc&#45;&gt;proc~flux_cell -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge59" class="edge">
+<title>proc~compute_flux_hllc&#45;&gt;proc~flux_cell</title>
+<path fill="none" stroke="#00ff91" d="M586.73,-101.57C621.9,-105.22 666.94,-109.89 698.21,-113.13"/>
+<polygon fill="#00ff91" stroke="#00ff91" points="697.94,-116.62 708.25,-114.17 698.67,-109.66 697.94,-116.62"/>
+</g>
+<!-- proc~ml_horizontal_viscosity_cleanup -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node41" class="node">
+<title>proc~ml_horizontal_viscosity_cleanup</title>
+<g id="a_proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node41"><a xlink:href="../proc/ml_horizontal_viscosity_cleanup.html" xlink:title="ml_horizontal_viscosity_cleanup">
+<polygon fill="#d9534f" stroke="#d9534f" points="828,-360 645,-360 645,-336 828,-336 828,-360"/>
+<text text-anchor="middle" x="736.5" y="-345.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">ml_horizontal_viscosity_cleanup</text>
+</a>
+</g>
+</g>
+<!-- proc~horvisc_workspace_ensure&#45;&gt;proc~ml_horizontal_viscosity_cleanup -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge60" class="edge">
+<title>proc~horvisc_workspace_ensure&#45;&gt;proc~ml_horizontal_viscosity_cleanup</title>
+<path fill="none" stroke="#0048ff" d="M609.27,-348C617.65,-348 626.27,-348 634.89,-348"/>
+<polygon fill="#0048ff" stroke="#0048ff" points="634.99,-351.5 644.99,-348 634.99,-344.5 634.99,-351.5"/>
+</g>
+<!-- proc~extract_velocity -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node42" class="node">
+<title>proc~extract_velocity</title>
+<g id="a_proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node42"><a xlink:href="../proc/extract_velocity.html" xlink:title="extract_velocity">
+<polygon fill="#d9534f" stroke="#d9534f" points="960,-234 864,-234 864,-210 960,-210 960,-234"/>
+<text text-anchor="middle" x="912" y="-219.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">extract_velocity</text>
+</a>
+</g>
+</g>
+<!-- proc~flux_cell&#45;&gt;proc~extract_velocity -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge61" class="edge">
+<title>proc~flux_cell&#45;&gt;proc~extract_velocity</title>
+<path fill="none" stroke="#ff0000" d="M753.73,-129.05C777.28,-146.24 822.66,-178.24 864,-201 866.73,-202.5 869.59,-203.99 872.49,-205.43"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="871.27,-208.72 881.8,-209.86 874.27,-202.4 871.27,-208.72"/>
+</g>
+<!-- proc~hll_flux_x -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node43" class="node">
+<title>proc~hll_flux_x</title>
+<g id="a_proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node43"><a xlink:href="../proc/hll_flux_x.html" xlink:title="hll_flux_x">
+<polygon fill="#d9534f" stroke="#d9534f" points="942.5,-192 881.5,-192 881.5,-168 942.5,-168 942.5,-192"/>
+<text text-anchor="middle" x="912" y="-177.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">hll_flux_x</text>
+</a>
+</g>
+</g>
+<!-- proc~flux_cell&#45;&gt;proc~hll_flux_x -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge62" class="edge">
+<title>proc~flux_cell&#45;&gt;proc~hll_flux_x</title>
+<path fill="none" stroke="#ff0000" d="M764.61,-126.84C793.37,-137.29 839.09,-153.89 871.78,-165.76"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="870.88,-169.15 881.47,-169.28 873.26,-162.57 870.88,-169.15"/>
+</g>
+<!-- proc~hll_flux_y -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node44" class="node">
+<title>proc~hll_flux_y</title>
+<g id="a_proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node44"><a xlink:href="../proc/hll_flux_y.html" xlink:title="hll_flux_y">
+<polygon fill="#d9534f" stroke="#d9534f" points="942.5,-150 881.5,-150 881.5,-126 942.5,-126 942.5,-150"/>
+<text text-anchor="middle" x="912" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">hll_flux_y</text>
+</a>
+</g>
+</g>
+<!-- proc~flux_cell&#45;&gt;proc~hll_flux_y -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge63" class="edge">
+<title>proc~flux_cell&#45;&gt;proc~hll_flux_y</title>
+<path fill="none" stroke="#ff0000" d="M764.61,-120.28C793.25,-123.75 838.69,-129.25 871.35,-133.2"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="871.12,-136.7 881.47,-134.43 871.96,-129.75 871.12,-136.7"/>
+</g>
+<!-- proc~hllc_flux_x -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node45" class="node">
+<title>proc~hllc_flux_x</title>
+<g id="a_proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node45"><a xlink:href="../proc/hllc_flux_x.html" xlink:title="hllc_flux_x">
+<polygon fill="#d9534f" stroke="#d9534f" points="945.5,-108 878.5,-108 878.5,-84 945.5,-84 945.5,-108"/>
+<text text-anchor="middle" x="912" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">hllc_flux_x</text>
+</a>
+</g>
+</g>
+<!-- proc~flux_cell&#45;&gt;proc~hllc_flux_x -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge64" class="edge">
+<title>proc~flux_cell&#45;&gt;proc~hllc_flux_x</title>
+<path fill="none" stroke="#ff0000" d="M764.61,-113.72C792.39,-110.36 835.98,-105.08 868.38,-101.16"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="868.96,-104.61 878.47,-99.94 868.12,-97.66 868.96,-104.61"/>
+</g>
+<!-- proc~hllc_flux_y -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node46" class="node">
+<title>proc~hllc_flux_y</title>
+<g id="a_proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node46"><a xlink:href="../proc/hllc_flux_y.html" xlink:title="hllc_flux_y">
+<polygon fill="#d9534f" stroke="#d9534f" points="945.5,-66 878.5,-66 878.5,-42 945.5,-42 945.5,-66"/>
+<text text-anchor="middle" x="912" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">hllc_flux_y</text>
+</a>
+</g>
+</g>
+<!-- proc~flux_cell&#45;&gt;proc~hllc_flux_y -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge65" class="edge">
+<title>proc~flux_cell&#45;&gt;proc~hllc_flux_y</title>
+<path fill="none" stroke="#ff0000" d="M764.61,-107.16C792.51,-97.03 836.36,-81.1 868.8,-69.32"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="870.26,-72.52 878.47,-65.81 867.87,-65.94 870.26,-72.52"/>
+</g>
+<!-- proc~minmod -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node47" class="node">
+<title>proc~minmod</title>
+<g id="a_proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_node47"><a xlink:href="../proc/minmod.html" xlink:title="minmod">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="940.5,-24 883.5,-24 883.5,0 940.5,0 940.5,-24"/>
+<text text-anchor="middle" x="912" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">minmod</text>
+</a>
+</g>
+</g>
+<!-- proc~flux_cell&#45;&gt;proc~minmod -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CallsGraph_edge66" class="edge">
+<title>proc~flux_cell&#45;&gt;proc~minmod</title>
+<path fill="none" stroke="#ff0000" d="M753.73,-104.95C777.28,-87.76 822.66,-55.76 864,-33 867.24,-31.21 870.67,-29.46 874.13,-27.76"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="875.72,-30.88 883.29,-23.46 872.75,-24.55 875.72,-30.88"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var panprocsolver_multilayer_rk_stage_nz1CallsGraph = svgPanZoom('#procsolver_multilayer_rk_stage_nz1CallsGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CallsGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CallsGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Called by</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~solver_multilayer_rk_stage_nz1~~CalledByGraph Pages: 1 -->
+<svg id="procsolver_multilayer_rk_stage_nz1CalledByGraph" width="641pt" height="80pt"
+ viewBox="0.00 0.00 641.00 79.87" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CalledByGraph" class="graph" transform="scale(0.69 0.69) rotate(0) translate(4 112)">
+<title>proc~~solver_multilayer_rk_stage_nz1~~CalledByGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-112 927,-112 927,4 -4,4"/>
+<!-- proc~solver_multilayer_rk_stage_nz1 -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CalledByGraph_node1" class="node">
+<title>proc~solver_multilayer_rk_stage_nz1</title>
+<polygon fill="none" stroke="black" points="923,-66 745,-66 745,-42 923,-42 923,-66"/>
+<text text-anchor="middle" x="834" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50">solver_multilayer_rk_stage_nz1</text>
+</g>
+<!-- proc~solver_multilayer_rk_stage -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CalledByGraph_node2" class="node">
+<title>proc~solver_multilayer_rk_stage</title>
+<g id="a_proc~~solver_multilayer_rk_stage_nz1~~CalledByGraph_node2"><a xlink:href="../proc/solver_multilayer_rk_stage.html" xlink:title="solver_multilayer_rk_stage">
+<polygon fill="#d9534f" stroke="#d9534f" points="709,-66 555,-66 555,-42 709,-42 709,-66"/>
+<text text-anchor="middle" x="632" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_multilayer_rk_stage</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_multilayer_rk_stage&#45;&gt;proc~solver_multilayer_rk_stage_nz1 -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CalledByGraph_edge1" class="edge">
+<title>proc~solver_multilayer_rk_stage&#45;&gt;proc~solver_multilayer_rk_stage_nz1</title>
+<path fill="none" stroke="#ff0000" d="M709.18,-54C717.59,-54 726.24,-54 734.87,-54"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="734.98,-57.5 744.98,-54 734.98,-50.5 734.98,-57.5"/>
+</g>
+<!-- proc~solver_step_multilayer_impl -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CalledByGraph_node3" class="node">
+<title>proc~solver_step_multilayer_impl</title>
+<g id="a_proc~~solver_multilayer_rk_stage_nz1~~CalledByGraph_node3"><a xlink:href="../proc/solver_step_multilayer_impl.html" xlink:title="solver_step_multilayer_impl">
+<polygon fill="#d9534f" stroke="#d9534f" points="519,-66 359,-66 359,-42 519,-42 519,-66"/>
+<text text-anchor="middle" x="439" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_step_multilayer_impl</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_step_multilayer_impl&#45;&gt;proc~solver_multilayer_rk_stage -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CalledByGraph_edge2" class="edge">
+<title>proc~solver_step_multilayer_impl&#45;&gt;proc~solver_multilayer_rk_stage</title>
+<path fill="none" stroke="#ff0000" d="M519.07,-54C527.46,-54 536.02,-54 544.49,-54"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="544.76,-57.5 554.76,-54 544.76,-50.5 544.76,-57.5"/>
+</g>
+<!-- proc~solver_step -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CalledByGraph_node4" class="node">
+<title>proc~solver_step</title>
+<g id="a_proc~~solver_multilayer_rk_stage_nz1~~CalledByGraph_node4"><a xlink:href="../proc/solver_step.html" xlink:title="solver_step">
+<polygon fill="#d9534f" stroke="#d9534f" points="323,-66 250,-66 250,-42 323,-42 323,-66"/>
+<text text-anchor="middle" x="286.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_step</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_step&#45;&gt;proc~solver_step_multilayer_impl -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CalledByGraph_edge3" class="edge">
+<title>proc~solver_step&#45;&gt;proc~solver_step_multilayer_impl</title>
+<path fill="none" stroke="#ff0000" d="M323.17,-54C331.06,-54 339.77,-54 348.75,-54"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="348.98,-57.5 358.98,-54 348.98,-50.5 348.98,-57.5"/>
+</g>
+<!-- proc~driver_run_coastal -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CalledByGraph_node5" class="node">
+<title>proc~driver_run_coastal</title>
+<g id="a_proc~~solver_multilayer_rk_stage_nz1~~CalledByGraph_node5"><a xlink:href="../proc/driver_run_coastal.html" xlink:title="driver_run_coastal">
+<polygon fill="#d9534f" stroke="#d9534f" points="214,-108 103,-108 103,-84 214,-84 214,-108"/>
+<text text-anchor="middle" x="158.5" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">driver_run_coastal</text>
+</a>
+</g>
+</g>
+<!-- proc~driver_run_coastal&#45;&gt;proc~solver_step -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CalledByGraph_edge4" class="edge">
+<title>proc~driver_run_coastal&#45;&gt;proc~solver_step</title>
+<path fill="none" stroke="#ff0000" d="M195.61,-83.96C209.43,-79.36 225.39,-74.04 239.98,-69.17"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="241.44,-72.37 249.82,-65.89 239.23,-65.73 241.44,-72.37"/>
+</g>
+<!-- proc~rki_advance -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CalledByGraph_node6" class="node">
+<title>proc~rki_advance</title>
+<g id="a_proc~~solver_multilayer_rk_stage_nz1~~CalledByGraph_node6"><a xlink:href="../proc/rki_advance.html" xlink:title="rki_advance">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="197,-66 120,-66 120,-42 197,-42 197,-66"/>
+<text text-anchor="middle" x="158.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_advance</text>
+</a>
+</g>
+</g>
+<!-- proc~rki_advance&#45;&gt;proc~solver_step -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CalledByGraph_edge5" class="edge">
+<title>proc~rki_advance&#45;&gt;proc~solver_step</title>
+<path fill="none" stroke="#ff0000" d="M197.3,-54C210.59,-54 225.67,-54 239.55,-54"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="239.88,-57.5 249.88,-54 239.88,-50.5 239.88,-57.5"/>
+</g>
+<!-- proc~rki_step -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CalledByGraph_node7" class="node">
+<title>proc~rki_step</title>
+<g id="a_proc~~solver_multilayer_rk_stage_nz1~~CalledByGraph_node7"><a xlink:href="../proc/rki_step.html" xlink:title="rki_step">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="185.5,-24 131.5,-24 131.5,0 185.5,0 185.5,-24"/>
+<text text-anchor="middle" x="158.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_step</text>
+</a>
+</g>
+</g>
+<!-- proc~rki_step&#45;&gt;proc~solver_step -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CalledByGraph_edge6" class="edge">
+<title>proc~rki_step&#45;&gt;proc~solver_step</title>
+<path fill="none" stroke="#ff0000" d="M185.61,-20.7C201.37,-25.96 221.89,-32.8 240.23,-38.91"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="239.28,-42.28 249.87,-42.12 241.49,-35.64 239.28,-42.28"/>
+</g>
+<!-- proc~driver_run -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CalledByGraph_node8" class="node">
+<title>proc~driver_run</title>
+<g id="a_proc~~solver_multilayer_rk_stage_nz1~~CalledByGraph_node8"><a xlink:href="../proc/driver_run.html" xlink:title="driver_run">
+<polygon fill="#d9534f" stroke="#d9534f" points="67,-108 0,-108 0,-84 67,-84 67,-108"/>
+<text text-anchor="middle" x="33.5" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">driver_run</text>
+</a>
+</g>
+</g>
+<!-- proc~driver_run&#45;&gt;proc~driver_run_coastal -->
+<g id="proc~~solver_multilayer_rk_stage_nz1~~CalledByGraph_edge7" class="edge">
+<title>proc~driver_run&#45;&gt;proc~driver_run_coastal</title>
+<path fill="none" stroke="#ff0000" d="M67.14,-96C75.1,-96 83.9,-96 92.79,-96"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="92.82,-99.5 102.82,-96 92.82,-92.5 92.82,-99.5"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var panprocsolver_multilayer_rk_stage_nz1CalledByGraph = svgPanZoom('#procsolver_multilayer_rk_stage_nz1CalledByGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CalledByGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CalledByGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+
+
+    <section>    
+      <h2>Variables</h2>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Visibility</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+<th></th><th scope="col">Initial</th>        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-it~8"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>it</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nz_local"></span>
+              integer,
+            </td>
+              <td>private,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>nz_local</strong></td>
+<td> =</td>
+                <td>1</td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    </section>
+    <br>
+    
+    
+
+    
+    
+
+
+
+    
+    <section>
+    <h2><span class="anchor" id="src"></span>Source Code</h2>
+    <div class="hl codehilite"><pre><span></span><span class="w">   </span><span class="k">subroutine </span><span class="n">solver_multilayer_rk_stage_nz1</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="w"> </span><span class="n">is_stage1</span><span class="p">)</span>
+<span class="w">      </span><span class="c">!! Fused RK-stage path specialised for nz_ml=1 (depth-averaged</span>
+<span class="w">      </span><span class="c">!! 2D with optional tracers).</span>
+<span class="w">      </span><span class="c">!!</span>
+<span class="w">      </span><span class="c">!! Reorders the tracer pipeline to run before the per-cell post-</span>
+<span class="w">      </span><span class="c">!! update sequence so that (compute_update + distribute_barotropic</span>
+<span class="w">      </span><span class="c">!! + bottom_friction + truncate_velocity + recompute_barotropic +</span>
+<span class="w">      </span><span class="c">!! wind / atm_pressure / precip + coriolis) collapses into a</span>
+<span class="w">      </span><span class="c">!! single fused kernel `ml_fused_post_update`. Mirrors what the</span>
+<span class="w">      </span><span class="c">!! 2D HLL path does with `fused_update_stage1/2`. At nz_ml=1 the</span>
+<span class="w">      </span><span class="c">!! vertical-mixing block (vert_exchange, EOS, vmix, BPG) is</span>
+<span class="w">      </span><span class="c">!! definitionally empty, so this path is complete; for nz_ml&gt;1</span>
+<span class="w">      </span><span class="c">!! the un-fused stage above runs instead.</span>
+<span class="w">      </span><span class="c">!!</span>
+<span class="w">      </span><span class="c">!! When `is_stage1` is true the fused kernel additionally saves</span>
+<span class="w">      </span><span class="c">!! the pre-update barotropic and layer state into the `*_0`</span>
+<span class="w">      </span><span class="c">!! arrays, absorbing `solver_save_state` and `ml_save_layer_state`.</span>
+<span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="n">state_t</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">state</span>
+<span class="w">      </span><span class="kt">logical</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">is_stage1</span>
+<span class="w">      </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">parameter</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">nz_local</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">      </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">it</span>
+
+<span class="w">      </span><span class="c">! ---- Barotropic + layer BCs ----</span>
+<span class="w">      </span><span class="k">call </span><span class="n">profiler_start</span><span class="p">(</span><span class="s2">"boundary"</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">apply_boundary_conditions</span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">h</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hu</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hv</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                     </span><span class="n">state</span><span class="p">%</span><span class="n">grid</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">bc</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">ml_apply_layer_bcs</span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">h_layer</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">hu_layer</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">hv_layer</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                              </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">h</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hu</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hv</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">dsig_ml</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                              </span><span class="n">state</span><span class="p">%</span><span class="n">grid</span><span class="p">,</span><span class="w"> </span><span class="n">nz_local</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                              </span><span class="n">bc_west</span><span class="o">=</span><span class="n">state</span><span class="p">%</span><span class="n">bc</span><span class="p">%</span><span class="n">west</span><span class="p">,</span><span class="w"> </span><span class="n">bc_east</span><span class="o">=</span><span class="n">state</span><span class="p">%</span><span class="n">bc</span><span class="p">%</span><span class="n">east</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                              </span><span class="n">bc_south</span><span class="o">=</span><span class="n">state</span><span class="p">%</span><span class="n">bc</span><span class="p">%</span><span class="n">south</span><span class="p">,</span><span class="w"> </span><span class="n">bc_north</span><span class="o">=</span><span class="n">state</span><span class="p">%</span><span class="n">bc</span><span class="p">%</span><span class="n">north</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">profiler_stop</span><span class="p">(</span><span class="s2">"boundary"</span><span class="p">)</span>
+
+<span class="w">      </span><span class="c">! ---- Barotropic HLL flux (mass + momentum) ----</span>
+<span class="w">      </span><span class="c">! The pre-update momentum needed by the fused-kernel's distribute</span>
+<span class="w">      </span><span class="c">! step is captured in registers inside the kernel itself, so the</span>
+<span class="w">      </span><span class="c">! un-fused path's hu_ml_pre / hv_ml_pre copies are skipped here.</span>
+<span class="w">      </span><span class="k">call </span><span class="n">profiler_start</span><span class="p">(</span><span class="s2">"flux"</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">solver_compute_barotropic_flux</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">profiler_stop</span><span class="p">(</span><span class="s2">"flux"</span><span class="p">)</span>
+
+<span class="w">      </span><span class="c">! ---- Tracer BCs + CWC advection on OLD h_layer + mass_flux ----</span>
+<span class="w">      </span><span class="c">! Reordered to run before the fused post-update kernel, since the</span>
+<span class="w">      </span><span class="c">! fused kernel writes the NEW h_layer in place. The CWC property</span>
+<span class="w">      </span><span class="c">! holds because the mass_flux is the same continuity flux that</span>
+<span class="w">      </span><span class="c">! the barotropic update inside the fused kernel will consume.</span>
+<span class="w">      </span><span class="c">! Tracer BCs on OLD h_layer, looped over the registry (per-tracer</span>
+<span class="w">      </span><span class="c">! inflow synced for S/T in solver_multilayer_rk_stage above).</span>
+<span class="w">      </span><span class="k">do </span><span class="n">it</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">tracers</span><span class="p">)</span>
+<span class="w">         </span><span class="k">call </span><span class="n">ml_apply_tracer_bcs</span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">tracers</span><span class="p">(</span><span class="n">it</span><span class="p">)%</span><span class="n">hTr</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">h_layer</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                  </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">tracers</span><span class="p">(</span><span class="n">it</span><span class="p">)%</span><span class="n">tr_inflow</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                  </span><span class="n">state</span><span class="p">%</span><span class="n">grid</span><span class="p">,</span><span class="w"> </span><span class="n">nz_local</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">bc</span><span class="p">)</span>
+<span class="w">      </span><span class="k">end do</span>
+
+<span class="w">      </span><span class="c">! CWC tracer advection on OLD h_layer with NEW mass_flux, looped</span>
+<span class="w">      </span><span class="c">! over the whole registry (mirrors the nz&gt;1 path).</span>
+<span class="w">      </span><span class="k">do </span><span class="n">it</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">tracers</span><span class="p">)</span>
+<span class="w">         </span><span class="k">if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">tracers</span><span class="p">(</span><span class="n">it</span><span class="p">)%</span><span class="n">do_horizontal_advection</span><span class="p">)</span><span class="w"> </span><span class="k">cycle</span>
+<span class="k">         if</span><span class="w"> </span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">use_ppm_tracer</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            if</span><span class="w"> </span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">tracer_recon_code</span><span class="w"> </span><span class="o">/=</span><span class="w"> </span><span class="n">TRACER_RECON_PPM</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">               call </span><span class="n">ml_advect_tracer_weno</span><span class="p">(</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                  </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">h_layer</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">hu_layer</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">hv_layer</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                  </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">mass_flux_x</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">mass_flux_y</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                  </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">tracers</span><span class="p">(</span><span class="n">it</span><span class="p">)%</span><span class="n">hTr</span><span class="p">,</span><span class="w"> </span><span class="n">tracer_scratch</span><span class="p">%</span><span class="n">weno_tr_snap</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">grid</span><span class="p">,</span><span class="w"> </span><span class="n">nz_local</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                  </span><span class="n">state</span><span class="p">%</span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">tracer_recon_code</span><span class="p">)</span>
+<span class="w">            </span><span class="k">else</span>
+<span class="k">               call </span><span class="n">ml_advect_tracer_ppm</span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">h_layer</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">hu_layer</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">hv_layer</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                         </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">mass_flux_x</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">mass_flux_y</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                         </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">tracers</span><span class="p">(</span><span class="n">it</span><span class="p">)%</span><span class="n">hTr</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                         </span><span class="n">tracer_scratch</span><span class="p">%</span><span class="n">ppm_tr_snap</span><span class="p">,</span><span class="w"> </span><span class="n">tracer_scratch</span><span class="p">%</span><span class="n">ppm_ql_x</span><span class="p">,</span><span class="w"> </span><span class="n">tracer_scratch</span><span class="p">%</span><span class="n">ppm_qr_x</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                         </span><span class="n">tracer_scratch</span><span class="p">%</span><span class="n">ppm_ql_y</span><span class="p">,</span><span class="w"> </span><span class="n">tracer_scratch</span><span class="p">%</span><span class="n">ppm_qr_y</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                         </span><span class="n">state</span><span class="p">%</span><span class="n">grid</span><span class="p">,</span><span class="w"> </span><span class="n">nz_local</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                         </span><span class="n">state</span><span class="p">%</span><span class="n">dt</span><span class="p">)</span>
+<span class="w">            </span><span class="k">end if</span>
+<span class="k">         else</span>
+<span class="k">            call </span><span class="n">ml_advect_tracer</span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">h_layer</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">hu_layer</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">hv_layer</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                  </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">mass_flux_x</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">mass_flux_y</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                  </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">tracers</span><span class="p">(</span><span class="n">it</span><span class="p">)%</span><span class="n">hTr</span><span class="p">,</span><span class="w"> </span><span class="n">tracer_scratch</span><span class="p">%</span><span class="n">adv_hTr_snap</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">grid</span><span class="p">,</span><span class="w"> </span><span class="n">nz_local</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                  </span><span class="n">state</span><span class="p">%</span><span class="n">dt</span><span class="p">)</span>
+<span class="w">         </span><span class="k">end if</span>
+<span class="k">      end do</span>
+
+<span class="w">      </span><span class="c">! ---- The big fusion: 7 per-cell kernels collapsed into one ----</span>
+<span class="w">      </span><span class="k">call </span><span class="n">profiler_start</span><span class="p">(</span><span class="s2">"update"</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">ml_fused_post_update</span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">h</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hu</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hv</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">h_layer</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">hu_layer</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">hv_layer</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">h0</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hu0</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hv0</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">h_layer0</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">hu_layer0</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">hv_layer0</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">flux_h</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">flux_hu</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">flux_hv</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">dsig_ml</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                </span><span class="n">state</span><span class="p">%</span><span class="n">forcing</span><span class="p">%</span><span class="n">wind_x</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">forcing</span><span class="p">%</span><span class="n">wind_y</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                </span><span class="n">state</span><span class="p">%</span><span class="n">forcing</span><span class="p">%</span><span class="n">atm_pressure</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">forcing</span><span class="p">%</span><span class="n">precipitation</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                </span><span class="n">state</span><span class="p">%</span><span class="n">grid</span><span class="p">,</span><span class="w"> </span><span class="n">nz_local</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">manning_n</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">use_linear_bottom_drag</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">bottom_drag_r</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">coriolis_f</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">forcing</span><span class="p">%</span><span class="n">active</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                </span><span class="n">do_save</span><span class="o">=</span><span class="n">is_stage1</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">profiler_stop</span><span class="p">(</span><span class="s2">"update"</span><span class="p">)</span>
+
+<span class="w">      </span><span class="c">! ---- Tracer pipeline tail: horizontal diffusion, surface flux,</span>
+<span class="w">      </span><span class="c">!      physical clamp. ----</span>
+<span class="w">      </span><span class="c">! Horizontal tracer diffusion, looped over the registry with</span>
+<span class="w">      </span><span class="c">! per-tracer hdiff_kappa (synced from the state scalar for S/T).</span>
+<span class="w">      </span><span class="k">do </span><span class="n">it</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">tracers</span><span class="p">)</span>
+<span class="w">         </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">tracers</span><span class="p">(</span><span class="n">it</span><span class="p">)%</span><span class="n">do_horizontal_diffusion</span><span class="w"> </span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">             </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">tracers</span><span class="p">(</span><span class="n">it</span><span class="p">)%</span><span class="n">hdiff_kappa</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mf">0.0_wp</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            call </span><span class="n">ml_horizontal_diffusion_tracer</span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">h_layer</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">tracers</span><span class="p">(</span><span class="n">it</span><span class="p">)%</span><span class="n">hTr</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                                </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">tracers</span><span class="p">(</span><span class="n">it</span><span class="p">)%</span><span class="n">hdiff_kappa</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                                </span><span class="n">tracer_scratch</span><span class="p">%</span><span class="n">hdiff_hTr_pre</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                                </span><span class="n">state</span><span class="p">%</span><span class="n">grid</span><span class="p">,</span><span class="w"> </span><span class="n">nz_local</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                                </span><span class="n">state</span><span class="p">%</span><span class="n">dt</span><span class="p">)</span>
+<span class="w">         </span><span class="k">end if</span>
+<span class="k">      end do</span>
+
+<span class="w">      </span><span class="c">! Surface tracer flux + S/T clamp fused into one per-cell pass.</span>
+<span class="w">      </span><span class="c">! Replaces 3 launches: ml_apply_surface_tracer_fluxes +</span>
+<span class="w">      </span><span class="c">! ml_clamp_tracer(S) + ml_clamp_tracer(T).</span>
+<span class="w">      </span><span class="k">call </span><span class="n">ml_fused_tracer_post</span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">tracers</span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">idx_salinity</span><span class="p">)%</span><span class="n">hTr</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">tracers</span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">idx_temperature</span><span class="p">)%</span><span class="n">hTr</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">h_layer</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">hu_layer</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">hv_layer</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">h</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hu</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hv</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                </span><span class="n">state</span><span class="p">%</span><span class="n">forcing</span><span class="p">%</span><span class="n">heat_flux</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">forcing</span><span class="p">%</span><span class="n">evap_minus_precip</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">evap_mass_sink</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">evap_latent_cooling</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">S_min</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">S_max</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">T_min</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">T_max</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">rho_0</span><span class="p">,</span><span class="w"> </span><span class="n">CP_WATER</span><span class="p">,</span><span class="w"> </span><span class="n">ML_MIN_DEPTH</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                </span><span class="n">state</span><span class="p">%</span><span class="n">grid</span><span class="p">,</span><span class="w"> </span><span class="n">nz_local</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">dt</span><span class="p">)</span>
+
+<span class="w">      </span><span class="c">! Clamp extra registered tracers — the fused tracer-post above clamps</span>
+<span class="w">      </span><span class="c">! S/T only, so extras (e.g. sediment) need their own positivity clamp.</span>
+<span class="w">      </span><span class="k">do </span><span class="n">it</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">tracers</span><span class="p">)</span>
+<span class="w">         </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">it</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">idx_salinity</span><span class="w"> </span><span class="p">.</span><span class="nb">or</span><span class="p">.</span><span class="w"> </span><span class="n">it</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">idx_temperature</span><span class="p">)</span><span class="w"> </span><span class="k">cycle</span>
+<span class="k">         if</span><span class="w"> </span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">tracers</span><span class="p">(</span><span class="n">it</span><span class="p">)%</span><span class="n">do_clamp</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            call </span><span class="n">ml_clamp_tracer</span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">tracers</span><span class="p">(</span><span class="n">it</span><span class="p">)%</span><span class="n">hTr</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">h_layer</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                 </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">tracers</span><span class="p">(</span><span class="n">it</span><span class="p">)%</span><span class="n">tr_min</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">tracers</span><span class="p">(</span><span class="n">it</span><span class="p">)%</span><span class="n">tr_max</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                 </span><span class="n">state</span><span class="p">%</span><span class="n">grid</span><span class="p">,</span><span class="w"> </span><span class="n">nz_local</span><span class="p">)</span>
+<span class="w">         </span><span class="k">end if</span>
+<span class="k">      end do</span>
+
+<span class="w">      </span><span class="c">! ---- Smagorinsky horizontal viscosity (optional) ----</span>
+<span class="w">      </span><span class="c">! Smag modifies hu_layer/hv_layer; refresh barotropic hu/hv so</span>
+<span class="w">      </span><span class="c">! the next stage's BCs see consistent state.</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">smagorinsky_cs</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mf">0.0_wp</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">         call </span><span class="n">ml_horizontal_viscosity_smag</span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">h_layer</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">hu_layer</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">hv_layer</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                           </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">smagorinsky_cs</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                           </span><span class="n">state</span><span class="p">%</span><span class="n">grid</span><span class="p">,</span><span class="w"> </span><span class="n">nz_local</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">dt</span><span class="p">)</span>
+<span class="w">      </span><span class="k">end if</span>
+<span class="k">      if</span><span class="w"> </span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">biharmonic_nu4</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mf">0.0_wp</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">         call </span><span class="n">ml_horizontal_viscosity_biharmonic</span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">h_layer</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">hu_layer</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                                 </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">hv_layer</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">biharmonic_nu4</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                                 </span><span class="n">state</span><span class="p">%</span><span class="n">grid</span><span class="p">,</span><span class="w"> </span><span class="n">nz_local</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">dt</span><span class="p">)</span>
+<span class="w">      </span><span class="k">end if</span>
+<span class="k">      if</span><span class="w"> </span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">smagorinsky_cs</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mf">0.0_wp</span><span class="w"> </span><span class="p">.</span><span class="nb">or</span><span class="p">.</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">biharmonic_nu4</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mf">0.0_wp</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">         call </span><span class="n">ml_compute_barotropic_momentum</span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">h_layer</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">hu_layer</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                             </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">hv_layer</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hu</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hv</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                             </span><span class="n">state</span><span class="p">%</span><span class="n">grid</span><span class="p">,</span><span class="w"> </span><span class="n">nz_local</span><span class="p">)</span>
+<span class="w">      </span><span class="k">end if</span>
+
+<span class="w">      </span><span class="c">! ---- Sponge zone relaxation ----</span>
+<span class="w">      </span><span class="c">! NOTE: the nz=1 ML fast path does NOT call accumulate_mass_src /</span>
+<span class="w">      </span><span class="c">! accumulate_sponge_mass_src, so mass_src_tracked stays .false. and</span>
+<span class="w">      </span><span class="c">! the console falls back to raw drift for this path.  This is a safe,</span>
+<span class="w">      </span><span class="c">! conservative fallback: the nz=1 fused path is typically used for</span>
+<span class="w">      </span><span class="c">! barotropic ML spin-up or validation, not the flagship forced runs</span>
+<span class="w">      </span><span class="c">! (Sydney Harbour / coastal configs with precip/evap/sponge use nz&gt;1).</span>
+<span class="w">      </span><span class="c">! Instrumenting it requires threading the evap_mass_sink flag and the</span>
+<span class="w">      </span><span class="c">! budget accumulators through the fused kernel; deferred until needed.</span>
+<span class="w">      </span><span class="k">call </span><span class="n">apply_sponge</span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">h</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hu</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hv</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                        </span><span class="n">state</span><span class="p">%</span><span class="n">grid</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">bc</span><span class="p">)</span>
+<span class="w">   </span><span class="k">end subroutine </span><span class="n">solver_multilayer_rk_stage_nz1</span>
+</pre></div>
+
+    </section>
+    <br>
+    
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Rakali
+ was developed by Jorge Luis Galvez Vallejo<br>              &copy; 2026 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+ on 2026-10-08 12:55 +0000             </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>

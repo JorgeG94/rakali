@@ -1,0 +1,640 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="GPU-native coastal solver — structured Cartesian and unstructured triangular grids, hydrostatic multilayer + non-hydrostatic, portable across NVHPC/gfortran/ifx.">
+    <meta name="author" content="Jorge Luis Galvez Vallejo" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>rki_get_h_ptr &ndash; Rakali</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">Rakali </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/absint.html">Abstract Interfaces</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>rki_get_h_ptr
+      <small>Function</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.1% of total for procedures.">23 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/rki_api.F90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/rki_api.f90.html'>rki_api.F90</a></li>
+                <li class="breadcrumb-item"><a href='../module/rki_api.html'>rki_api</a></li>
+            <li class="breadcrumb-item active" aria-current="page">rki_get_h_ptr</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+  
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#vars-0"
+         aria-expanded="false" aria-controls="vars-0">
+         <h4 class="card-header bg-primary text-white">Variables</h4>
+      </a>
+      <div id="vars-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../proc/rki_get_h_ptr.html#variable-h~88">h</a>
+            <a class="list-group-item" href="../proc/rki_get_h_ptr.html#variable-tmp~14">tmp</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../proc/rki_get_h_ptr.html#src">rki_get_h_ptr</a>
+      </div>
+    </div>
+
+
+  </div>
+
+    </div>
+    
+    <div class="col-md-9" id='text'>
+    <h2>private  function rki_get_h_ptr(c_handle, ptr, nx_total, ny_total) result(ierr) bind(c, name="rki_get_h_ptr")  
+</h2>
+    
+
+
+
+    <h3>Arguments</h3>
+        <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-c_handle~80"></span>
+              type(c_ptr),
+            </td>
+<td>intent(in),</td>
+              <td></td>            <td>
+              value
+            </td>
+            <td>::</td>
+            <td><strong>c_handle</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ptr~14"></span>
+              type(c_ptr),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>ptr</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nx_total~2"></span>
+              integer(kind=c_int),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nx_total</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ny_total~2"></span>
+              integer(kind=c_int),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>ny_total</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+      <h3>Return Value
+        <small>
+          <span class="anchor" id="variable-ierr~67"></span>
+          integer(kind=c_int)
+        </small>
+      </h3>
+      
+    <br>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Calls</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~rki_get_h_ptr~~CallsGraph Pages: 1 -->
+<svg id="procrki_get_h_ptrCallsGraph" width="641pt" height="133pt"
+ viewBox="0.00 0.00 641.00 132.91" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~rki_get_h_ptr~~CallsGraph" class="graph" transform="scale(0.84 0.84) rotate(0) translate(4 154)">
+<title>proc~~rki_get_h_ptr~~CallsGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-154 758,-154 758,4 -4,4"/>
+<!-- proc~rki_get_h_ptr -->
+<g id="proc~~rki_get_h_ptr~~CallsGraph_node1" class="node">
+<title>proc~rki_get_h_ptr</title>
+<polygon fill="none" stroke="black" points="81,-66 0,-66 0,-42 81,-42 81,-66"/>
+<text text-anchor="middle" x="40.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50">rki_get_h_ptr</text>
+</g>
+<!-- proc~ensure_host~2 -->
+<g id="proc~~rki_get_h_ptr~~CallsGraph_node2" class="node">
+<title>proc~ensure_host~2</title>
+<g id="a_proc~~rki_get_h_ptr~~CallsGraph_node2"><a xlink:href="../proc/ensure_host~2.html" xlink:title="ensure_host">
+<polygon fill="#d9534f" stroke="#d9534f" points="193,-87 117,-87 117,-63 193,-63 193,-87"/>
+<text text-anchor="middle" x="155" y="-72.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">ensure_host</text>
+</a>
+</g>
+</g>
+<!-- proc~rki_get_h_ptr&#45;&gt;proc~ensure_host~2 -->
+<g id="proc~~rki_get_h_ptr~~CallsGraph_edge1" class="edge">
+<title>proc~rki_get_h_ptr&#45;&gt;proc~ensure_host~2</title>
+<path fill="none" stroke="#ff0000" d="M81.16,-61.4C89.53,-62.97 98.43,-64.63 107.04,-66.23"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="106.48,-69.69 116.95,-68.08 107.77,-62.81 106.48,-69.69"/>
+</g>
+<!-- proc~resolve~2 -->
+<g id="proc~~rki_get_h_ptr~~CallsGraph_node3" class="node">
+<title>proc~resolve~2</title>
+<g id="a_proc~~rki_get_h_ptr~~CallsGraph_node3"><a xlink:href="../proc/resolve~2.html" xlink:title="resolve">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="182,-45 128,-45 128,-21 182,-21 182,-45"/>
+<text text-anchor="middle" x="155" y="-30.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">resolve</text>
+</a>
+</g>
+</g>
+<!-- proc~rki_get_h_ptr&#45;&gt;proc~resolve~2 -->
+<g id="proc~~rki_get_h_ptr~~CallsGraph_edge2" class="edge">
+<title>proc~rki_get_h_ptr&#45;&gt;proc~resolve~2</title>
+<path fill="none" stroke="#ff0000" d="M81.16,-46.6C93.1,-44.37 106.13,-41.93 117.83,-39.75"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="118.52,-43.18 127.71,-37.91 117.24,-36.3 118.52,-43.18"/>
+</g>
+<!-- proc~solver_exit_data -->
+<g id="proc~~rki_get_h_ptr~~CallsGraph_node5" class="node">
+<title>proc~solver_exit_data</title>
+<g id="a_proc~~rki_get_h_ptr~~CallsGraph_node5"><a xlink:href="../proc/solver_exit_data.html" xlink:title="solver_exit_data">
+<polygon fill="#d9534f" stroke="#d9534f" points="327,-87 229,-87 229,-63 327,-63 327,-87"/>
+<text text-anchor="middle" x="278" y="-72.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_exit_data</text>
+</a>
+</g>
+</g>
+<!-- proc~ensure_host~2&#45;&gt;proc~solver_exit_data -->
+<g id="proc~~rki_get_h_ptr~~CallsGraph_edge3" class="edge">
+<title>proc~ensure_host~2&#45;&gt;proc~solver_exit_data</title>
+<path fill="none" stroke="#ff0000" d="M193.29,-75C201.38,-75 210.11,-75 218.79,-75"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="218.9,-78.5 228.9,-75 218.9,-71.5 218.9,-78.5"/>
+</g>
+<!-- proc~handle_check -->
+<g id="proc~~rki_get_h_ptr~~CallsGraph_node4" class="node">
+<title>proc~handle_check</title>
+<g id="a_proc~~rki_get_h_ptr~~CallsGraph_node4"><a xlink:href="../proc/handle_check.html" xlink:title="handle_check">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="321,-45 235,-45 235,-21 321,-21 321,-45"/>
+<text text-anchor="middle" x="278" y="-30.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">handle_check</text>
+</a>
+</g>
+</g>
+<!-- proc~resolve~2&#45;&gt;proc~handle_check -->
+<g id="proc~~rki_get_h_ptr~~CallsGraph_edge4" class="edge">
+<title>proc~resolve~2&#45;&gt;proc~handle_check</title>
+<path fill="none" stroke="#00ffff" d="M182.26,-33C194.56,-33 209.68,-33 224.2,-33"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="224.62,-36.5 234.62,-33 224.62,-29.5 224.62,-36.5"/>
+</g>
+<!-- proc~ml_dynamics_workspaces_cleanup -->
+<g id="proc~~rki_get_h_ptr~~CallsGraph_node6" class="node">
+<title>proc~ml_dynamics_workspaces_cleanup</title>
+<g id="a_proc~~rki_get_h_ptr~~CallsGraph_node6"><a xlink:href="../proc/ml_dynamics_workspaces_cleanup.html" xlink:title="ml_dynamics_workspaces_cleanup">
+<polygon fill="#d9534f" stroke="#d9534f" points="561,-150 363,-150 363,-126 561,-126 561,-150"/>
+<text text-anchor="middle" x="462" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">ml_dynamics_workspaces_cleanup</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_exit_data&#45;&gt;proc~ml_dynamics_workspaces_cleanup -->
+<g id="proc~~rki_get_h_ptr~~CallsGraph_edge5" class="edge">
+<title>proc~solver_exit_data&#45;&gt;proc~ml_dynamics_workspaces_cleanup</title>
+<path fill="none" stroke="#00ffff" d="M299.42,-87.04C316.04,-96.4 340.38,-109.07 363,-117 369.77,-119.38 376.91,-121.53 384.11,-123.48"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="383.4,-126.9 393.95,-126 385.13,-120.12 383.4,-126.9"/>
+</g>
+<!-- proc~ml_horizontal_viscosity_cleanup -->
+<g id="proc~~rki_get_h_ptr~~CallsGraph_node7" class="node">
+<title>proc~ml_horizontal_viscosity_cleanup</title>
+<g id="a_proc~~rki_get_h_ptr~~CallsGraph_node7"><a xlink:href="../proc/ml_horizontal_viscosity_cleanup.html" xlink:title="ml_horizontal_viscosity_cleanup">
+<polygon fill="#d9534f" stroke="#d9534f" points="553.5,-108 370.5,-108 370.5,-84 553.5,-84 553.5,-108"/>
+<text text-anchor="middle" x="462" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">ml_horizontal_viscosity_cleanup</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_exit_data&#45;&gt;proc~ml_horizontal_viscosity_cleanup -->
+<g id="proc~~rki_get_h_ptr~~CallsGraph_edge6" class="edge">
+<title>proc~solver_exit_data&#45;&gt;proc~ml_horizontal_viscosity_cleanup</title>
+<path fill="none" stroke="#00ffff" d="M327.29,-80.57C337.56,-81.76 348.76,-83.05 360.17,-84.37"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="359.89,-87.86 370.23,-85.53 360.69,-80.9 359.89,-87.86"/>
+</g>
+<!-- proc~solver_tracers_exit_data -->
+<g id="proc~~rki_get_h_ptr~~CallsGraph_node8" class="node">
+<title>proc~solver_tracers_exit_data</title>
+<g id="a_proc~~rki_get_h_ptr~~CallsGraph_node8"><a xlink:href="../proc/solver_tracers_exit_data.html" xlink:title="solver_tracers_exit_data">
+<polygon fill="#d9534f" stroke="#d9534f" points="532.5,-66 391.5,-66 391.5,-42 532.5,-42 532.5,-66"/>
+<text text-anchor="middle" x="462" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_tracers_exit_data</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_exit_data&#45;&gt;proc~solver_tracers_exit_data -->
+<g id="proc~~rki_get_h_ptr~~CallsGraph_edge7" class="edge">
+<title>proc~solver_exit_data&#45;&gt;proc~solver_tracers_exit_data</title>
+<path fill="none" stroke="#00ffff" d="M327.29,-69.43C343.82,-67.52 362.78,-65.33 381.12,-63.22"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="381.7,-66.67 391.23,-62.05 380.9,-59.72 381.7,-66.67"/>
+</g>
+<!-- proc~tracer_scratch_destroy -->
+<g id="proc~~rki_get_h_ptr~~CallsGraph_node9" class="node">
+<title>proc~tracer_scratch_destroy</title>
+<g id="a_proc~~rki_get_h_ptr~~CallsGraph_node9"><a xlink:href="../proc/tracer_scratch_destroy.html" xlink:title="tracer_scratch_destroy">
+<polygon fill="#d9534f" stroke="#d9534f" points="528.5,-24 395.5,-24 395.5,0 528.5,0 528.5,-24"/>
+<text text-anchor="middle" x="462" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">tracer_scratch_destroy</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_exit_data&#45;&gt;proc~tracer_scratch_destroy -->
+<g id="proc~~rki_get_h_ptr~~CallsGraph_edge8" class="edge">
+<title>proc~solver_exit_data&#45;&gt;proc~tracer_scratch_destroy</title>
+<path fill="none" stroke="#00ffff" d="M307.93,-62.99C314.28,-60.17 320.92,-57.09 327,-54 343.51,-45.61 345.73,-39.69 363,-33 370.19,-30.22 377.82,-27.77 385.53,-25.62"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="386.53,-28.98 395.31,-23.06 384.75,-22.21 386.53,-28.98"/>
+</g>
+<!-- proc~remap_workspace_cleanup -->
+<g id="proc~~rki_get_h_ptr~~CallsGraph_node10" class="node">
+<title>proc~remap_workspace_cleanup</title>
+<g id="a_proc~~rki_get_h_ptr~~CallsGraph_node10"><a xlink:href="../proc/remap_workspace_cleanup.html" xlink:title="remap_workspace_cleanup">
+<polygon fill="#d9534f" stroke="#d9534f" points="754,-150 597,-150 597,-126 754,-126 754,-150"/>
+<text text-anchor="middle" x="675.5" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">remap_workspace_cleanup</text>
+</a>
+</g>
+</g>
+<!-- proc~ml_dynamics_workspaces_cleanup&#45;&gt;proc~remap_workspace_cleanup -->
+<g id="proc~~rki_get_h_ptr~~CallsGraph_edge9" class="edge">
+<title>proc~ml_dynamics_workspaces_cleanup&#45;&gt;proc~remap_workspace_cleanup</title>
+<path fill="none" stroke="#ff0000" d="M561.01,-138C569.54,-138 578.13,-138 586.57,-138"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="586.77,-141.5 596.77,-138 586.77,-134.5 586.77,-141.5"/>
+</g>
+<!-- proc~scratch_array_destroy -->
+<g id="proc~~rki_get_h_ptr~~CallsGraph_node11" class="node">
+<title>proc~scratch_array_destroy</title>
+<g id="a_proc~~rki_get_h_ptr~~CallsGraph_node11"><a xlink:href="../proc/scratch_array_destroy.html" xlink:title="scratch_array_destroy">
+<polygon fill="#d9534f" stroke="#d9534f" points="740.5,-24 610.5,-24 610.5,0 740.5,0 740.5,-24"/>
+<text text-anchor="middle" x="675.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">scratch_array_destroy</text>
+</a>
+</g>
+</g>
+<!-- proc~tracer_scratch_destroy&#45;&gt;proc~scratch_array_destroy -->
+<g id="proc~~rki_get_h_ptr~~CallsGraph_edge10" class="edge">
+<title>proc~tracer_scratch_destroy&#45;&gt;proc~scratch_array_destroy</title>
+<path fill="none" stroke="#7f00ff" d="M528.76,-12C551.37,-12 576.83,-12 600.07,-12"/>
+<polygon fill="#7f00ff" stroke="#7f00ff" points="600.23,-15.5 610.23,-12 600.23,-8.5 600.23,-15.5"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var panprocrki_get_h_ptrCallsGraph = svgPanZoom('#procrki_get_h_ptrCallsGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CallsGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CallsGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+
+
+    <section>    
+      <h2>Variables</h2>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Visibility</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+<th></th><th scope="col">Initial</th>        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-h~88"></span>
+              type(<a href='../type/solver_handle_t.html'>solver_handle_t</a>),
+            </td>
+              <td>private,</td>
+            <td>
+              pointer
+            </td>
+            <td>::</td>
+            <td><strong>h</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-tmp~14"></span>
+              real(kind=wp),
+            </td>
+              <td>private,</td>
+            <td>
+              pointer
+            </td>
+            <td>::</td>
+            <td><strong>tmp</strong>(:,:)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    </section>
+    <br>
+    
+    
+
+    
+    
+
+
+
+    
+    <section>
+    <h2><span class="anchor" id="src"></span>Source Code</h2>
+    <div class="hl codehilite"><pre><span></span><span class="w">   </span><span class="k">function </span><span class="n">rki_get_h_ptr</span><span class="p">(</span><span class="n">c_handle</span><span class="p">,</span><span class="w"> </span><span class="n">ptr</span><span class="p">,</span><span class="w"> </span><span class="n">nx_total</span><span class="p">,</span><span class="w"> </span><span class="n">ny_total</span><span class="p">)</span><span class="w"> </span><span class="k">result</span><span class="p">(</span><span class="n">ierr</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">      </span><span class="k">bind</span><span class="p">(</span><span class="n">c</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="o">=</span><span class="s2">"rki_get_h_ptr"</span><span class="p">)</span>
+<span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="kt">c_ptr</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">),</span><span class="w"> </span><span class="k">value</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">c_handle</span>
+<span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="kt">c_ptr</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">ptr</span>
+<span class="w">      </span><span class="kt">integer</span><span class="p">(</span><span class="kt">c_int</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">nx_total</span><span class="p">,</span><span class="w"> </span><span class="n">ny_total</span>
+<span class="w">      </span><span class="kt">integer</span><span class="p">(</span><span class="kt">c_int</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">ierr</span>
+<span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="n">solver_handle_t</span><span class="p">),</span><span class="w"> </span><span class="k">pointer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">h</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">pointer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">tmp</span><span class="p">(:,</span><span class="w"> </span><span class="p">:)</span>
+
+<span class="w">      </span><span class="n">ptr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">c_null_ptr</span>
+<span class="nb">      </span><span class="n">nx_total</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">      </span><span class="n">ny_total</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">      </span><span class="n">ierr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">resolve</span><span class="p">(</span><span class="n">c_handle</span><span class="p">,</span><span class="w"> </span><span class="n">h</span><span class="p">)</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ierr</span><span class="w"> </span><span class="o">/=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">return</span>
+<span class="k">      if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="w"> </span><span class="n">h</span><span class="p">%</span><span class="n">is_initialised</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">         </span><span class="n">ierr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">-</span><span class="mi">1</span>
+<span class="w">         </span><span class="k">return</span>
+<span class="k">      end if</span>
+<span class="k">      call </span><span class="n">ensure_host</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+<span class="w">      </span><span class="n">tmp</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">h</span><span class="p">%</span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">h</span>
+<span class="w">      </span><span class="n">ptr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">c_loc</span><span class="p">(</span><span class="n">tmp</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">))</span>
+<span class="w">      </span><span class="n">nx_total</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">h</span><span class="p">%</span><span class="n">state</span><span class="p">%</span><span class="n">grid</span><span class="p">%</span><span class="n">nx_total</span>
+<span class="w">      </span><span class="n">ny_total</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">h</span><span class="p">%</span><span class="n">state</span><span class="p">%</span><span class="n">grid</span><span class="p">%</span><span class="n">ny_total</span>
+<span class="w">      </span><span class="n">ierr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">   </span><span class="k">end function </span><span class="n">rki_get_h_ptr</span>
+</pre></div>
+
+    </section>
+    <br>
+    
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Rakali
+ was developed by Jorge Luis Galvez Vallejo<br>              &copy; 2026 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+ on 2026-10-08 12:55 +0000             </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,1407 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="GPU-native coastal solver — structured Cartesian and unstructured triangular grids, hydrostatic multilayer + non-hydrostatic, portable across NVHPC/gfortran/ifx.">
+    <meta name="author" content="Jorge Luis Galvez Vallejo" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>rki_boundary_unstr &ndash; Rakali</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">Rakali </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/absint.html">Abstract Interfaces</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>rki_boundary_unstr
+      <small>Module</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.1% of total for modules and submodules.">28 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/rki_boundary_unstr.F90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/rki_boundary_unstr.f90.html'>rki_boundary_unstr.F90</a></li>
+            <li class="breadcrumb-item active" aria-current="page">rki_boundary_unstr</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+
+  <div class="row">
+    <div class="col-md-3">
+        <div id="sidebar">
+      <h3>Contents</h3>
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#vars-0"
+         aria-expanded="false" aria-controls="vars-0">
+         <h4 class="card-header bg-primary text-white">Variables</h4>
+      </a>
+      <div id="vars-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../module/rki_boundary_unstr.html#variable-bc_chapman">BC_CHAPMAN</a>
+            <a class="list-group-item" href="../module/rki_boundary_unstr.html#variable-bc_clamped">BC_CLAMPED</a>
+            <a class="list-group-item" href="../module/rki_boundary_unstr.html#variable-bc_discharge">BC_DISCHARGE</a>
+            <a class="list-group-item" href="../module/rki_boundary_unstr.html#variable-bc_inflow">BC_INFLOW</a>
+            <a class="list-group-item" href="../module/rki_boundary_unstr.html#variable-bc_interior">BC_INTERIOR</a>
+            <a class="list-group-item" href="../module/rki_boundary_unstr.html#variable-bc_nested">BC_NESTED</a>
+            <a class="list-group-item" href="../module/rki_boundary_unstr.html#variable-bc_open">BC_OPEN</a>
+            <a class="list-group-item" href="../module/rki_boundary_unstr.html#variable-bc_outflow">BC_OUTFLOW</a>
+            <a class="list-group-item" href="../module/rki_boundary_unstr.html#variable-bc_sponge">BC_SPONGE</a>
+            <a class="list-group-item" href="../module/rki_boundary_unstr.html#variable-bc_tidal">BC_TIDAL</a>
+            <a class="list-group-item" href="../module/rki_boundary_unstr.html#variable-bc_wall">BC_WALL</a>
+            <a class="list-group-item" href="../module/rki_boundary_unstr.html#variable-max_bc_groups">MAX_BC_GROUPS</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+
+
+  </div>
+
+    </div>
+
+    <div class="col-md-9" id='text'>
+      <p>Integer constants identifying the boundary condition type for
+each boundary edge group, plus a fixed maximum on the number of
+groups a single mesh can carry. Mirrors the role of
+<code>rki_boundary_types</code> on the structured side. Seven BC types are
+fully dispatched inside <code>compute_boundary_state_impl</code>
+(inlined into <code>rki_kernel_flux_unstr</code>): <code>BC_WALL</code>, <code>BC_OPEN</code>, <code>BC_INFLOW</code>,
+<code>BC_DISCHARGE</code>, <code>BC_OUTFLOW</code>, <code>BC_TIDAL</code>, <code>BC_CLAMPED</code>. <code>BC_CHAPMAN</code>
+is dispatched one level higher in the flux kernel
+(<code>rki_kernel_flux_unstr</code>) because it needs per-edge mesh access to
+compute the radiating ghost target before falling through into the
+Flather/<code>BC_TIDAL</code> algebra. The multilayer tracer advection kernel
+(<code>ml_advect_tracer_unstr</code>) honours <code>bc_S_ext</code> / <code>bc_T_ext</code> at
+inflow edges, so freshwater / clamped-tracer river inflows work
+end-to-end. Types that live on the structured side but are not yet
+ported: <code>BC_NESTED</code>, <code>BC_SPONGE</code>.</p>
+<p><code>BC_TIDAL</code> is a Flather radiating boundary that clamps the ghost
+stage to <code>bc_eta_ext(g)</code> and reconstructs the ghost outward-normal
+velocity from the outgoing Riemann invariant. <code>BC_CLAMPED</code> does
+the same stage clamp but copies momentum transmissively (no
+radiation term) &ndash; pick it when you want a pure Dirichlet stage
+without the wave-radiation coupling.</p>
+<p>How a mesh wires up its boundary edges:</p>
+<ul>
+<li>Every boundary edge of a triangle has <code>mesh%neighbours(i, k) == -1</code>
+    and <code>mesh%bc_group(i, k) &gt;= 0</code>. Group 0 means &ldquo;no group set
+    &ndash; treat as default wall&rdquo;.</li>
+<li><code>state%bc_type(g)</code> for <code>g = 1..MAX_BC_GROUPS</code> says what BC
+    type group <code>g</code> represents. Defaults to <code>BC_WALL</code> so a fresh
+    state with no explicit BC setup behaves like an all-walls
+    domain (which is what we want for lake-at-rest tests).</li>
+<li>The flux kernel reads the bc_type via this lookup and
+    dispatches inside <code>compute_boundary_state_impl</code> (inlined in
+    <code>rki_kernel_flux_unstr</code>) to build the right-side ghost state.</li>
+<li>Tracer inflow values live in <code>state%bc_S_ext(g)</code> /
+    <code>state%bc_T_ext(g)</code> and are consumed by
+    <code>ml_advect_tracer_unstr</code> on edges whose mass flux is into
+    the domain.</li>
+</ul>
+<p>Integer values match the structured side
+(<code>rki_boundary_types</code>): WALL=1, OPEN=2, TIDAL=3, NESTED=4,
+INFLOW=5, DISCHARGE=6, CLAMPED=7, SPONGE=8, CHAPMAN=9. Only the
+types actually dispatched here are re-declared; the rest of that
+range is reserved. <code>BC_OUTFLOW = 10</code> is unstructured-only and
+sits past the structured range to avoid future collisions.</p>
+<br>      
+          <div class="card">
+      <h3 class="card-header card-title bg-light">Used by</h3>
+      <div class="card-body">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: module~~rki_boundary_unstr~~UsedByGraph Pages: 1 -->
+<svg id="modulerki_boundary_unstrUsedByGraph" width="641pt" height="373pt"
+ viewBox="0.00 0.00 641.00 373.39" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="module~~rki_boundary_unstr~~UsedByGraph" class="graph" transform="scale(0.42 0.42) rotate(0) translate(4 877.34)">
+<title>module~~rki_boundary_unstr~~UsedByGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-877.34 1509,-877.34 1509,4 -4,4"/>
+<!-- module~rki_boundary_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_node1" class="node">
+<title>module~rki_boundary_unstr</title>
+<polygon fill="none" stroke="black" points="115,-167 0,-167 0,-143 115,-143 115,-167"/>
+<text text-anchor="middle" x="57.5" y="-152.6" font-family="Helvetica,sans-Serif" font-size="10.50">rki_boundary_unstr</text>
+</g>
+<!-- module~rki_api_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_node2" class="node">
+<title>module~rki_api_unstr</title>
+<g id="a_module~~rki_boundary_unstr~~UsedByGraph_node2"><a xlink:href="../module/rki_api_unstr.html" xlink:title="rki_api_unstr">
+<polygon fill="#337ab7" stroke="#337ab7" points="1505,-731 1425,-731 1425,-707 1505,-707 1505,-731"/>
+<text text-anchor="middle" x="1465" y="-716.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_api_unstr</text>
+</a>
+</g>
+</g>
+<!-- module~rki_api_unstr&#45;&gt;module~rki_boundary_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge1" class="edge">
+<title>module~rki_api_unstr&#45;&gt;module~rki_boundary_unstr</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M1454.27,-731.34C1434.96,-755.79 1393.25,-808.27 1389,-811 1304.36,-865.34 1270.58,-868 1170,-868 1170,-868 1170,-868 953,-868 788.11,-868 746.49,-879.4 582,-868"/>
+</g>
+<!-- module~rki_state_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_node7" class="node">
+<title>module~rki_state_unstr</title>
+<g id="a_module~~rki_boundary_unstr~~UsedByGraph_node7"><a xlink:href="../module/rki_state_unstr.html" xlink:title="rki_state_unstr">
+<polygon fill="#337ab7" stroke="#337ab7" points="626,-167 536,-167 536,-143 626,-143 626,-167"/>
+<text text-anchor="middle" x="581" y="-152.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_state_unstr</text>
+</a>
+</g>
+</g>
+<!-- module~rki_api_unstr&#45;&gt;module~rki_state_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge14" class="edge">
+<title>module~rki_api_unstr&#45;&gt;module~rki_state_unstr</title>
+<path fill="none" stroke="#00a9ff" stroke-dasharray="5,2" d="M1339,-750C1225.75,-763.83 1193.27,-760.26 1083,-731 1022.09,-714.84 1017.94,-666.95 955,-670"/>
+</g>
+<!-- module~rki_gauges_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_node12" class="node">
+<title>module~rki_gauges_unstr</title>
+<g id="a_module~~rki_boundary_unstr~~UsedByGraph_node12"><a xlink:href="../module/rki_gauges_unstr.html" xlink:title="rki_gauges_unstr">
+<polygon fill="#337ab7" stroke="#337ab7" points="1220.5,-722 1117.5,-722 1117.5,-698 1220.5,-698 1220.5,-722"/>
+<text text-anchor="middle" x="1169" y="-707.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_gauges_unstr</text>
+</a>
+</g>
+</g>
+<!-- module~rki_api_unstr&#45;&gt;module~rki_gauges_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge42" class="edge">
+<title>module~rki_api_unstr&#45;&gt;module~rki_gauges_unstr</title>
+<path fill="none" stroke="#ff4200" stroke-dasharray="5,2" d="M1426.51,-731.05C1402.38,-738.16 1370.18,-746.44 1341,-750"/>
+<path fill="none" stroke="#ff4200" stroke-dasharray="5,2" d="M1339,-750C1315.73,-752.84 1258.35,-737.47 1216.9,-724.96"/>
+<polygon fill="#ff4200" stroke="#ff4200" points="1217.85,-721.59 1207.27,-722.02 1215.81,-728.29 1217.85,-721.59"/>
+</g>
+<!-- module~rki_handle -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_node13" class="node">
+<title>module~rki_handle</title>
+<g id="a_module~~rki_boundary_unstr~~UsedByGraph_node13"><a xlink:href="../module/rki_handle.html" xlink:title="rki_handle">
+<polygon fill="#337ab7" stroke="#337ab7" points="1374,-802 1306,-802 1306,-778 1374,-778 1374,-802"/>
+<text text-anchor="middle" x="1340" y="-787.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_handle</text>
+</a>
+</g>
+</g>
+<!-- module~rki_api_unstr&#45;&gt;module~rki_handle -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge45" class="edge">
+<title>module~rki_api_unstr&#45;&gt;module~rki_handle</title>
+<path fill="none" stroke="#ff8500" stroke-dasharray="5,2" d="M1444.4,-731.08C1429.35,-740.28 1407.99,-753.17 1389,-764 1383.83,-766.95 1378.31,-770.01 1372.92,-772.96"/>
+<polygon fill="#ff8500" stroke="#ff8500" points="1371.18,-769.93 1364.06,-777.77 1374.52,-776.08 1371.18,-769.93"/>
+</g>
+<!-- module~rki_kernel_timestep_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_node18" class="node">
+<title>module~rki_kernel_timestep_unstr</title>
+<g id="a_module~~rki_boundary_unstr~~UsedByGraph_node18"><a xlink:href="../module/rki_kernel_timestep_unstr.html" xlink:title="rki_kernel_timestep_unstr">
+<polygon fill="#337ab7" stroke="#337ab7" points="1243.5,-642 1094.5,-642 1094.5,-618 1243.5,-618 1243.5,-642"/>
+<text text-anchor="middle" x="1169" y="-627.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_kernel_timestep_unstr</text>
+</a>
+</g>
+</g>
+<!-- module~rki_api_unstr&#45;&gt;module~rki_kernel_timestep_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge50" class="edge">
+<title>module~rki_api_unstr&#45;&gt;module~rki_kernel_timestep_unstr</title>
+<path fill="none" stroke="#2cff00" stroke-dasharray="5,2" d="M1449.8,-706.9C1435.43,-695.32 1412.09,-678.28 1389,-669 1346.13,-651.77 1295.5,-642.13 1253.73,-636.74"/>
+<polygon fill="#2cff00" stroke="#2cff00" points="1253.94,-633.24 1243.58,-635.5 1253.08,-640.19 1253.94,-633.24"/>
+</g>
+<!-- module~rki_output_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_node30" class="node">
+<title>module~rki_output_unstr</title>
+<g id="a_module~~rki_boundary_unstr~~UsedByGraph_node30"><a xlink:href="../module/rki_output_unstr.html" xlink:title="rki_output_unstr">
+<polygon fill="#337ab7" stroke="#337ab7" points="1218,-802 1120,-802 1120,-778 1218,-778 1218,-802"/>
+<text text-anchor="middle" x="1169" y="-787.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_output_unstr</text>
+</a>
+</g>
+</g>
+<!-- module~rki_api_unstr&#45;&gt;module~rki_output_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge72" class="edge">
+<title>module~rki_api_unstr&#45;&gt;module~rki_output_unstr</title>
+<path fill="none" stroke="#f300ff" stroke-dasharray="5,2" d="M1339,-750C1298.32,-754.97 1253.19,-765.94 1219.8,-775.14"/>
+<polygon fill="#f300ff" stroke="#f300ff" points="1218.53,-771.86 1209.84,-777.93 1220.41,-778.6 1218.53,-771.86"/>
+</g>
+<!-- module~rki_restart_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_node31" class="node">
+<title>module~rki_restart_unstr</title>
+<g id="a_module~~rki_boundary_unstr~~UsedByGraph_node31"><a xlink:href="../module/rki_restart_unstr.html" xlink:title="rki_restart_unstr">
+<polygon fill="#337ab7" stroke="#337ab7" points="1389,-702 1291,-702 1291,-678 1389,-678 1389,-702"/>
+<text text-anchor="middle" x="1340" y="-687.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_restart_unstr</text>
+</a>
+</g>
+</g>
+<!-- module~rki_api_unstr&#45;&gt;module~rki_restart_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge74" class="edge">
+<title>module~rki_api_unstr&#45;&gt;module~rki_restart_unstr</title>
+<path fill="none" stroke="#ff00c7" stroke-dasharray="5,2" d="M1424.74,-709.74C1416.57,-707.82 1407.79,-705.75 1399.1,-703.7"/>
+<polygon fill="#ff00c7" stroke="#ff00c7" points="1399.91,-700.29 1389.37,-701.4 1398.3,-707.11 1399.91,-700.29"/>
+</g>
+<!-- module~rki_solver_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_node33" class="node">
+<title>module~rki_solver_unstr</title>
+<g id="a_module~~rki_boundary_unstr~~UsedByGraph_node33"><a xlink:href="../module/rki_solver_unstr.html" xlink:title="rki_solver_unstr">
+<polygon fill="#337ab7" stroke="#337ab7" points="1388,-496 1292,-496 1292,-472 1388,-472 1388,-496"/>
+<text text-anchor="middle" x="1340" y="-481.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_solver_unstr</text>
+</a>
+</g>
+</g>
+<!-- module~rki_api_unstr&#45;&gt;module~rki_solver_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge77" class="edge">
+<title>module~rki_api_unstr&#45;&gt;module~rki_solver_unstr</title>
+<path fill="none" stroke="#ff0042" stroke-dasharray="5,2" d="M1457.56,-706.7C1437.68,-668.7 1377.08,-552.93 1352.02,-505.06"/>
+<polygon fill="#ff0042" stroke="#ff0042" points="1355.11,-503.42 1347.38,-496.18 1348.91,-506.66 1355.11,-503.42"/>
+</g>
+<!-- module~rki_kernel_flux_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_node3" class="node">
+<title>module~rki_kernel_flux_unstr</title>
+<g id="a_module~~rki_boundary_unstr~~UsedByGraph_node3"><a xlink:href="../module/rki_kernel_flux_unstr.html" xlink:title="rki_kernel_flux_unstr">
+<polygon fill="#337ab7" stroke="#337ab7" points="804.5,-104 682.5,-104 682.5,-80 804.5,-80 804.5,-104"/>
+<text text-anchor="middle" x="743.5" y="-89.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_kernel_flux_unstr</text>
+</a>
+</g>
+</g>
+<!-- module~rki_kernel_flux_unstr&#45;&gt;module~rki_boundary_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge2" class="edge">
+<title>module~rki_kernel_flux_unstr&#45;&gt;module~rki_boundary_unstr</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M682.43,-83.33C651.69,-81.05 614.08,-81.61 582,-92"/>
+</g>
+<!-- module~rki_kernel_flux_unstr&#45;&gt;module~rki_state_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge19" class="edge">
+<title>module~rki_kernel_flux_unstr&#45;&gt;module~rki_state_unstr</title>
+<path fill="none" stroke="#00a9ff" stroke-dasharray="5,2" d="M689.13,-104.09C679.96,-106.68 670.62,-109.66 662,-113 644.31,-119.85 625.49,-129.59 610.55,-137.98"/>
+<polygon fill="#00a9ff" stroke="#00a9ff" points="608.73,-134.98 601.79,-142.98 612.21,-141.06 608.73,-134.98"/>
+</g>
+<!-- module~rki_kernel_sponge_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_node4" class="node">
+<title>module~rki_kernel_sponge_unstr</title>
+<g id="a_module~~rki_boundary_unstr~~UsedByGraph_node4"><a xlink:href="../module/rki_kernel_sponge_unstr.html" xlink:title="rki_kernel_sponge_unstr">
+<polygon fill="#337ab7" stroke="#337ab7" points="814.5,-24 672.5,-24 672.5,0 814.5,0 814.5,-24"/>
+<text text-anchor="middle" x="743.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_kernel_sponge_unstr</text>
+</a>
+</g>
+</g>
+<!-- module~rki_kernel_sponge_unstr&#45;&gt;module~rki_boundary_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge3" class="edge">
+<title>module~rki_kernel_sponge_unstr&#45;&gt;module~rki_boundary_unstr</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M697.33,-24.13C685.57,-27.94 673.09,-32.6 662,-38 623.43,-56.78 622.81,-78.79 582,-92"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M580,-92C509.84,-114.72 499.88,-147.64 426.5,-155"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M424.5,-155C340.26,-163.45 318.55,-159.38 234,-155"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M232,-155C196.85,-153.18 157.64,-153.02 125.4,-153.39"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="125.14,-149.89 115.19,-153.52 125.24,-156.89 125.14,-149.89"/>
+</g>
+<!-- module~rki_kernel_sponge_unstr&#45;&gt;module~rki_state_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge23" class="edge">
+<title>module~rki_kernel_sponge_unstr&#45;&gt;module~rki_state_unstr</title>
+<path fill="none" stroke="#00a9ff" stroke-dasharray="5,2" d="M685.9,-24.08C677.29,-27.6 668.98,-32.15 662,-38 635.8,-59.98 645.57,-77.96 626,-106 618.79,-116.34 609.63,-126.86 601.53,-135.49"/>
+<polygon fill="#00a9ff" stroke="#00a9ff" points="598.89,-133.19 594.49,-142.82 603.94,-138.04 598.89,-133.19"/>
+</g>
+<!-- module~rki_multilayer_state_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_node5" class="node">
+<title>module~rki_multilayer_state_unstr</title>
+<g id="a_module~~rki_boundary_unstr~~UsedByGraph_node5"><a xlink:href="../module/rki_multilayer_state_unstr.html" xlink:title="rki_multilayer_state_unstr">
+<polygon fill="#337ab7" stroke="#337ab7" points="500,-207 351,-207 351,-183 500,-183 500,-207"/>
+<text text-anchor="middle" x="425.5" y="-192.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_multilayer_state_unstr</text>
+</a>
+</g>
+</g>
+<!-- module~rki_multilayer_state_unstr&#45;&gt;module~rki_boundary_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge4" class="edge">
+<title>module~rki_multilayer_state_unstr&#45;&gt;module~rki_boundary_unstr</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M384.84,-182.91C346.63,-172.17 286.99,-157.75 234,-155"/>
+</g>
+<!-- module~rki_tracer_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_node8" class="node">
+<title>module~rki_tracer_unstr</title>
+<g id="a_module~~rki_boundary_unstr~~UsedByGraph_node8"><a xlink:href="../module/rki_tracer_unstr.html" xlink:title="rki_tracer_unstr">
+<polygon fill="#337ab7" stroke="#337ab7" points="281,-207 185,-207 185,-183 281,-183 281,-207"/>
+<text text-anchor="middle" x="233" y="-192.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_tracer_unstr</text>
+</a>
+</g>
+</g>
+<!-- module~rki_multilayer_state_unstr&#45;&gt;module~rki_tracer_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge41" class="edge">
+<title>module~rki_multilayer_state_unstr&#45;&gt;module~rki_tracer_unstr</title>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M350.85,-195C331.06,-195 309.96,-195 291.21,-195"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="291.06,-191.5 281.06,-195 291.06,-198.5 291.06,-191.5"/>
+</g>
+<!-- module~rki_si_unstr_step_ml -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_node6" class="node">
+<title>module~rki_si_unstr_step_ml</title>
+<g id="a_module~~rki_boundary_unstr~~UsedByGraph_node6"><a xlink:href="../module/rki_si_unstr_step_ml.html" xlink:title="rki_si_unstr_step_ml">
+<polygon fill="#337ab7" stroke="#337ab7" points="1228,-436 1110,-436 1110,-412 1228,-412 1228,-436"/>
+<text text-anchor="middle" x="1169" y="-421.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_si_unstr_step_ml</text>
+</a>
+</g>
+</g>
+<!-- module~rki_si_unstr_step_ml&#45;&gt;module~rki_boundary_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge5" class="edge">
+<title>module~rki_si_unstr_step_ml&#45;&gt;module~rki_boundary_unstr</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M1109.78,-432.29C1099.63,-436.19 1090.07,-441.83 1083,-450 1014.15,-529.57 1112.62,-601.74 1047,-684 977.7,-770.88 692.4,-855.26 582,-868"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M580,-868C228.91,-888.99 88.34,-300.14 62.87,-177.27"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="66.23,-176.26 60.81,-167.16 59.37,-177.65 66.23,-176.26"/>
+</g>
+<!-- module~rki_si_unstr_step_ml&#45;&gt;module~rki_state_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge39" class="edge">
+<title>module~rki_si_unstr_step_ml&#45;&gt;module~rki_state_unstr</title>
+<path fill="none" stroke="#00a9ff" stroke-dasharray="5,2" d="M1110,-431.44C1046.29,-437.15 942.24,-439.12 861,-405 796.73,-378.01 808.35,-327.96 744.5,-300"/>
+</g>
+<!-- module~rki_ml_dynamics_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_node20" class="node">
+<title>module~rki_ml_dynamics_unstr</title>
+<g id="a_module~~rki_boundary_unstr~~UsedByGraph_node20"><a xlink:href="../module/rki_ml_dynamics_unstr.html" xlink:title="rki_ml_dynamics_unstr">
+<polygon fill="#337ab7" stroke="#337ab7" points="1020.5,-270 887.5,-270 887.5,-246 1020.5,-246 1020.5,-270"/>
+<text text-anchor="middle" x="954" y="-255.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_dynamics_unstr</text>
+</a>
+</g>
+</g>
+<!-- module~rki_si_unstr_step_ml&#45;&gt;module~rki_ml_dynamics_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge53" class="edge">
+<title>module~rki_si_unstr_step_ml&#45;&gt;module~rki_ml_dynamics_unstr</title>
+<path fill="none" stroke="#00ff58" stroke-dasharray="5,2" d="M1161.66,-411.99C1146.16,-383.88 1103.47,-313.61 1047,-279 1041.9,-275.87 1036.38,-273.21 1030.67,-270.95"/>
+<polygon fill="#00ff58" stroke="#00ff58" points="1031.51,-267.53 1020.92,-267.49 1029.17,-274.13 1031.51,-267.53"/>
+</g>
+<!-- module~rki_ml_eos_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_node21" class="node">
+<title>module~rki_ml_eos_unstr</title>
+<g id="a_module~~rki_boundary_unstr~~UsedByGraph_node21"><a xlink:href="../module/rki_ml_eos_unstr.html" xlink:title="rki_ml_eos_unstr">
+<polygon fill="#337ab7" stroke="#337ab7" points="794,-536 693,-536 693,-512 794,-512 794,-536"/>
+<text text-anchor="middle" x="743.5" y="-521.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_eos_unstr</text>
+</a>
+</g>
+</g>
+<!-- module~rki_si_unstr_step_ml&#45;&gt;module~rki_ml_eos_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge56" class="edge">
+<title>module~rki_si_unstr_step_ml&#45;&gt;module~rki_ml_eos_unstr</title>
+<path fill="none" stroke="#00ff9b" stroke-dasharray="5,2" d="M1114.66,-436.07C1103.77,-439.69 1092.7,-444.27 1083,-450 1063.79,-461.36 1067.1,-475.3 1047,-485 1005.44,-505.06 880.24,-515.89 804.56,-520.75"/>
+<polygon fill="#00ff9b" stroke="#00ff9b" points="803.99,-517.28 794.23,-521.4 804.43,-524.26 803.99,-517.28"/>
+</g>
+<!-- module~rki_ml_friction_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_node22" class="node">
+<title>module~rki_ml_friction_unstr</title>
+<g id="a_module~~rki_boundary_unstr~~UsedByGraph_node22"><a xlink:href="../module/rki_ml_friction_unstr.html" xlink:title="rki_ml_friction_unstr">
+<polygon fill="#337ab7" stroke="#337ab7" points="1014,-228 894,-228 894,-204 1014,-204 1014,-228"/>
+<text text-anchor="middle" x="954" y="-213.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_friction_unstr</text>
+</a>
+</g>
+</g>
+<!-- module~rki_si_unstr_step_ml&#45;&gt;module~rki_ml_friction_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge58" class="edge">
+<title>module~rki_si_unstr_step_ml&#45;&gt;module~rki_ml_friction_unstr</title>
+<path fill="none" stroke="#00ffdd" stroke-dasharray="5,2" d="M1161.76,-411.94C1142.1,-374.39 1080.74,-260.61 1047,-237 1040.05,-232.14 1032.16,-228.39 1023.97,-225.49"/>
+<polygon fill="#00ffdd" stroke="#00ffdd" points="1024.87,-222.1 1014.28,-222.47 1022.79,-228.79 1024.87,-222.1"/>
+</g>
+<!-- module~rki_ml_horizontal_viscosity_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_node23" class="node">
+<title>module~rki_ml_horizontal_viscosity_unstr</title>
+<g id="a_module~~rki_boundary_unstr~~UsedByGraph_node23"><a xlink:href="../module/rki_ml_horizontal_viscosity_unstr.html" xlink:title="rki_ml_horizontal_viscosity_unstr">
+<polygon fill="#337ab7" stroke="#337ab7" points="1047,-636 861,-636 861,-612 1047,-612 1047,-636"/>
+<text text-anchor="middle" x="954" y="-621.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_horizontal_viscosity_unstr</text>
+</a>
+</g>
+</g>
+<!-- module~rki_si_unstr_step_ml&#45;&gt;module~rki_ml_horizontal_viscosity_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge60" class="edge">
+<title>module~rki_si_unstr_step_ml&#45;&gt;module~rki_ml_horizontal_viscosity_unstr</title>
+<path fill="none" stroke="#00ddff" stroke-dasharray="5,2" d="M1109.85,-433.51C1099.93,-437.3 1090.44,-442.6 1083,-450 1045.01,-487.75 1079.5,-522.43 1047,-565 1033.11,-583.19 1011.89,-597.34 993.32,-607.22"/>
+<polygon fill="#00ddff" stroke="#00ddff" points="991.52,-604.2 984.19,-611.85 994.69,-610.45 991.52,-604.2"/>
+</g>
+<!-- module~rki_ml_keps_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_node24" class="node">
+<title>module~rki_ml_keps_unstr</title>
+<g id="a_module~~rki_boundary_unstr~~UsedByGraph_node24"><a xlink:href="../module/rki_ml_keps_unstr.html" xlink:title="rki_ml_keps_unstr">
+<polygon fill="#337ab7" stroke="#337ab7" points="1007.5,-476 900.5,-476 900.5,-452 1007.5,-452 1007.5,-476"/>
+<text text-anchor="middle" x="954" y="-461.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_keps_unstr</text>
+</a>
+</g>
+</g>
+<!-- module~rki_si_unstr_step_ml&#45;&gt;module~rki_ml_keps_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge62" class="edge">
+<title>module~rki_si_unstr_step_ml&#45;&gt;module~rki_ml_keps_unstr</title>
+<path fill="none" stroke="#009bff" stroke-dasharray="5,2" d="M1109.8,-434.93C1081.26,-440.29 1046.85,-446.75 1017.73,-452.22"/>
+<polygon fill="#009bff" stroke="#009bff" points="1016.85,-448.82 1007.67,-454.11 1018.14,-455.7 1016.85,-448.82"/>
+</g>
+<!-- module~rki_ml_kpp_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_node25" class="node">
+<title>module~rki_ml_kpp_unstr</title>
+<g id="a_module~~rki_boundary_unstr~~UsedByGraph_node25"><a xlink:href="../module/rki_ml_kpp_unstr.html" xlink:title="rki_ml_kpp_unstr">
+<polygon fill="#337ab7" stroke="#337ab7" points="1005,-396 903,-396 903,-372 1005,-372 1005,-396"/>
+<text text-anchor="middle" x="954" y="-381.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_kpp_unstr</text>
+</a>
+</g>
+</g>
+<!-- module~rki_si_unstr_step_ml&#45;&gt;module~rki_ml_kpp_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge64" class="edge">
+<title>module~rki_si_unstr_step_ml&#45;&gt;module~rki_ml_kpp_unstr</title>
+<path fill="none" stroke="#0058ff" stroke-dasharray="5,2" d="M1109.8,-413.07C1080.49,-407.57 1044.99,-400.9 1015.38,-395.34"/>
+<polygon fill="#0058ff" stroke="#0058ff" points="1015.65,-391.83 1005.17,-393.42 1014.36,-398.71 1015.65,-391.83"/>
+</g>
+<!-- module~rki_ml_pressure_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_node26" class="node">
+<title>module~rki_ml_pressure_unstr</title>
+<g id="a_module~~rki_boundary_unstr~~UsedByGraph_node26"><a xlink:href="../module/rki_ml_pressure_unstr.html" xlink:title="rki_ml_pressure_unstr">
+<polygon fill="#337ab7" stroke="#337ab7" points="1017.5,-556 890.5,-556 890.5,-532 1017.5,-532 1017.5,-556"/>
+<text text-anchor="middle" x="954" y="-541.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_pressure_unstr</text>
+</a>
+</g>
+</g>
+<!-- module~rki_si_unstr_step_ml&#45;&gt;module~rki_ml_pressure_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge66" class="edge">
+<title>module~rki_si_unstr_step_ml&#45;&gt;module~rki_ml_pressure_unstr</title>
+<path fill="none" stroke="#0016ff" stroke-dasharray="5,2" d="M1109.57,-435.16C1100.02,-438.79 1090.73,-443.61 1083,-450 1056.63,-471.78 1073.6,-496.51 1047,-518 1041.14,-522.73 1034.47,-526.61 1027.46,-529.77"/>
+<polygon fill="#0016ff" stroke="#0016ff" points="1025.71,-526.7 1017.73,-533.67 1028.31,-533.2 1025.71,-526.7"/>
+</g>
+<!-- module~rki_ml_tracers_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_node27" class="node">
+<title>module~rki_ml_tracers_unstr</title>
+<g id="a_module~~rki_boundary_unstr~~UsedByGraph_node27"><a xlink:href="../module/rki_ml_tracers_unstr.html" xlink:title="rki_ml_tracers_unstr">
+<polygon fill="#337ab7" stroke="#337ab7" points="1014,-354 894,-354 894,-330 1014,-330 1014,-354"/>
+<text text-anchor="middle" x="954" y="-339.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_tracers_unstr</text>
+</a>
+</g>
+</g>
+<!-- module~rki_si_unstr_step_ml&#45;&gt;module~rki_ml_tracers_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge68" class="edge">
+<title>module~rki_si_unstr_step_ml&#45;&gt;module~rki_ml_tracers_unstr</title>
+<path fill="none" stroke="#2c00ff" stroke-dasharray="5,2" d="M1147.7,-411.83C1124.19,-398.21 1083.96,-376.31 1047,-363 1039.63,-360.35 1031.8,-357.95 1023.95,-355.81"/>
+<polygon fill="#2c00ff" stroke="#2c00ff" points="1024.58,-352.36 1014.02,-353.23 1022.82,-359.13 1024.58,-352.36"/>
+</g>
+<!-- module~rki_si_unstr_step -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_node32" class="node">
+<title>module~rki_si_unstr_step</title>
+<g id="a_module~~rki_boundary_unstr~~UsedByGraph_node32"><a xlink:href="../module/rki_si_unstr_step.html" xlink:title="rki_si_unstr_step">
+<polygon fill="#337ab7" stroke="#337ab7" points="1004,-312 904,-312 904,-288 1004,-288 1004,-312"/>
+<text text-anchor="middle" x="954" y="-297.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_si_unstr_step</text>
+</a>
+</g>
+</g>
+<!-- module~rki_si_unstr_step_ml&#45;&gt;module~rki_si_unstr_step -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge75" class="edge">
+<title>module~rki_si_unstr_step_ml&#45;&gt;module~rki_si_unstr_step</title>
+<path fill="none" stroke="#ff0085" stroke-dasharray="5,2" d="M1157.36,-411.68C1137.81,-389.85 1093.85,-344.5 1047,-321 1036.81,-315.89 1025.35,-312 1014.08,-309.06"/>
+<polygon fill="#ff0085" stroke="#ff0085" points="1014.8,-305.63 1004.26,-306.7 1013.16,-312.44 1014.8,-305.63"/>
+</g>
+<!-- module~rki_state_unstr&#45;&gt;module~rki_boundary_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge6" class="edge">
+<title>module~rki_state_unstr&#45;&gt;module~rki_boundary_unstr</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M535.88,-152.67C505.14,-151.62 463.23,-151.32 426.5,-155"/>
+</g>
+<!-- module~rki_state_unstr&#45;&gt;module~rki_multilayer_state_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge12" class="edge">
+<title>module~rki_state_unstr&#45;&gt;module~rki_multilayer_state_unstr</title>
+<path fill="none" stroke="#00ff00" stroke-dasharray="5,2" d="M535.6,-166.57C519.1,-170.87 500.15,-175.81 482.72,-180.35"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="481.46,-177.06 472.67,-182.97 483.23,-183.83 481.46,-177.06"/>
+</g>
+<!-- module~rki_tracer_unstr&#45;&gt;module~rki_boundary_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge7" class="edge">
+<title>module~rki_tracer_unstr&#45;&gt;module~rki_boundary_unstr</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M184.59,-184.07C164.84,-179.52 141.64,-174.17 120.56,-169.31"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="121.26,-165.88 110.73,-167.04 119.69,-172.7 121.26,-165.88"/>
+</g>
+<!-- proc~si_unstr_face_depths -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_node9" class="node">
+<title>proc~si_unstr_face_depths</title>
+<g id="a_module~~rki_boundary_unstr~~UsedByGraph_node9"><a xlink:href="../proc/si_unstr_face_depths.html" xlink:title="si_unstr_face_depths">
+<polygon fill="#d9534f" stroke="#d9534f" points="294.5,-127 171.5,-127 171.5,-103 294.5,-103 294.5,-127"/>
+<text text-anchor="middle" x="233" y="-112.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">si_unstr_face_depths</text>
+</a>
+</g>
+</g>
+<!-- proc~si_unstr_face_depths&#45;&gt;module~rki_boundary_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge8" class="edge">
+<title>proc~si_unstr_face_depths&#45;&gt;module~rki_boundary_unstr</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M179.94,-127C161.33,-131.29 140.16,-136.17 120.77,-140.64"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="119.78,-137.28 110.82,-142.94 121.35,-144.1 119.78,-137.28"/>
+</g>
+<!-- proc~si_unstr_wetdry_face_depths -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_node10" class="node">
+<title>proc~si_unstr_wetdry_face_depths</title>
+<g id="a_module~~rki_boundary_unstr~~UsedByGraph_node10"><a xlink:href="../proc/si_unstr_wetdry_face_depths.html" xlink:title="si_unstr_wetdry_face_depths">
+<polygon fill="#d9534f" stroke="#d9534f" points="315,-85 151,-85 151,-61 315,-61 315,-85"/>
+<text text-anchor="middle" x="233" y="-70.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">si_unstr_wetdry_face_depths</text>
+</a>
+</g>
+</g>
+<!-- proc~si_unstr_wetdry_face_depths&#45;&gt;module~rki_boundary_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge9" class="edge">
+<title>proc~si_unstr_wetdry_face_depths&#45;&gt;module~rki_boundary_unstr</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M175.41,-85.11C167.07,-87.63 158.7,-90.58 151,-94 125.62,-105.28 99.45,-123.24 81.45,-136.76"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="79.12,-134.13 73.31,-142.99 83.38,-139.69 79.12,-134.13"/>
+</g>
+<!-- module~rki_driver -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_node11" class="node">
+<title>module~rki_driver</title>
+<g id="a_module~~rki_boundary_unstr~~UsedByGraph_node11"><a xlink:href="../module/rki_driver.html" xlink:title="rki_driver">
+<polygon fill="#337ab7" stroke="#337ab7" points="1496.5,-270 1433.5,-270 1433.5,-246 1496.5,-246 1496.5,-270"/>
+<text text-anchor="middle" x="1465" y="-255.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_driver</text>
+</a>
+</g>
+</g>
+<!-- module~rki_driver&#45;&gt;module~rki_state_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge15" class="edge">
+<title>module~rki_driver&#45;&gt;module~rki_state_unstr</title>
+<path fill="none" stroke="#00a9ff" stroke-dasharray="5,2" d="M1455.47,-245.73C1423.53,-201.38 1305.87,-52 1170,-52 1170,-52 1170,-52 953,-52 823.39,-52 779.4,-16.09 662,-71 658.03,-72.86 622.38,-111.13 600.03,-135.36"/>
+<polygon fill="#00a9ff" stroke="#00a9ff" points="597.22,-133.24 593.03,-142.97 602.37,-137.98 597.22,-133.24"/>
+</g>
+<!-- module~rki_driver&#45;&gt;module~rki_solver_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge78" class="edge">
+<title>module~rki_driver&#45;&gt;module~rki_solver_unstr</title>
+<path fill="none" stroke="#ff0042" stroke-dasharray="5,2" d="M1457.39,-270.15C1437.45,-306.79 1377.74,-416.49 1352.49,-462.9"/>
+<polygon fill="#ff0042" stroke="#ff0042" points="1349.35,-461.33 1347.65,-471.79 1355.5,-464.68 1349.35,-461.33"/>
+</g>
+<!-- module~rki_gauges_unstr&#45;&gt;module~rki_state_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge16" class="edge">
+<title>module~rki_gauges_unstr&#45;&gt;module~rki_state_unstr</title>
+<path fill="none" stroke="#00a9ff" stroke-dasharray="5,2" d="M1132.18,-697.95C1090.14,-685.06 1018.13,-666.85 955,-670"/>
+</g>
+<!-- module~rki_handle&#45;&gt;module~rki_state_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge17" class="edge">
+<title>module~rki_handle&#45;&gt;module~rki_state_unstr</title>
+<path fill="none" stroke="#00a9ff" stroke-dasharray="5,2" d="M1305.84,-800.28C1290.53,-804.51 1272.01,-808.91 1255,-811 1179.13,-820.34 1158.63,-822.16 1083,-811 889.65,-782.47 789.98,-831.71 662,-684 594.78,-606.41 584,-268.41 582.31,-177.55"/>
+<polygon fill="#00a9ff" stroke="#00a9ff" points="585.8,-177.23 582.14,-167.29 578.8,-177.35 585.8,-177.23"/>
+</g>
+<!-- module~rki_handle&#45;&gt;module~rki_gauges_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge43" class="edge">
+<title>module~rki_handle&#45;&gt;module~rki_gauges_unstr</title>
+<path fill="none" stroke="#ff4200" stroke-dasharray="5,2" d="M1313.33,-777.85C1284.25,-764.08 1236.72,-741.58 1204.44,-726.3"/>
+<polygon fill="#ff4200" stroke="#ff4200" points="1205.89,-723.12 1195.36,-722 1202.9,-729.44 1205.89,-723.12"/>
+</g>
+<!-- module~rki_handle&#45;&gt;module~rki_output_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge73" class="edge">
+<title>module~rki_handle&#45;&gt;module~rki_output_unstr</title>
+<path fill="none" stroke="#f300ff" stroke-dasharray="5,2" d="M1305.61,-790C1283.53,-790 1253.99,-790 1228.12,-790"/>
+<polygon fill="#f300ff" stroke="#f300ff" points="1228.04,-786.5 1218.04,-790 1228.04,-793.5 1228.04,-786.5"/>
+</g>
+<!-- module~rki_kernel_extrapolate_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_node14" class="node">
+<title>module~rki_kernel_extrapolate_unstr</title>
+<g id="a_module~~rki_boundary_unstr~~UsedByGraph_node14"><a xlink:href="../module/rki_kernel_extrapolate_unstr.html" xlink:title="rki_kernel_extrapolate_unstr">
+<polygon fill="#337ab7" stroke="#337ab7" points="825,-272 662,-272 662,-248 825,-248 825,-272"/>
+<text text-anchor="middle" x="743.5" y="-257.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_kernel_extrapolate_unstr</text>
+</a>
+</g>
+</g>
+<!-- module~rki_kernel_extrapolate_unstr&#45;&gt;module~rki_state_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge18" class="edge">
+<title>module~rki_kernel_extrapolate_unstr&#45;&gt;module~rki_state_unstr</title>
+<path fill="none" stroke="#00a9ff" stroke-dasharray="5,2" d="M681.26,-247.91C674.54,-245.46 667.97,-242.52 662,-239 634.47,-222.78 610.33,-194.39 595.95,-175.15"/>
+<polygon fill="#00a9ff" stroke="#00a9ff" points="598.77,-173.07 590.06,-167.03 593.1,-177.18 598.77,-173.07"/>
+</g>
+<!-- module~rki_kernel_friction_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_node15" class="node">
+<title>module~rki_kernel_friction_unstr</title>
+<g id="a_module~~rki_boundary_unstr~~UsedByGraph_node15"><a xlink:href="../module/rki_kernel_friction_unstr.html" xlink:title="rki_kernel_friction_unstr">
+<polygon fill="#337ab7" stroke="#337ab7" points="813.5,-230 673.5,-230 673.5,-206 813.5,-206 813.5,-230"/>
+<text text-anchor="middle" x="743.5" y="-215.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_kernel_friction_unstr</text>
+</a>
+</g>
+</g>
+<!-- module~rki_kernel_friction_unstr&#45;&gt;module~rki_state_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge20" class="edge">
+<title>module~rki_kernel_friction_unstr&#45;&gt;module~rki_state_unstr</title>
+<path fill="none" stroke="#00a9ff" stroke-dasharray="5,2" d="M689.13,-205.91C679.96,-203.32 670.62,-200.34 662,-197 644.31,-190.15 625.49,-180.41 610.55,-172.02"/>
+<polygon fill="#00a9ff" stroke="#00a9ff" points="612.21,-168.94 601.79,-167.02 608.73,-175.02 612.21,-168.94"/>
+</g>
+<!-- module~rki_kernel_fused_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_node16" class="node">
+<title>module~rki_kernel_fused_unstr</title>
+<g id="a_module~~rki_boundary_unstr~~UsedByGraph_node16"><a xlink:href="../module/rki_kernel_fused_unstr.html" xlink:title="rki_kernel_fused_unstr">
+<polygon fill="#337ab7" stroke="#337ab7" points="809.5,-188 677.5,-188 677.5,-164 809.5,-164 809.5,-188"/>
+<text text-anchor="middle" x="743.5" y="-173.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_kernel_fused_unstr</text>
+</a>
+</g>
+</g>
+<!-- module~rki_kernel_fused_unstr&#45;&gt;module~rki_state_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge21" class="edge">
+<title>module~rki_kernel_fused_unstr&#45;&gt;module~rki_state_unstr</title>
+<path fill="none" stroke="#00a9ff" stroke-dasharray="5,2" d="M677.22,-167.46C663.66,-165.68 649.51,-163.83 636.39,-162.12"/>
+<polygon fill="#00a9ff" stroke="#00a9ff" points="636.49,-158.6 626.12,-160.77 635.58,-165.54 636.49,-158.6"/>
+</g>
+<!-- module~rki_kernel_protect_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_node17" class="node">
+<title>module~rki_kernel_protect_unstr</title>
+<g id="a_module~~rki_boundary_unstr~~UsedByGraph_node17"><a xlink:href="../module/rki_kernel_protect_unstr.html" xlink:title="rki_kernel_protect_unstr">
+<polygon fill="#337ab7" stroke="#337ab7" points="813.5,-146 673.5,-146 673.5,-122 813.5,-122 813.5,-146"/>
+<text text-anchor="middle" x="743.5" y="-131.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_kernel_protect_unstr</text>
+</a>
+</g>
+</g>
+<!-- module~rki_kernel_protect_unstr&#45;&gt;module~rki_state_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge22" class="edge">
+<title>module~rki_kernel_protect_unstr&#45;&gt;module~rki_state_unstr</title>
+<path fill="none" stroke="#00a9ff" stroke-dasharray="5,2" d="M673.04,-143.09C660.72,-144.7 648.05,-146.36 636.23,-147.9"/>
+<polygon fill="#00a9ff" stroke="#00a9ff" points="635.55,-144.46 626.09,-149.23 636.46,-151.4 635.55,-144.46"/>
+</g>
+<!-- module~rki_kernel_timestep_unstr&#45;&gt;module~rki_state_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge24" class="edge">
+<title>module~rki_kernel_timestep_unstr&#45;&gt;module~rki_state_unstr</title>
+<path fill="none" stroke="#00a9ff" stroke-dasharray="5,2" d="M1123.13,-642.1C1080.32,-652.77 1013.81,-667.07 955,-670"/>
+</g>
+<!-- module~rki_kernel_update_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_node19" class="node">
+<title>module~rki_kernel_update_unstr</title>
+<g id="a_module~~rki_boundary_unstr~~UsedByGraph_node19"><a xlink:href="../module/rki_kernel_update_unstr.html" xlink:title="rki_kernel_update_unstr">
+<polygon fill="#337ab7" stroke="#337ab7" points="1239,-600 1099,-600 1099,-576 1239,-576 1239,-600"/>
+<text text-anchor="middle" x="1169" y="-585.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_kernel_update_unstr</text>
+</a>
+</g>
+</g>
+<!-- module~rki_kernel_update_unstr&#45;&gt;module~rki_state_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge25" class="edge">
+<title>module~rki_kernel_update_unstr&#45;&gt;module~rki_state_unstr</title>
+<path fill="none" stroke="#00a9ff" stroke-dasharray="5,2" d="M1102.98,-600.12C1096.02,-602.56 1089.22,-605.49 1083,-609 1063.29,-620.12 1066.58,-633.65 1047,-645 1010.34,-666.25 997.32,-667.89 955,-670"/>
+</g>
+<!-- module~rki_ml_dynamics_unstr&#45;&gt;module~rki_state_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge26" class="edge">
+<title>module~rki_ml_dynamics_unstr&#45;&gt;module~rki_state_unstr</title>
+<path fill="none" stroke="#00a9ff" stroke-dasharray="5,2" d="M900.91,-270.04C841.54,-283.54 751.7,-303.15 744.5,-300"/>
+</g>
+<!-- module~rki_ml_eos_unstr&#45;&gt;module~rki_state_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge27" class="edge">
+<title>module~rki_ml_eos_unstr&#45;&gt;module~rki_state_unstr</title>
+<path fill="none" stroke="#00a9ff" stroke-dasharray="5,2" d="M737.16,-511.72C713.93,-458.32 621.5,-245.81 591.47,-176.78"/>
+<polygon fill="#00a9ff" stroke="#00a9ff" points="594.56,-175.1 587.36,-167.32 588.14,-177.89 594.56,-175.1"/>
+</g>
+<!-- module~rki_ml_friction_unstr&#45;&gt;module~rki_state_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge28" class="edge">
+<title>module~rki_ml_friction_unstr&#45;&gt;module~rki_state_unstr</title>
+<path fill="none" stroke="#00a9ff" stroke-dasharray="5,2" d="M893.8,-223.45C882.37,-226.53 870.89,-230.87 861,-237 839.52,-250.31 846.43,-267.61 825,-281 793.82,-300.48 778.17,-314.75 744.5,-300"/>
+</g>
+<!-- module~rki_ml_horizontal_viscosity_unstr&#45;&gt;module~rki_state_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge29" class="edge">
+<title>module~rki_ml_horizontal_viscosity_unstr&#45;&gt;module~rki_state_unstr</title>
+<path fill="none" stroke="#00a9ff" stroke-dasharray="5,2" d="M912.18,-636C855.73,-652.15 759.1,-677.97 744.5,-670"/>
+</g>
+<!-- module~rki_ml_keps_unstr&#45;&gt;module~rki_state_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge30" class="edge">
+<title>module~rki_ml_keps_unstr&#45;&gt;module~rki_state_unstr</title>
+<path fill="none" stroke="#00a9ff" stroke-dasharray="5,2" d="M900.09,-454.79C886.65,-450.95 872.72,-445.55 861,-438 793.53,-394.51 818.02,-332.2 744.5,-300"/>
+</g>
+<!-- module~rki_ml_kpp_unstr&#45;&gt;module~rki_state_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge31" class="edge">
+<title>module~rki_ml_kpp_unstr&#45;&gt;module~rki_state_unstr</title>
+<path fill="none" stroke="#00a9ff" stroke-dasharray="5,2" d="M902.62,-375.08C888.9,-371.96 874.19,-367.96 861,-363 805.91,-342.26 798.42,-323.62 744.5,-300"/>
+</g>
+<!-- module~rki_ml_pressure_unstr&#45;&gt;module~rki_state_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge32" class="edge">
+<title>module~rki_ml_pressure_unstr&#45;&gt;module~rki_state_unstr</title>
+<path fill="none" stroke="#00a9ff" stroke-dasharray="5,2" d="M933.9,-556.14C883.31,-588.22 749.31,-672.63 744.5,-670"/>
+<path fill="none" stroke="#00a9ff" stroke-dasharray="5,2" d="M742.5,-670C684.5,-638.34 686.95,-606.19 662,-545 607.82,-412.15 588.91,-238.32 583.69,-177.32"/>
+<polygon fill="#00a9ff" stroke="#00a9ff" points="587.17,-176.96 582.87,-167.28 580.19,-177.53 587.17,-176.96"/>
+</g>
+<!-- module~rki_ml_pressure_unstr&#45;&gt;module~rki_ml_eos_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge55" class="edge">
+<title>module~rki_ml_pressure_unstr&#45;&gt;module~rki_ml_eos_unstr</title>
+<path fill="none" stroke="#00ff9b" stroke-dasharray="5,2" d="M890.44,-538C863.11,-535.38 831.19,-532.32 804.19,-529.73"/>
+<polygon fill="#00ff9b" stroke="#00ff9b" points="804.39,-526.23 794.1,-528.76 803.72,-533.2 804.39,-526.23"/>
+</g>
+<!-- module~rki_ml_tracers_unstr&#45;&gt;module~rki_state_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge33" class="edge">
+<title>module~rki_ml_tracers_unstr&#45;&gt;module~rki_state_unstr</title>
+<path fill="none" stroke="#00a9ff" stroke-dasharray="5,2" d="M893.9,-336.89C851.01,-331.58 792.36,-320.96 744.5,-300"/>
+</g>
+<!-- module~rki_ml_truncate_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_node28" class="node">
+<title>module~rki_ml_truncate_unstr</title>
+<g id="a_module~~rki_boundary_unstr~~UsedByGraph_node28"><a xlink:href="../module/rki_ml_truncate_unstr.html" xlink:title="rki_ml_truncate_unstr">
+<polygon fill="#337ab7" stroke="#337ab7" points="1232.5,-558 1105.5,-558 1105.5,-534 1232.5,-534 1232.5,-558"/>
+<text text-anchor="middle" x="1169" y="-543.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_truncate_unstr</text>
+</a>
+</g>
+</g>
+<!-- module~rki_ml_truncate_unstr&#45;&gt;module~rki_state_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge34" class="edge">
+<title>module~rki_ml_truncate_unstr&#45;&gt;module~rki_state_unstr</title>
+<path fill="none" stroke="#00a9ff" stroke-dasharray="5,2" d="M1105.44,-554.5C1097.32,-557.53 1089.56,-561.58 1083,-567 1053.56,-591.31 1076.16,-620.35 1047,-645 1014.64,-672.36 997.32,-667.89 955,-670"/>
+</g>
+<!-- module~rki_ml_vertical_viscosity_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_node29" class="node">
+<title>module~rki_ml_vertical_viscosity_unstr</title>
+<g id="a_module~~rki_boundary_unstr~~UsedByGraph_node29"><a xlink:href="../module/rki_ml_vertical_viscosity_unstr.html" xlink:title="rki_ml_vertical_viscosity_unstr">
+<polygon fill="#337ab7" stroke="#337ab7" points="1255,-516 1083,-516 1083,-492 1255,-492 1255,-516"/>
+<text text-anchor="middle" x="1169" y="-501.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_vertical_viscosity_unstr</text>
+</a>
+</g>
+</g>
+<!-- module~rki_ml_vertical_viscosity_unstr&#45;&gt;module~rki_state_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge35" class="edge">
+<title>module~rki_ml_vertical_viscosity_unstr&#45;&gt;module~rki_state_unstr</title>
+<path fill="none" stroke="#00a9ff" stroke-dasharray="5,2" d="M1095.14,-516.17C1090.74,-518.63 1086.63,-521.54 1083,-525 1042.67,-563.39 1086.88,-606.14 1047,-645 1016.65,-674.57 997.32,-667.89 955,-670"/>
+<path fill="none" stroke="#00a9ff" stroke-dasharray="5,2" d="M953,-670C860.45,-674.62 825.84,-714.4 744.5,-670"/>
+</g>
+<!-- module~rki_output_unstr&#45;&gt;module~rki_state_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge36" class="edge">
+<title>module~rki_output_unstr&#45;&gt;module~rki_state_unstr</title>
+<path fill="none" stroke="#00a9ff" stroke-dasharray="5,2" d="M1119.7,-778.3C1107.41,-774.5 1094.45,-769.75 1083,-764 1019.92,-732.34 1025.49,-666.48 955,-670"/>
+</g>
+<!-- module~rki_restart_unstr&#45;&gt;module~rki_state_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge37" class="edge">
+<title>module~rki_restart_unstr&#45;&gt;module~rki_state_unstr</title>
+<path fill="none" stroke="#00a9ff" stroke-dasharray="5,2" d="M1290.81,-684.34C1218.06,-676.51 1075.85,-663.97 955,-670"/>
+</g>
+<!-- module~rki_si_unstr_step&#45;&gt;module~rki_state_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge38" class="edge">
+<title>module~rki_si_unstr_step&#45;&gt;module~rki_state_unstr</title>
+<path fill="none" stroke="#00a9ff" stroke-dasharray="5,2" d="M903.97,-310.72C860.22,-317.85 795.4,-322.29 744.5,-300"/>
+</g>
+<!-- module~rki_solver_unstr&#45;&gt;module~rki_kernel_flux_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge10" class="edge">
+<title>module~rki_solver_unstr&#45;&gt;module~rki_kernel_flux_unstr</title>
+<path fill="none" stroke="#ffaa00" stroke-dasharray="5,2" d="M1334.91,-472C1320.37,-431.53 1266.74,-300.29 1170,-258"/>
+<path fill="none" stroke="#ffaa00" stroke-dasharray="5,2" d="M1168,-258C1112.44,-233.72 1104.12,-215.33 1047,-195 1007.66,-181 996.38,-181.55 955,-176"/>
+<path fill="none" stroke="#ffaa00" stroke-dasharray="5,2" d="M953,-176C890.16,-167.58 884.42,-135.12 825,-113 819.14,-110.82 812.95,-108.77 806.73,-106.88"/>
+<polygon fill="#ffaa00" stroke="#ffaa00" points="807.52,-103.47 796.94,-104.04 805.57,-110.19 807.52,-103.47"/>
+</g>
+<!-- module~rki_solver_unstr&#45;&gt;module~rki_kernel_sponge_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge11" class="edge">
+<title>module~rki_solver_unstr&#45;&gt;module~rki_kernel_sponge_unstr</title>
+<path fill="none" stroke="#aaff00" stroke-dasharray="5,2" d="M1338,-471.89C1334.22,-433.68 1317.73,-314.05 1255,-244 1137.38,-112.67 930.71,-51.05 819.83,-26.23"/>
+<polygon fill="#aaff00" stroke="#aaff00" points="820.25,-22.74 809.73,-24.01 818.75,-29.58 820.25,-22.74"/>
+</g>
+<!-- module~rki_solver_unstr&#45;&gt;module~rki_si_unstr_step_ml -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge13" class="edge">
+<title>module~rki_solver_unstr&#45;&gt;module~rki_si_unstr_step_ml</title>
+<path fill="none" stroke="#00ffa9" stroke-dasharray="5,2" d="M1310.85,-471.89C1294.65,-465.1 1273.83,-456.68 1255,-450 1244.42,-446.25 1232.99,-442.53 1222.05,-439.13"/>
+<polygon fill="#00ffa9" stroke="#00ffa9" points="1222.76,-435.69 1212.18,-436.1 1220.71,-442.38 1222.76,-435.69"/>
+</g>
+<!-- module~rki_solver_unstr&#45;&gt;module~rki_state_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge40" class="edge">
+<title>module~rki_solver_unstr&#45;&gt;module~rki_state_unstr</title>
+<path fill="none" stroke="#00a9ff" stroke-dasharray="5,2" d="M953,-176C911.62,-170.45 893.23,-168.46 861,-195 829.02,-221.34 856.61,-254.21 825,-281 796.96,-304.77 778.19,-314.7 744.5,-300"/>
+<path fill="none" stroke="#00a9ff" stroke-dasharray="5,2" d="M742.5,-300C708.81,-285.3 691.95,-302.31 662,-281 624.96,-254.64 601.11,-205.23 589.77,-176.74"/>
+<polygon fill="#00a9ff" stroke="#00a9ff" points="593,-175.37 586.16,-167.28 586.46,-177.87 593,-175.37"/>
+</g>
+<!-- module~rki_solver_unstr&#45;&gt;module~rki_kernel_extrapolate_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge46" class="edge">
+<title>module~rki_solver_unstr&#45;&gt;module~rki_kernel_extrapolate_unstr</title>
+<path fill="none" stroke="#ffc700" stroke-dasharray="5,2" d="M953,-176C911.62,-170.45 896.72,-173.38 861,-195 839.39,-208.09 846.27,-225.36 825,-239 822.26,-240.75 819.39,-242.36 816.42,-243.84"/>
+<polygon fill="#ffc700" stroke="#ffc700" points="815,-240.63 807.26,-247.87 817.82,-247.04 815,-240.63"/>
+</g>
+<!-- module~rki_solver_unstr&#45;&gt;module~rki_kernel_friction_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge47" class="edge">
+<title>module~rki_solver_unstr&#45;&gt;module~rki_kernel_friction_unstr</title>
+<path fill="none" stroke="#f3ff00" stroke-dasharray="5,2" d="M953,-176C938.43,-174.05 861.36,-190.76 805.15,-203.69"/>
+<polygon fill="#f3ff00" stroke="#f3ff00" points="804.22,-200.31 795.27,-205.97 805.8,-207.13 804.22,-200.31"/>
+</g>
+<!-- module~rki_solver_unstr&#45;&gt;module~rki_kernel_fused_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge48" class="edge">
+<title>module~rki_solver_unstr&#45;&gt;module~rki_kernel_fused_unstr</title>
+<path fill="none" stroke="#b1ff00" stroke-dasharray="5,2" d="M953,-176C909.1,-170.12 859.54,-169.86 819.76,-171.19"/>
+<polygon fill="#b1ff00" stroke="#b1ff00" points="819.46,-167.7 809.6,-171.57 819.72,-174.69 819.46,-167.7"/>
+</g>
+<!-- module~rki_solver_unstr&#45;&gt;module~rki_kernel_protect_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge49" class="edge">
+<title>module~rki_solver_unstr&#45;&gt;module~rki_kernel_protect_unstr</title>
+<path fill="none" stroke="#6eff00" stroke-dasharray="5,2" d="M953,-176C902.62,-169.25 846.14,-157.61 804.68,-148.3"/>
+<polygon fill="#6eff00" stroke="#6eff00" points="805.27,-144.84 794.75,-146.05 803.72,-151.67 805.27,-144.84"/>
+</g>
+<!-- module~rki_solver_unstr&#45;&gt;module~rki_kernel_timestep_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge51" class="edge">
+<title>module~rki_solver_unstr&#45;&gt;module~rki_kernel_timestep_unstr</title>
+<path fill="none" stroke="#2cff00" stroke-dasharray="5,2" d="M1334.4,-496.15C1324.19,-521.36 1297.2,-579.46 1255,-609 1252.74,-610.58 1250.38,-612.04 1247.94,-613.39"/>
+<polygon fill="#2cff00" stroke="#2cff00" points="1246.26,-610.32 1238.78,-617.82 1249.31,-616.62 1246.26,-610.32"/>
+</g>
+<!-- module~rki_solver_unstr&#45;&gt;module~rki_kernel_update_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge52" class="edge">
+<title>module~rki_solver_unstr&#45;&gt;module~rki_kernel_update_unstr</title>
+<path fill="none" stroke="#00ff16" stroke-dasharray="5,2" d="M1330.16,-496.22C1316.27,-514.5 1287.55,-548.76 1255,-567 1251.59,-568.91 1248.01,-570.65 1244.33,-572.23"/>
+<polygon fill="#00ff16" stroke="#00ff16" points="1243.05,-568.97 1234.99,-575.85 1245.58,-575.5 1243.05,-568.97"/>
+</g>
+<!-- module~rki_solver_unstr&#45;&gt;module~rki_ml_dynamics_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge54" class="edge">
+<title>module~rki_solver_unstr&#45;&gt;module~rki_ml_dynamics_unstr</title>
+<path fill="none" stroke="#00ff58" stroke-dasharray="5,2" d="M1168,-258C1122.36,-238.05 1065.78,-239.09 1022.4,-244.56"/>
+<polygon fill="#00ff58" stroke="#00ff58" points="1021.67,-241.13 1012.24,-245.96 1022.62,-248.07 1021.67,-241.13"/>
+</g>
+<!-- module~rki_solver_unstr&#45;&gt;module~rki_ml_eos_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge57" class="edge">
+<title>module~rki_solver_unstr&#45;&gt;module~rki_ml_eos_unstr</title>
+<path fill="none" stroke="#00ff9b" stroke-dasharray="5,2" d="M1168,-464C1129.67,-469.4 1112.89,-458.4 1083,-483 1052.27,-508.29 1080.32,-543.24 1047,-565 961.67,-620.73 833.85,-569.6 775.52,-540.71"/>
+<polygon fill="#00ff9b" stroke="#00ff9b" points="776.95,-537.5 766.45,-536.11 773.79,-543.75 776.95,-537.5"/>
+</g>
+<!-- module~rki_solver_unstr&#45;&gt;module~rki_ml_friction_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge59" class="edge">
+<title>module~rki_solver_unstr&#45;&gt;module~rki_ml_friction_unstr</title>
+<path fill="none" stroke="#00ffdd" stroke-dasharray="5,2" d="M1168,-258C1122.44,-238.08 1067.27,-227.54 1024.5,-222"/>
+<polygon fill="#00ffdd" stroke="#00ffdd" points="1024.81,-218.51 1014.46,-220.76 1023.96,-225.46 1024.81,-218.51"/>
+</g>
+<!-- module~rki_solver_unstr&#45;&gt;module~rki_ml_horizontal_viscosity_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge61" class="edge">
+<title>module~rki_solver_unstr&#45;&gt;module~rki_ml_horizontal_viscosity_unstr</title>
+<path fill="none" stroke="#00ddff" stroke-dasharray="5,2" d="M1168,-464C1129.67,-469.4 1111.49,-456.79 1083,-483 1043.58,-519.26 1085.4,-560.66 1047,-598 1043.47,-601.44 1039.52,-604.42 1035.29,-607.02"/>
+<polygon fill="#00ddff" stroke="#00ddff" points="1033.46,-604.03 1026.28,-611.83 1036.76,-610.21 1033.46,-604.03"/>
+</g>
+<!-- module~rki_solver_unstr&#45;&gt;module~rki_ml_keps_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge63" class="edge">
+<title>module~rki_solver_unstr&#45;&gt;module~rki_ml_keps_unstr</title>
+<path fill="none" stroke="#009bff" stroke-dasharray="5,2" d="M1292.3,-472C1258.33,-464.84 1211.25,-458.19 1170,-464"/>
+<path fill="none" stroke="#009bff" stroke-dasharray="5,2" d="M1168,-464C1117.93,-471.06 1060.59,-470.57 1018.02,-468.59"/>
+<polygon fill="#009bff" stroke="#009bff" points="1017.97,-465.09 1007.81,-468.08 1017.62,-472.08 1017.97,-465.09"/>
+</g>
+<!-- module~rki_solver_unstr&#45;&gt;module~rki_ml_kpp_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge65" class="edge">
+<title>module~rki_solver_unstr&#45;&gt;module~rki_ml_kpp_unstr</title>
+<path fill="none" stroke="#0058ff" stroke-dasharray="5,2" d="M1168,-258C1102.76,-229.48 1110.5,-330.78 1047,-363 1037.16,-367.99 1026.12,-371.81 1015.21,-374.73"/>
+<polygon fill="#0058ff" stroke="#0058ff" points="1014.13,-371.39 1005.25,-377.17 1015.8,-378.19 1014.13,-371.39"/>
+</g>
+<!-- module~rki_solver_unstr&#45;&gt;module~rki_ml_pressure_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge67" class="edge">
+<title>module~rki_solver_unstr&#45;&gt;module~rki_ml_pressure_unstr</title>
+<path fill="none" stroke="#0016ff" stroke-dasharray="5,2" d="M1168,-464C1129.67,-469.4 1117.05,-464.59 1083,-483 1063.37,-493.61 1066.33,-506.85 1047,-518 1039.77,-522.17 1031.82,-525.71 1023.73,-528.7"/>
+<polygon fill="#0016ff" stroke="#0016ff" points="1022.52,-525.42 1014.19,-531.97 1024.78,-532.04 1022.52,-525.42"/>
+</g>
+<!-- module~rki_solver_unstr&#45;&gt;module~rki_ml_tracers_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge69" class="edge">
+<title>module~rki_solver_unstr&#45;&gt;module~rki_ml_tracers_unstr</title>
+<path fill="none" stroke="#2c00ff" stroke-dasharray="5,2" d="M1168,-258C1112.44,-233.72 1103.91,-300.08 1047,-321 1039.65,-323.7 1031.83,-326.13 1023.98,-328.29"/>
+<polygon fill="#2c00ff" stroke="#2c00ff" points="1022.85,-324.96 1014.06,-330.88 1024.62,-331.74 1022.85,-324.96"/>
+</g>
+<!-- module~rki_solver_unstr&#45;&gt;module~rki_ml_truncate_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge70" class="edge">
+<title>module~rki_solver_unstr&#45;&gt;module~rki_ml_truncate_unstr</title>
+<path fill="none" stroke="#6e00ff" stroke-dasharray="5,2" d="M1317.45,-496.1C1300.8,-505.05 1276.97,-517.03 1255,-525 1249,-527.18 1242.68,-529.21 1236.31,-531.08"/>
+<polygon fill="#6e00ff" stroke="#6e00ff" points="1234.97,-527.81 1226.29,-533.88 1236.86,-534.56 1234.97,-527.81"/>
+</g>
+<!-- module~rki_solver_unstr&#45;&gt;module~rki_ml_vertical_viscosity_unstr -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge71" class="edge">
+<title>module~rki_solver_unstr&#45;&gt;module~rki_ml_vertical_viscosity_unstr</title>
+<path fill="none" stroke="#b100ff" stroke-dasharray="5,2" d="M1291.92,-489.57C1283.46,-490.57 1274.37,-491.65 1265.11,-492.74"/>
+<polygon fill="#b100ff" stroke="#b100ff" points="1264.53,-489.29 1255.01,-493.94 1265.35,-496.24 1264.53,-489.29"/>
+</g>
+<!-- module~rki_solver_unstr&#45;&gt;module~rki_si_unstr_step -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge76" class="edge">
+<title>module~rki_solver_unstr&#45;&gt;module~rki_si_unstr_step</title>
+<path fill="none" stroke="#ff0085" stroke-dasharray="5,2" d="M1168,-258C1160.88,-254.89 1074.64,-273.2 1014.1,-286.63"/>
+<polygon fill="#ff0085" stroke="#ff0085" points="1013.25,-283.23 1004.25,-288.82 1014.77,-290.07 1013.25,-283.23"/>
+</g>
+<!-- module~rki_api -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_node34" class="node">
+<title>module~rki_api</title>
+<g id="a_module~~rki_boundary_unstr~~UsedByGraph_node34"><a xlink:href="../module/rki_api.html" xlink:title="rki_api">
+<polygon fill="#337ab7" stroke="#337ab7" points="1492,-802 1438,-802 1438,-778 1492,-778 1492,-802"/>
+<text text-anchor="middle" x="1465" y="-787.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_api</text>
+</a>
+</g>
+</g>
+<!-- module~rki_api&#45;&gt;module~rki_handle -->
+<g id="module~~rki_boundary_unstr~~UsedByGraph_edge44" class="edge">
+<title>module~rki_api&#45;&gt;module~rki_handle</title>
+<path fill="none" stroke="#ff8500" stroke-dasharray="5,2" d="M1437.91,-790C1422.35,-790 1402.2,-790 1384.31,-790"/>
+<polygon fill="#ff8500" stroke="#ff8500" points="1384.08,-786.5 1374.08,-790 1384.08,-793.5 1384.08,-786.5"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var panmodulerki_boundary_unstrUsedByGraph = svgPanZoom('#modulerki_boundary_unstrUsedByGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#UsedByGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="UsedByGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="518pt" height="32pt"
+ viewBox="0.00 0.00 517.50 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 513.5,-28 513.5,4 -4,4"/>
+<!-- Module -->
+<g id="node1" class="node">
+<title>Module</title>
+<polygon fill="#337ab7" stroke="#337ab7" points="54,-24 0,-24 0,0 54,0 54,-24"/>
+<text text-anchor="middle" x="27" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Module</text>
+</g>
+<!-- Submodule -->
+<g id="node2" class="node">
+<title>Submodule</title>
+<polygon fill="#5bc0de" stroke="#5bc0de" points="145.5,-24 72.5,-24 72.5,0 145.5,0 145.5,-24"/>
+<text text-anchor="middle" x="109" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Submodule</text>
+</g>
+<!-- Subroutine -->
+<g id="node3" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="234,-24 164,-24 164,0 234,0 234,-24"/>
+<text text-anchor="middle" x="199" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node4" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="310,-24 252,-24 252,0 310,0 310,-24"/>
+<text text-anchor="middle" x="281" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Program -->
+<g id="node5" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="386,-24 328,-24 328,0 386,0 386,-24"/>
+<text text-anchor="middle" x="357" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node6" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="509.5,-24 404.5,-24 404.5,0 509.5,0 509.5,-24"/>
+<text text-anchor="middle" x="457" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a submodule to the (sub)module which it is
+descended from. Dashed arrows point from a module or program unit to 
+modules which it uses.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+            </li>
+        </ul>
+      </div>
+    </div>
+
+      <br>
+
+
+        <section>
+          <h2>Variables</h2>
+            <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Visibility</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+<th></th><th scope="col">Initial</th>        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-bc_chapman"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>BC_CHAPMAN</strong></td>
+<td> =</td>
+                <td>9</td>
+            <td>
+                <p>Chapman / Orlanski radiating boundary. No per-group external
+parameter; instead the kernel keeps a per-boundary-edge
+persistent state <code>state%chapman_eta_old(i, k)</code> (the previous
+step&rsquo;s eta at edge <code>i</code> of cell <code>k</code>) and reconstructs the ghost
+stage each call from a phase-speed estimate
+  c = -(deta/dt) / (deta/dn_inward)
+clamped to <code>[0, sqrt(g*h_int)]</code>. Spatial gradient is
+approximated from the cell&rsquo;s centroid stage and the extrapolated
+edge-midpoint stage; temporal gradient uses <code>state%dt</code>. The
+computed ghost target is then dispatched through the
+Flather/<code>BC_TIDAL</code> algebra in <code>compute_boundary_state</code> so the
+ghost momentum reconstruction matches <code>BC_TIDAL</code>. Matches
+structured <code>BC_CHAPMAN=9</code> semantics.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-bc_clamped"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>BC_CLAMPED</strong></td>
+<td> =</td>
+                <td>7</td>
+            <td>
+                <p>Prescribed free-surface elevation with transmissive momentum
+(no Flather radiation term). The per-group parameter
+<code>state%bc_eta_ext(g)</code> is the absolute stage (m); the kernel
+clamps the ghost stage to it and copies interior momentum
+across unchanged. Pick this when you need a Dirichlet stage
+without wave-radiation coupling. Matches structured
+<code>BC_CLAMPED=7</code>.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-bc_discharge"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>BC_DISCHARGE</strong></td>
+<td> =</td>
+                <td>6</td>
+            <td>
+                <p>Prescribed momentum flux per unit width (m^2/s) along the
+outward normal. The per-group parameter <code>state%bc_Qn_ext(g)</code>
+carries the specific discharge; positive means <em>out of</em> the
+domain (along the outward normal). Ghost momentum is rebuilt
+from <code>(-bc_Qn_ext * n1, -bc_Qn_ext * n2)</code> so a negative Qn
+pumps mass in without a separate sign flip at the call site.
+Depth at the ghost follows the interior extrapolation. Useful
+when the driving quantity is a measured river flow per unit
+width rather than a velocity. Matches structured BC_DISCHARGE.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-bc_inflow"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>BC_INFLOW</strong></td>
+<td> =</td>
+                <td>5</td>
+            <td>
+                <p>Prescribed normal velocity. The per-group parameter
+<code>state%bc_un_ext(g)</code> is the velocity component along the
+outward normal &ndash; so a value of -2.0 means flow into the
+domain at 2 m/s on a boundary whose outward normal points
+out of the domain. The Python wrapper exposes
+<code>set_bc_inflow_speed(g, v)</code> which negates internally so
+positive <code>v</code> always means inflow. Depth at the ghost state
+is the extrapolated interior depth.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-bc_interior"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>BC_INTERIOR</strong></td>
+<td> =</td>
+                <td>0</td>
+            <td>
+                <p>Sentinel for interior edges. Never appears in <code>state%bc_type(:)</code>
+itself &ndash; it&rsquo;s the value of <code>bc_group(i, k)</code> on edges that
+were not assigned to a group at mesh-build time.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-bc_nested"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>BC_NESTED</strong></td>
+<td> =</td>
+                <td>4</td>
+            <td>
+                <p>Nested boundary: Flather radiation driven by a parent-model
+prescribed elevation per BC group.  At smoke level this is
+identical to <code>BC_TIDAL</code> — per-group <code>bc_eta_ext(g)</code> supplies
+the external stage and the outward-normal ghost velocity is
+reconstructed from the Riemann invariant.  Full parent-model
+coupling (live eta from a coarser grid) is deferred. Matches
+structured <code>BC_NESTED = 4</code>.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-bc_open"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>BC_OPEN</strong></td>
+<td> =</td>
+                <td>2</td>
+            <td>
+                <p>Transmissive (zero-gradient) radiation. The right-side ghost
+state copies the left state, so the central-upwind solver
+emits the physical flux of the interior with no reflection.
+Stateless: uses no per-group parameters.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-bc_outflow"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>BC_OUTFLOW</strong></td>
+<td> =</td>
+                <td>10</td>
+            <td>
+                <p>Prescribed depth at the boundary. The per-group parameter
+<code>state%bc_h_ext(g)</code> is the depth (m) the kernel clamps to;
+momentum is transmissive. Useful as a downstream water level
+condition for steady-state channel runs. Unstructured-only;
+no structured analog, numbered past the structured range.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-bc_sponge"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>BC_SPONGE</strong></td>
+<td> =</td>
+                <td>8</td>
+            <td>
+                <p>Sponge layer: explicit relaxation of h and momentum toward a
+prescribed reference state.  Per-group parameters
+<code>state%bc_sponge_strength(g)</code> [1/s] and <code>state%bc_sponge_h_ref(g)</code>
+[m] are consumed by <code>apply_sponge_unstr</code> (separate kernel, not
+the flux kernel): the sponge falls through to <code>BC_WALL</code> ghost
+state in the flux pass, and relaxation is applied after each
+RK2 stage update.  Matches structured <code>BC_SPONGE = 8</code>.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-bc_tidal"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>BC_TIDAL</strong></td>
+<td> =</td>
+                <td>3</td>
+            <td>
+                <p>Prescribed free-surface elevation with Flather radiation.
+The per-group parameter <code>state%bc_eta_ext(g)</code> is the absolute
+stage (m, in the same datum as the bed) the kernel clamps the
+ghost stage to. Ghost outward-normal velocity is rebuilt as
+  u_n_ghost = u_n_int + sqrt(g/h_int)*(eta_int - eta_ext)
+so interior-going waves enter driven by the stage anomaly and
+outgoing waves leave cleanly. Update the value between steps
+to drive a tide. Matches structured <code>BC_TIDAL</code> semantics.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-bc_wall"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>BC_WALL</strong></td>
+<td> =</td>
+                <td>1</td>
+            <td>
+                <p>Reflective wall. The right-side ghost state mirrors the left
+state across the edge normal: stage / depth / bed are the
+same, momentum has its normal component negated. Implemented
+in <code>compute_boundary_state</code>.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-max_bc_groups"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>MAX_BC_GROUPS</strong></td>
+<td> =</td>
+                <td>32</td>
+            <td>
+                <p>Maximum number of boundary groups per mesh. Plenty for any
+realistic coastal case (most have 2-5: open ocean, river
+mouths, walls). Fixed-size so the table lives inside the
+state struct without needing a separate <code>map(to:)</code>.</p>
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+        </section>
+        <br>
+
+
+
+
+
+
+
+
+
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Rakali
+ was developed by Jorge Luis Galvez Vallejo<br>              &copy; 2026 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+ on 2026-10-08 12:55 +0000             </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>

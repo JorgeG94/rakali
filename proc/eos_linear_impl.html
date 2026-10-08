@@ -1,0 +1,1060 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="GPU-native coastal solver — structured Cartesian and unstructured triangular grids, hydrostatic multilayer + non-hydrostatic, portable across NVHPC/gfortran/ifx.">
+    <meta name="author" content="Jorge Luis Galvez Vallejo" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>eos_linear_impl &ndash; Rakali</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">Rakali </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/absint.html">Abstract Interfaces</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>eos_linear_impl
+      <small>Subroutine</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.1% of total for procedures.">21 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/rki_eos.F90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/rki_eos.f90.html'>rki_eos.F90</a></li>
+                <li class="breadcrumb-item"><a href='../module/rki_eos.html'>rki_eos</a></li>
+            <li class="breadcrumb-item active" aria-current="page">eos_linear_impl</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+  
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#vars-0"
+         aria-expanded="false" aria-controls="vars-0">
+         <h4 class="card-header bg-primary text-white">Variables</h4>
+      </a>
+      <div id="vars-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../proc/eos_linear_impl.html#variable-s_k~4">S_k</a>
+            <a class="list-group-item" href="../proc/eos_linear_impl.html#variable-t_k~4">T_k</a>
+            <a class="list-group-item" href="../proc/eos_linear_impl.html#variable-i~108">i</a>
+            <a class="list-group-item" href="../proc/eos_linear_impl.html#variable-inv_h~4">inv_h</a>
+            <a class="list-group-item" href="../proc/eos_linear_impl.html#variable-j~71">j</a>
+            <a class="list-group-item" href="../proc/eos_linear_impl.html#variable-k~105">k</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../proc/eos_linear_impl.html#src">eos_linear_impl</a>
+      </div>
+    </div>
+
+
+  </div>
+
+    </div>
+    
+    <div class="col-md-9" id='text'>
+    <h2>private pure subroutine eos_linear_impl(h_layer, hS_layer, hT_layer, rho_layer, rho_0, beta_S, S_ref, alpha_T, T_ref, nx, ny, nz)  
+</h2>
+    
+
+    <p>Linear two-tracer EOS, flat-impl form:</p>
+<p>rho_k = rho_0 + beta_S * (S_k - S_ref) - alpha_T * (T_k - T_ref)</p>
+<p>where S_k = hS_k / h_k, T_k = hT_k / h_k.  <code>beta_S</code> and
+<code>alpha_T</code> are pre-multiplied sensitivities in kg/m³ per unit
+S / T — standard seawater values are 0.78 and 0.17.</p>
+<p>For vanishing layers (<code>h_layer &lt;= H_VANISHED</code>) the cell falls
+back to rho_0 — same defensive branch as the coastal kernel; keeps
+the EOS finite under ZSTAR_FULL when bed-side layers can pinch out.
+The gate is <code>&gt; H_VANISHED</code> (not <code>&gt; 0</code>): during an active drain the
+PPM positivity limiter guarantees <code>h &gt;= 0</code> but NOT <code>h &gt;= H_VANISHED</code>,
+so a layer at e.g. <code>h = 1e-8</code> with <code>hS ≈ 35·1e-8</code> would pass a
+<code>&gt; 0</code> gate and give <code>S = hS/h ≈ 5e2 PSU</code> ⇒ corrupted ρ ⇒ garbage
+PGF.  <code>&gt; H_VANISHED</code> (the D4 vanished-layer role) returns rho_0 for
+any layer in <code>(0, H_VANISHED]</code>.  Bit-identical for any config whose
+layers all exceed H_VANISHED.  CAVEAT: ZSTAR_FULL floors vanishing
+bed layers to <code>zstar_h_min</code> (default 1.5e-4 == H_VANISHED exactly),
+so such a bed layer now takes the rho_0 fallback instead of the
+computed density — a dynamically negligible change on a 0.15 mm
+layer (PGF contribution ~1e-4 of a normal layer); the shipped
+anchors (ocean_analytical 8/8, dyn_split, baroclinic_longrun,
+double-gyre helpers) pass unchanged on both toolchains.</p>
+
+
+    <h3>Arguments</h3>
+        <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-h_layer~48"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>h_layer</strong>(nx,ny,nz)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-hs_layer~9"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>hS_layer</strong>(nx,ny,nz)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ht_layer~9"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>hT_layer</strong>(nx,ny,nz)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-rho_layer~17"></span>
+              real(kind=wp),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>rho_layer</strong>(nx,ny,nz)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-rho_0~21"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>rho_0</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-beta_s~5"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>beta_S</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-s_ref~5"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>S_ref</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-alpha_t~5"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>alpha_T</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-t_ref~5"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>T_ref</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nx~67"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nx</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ny~67"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>ny</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nz~108"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nz</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <br>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Calls</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~eos_linear_impl~~CallsGraph Pages: 1 -->
+<svg id="proceos_linear_implCallsGraph" width="194pt" height="32pt"
+ viewBox="0.00 0.00 194.00 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~eos_linear_impl~~CallsGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<title>proc~~eos_linear_impl~~CallsGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 190,-28 190,4 -4,4"/>
+<!-- proc~eos_linear_impl -->
+<g id="proc~~eos_linear_impl~~CallsGraph_node1" class="node">
+<title>proc~eos_linear_impl</title>
+<polygon fill="none" stroke="black" points="96,-24 0,-24 0,0 96,0 96,-24"/>
+<text text-anchor="middle" x="48" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">eos_linear_impl</text>
+</g>
+<!-- local -->
+<g id="proc~~eos_linear_impl~~CallsGraph_node2" class="node">
+<title>local</title>
+<polygon fill="#777777" stroke="#777777" points="186,-24 132,-24 132,0 186,0 186,-24"/>
+<text text-anchor="middle" x="159" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">local</text>
+</g>
+<!-- proc~eos_linear_impl&#45;&gt;local -->
+<g id="proc~~eos_linear_impl~~CallsGraph_edge1" class="edge">
+<title>proc~eos_linear_impl&#45;&gt;local</title>
+<path fill="none" stroke="#ff0000" d="M96.18,-12C104.66,-12 113.38,-12 121.5,-12"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="121.76,-15.5 131.76,-12 121.76,-8.5 121.76,-15.5"/>
+</g>
+</g>
+</svg>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CallsGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CallsGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Called by</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~eos_linear_impl~~CalledByGraph Pages: 1 -->
+<svg id="proceos_linear_implCalledByGraph" width="641pt" height="115pt"
+ viewBox="0.00 0.00 641.00 115.09" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~eos_linear_impl~~CalledByGraph" class="graph" transform="scale(0.55 0.55) rotate(0) translate(4 205)">
+<title>proc~~eos_linear_impl~~CalledByGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-205 1160,-205 1160,4 -4,4"/>
+<!-- proc~eos_linear_impl -->
+<g id="proc~~eos_linear_impl~~CalledByGraph_node1" class="node">
+<title>proc~eos_linear_impl</title>
+<polygon fill="none" stroke="black" points="1156,-87 1060,-87 1060,-63 1156,-63 1156,-87"/>
+<text text-anchor="middle" x="1108" y="-72.6" font-family="Helvetica,sans-Serif" font-size="10.50">eos_linear_impl</text>
+</g>
+<!-- proc~eos_compute_arrays -->
+<g id="proc~~eos_linear_impl~~CalledByGraph_node2" class="node">
+<title>proc~eos_compute_arrays</title>
+<g id="a_proc~~eos_linear_impl~~CalledByGraph_node2"><a xlink:href="../proc/eos_compute_arrays.html" xlink:title="eos_compute_arrays">
+<polygon fill="#d9534f" stroke="#d9534f" points="1024,-87 901,-87 901,-63 1024,-63 1024,-87"/>
+<text text-anchor="middle" x="962.5" y="-72.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">eos_compute_arrays</text>
+</a>
+</g>
+</g>
+<!-- proc~eos_compute_arrays&#45;&gt;proc~eos_linear_impl -->
+<g id="proc~~eos_linear_impl~~CalledByGraph_edge1" class="edge">
+<title>proc~eos_compute_arrays&#45;&gt;proc~eos_linear_impl</title>
+<path fill="none" stroke="#ff0000" d="M1024.36,-75C1032.83,-75 1041.51,-75 1049.91,-75"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="1049.98,-78.5 1059.98,-75 1049.98,-71.5 1049.98,-78.5"/>
+</g>
+<!-- proc~ml_equation_of_state_shared -->
+<g id="proc~~eos_linear_impl~~CalledByGraph_node3" class="node">
+<title>proc~ml_equation_of_state_shared</title>
+<g id="a_proc~~eos_linear_impl~~CalledByGraph_node3"><a xlink:href="../proc/ml_equation_of_state_shared.html" xlink:title="ml_equation_of_state_shared">
+<polygon fill="#d9534f" stroke="#d9534f" points="865,-87 698,-87 698,-63 865,-63 865,-87"/>
+<text text-anchor="middle" x="781.5" y="-72.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">ml_equation_of_state_shared</text>
+</a>
+</g>
+</g>
+<!-- proc~ml_equation_of_state_shared&#45;&gt;proc~eos_compute_arrays -->
+<g id="proc~~eos_linear_impl~~CalledByGraph_edge2" class="edge">
+<title>proc~ml_equation_of_state_shared&#45;&gt;proc~eos_compute_arrays</title>
+<path fill="none" stroke="#ff0000" d="M865.19,-75C873.72,-75 882.33,-75 890.72,-75"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="890.81,-78.5 900.81,-75 890.81,-71.5 890.81,-78.5"/>
+</g>
+<!-- proc~refresh_multilayer_derived -->
+<g id="proc~~eos_linear_impl~~CalledByGraph_node4" class="node">
+<title>proc~refresh_multilayer_derived</title>
+<g id="a_proc~~eos_linear_impl~~CalledByGraph_node4"><a xlink:href="../proc/refresh_multilayer_derived.html" xlink:title="refresh_multilayer_derived">
+<polygon fill="#d9534f" stroke="#d9534f" points="662,-127 508,-127 508,-103 662,-103 662,-127"/>
+<text text-anchor="middle" x="585" y="-112.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">refresh_multilayer_derived</text>
+</a>
+</g>
+</g>
+<!-- proc~refresh_multilayer_derived&#45;&gt;proc~ml_equation_of_state_shared -->
+<g id="proc~~eos_linear_impl~~CalledByGraph_edge3" class="edge">
+<title>proc~refresh_multilayer_derived&#45;&gt;proc~ml_equation_of_state_shared</title>
+<path fill="none" stroke="#ff0000" d="M644.36,-103C665.61,-98.63 689.82,-93.65 711.88,-89.11"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="712.76,-92.5 721.85,-87.06 711.35,-85.65 712.76,-92.5"/>
+</g>
+<!-- proc~solver_multilayer_rk_stage -->
+<g id="proc~~eos_linear_impl~~CalledByGraph_node5" class="node">
+<title>proc~solver_multilayer_rk_stage</title>
+<g id="a_proc~~eos_linear_impl~~CalledByGraph_node5"><a xlink:href="../proc/solver_multilayer_rk_stage.html" xlink:title="solver_multilayer_rk_stage">
+<polygon fill="#d9534f" stroke="#d9534f" points="662,-47 508,-47 508,-23 662,-23 662,-47"/>
+<text text-anchor="middle" x="585" y="-32.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_multilayer_rk_stage</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_multilayer_rk_stage&#45;&gt;proc~ml_equation_of_state_shared -->
+<g id="proc~~eos_linear_impl~~CalledByGraph_edge4" class="edge">
+<title>proc~solver_multilayer_rk_stage&#45;&gt;proc~ml_equation_of_state_shared</title>
+<path fill="none" stroke="#ff0000" d="M644.36,-47C665.61,-51.37 689.82,-56.35 711.88,-60.89"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="711.35,-64.35 721.85,-62.94 712.76,-57.5 711.35,-64.35"/>
+</g>
+<!-- proc~solver_step_multilayer_impl -->
+<g id="proc~~eos_linear_impl~~CalledByGraph_node6" class="node">
+<title>proc~solver_step_multilayer_impl</title>
+<g id="a_proc~~eos_linear_impl~~CalledByGraph_node6"><a xlink:href="../proc/solver_step_multilayer_impl.html" xlink:title="solver_step_multilayer_impl">
+<polygon fill="#d9534f" stroke="#d9534f" points="462.5,-66 302.5,-66 302.5,-42 462.5,-42 462.5,-66"/>
+<text text-anchor="middle" x="382.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_step_multilayer_impl</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_step_multilayer_impl&#45;&gt;proc~ml_equation_of_state_shared -->
+<g id="proc~~eos_linear_impl~~CalledByGraph_edge5" class="edge">
+<title>proc~solver_step_multilayer_impl&#45;&gt;proc~ml_equation_of_state_shared</title>
+<path fill="none" stroke="#ff0000" d="M462.88,-58.2C527.67,-61.63 619.31,-66.47 687.52,-70.08"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="687.67,-73.59 697.84,-70.63 688.04,-66.6 687.67,-73.59"/>
+</g>
+<!-- proc~solver_step_multilayer_impl&#45;&gt;proc~solver_multilayer_rk_stage -->
+<g id="proc~~eos_linear_impl~~CalledByGraph_edge8" class="edge">
+<title>proc~solver_step_multilayer_impl&#45;&gt;proc~solver_multilayer_rk_stage</title>
+<path fill="none" stroke="#00ff00" d="M462.74,-46.49C474.26,-45.4 486.16,-44.27 497.8,-43.17"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="498.32,-46.63 507.95,-42.21 497.66,-39.67 498.32,-46.63"/>
+</g>
+<!-- proc~init_multilayer_from_barotropic -->
+<g id="proc~~eos_linear_impl~~CalledByGraph_node7" class="node">
+<title>proc~init_multilayer_from_barotropic</title>
+<g id="a_proc~~eos_linear_impl~~CalledByGraph_node7"><a xlink:href="../proc/init_multilayer_from_barotropic.html" xlink:title="init_multilayer_from_barotropic">
+<polygon fill="#d9534f" stroke="#d9534f" points="471.5,-159 293.5,-159 293.5,-135 471.5,-135 471.5,-159"/>
+<text text-anchor="middle" x="382.5" y="-144.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">init_multilayer_from_barotropic</text>
+</a>
+</g>
+</g>
+<!-- proc~init_multilayer_from_barotropic&#45;&gt;proc~refresh_multilayer_derived -->
+<g id="proc~~eos_linear_impl~~CalledByGraph_edge6" class="edge">
+<title>proc~init_multilayer_from_barotropic&#45;&gt;proc~refresh_multilayer_derived</title>
+<path fill="none" stroke="#ff0000" d="M458.73,-134.99C471.75,-132.92 485.36,-130.74 498.63,-128.63"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="499.36,-132.05 508.68,-127.02 498.26,-125.14 499.36,-132.05"/>
+</g>
+<!-- proc~restore_multilayer_after_restart -->
+<g id="proc~~eos_linear_impl~~CalledByGraph_node8" class="node">
+<title>proc~restore_multilayer_after_restart</title>
+<g id="a_proc~~eos_linear_impl~~CalledByGraph_node8"><a xlink:href="../proc/restore_multilayer_after_restart.html" xlink:title="restore_multilayer_after_restart">
+<polygon fill="#d9534f" stroke="#d9534f" points="472,-117 293,-117 293,-93 472,-93 472,-117"/>
+<text text-anchor="middle" x="382.5" y="-102.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">restore_multilayer_after_restart</text>
+</a>
+</g>
+</g>
+<!-- proc~restore_multilayer_after_restart&#45;&gt;proc~refresh_multilayer_derived -->
+<g id="proc~~eos_linear_impl~~CalledByGraph_edge7" class="edge">
+<title>proc~restore_multilayer_after_restart&#45;&gt;proc~refresh_multilayer_derived</title>
+<path fill="none" stroke="#ff0000" d="M472.03,-109.42C480.53,-109.84 489.14,-110.27 497.63,-110.69"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="497.72,-114.2 507.89,-111.2 498.07,-107.21 497.72,-114.2"/>
+</g>
+<!-- proc~solver_step -->
+<g id="proc~~eos_linear_impl~~CalledByGraph_node9" class="node">
+<title>proc~solver_step</title>
+<g id="a_proc~~eos_linear_impl~~CalledByGraph_node9"><a xlink:href="../proc/solver_step.html" xlink:title="solver_step">
+<polygon fill="#d9534f" stroke="#d9534f" points="238.5,-66 165.5,-66 165.5,-42 238.5,-42 238.5,-66"/>
+<text text-anchor="middle" x="202" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_step</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_step&#45;&gt;proc~solver_step_multilayer_impl -->
+<g id="proc~~eos_linear_impl~~CalledByGraph_edge9" class="edge">
+<title>proc~solver_step&#45;&gt;proc~solver_step_multilayer_impl</title>
+<path fill="none" stroke="#0000ff" d="M238.69,-54C254.22,-54 273.17,-54 292.13,-54"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="292.33,-57.5 302.33,-54 292.33,-50.5 292.33,-57.5"/>
+</g>
+<!-- proc~api_init_multilayer -->
+<g id="proc~~eos_linear_impl~~CalledByGraph_node10" class="node">
+<title>proc~api_init_multilayer</title>
+<g id="a_proc~~eos_linear_impl~~CalledByGraph_node10"><a xlink:href="../proc/api_init_multilayer.html" xlink:title="api_init_multilayer">
+<polygon fill="#d9534f" stroke="#d9534f" points="257,-201 147,-201 147,-177 257,-177 257,-201"/>
+<text text-anchor="middle" x="202" y="-186.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">api_init_multilayer</text>
+</a>
+</g>
+</g>
+<!-- proc~api_init_multilayer&#45;&gt;proc~init_multilayer_from_barotropic -->
+<g id="proc~~eos_linear_impl~~CalledByGraph_edge10" class="edge">
+<title>proc~api_init_multilayer&#45;&gt;proc~init_multilayer_from_barotropic</title>
+<path fill="none" stroke="#ff0000" d="M254.15,-176.96C274.88,-172.09 298.98,-166.42 320.6,-161.33"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="321.41,-164.73 330.34,-159.04 319.81,-157.92 321.41,-164.73"/>
+</g>
+<!-- proc~driver_run_coastal -->
+<g id="proc~~eos_linear_impl~~CalledByGraph_node11" class="node">
+<title>proc~driver_run_coastal</title>
+<g id="a_proc~~eos_linear_impl~~CalledByGraph_node11"><a xlink:href="../proc/driver_run_coastal.html" xlink:title="driver_run_coastal">
+<polygon fill="#d9534f" stroke="#d9534f" points="111,-108 0,-108 0,-84 111,-84 111,-108"/>
+<text text-anchor="middle" x="55.5" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">driver_run_coastal</text>
+</a>
+</g>
+</g>
+<!-- proc~driver_run_coastal&#45;&gt;proc~solver_step -->
+<g id="proc~~eos_linear_impl~~CalledByGraph_edge14" class="edge">
+<title>proc~driver_run_coastal&#45;&gt;proc~solver_step</title>
+<path fill="none" stroke="#0000ff" d="M97.91,-83.96C116.01,-78.7 137.28,-72.52 155.79,-67.14"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="156.84,-70.48 165.47,-64.33 154.89,-63.76 156.84,-70.48"/>
+</g>
+<!-- proc~init_from_config -->
+<g id="proc~~eos_linear_impl~~CalledByGraph_node12" class="node">
+<title>proc~init_from_config</title>
+<g id="a_proc~~eos_linear_impl~~CalledByGraph_node12"><a xlink:href="../proc/init_from_config.html" xlink:title="init_from_config">
+<polygon fill="#d9534f" stroke="#d9534f" points="250.5,-159 153.5,-159 153.5,-135 250.5,-135 250.5,-159"/>
+<text text-anchor="middle" x="202" y="-144.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">init_from_config</text>
+</a>
+</g>
+</g>
+<!-- proc~init_from_config&#45;&gt;proc~init_multilayer_from_barotropic -->
+<g id="proc~~eos_linear_impl~~CalledByGraph_edge11" class="edge">
+<title>proc~init_from_config&#45;&gt;proc~init_multilayer_from_barotropic</title>
+<path fill="none" stroke="#ff0000" d="M250.83,-147C260.88,-147 271.82,-147 282.95,-147"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="283.21,-150.5 293.21,-147 283.21,-143.5 283.21,-150.5"/>
+</g>
+<!-- proc~init_local_state -->
+<g id="proc~~eos_linear_impl~~CalledByGraph_node13" class="node">
+<title>proc~init_local_state</title>
+<g id="a_proc~~eos_linear_impl~~CalledByGraph_node13"><a xlink:href="../proc/init_local_state.html" xlink:title="init_local_state">
+<polygon fill="#d9534f" stroke="#d9534f" points="247.5,-117 156.5,-117 156.5,-93 247.5,-93 247.5,-117"/>
+<text text-anchor="middle" x="202" y="-102.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">init_local_state</text>
+</a>
+</g>
+</g>
+<!-- proc~init_local_state&#45;&gt;proc~init_multilayer_from_barotropic -->
+<g id="proc~~eos_linear_impl~~CalledByGraph_edge12" class="edge">
+<title>proc~init_local_state&#45;&gt;proc~init_multilayer_from_barotropic</title>
+<path fill="none" stroke="#ff0000" d="M247.58,-115.49C269.54,-120.66 296.35,-126.97 320.21,-132.58"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="319.69,-136.05 330.22,-134.94 321.29,-129.24 319.69,-136.05"/>
+</g>
+<!-- proc~init_local_state&#45;&gt;proc~restore_multilayer_after_restart -->
+<g id="proc~~eos_linear_impl~~CalledByGraph_edge13" class="edge">
+<title>proc~init_local_state&#45;&gt;proc~restore_multilayer_after_restart</title>
+<path fill="none" stroke="#00ff00" d="M247.58,-105C258.39,-105 270.38,-105 282.61,-105"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="282.93,-108.5 292.93,-105 282.93,-101.5 282.93,-108.5"/>
+</g>
+<!-- proc~rki_advance -->
+<g id="proc~~eos_linear_impl~~CalledByGraph_node14" class="node">
+<title>proc~rki_advance</title>
+<g id="a_proc~~eos_linear_impl~~CalledByGraph_node14"><a xlink:href="../proc/rki_advance.html" xlink:title="rki_advance">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="94,-66 17,-66 17,-42 94,-42 94,-66"/>
+<text text-anchor="middle" x="55.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_advance</text>
+</a>
+</g>
+</g>
+<!-- proc~rki_advance&#45;&gt;proc~solver_step -->
+<g id="proc~~eos_linear_impl~~CalledByGraph_edge15" class="edge">
+<title>proc~rki_advance&#45;&gt;proc~solver_step</title>
+<path fill="none" stroke="#0000ff" d="M94.09,-54C112.66,-54 135.24,-54 154.85,-54"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="155.09,-57.5 165.09,-54 155.09,-50.5 155.09,-57.5"/>
+</g>
+<!-- proc~rki_step -->
+<g id="proc~~eos_linear_impl~~CalledByGraph_node15" class="node">
+<title>proc~rki_step</title>
+<g id="a_proc~~eos_linear_impl~~CalledByGraph_node15"><a xlink:href="../proc/rki_step.html" xlink:title="rki_step">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="82.5,-24 28.5,-24 28.5,0 82.5,0 82.5,-24"/>
+<text text-anchor="middle" x="55.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_step</text>
+</a>
+</g>
+</g>
+<!-- proc~rki_step&#45;&gt;proc~solver_step -->
+<g id="proc~~eos_linear_impl~~CalledByGraph_edge16" class="edge">
+<title>proc~rki_step&#45;&gt;proc~solver_step</title>
+<path fill="none" stroke="#0000ff" d="M82.67,-19.61C102.97,-25.51 131.6,-33.83 155.61,-40.81"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="154.66,-44.18 165.24,-43.61 156.62,-37.45 154.66,-44.18"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var panproceos_linear_implCalledByGraph = svgPanZoom('#proceos_linear_implCalledByGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CalledByGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CalledByGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+
+
+    <section>    
+      <h2>Variables</h2>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Visibility</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+<th></th><th scope="col">Initial</th>        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-s_k~4"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>S_k</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-t_k~4"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>T_k</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-i~108"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>i</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-inv_h~4"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>inv_h</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-j~71"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>j</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-k~105"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>k</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    </section>
+    <br>
+    
+    
+
+    
+    
+
+
+
+    
+    <section>
+    <h2><span class="anchor" id="src"></span>Source Code</h2>
+    <div class="hl codehilite"><pre><span></span><span class="w">   </span><span class="k">pure subroutine </span><span class="n">eos_linear_impl</span><span class="p">(</span><span class="n">h_layer</span><span class="p">,</span><span class="w"> </span><span class="n">hS_layer</span><span class="p">,</span><span class="w"> </span><span class="n">hT_layer</span><span class="p">,</span><span class="w"> </span><span class="n">rho_layer</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                   </span><span class="n">rho_0</span><span class="p">,</span><span class="w"> </span><span class="n">beta_S</span><span class="p">,</span><span class="w"> </span><span class="n">S_ref</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                   </span><span class="n">alpha_T</span><span class="p">,</span><span class="w"> </span><span class="n">T_ref</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                   </span><span class="n">nx</span><span class="p">,</span><span class="w"> </span><span class="n">ny</span><span class="p">,</span><span class="w"> </span><span class="n">nz</span><span class="p">)</span>
+<span class="w">      </span><span class="c">!! Linear two-tracer EOS, flat-impl form:</span>
+<span class="w">      </span><span class="c">!!</span>
+<span class="w">      </span><span class="c">!!   rho_k = rho_0 + beta_S * (S_k - S_ref) - alpha_T * (T_k - T_ref)</span>
+<span class="w">      </span><span class="c">!!</span>
+<span class="w">      </span><span class="c">!! where S_k = hS_k / h_k, T_k = hT_k / h_k.  `beta_S` and</span>
+<span class="w">      </span><span class="c">!! `alpha_T` are pre-multiplied sensitivities in kg/m³ per unit</span>
+<span class="w">      </span><span class="c">!! S / T — standard seawater values are 0.78 and 0.17.</span>
+<span class="w">      </span><span class="c">!!</span>
+<span class="w">      </span><span class="c">!! For vanishing layers (`h_layer &lt;= H_VANISHED`) the cell falls</span>
+<span class="w">      </span><span class="c">!! back to rho_0 — same defensive branch as the coastal kernel; keeps</span>
+<span class="w">      </span><span class="c">!! the EOS finite under ZSTAR_FULL when bed-side layers can pinch out.</span>
+<span class="w">      </span><span class="c">!! The gate is `&gt; H_VANISHED` (not `&gt; 0`): during an active drain the</span>
+<span class="w">      </span><span class="c">!! PPM positivity limiter guarantees `h &gt;= 0` but NOT `h &gt;= H_VANISHED`,</span>
+<span class="w">      </span><span class="c">!! so a layer at e.g. `h = 1e-8` with `hS ≈ 35·1e-8` would pass a</span>
+<span class="w">      </span><span class="c">!! `&gt; 0` gate and give `S = hS/h ≈ 5e2 PSU` ⇒ corrupted ρ ⇒ garbage</span>
+<span class="w">      </span><span class="c">!! PGF.  `&gt; H_VANISHED` (the D4 vanished-layer role) returns rho_0 for</span>
+<span class="w">      </span><span class="c">!! any layer in `(0, H_VANISHED]`.  Bit-identical for any config whose</span>
+<span class="w">      </span><span class="c">!! layers all exceed H_VANISHED.  CAVEAT: ZSTAR_FULL floors vanishing</span>
+<span class="w">      </span><span class="c">!! bed layers to `zstar_h_min` (default 1.5e-4 == H_VANISHED exactly),</span>
+<span class="w">      </span><span class="c">!! so such a bed layer now takes the rho_0 fallback instead of the</span>
+<span class="w">      </span><span class="c">!! computed density — a dynamically negligible change on a 0.15 mm</span>
+<span class="w">      </span><span class="c">!! layer (PGF contribution ~1e-4 of a normal layer); the shipped</span>
+<span class="w">      </span><span class="c">!! anchors (ocean_analytical 8/8, dyn_split, baroclinic_longrun,</span>
+<span class="w">      </span><span class="c">!! double-gyre helpers) pass unchanged on both toolchains.</span>
+<span class="w">      </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">nx</span><span class="p">,</span><span class="w"> </span><span class="n">ny</span><span class="p">,</span><span class="w"> </span><span class="n">nz</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">h_layer</span><span class="p">(</span><span class="n">nx</span><span class="p">,</span><span class="w"> </span><span class="n">ny</span><span class="p">,</span><span class="w"> </span><span class="n">nz</span><span class="p">)</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">hS_layer</span><span class="p">(</span><span class="n">nx</span><span class="p">,</span><span class="w"> </span><span class="n">ny</span><span class="p">,</span><span class="w"> </span><span class="n">nz</span><span class="p">)</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">hT_layer</span><span class="p">(</span><span class="n">nx</span><span class="p">,</span><span class="w"> </span><span class="n">ny</span><span class="p">,</span><span class="w"> </span><span class="n">nz</span><span class="p">)</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">rho_layer</span><span class="p">(</span><span class="n">nx</span><span class="p">,</span><span class="w"> </span><span class="n">ny</span><span class="p">,</span><span class="w"> </span><span class="n">nz</span><span class="p">)</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">rho_0</span><span class="p">,</span><span class="w"> </span><span class="n">beta_S</span><span class="p">,</span><span class="w"> </span><span class="n">S_ref</span><span class="p">,</span><span class="w"> </span><span class="n">alpha_T</span><span class="p">,</span><span class="w"> </span><span class="n">T_ref</span>
+
+<span class="w">      </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">,</span><span class="w"> </span><span class="n">k</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">inv_h</span><span class="p">,</span><span class="w"> </span><span class="n">S_k</span><span class="p">,</span><span class="w"> </span><span class="n">T_k</span>
+
+<span class="w">      </span><span class="k">do</span><span class="w"> </span><span class="k">concurrent</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="n">nz</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="n">ny</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="n">nx</span><span class="p">)</span><span class="w"> </span><span class="n">local</span><span class="p">(</span><span class="n">inv_h</span><span class="p">,</span><span class="w"> </span><span class="n">S_k</span><span class="p">,</span><span class="w"> </span><span class="n">T_k</span><span class="p">)</span>
+<span class="w">         </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">h_layer</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">H_VANISHED</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            </span><span class="n">inv_h</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0_wp</span><span class="o">/</span><span class="n">h_layer</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">)</span>
+<span class="w">            </span><span class="n">S_k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hS_layer</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">)</span><span class="o">*</span><span class="n">inv_h</span>
+<span class="w">            </span><span class="n">T_k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hT_layer</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">)</span><span class="o">*</span><span class="n">inv_h</span>
+<span class="w">         </span><span class="k">else</span>
+<span class="k">            </span><span class="n">S_k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">S_ref</span>
+<span class="w">            </span><span class="n">T_k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">T_ref</span>
+<span class="w">         </span><span class="k">end if</span>
+<span class="k">         </span><span class="n">rho_layer</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rho_0</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">beta_S</span><span class="o">*</span><span class="p">(</span><span class="n">S_k</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">S_ref</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">alpha_T</span><span class="o">*</span><span class="p">(</span><span class="n">T_k</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">T_ref</span><span class="p">)</span>
+<span class="w">      </span><span class="k">end do</span>
+<span class="k">   end subroutine </span><span class="n">eos_linear_impl</span>
+</pre></div>
+
+    </section>
+    <br>
+    
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Rakali
+ was developed by Jorge Luis Galvez Vallejo<br>              &copy; 2026 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+ on 2026-10-08 12:55 +0000             </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>

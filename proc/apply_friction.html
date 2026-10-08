@@ -1,0 +1,1262 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="GPU-native coastal solver — structured Cartesian and unstructured triangular grids, hydrostatic multilayer + non-hydrostatic, portable across NVHPC/gfortran/ifx.">
+    <meta name="author" content="Jorge Luis Galvez Vallejo" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>apply_friction &ndash; Rakali</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">Rakali </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/absint.html">Abstract Interfaces</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>apply_friction
+      <small>Subroutine</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.3% of total for procedures.">68 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/rki_kernel_friction.F90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/rki_kernel_friction.f90.html'>rki_kernel_friction.F90</a></li>
+                <li class="breadcrumb-item"><a href='../module/rki_kernel_friction.html'>rki_kernel_friction</a></li>
+            <li class="breadcrumb-item active" aria-current="page">apply_friction</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+  
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#vars-0"
+         aria-expanded="false" aria-controls="vars-0">
+         <h4 class="card-header bg-primary text-white">Variables</h4>
+      </a>
+      <div id="vars-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../proc/apply_friction.html#variable-apply_wind">apply_wind</a>
+            <a class="list-group-item" href="../proc/apply_friction.html#variable-cf~15">cf</a>
+            <a class="list-group-item" href="../proc/apply_friction.html#variable-denom~37">denom</a>
+            <a class="list-group-item" href="../proc/apply_friction.html#variable-dpdx~5">dpdx</a>
+            <a class="list-group-item" href="../proc/apply_friction.html#variable-dpdy~5">dpdy</a>
+            <a class="list-group-item" href="../proc/apply_friction.html#variable-dx~36">dx</a>
+            <a class="list-group-item" href="../proc/apply_friction.html#variable-dy~36">dy</a>
+            <a class="list-group-item" href="../proc/apply_friction.html#variable-h_val~28">h_val</a>
+            <a class="list-group-item" href="../proc/apply_friction.html#variable-has_forcing">has_forcing</a>
+            <a class="list-group-item" href="../proc/apply_friction.html#variable-has_friction~9">has_friction</a>
+            <a class="list-group-item" href="../proc/apply_friction.html#variable-i~167">i</a>
+            <a class="list-group-item" href="../proc/apply_friction.html#variable-j~123">j</a>
+            <a class="list-group-item" href="../proc/apply_friction.html#variable-nghost~82">nghost</a>
+            <a class="list-group-item" href="../proc/apply_friction.html#variable-nx~119">nx</a>
+            <a class="list-group-item" href="../proc/apply_friction.html#variable-ny~119">ny</a>
+            <a class="list-group-item" href="../proc/apply_friction.html#variable-speed~15">speed</a>
+            <a class="list-group-item" href="../proc/apply_friction.html#variable-u_val~12">u_val</a>
+            <a class="list-group-item" href="../proc/apply_friction.html#variable-v_val~12">v_val</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../proc/apply_friction.html#src">apply_friction</a>
+      </div>
+    </div>
+
+
+  </div>
+
+    </div>
+    
+    <div class="col-md-9" id='text'>
+    <h2>public pure subroutine apply_friction(h, hu, hv, grid, dt, manning_n, wind_x, wind_y, atm_pressure, precipitation, forcing_active, include_wind)  
+</h2>
+    
+
+    <p>Apply bottom friction, wind stress, atmospheric pressure gradient,
+and precipitation to (h, hu, hv).</p>
+
+
+    <h3>Arguments</h3>
+        <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-h~187"></span>
+              real(kind=wp),
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>h</strong>(grid%nx_total,grid%ny_total)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-hu~41"></span>
+              real(kind=wp),
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>hu</strong>(grid%nx_total,grid%ny_total)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-hv~41"></span>
+              real(kind=wp),
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>hv</strong>(grid%nx_total,grid%ny_total)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-grid~106"></span>
+              type(<a href='../type/hgrid_t.html'>hgrid_t</a>),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>grid</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-dt~102"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>dt</strong></td>
+            <td>
+                <p>Timestep (s)</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-manning_n~13"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>manning_n</strong></td>
+            <td>
+                <p>Manning roughness coefficient (s/m^{1/3})</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-wind_x~10"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>wind_x</strong>(grid%nx_total,grid%ny_total)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-wind_y~10"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>wind_y</strong>(grid%nx_total,grid%ny_total)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-atm_pressure~6"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>atm_pressure</strong>(grid%nx_total,grid%ny_total)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-precipitation~6"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>precipitation</strong>(grid%nx_total,grid%ny_total)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-forcing_active~5"></span>
+              logical,
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>forcing_active</strong></td>
+            <td>
+                <p>When .false., skip wind/pressure/precipitation (default: .true.)</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-include_wind"></span>
+              logical,
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>include_wind</strong></td>
+            <td>
+                <p>When .false., skip the wind stress (it is applied to the surface
+layer instead — wind_surface_layer).  Default: .true.</p>
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <br>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Calls</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~apply_friction~~CallsGraph Pages: 1 -->
+<svg id="procapply_frictionCallsGraph" width="183pt" height="32pt"
+ viewBox="0.00 0.00 183.00 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~apply_friction~~CallsGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<title>proc~~apply_friction~~CallsGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 179,-28 179,4 -4,4"/>
+<!-- proc~apply_friction -->
+<g id="proc~~apply_friction~~CallsGraph_node1" class="node">
+<title>proc~apply_friction</title>
+<polygon fill="none" stroke="black" points="85,-24 0,-24 0,0 85,0 85,-24"/>
+<text text-anchor="middle" x="42.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">apply_friction</text>
+</g>
+<!-- local -->
+<g id="proc~~apply_friction~~CallsGraph_node2" class="node">
+<title>local</title>
+<polygon fill="#777777" stroke="#777777" points="175,-24 121,-24 121,0 175,0 175,-24"/>
+<text text-anchor="middle" x="148" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">local</text>
+</g>
+<!-- proc~apply_friction&#45;&gt;local -->
+<g id="proc~~apply_friction~~CallsGraph_edge1" class="edge">
+<title>proc~apply_friction&#45;&gt;local</title>
+<path fill="none" stroke="#ff0000" d="M85,-12C93.54,-12 102.47,-12 110.81,-12"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="110.97,-15.5 120.97,-12 110.97,-8.5 110.97,-15.5"/>
+</g>
+</g>
+</svg>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CallsGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CallsGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Called by</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~apply_friction~~CalledByGraph Pages: 1 -->
+<svg id="procapply_frictionCalledByGraph" width="641pt" height="89pt"
+ viewBox="0.00 0.00 641.00 88.73" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~apply_friction~~CalledByGraph" class="graph" transform="scale(0.76 0.76) rotate(0) translate(4 112)">
+<title>proc~~apply_friction~~CalledByGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-112 834,-112 834,4 -4,4"/>
+<!-- proc~apply_friction -->
+<g id="proc~~apply_friction~~CalledByGraph_node1" class="node">
+<title>proc~apply_friction</title>
+<polygon fill="none" stroke="black" points="830,-66 745,-66 745,-42 830,-42 830,-66"/>
+<text text-anchor="middle" x="787.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50">apply_friction</text>
+</g>
+<!-- proc~solver_barotropic_rk_stage -->
+<g id="proc~~apply_friction~~CalledByGraph_node2" class="node">
+<title>proc~solver_barotropic_rk_stage</title>
+<g id="a_proc~~apply_friction~~CalledByGraph_node2"><a xlink:href="../proc/solver_barotropic_rk_stage.html" xlink:title="solver_barotropic_rk_stage">
+<polygon fill="#d9534f" stroke="#d9534f" points="709,-24 555,-24 555,0 709,0 709,-24"/>
+<text text-anchor="middle" x="632" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_barotropic_rk_stage</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_barotropic_rk_stage&#45;&gt;proc~apply_friction -->
+<g id="proc~~apply_friction~~CalledByGraph_edge1" class="edge">
+<title>proc~solver_barotropic_rk_stage&#45;&gt;proc~apply_friction</title>
+<path fill="none" stroke="#ff0000" d="M676.99,-24.04C695.08,-28.99 716.18,-34.76 734.99,-39.91"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="734.31,-43.35 744.88,-42.61 736.16,-36.6 734.31,-43.35"/>
+</g>
+<!-- proc~solver_multilayer_rk_stage -->
+<g id="proc~~apply_friction~~CalledByGraph_node3" class="node">
+<title>proc~solver_multilayer_rk_stage</title>
+<g id="a_proc~~apply_friction~~CalledByGraph_node3"><a xlink:href="../proc/solver_multilayer_rk_stage.html" xlink:title="solver_multilayer_rk_stage">
+<polygon fill="#d9534f" stroke="#d9534f" points="709,-66 555,-66 555,-42 709,-42 709,-66"/>
+<text text-anchor="middle" x="632" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_multilayer_rk_stage</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_multilayer_rk_stage&#45;&gt;proc~apply_friction -->
+<g id="proc~~apply_friction~~CalledByGraph_edge2" class="edge">
+<title>proc~solver_multilayer_rk_stage&#45;&gt;proc~apply_friction</title>
+<path fill="none" stroke="#ff0000" d="M709.3,-54C717.87,-54 726.45,-54 734.61,-54"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="734.68,-57.5 744.68,-54 734.68,-50.5 734.68,-57.5"/>
+</g>
+<!-- proc~solver_nh_rk_stage -->
+<g id="proc~~apply_friction~~CalledByGraph_node4" class="node">
+<title>proc~solver_nh_rk_stage</title>
+<g id="a_proc~~apply_friction~~CalledByGraph_node4"><a xlink:href="../proc/solver_nh_rk_stage.html" xlink:title="solver_nh_rk_stage">
+<polygon fill="#d9534f" stroke="#d9534f" points="689,-108 575,-108 575,-84 689,-84 689,-108"/>
+<text text-anchor="middle" x="632" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_nh_rk_stage</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_nh_rk_stage&#45;&gt;proc~apply_friction -->
+<g id="proc~~apply_friction~~CalledByGraph_edge3" class="edge">
+<title>proc~solver_nh_rk_stage&#45;&gt;proc~apply_friction</title>
+<path fill="none" stroke="#ff0000" d="M676.99,-83.96C695.08,-79.01 716.18,-73.24 734.99,-68.09"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="736.16,-71.4 744.88,-65.39 734.31,-64.65 736.16,-71.4"/>
+</g>
+<!-- proc~solver_step_impl -->
+<g id="proc~~apply_friction~~CalledByGraph_node5" class="node">
+<title>proc~solver_step_impl</title>
+<g id="a_proc~~apply_friction~~CalledByGraph_node5"><a xlink:href="../proc/solver_step_impl.html" xlink:title="solver_step_impl">
+<polygon fill="#d9534f" stroke="#d9534f" points="489.5,-108 388.5,-108 388.5,-84 489.5,-84 489.5,-108"/>
+<text text-anchor="middle" x="439" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_step_impl</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_step_impl&#45;&gt;proc~solver_nh_rk_stage -->
+<g id="proc~~apply_friction~~CalledByGraph_edge6" class="edge">
+<title>proc~solver_step_impl&#45;&gt;proc~solver_nh_rk_stage</title>
+<path fill="none" stroke="#0000ff" d="M489.68,-96C512.61,-96 540.15,-96 564.81,-96"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="564.82,-99.5 574.82,-96 564.82,-92.5 564.82,-99.5"/>
+</g>
+<!-- proc~solver_step_multilayer_impl -->
+<g id="proc~~apply_friction~~CalledByGraph_node6" class="node">
+<title>proc~solver_step_multilayer_impl</title>
+<g id="a_proc~~apply_friction~~CalledByGraph_node6"><a xlink:href="../proc/solver_step_multilayer_impl.html" xlink:title="solver_step_multilayer_impl">
+<polygon fill="#d9534f" stroke="#d9534f" points="519,-66 359,-66 359,-42 519,-42 519,-66"/>
+<text text-anchor="middle" x="439" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_step_multilayer_impl</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_step_multilayer_impl&#45;&gt;proc~solver_multilayer_rk_stage -->
+<g id="proc~~apply_friction~~CalledByGraph_edge5" class="edge">
+<title>proc~solver_step_multilayer_impl&#45;&gt;proc~solver_multilayer_rk_stage</title>
+<path fill="none" stroke="#00ff00" d="M519.07,-54C527.46,-54 536.02,-54 544.49,-54"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="544.76,-57.5 554.76,-54 544.76,-50.5 544.76,-57.5"/>
+</g>
+<!-- proc~solver_step_split_impl -->
+<g id="proc~~apply_friction~~CalledByGraph_node7" class="node">
+<title>proc~solver_step_split_impl</title>
+<g id="a_proc~~apply_friction~~CalledByGraph_node7"><a xlink:href="../proc/solver_step_split_impl.html" xlink:title="solver_step_split_impl">
+<polygon fill="#d9534f" stroke="#d9534f" points="503,-24 375,-24 375,0 503,0 503,-24"/>
+<text text-anchor="middle" x="439" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_step_split_impl</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_step_split_impl&#45;&gt;proc~solver_barotropic_rk_stage -->
+<g id="proc~~apply_friction~~CalledByGraph_edge4" class="edge">
+<title>proc~solver_step_split_impl&#45;&gt;proc~solver_barotropic_rk_stage</title>
+<path fill="none" stroke="#ff0000" d="M503.07,-12C516.36,-12 530.6,-12 544.58,-12"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="544.7,-15.5 554.7,-12 544.7,-8.5 544.7,-15.5"/>
+</g>
+<!-- proc~solver_step -->
+<g id="proc~~apply_friction~~CalledByGraph_node8" class="node">
+<title>proc~solver_step</title>
+<g id="a_proc~~apply_friction~~CalledByGraph_node8"><a xlink:href="../proc/solver_step.html" xlink:title="solver_step">
+<polygon fill="#d9534f" stroke="#d9534f" points="323,-66 250,-66 250,-42 323,-42 323,-66"/>
+<text text-anchor="middle" x="286.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_step</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_step&#45;&gt;proc~solver_step_impl -->
+<g id="proc~~apply_friction~~CalledByGraph_edge7" class="edge">
+<title>proc~solver_step&#45;&gt;proc~solver_step_impl</title>
+<path fill="none" stroke="#ff0000" d="M323.09,-64.65C334.54,-68.02 347.29,-71.72 359,-75 366.5,-77.1 374.41,-79.26 382.21,-81.36"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="381.43,-84.78 391.99,-83.99 383.24,-78.02 381.43,-84.78"/>
+</g>
+<!-- proc~solver_step&#45;&gt;proc~solver_step_multilayer_impl -->
+<g id="proc~~apply_friction~~CalledByGraph_edge8" class="edge">
+<title>proc~solver_step&#45;&gt;proc~solver_step_multilayer_impl</title>
+<path fill="none" stroke="#00ff00" d="M323.17,-54C331.06,-54 339.77,-54 348.75,-54"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="348.98,-57.5 358.98,-54 348.98,-50.5 348.98,-57.5"/>
+</g>
+<!-- proc~solver_step&#45;&gt;proc~solver_step_split_impl -->
+<g id="proc~~apply_friction~~CalledByGraph_edge9" class="edge">
+<title>proc~solver_step&#45;&gt;proc~solver_step_split_impl</title>
+<path fill="none" stroke="#0000ff" d="M323.09,-43.35C334.54,-39.98 347.29,-36.28 359,-33 366.5,-30.9 374.41,-28.74 382.21,-26.64"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="383.24,-29.98 391.99,-24.01 381.43,-23.22 383.24,-29.98"/>
+</g>
+<!-- proc~driver_run_coastal -->
+<g id="proc~~apply_friction~~CalledByGraph_node9" class="node">
+<title>proc~driver_run_coastal</title>
+<g id="a_proc~~apply_friction~~CalledByGraph_node9"><a xlink:href="../proc/driver_run_coastal.html" xlink:title="driver_run_coastal">
+<polygon fill="#d9534f" stroke="#d9534f" points="214,-108 103,-108 103,-84 214,-84 214,-108"/>
+<text text-anchor="middle" x="158.5" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">driver_run_coastal</text>
+</a>
+</g>
+</g>
+<!-- proc~driver_run_coastal&#45;&gt;proc~solver_step -->
+<g id="proc~~apply_friction~~CalledByGraph_edge10" class="edge">
+<title>proc~driver_run_coastal&#45;&gt;proc~solver_step</title>
+<path fill="none" stroke="#ff0000" d="M195.61,-83.96C209.43,-79.36 225.39,-74.04 239.98,-69.17"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="241.44,-72.37 249.82,-65.89 239.23,-65.73 241.44,-72.37"/>
+</g>
+<!-- proc~rki_advance -->
+<g id="proc~~apply_friction~~CalledByGraph_node10" class="node">
+<title>proc~rki_advance</title>
+<g id="a_proc~~apply_friction~~CalledByGraph_node10"><a xlink:href="../proc/rki_advance.html" xlink:title="rki_advance">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="197,-66 120,-66 120,-42 197,-42 197,-66"/>
+<text text-anchor="middle" x="158.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_advance</text>
+</a>
+</g>
+</g>
+<!-- proc~rki_advance&#45;&gt;proc~solver_step -->
+<g id="proc~~apply_friction~~CalledByGraph_edge11" class="edge">
+<title>proc~rki_advance&#45;&gt;proc~solver_step</title>
+<path fill="none" stroke="#ff0000" d="M197.3,-54C210.59,-54 225.67,-54 239.55,-54"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="239.88,-57.5 249.88,-54 239.88,-50.5 239.88,-57.5"/>
+</g>
+<!-- proc~rki_step -->
+<g id="proc~~apply_friction~~CalledByGraph_node11" class="node">
+<title>proc~rki_step</title>
+<g id="a_proc~~apply_friction~~CalledByGraph_node11"><a xlink:href="../proc/rki_step.html" xlink:title="rki_step">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="185.5,-24 131.5,-24 131.5,0 185.5,0 185.5,-24"/>
+<text text-anchor="middle" x="158.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_step</text>
+</a>
+</g>
+</g>
+<!-- proc~rki_step&#45;&gt;proc~solver_step -->
+<g id="proc~~apply_friction~~CalledByGraph_edge12" class="edge">
+<title>proc~rki_step&#45;&gt;proc~solver_step</title>
+<path fill="none" stroke="#ff0000" d="M185.61,-20.7C201.37,-25.96 221.89,-32.8 240.23,-38.91"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="239.28,-42.28 249.87,-42.12 241.49,-35.64 239.28,-42.28"/>
+</g>
+<!-- proc~driver_run -->
+<g id="proc~~apply_friction~~CalledByGraph_node12" class="node">
+<title>proc~driver_run</title>
+<g id="a_proc~~apply_friction~~CalledByGraph_node12"><a xlink:href="../proc/driver_run.html" xlink:title="driver_run">
+<polygon fill="#d9534f" stroke="#d9534f" points="67,-108 0,-108 0,-84 67,-84 67,-108"/>
+<text text-anchor="middle" x="33.5" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">driver_run</text>
+</a>
+</g>
+</g>
+<!-- proc~driver_run&#45;&gt;proc~driver_run_coastal -->
+<g id="proc~~apply_friction~~CalledByGraph_edge13" class="edge">
+<title>proc~driver_run&#45;&gt;proc~driver_run_coastal</title>
+<path fill="none" stroke="#ff0000" d="M67.14,-96C75.1,-96 83.9,-96 92.79,-96"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="92.82,-99.5 102.82,-96 92.82,-92.5 92.82,-99.5"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var panprocapply_frictionCalledByGraph = svgPanZoom('#procapply_frictionCalledByGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CalledByGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CalledByGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+
+
+    <section>    
+      <h2>Variables</h2>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Visibility</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+<th></th><th scope="col">Initial</th>        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-apply_wind"></span>
+              logical,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>apply_wind</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-cf~15"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>cf</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-denom~37"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>denom</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-dpdx~5"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>dpdx</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-dpdy~5"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>dpdy</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-dx~36"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>dx</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-dy~36"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>dy</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-h_val~28"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>h_val</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-has_forcing"></span>
+              logical,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>has_forcing</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-has_friction~9"></span>
+              logical,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>has_friction</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-i~167"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>i</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-j~123"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>j</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nghost~82"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nghost</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nx~119"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nx</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ny~119"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>ny</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-speed~15"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>speed</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-u_val~12"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>u_val</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-v_val~12"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>v_val</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    </section>
+    <br>
+    
+    
+
+    
+    
+
+
+
+    
+    <section>
+    <h2><span class="anchor" id="src"></span>Source Code</h2>
+    <div class="hl codehilite"><pre><span></span><span class="w">   </span><span class="k">pure subroutine </span><span class="n">apply_friction</span><span class="p">(</span><span class="n">h</span><span class="p">,</span><span class="w"> </span><span class="n">hu</span><span class="p">,</span><span class="w"> </span><span class="n">hv</span><span class="p">,</span><span class="w"> </span><span class="n">grid</span><span class="p">,</span><span class="w"> </span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                  </span><span class="n">manning_n</span><span class="p">,</span><span class="w"> </span><span class="n">wind_x</span><span class="p">,</span><span class="w"> </span><span class="n">wind_y</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                  </span><span class="n">atm_pressure</span><span class="p">,</span><span class="w"> </span><span class="n">precipitation</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                  </span><span class="n">forcing_active</span><span class="p">,</span><span class="w"> </span><span class="n">include_wind</span><span class="p">)</span>
+<span class="w">      </span><span class="c">!! Apply bottom friction, wind stress, atmospheric pressure gradient,</span>
+<span class="w">      </span><span class="c">!! and precipitation to (h, hu, hv).</span>
+<span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="n">hgrid_t</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">grid</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">h</span><span class="p">(</span><span class="n">grid</span><span class="p">%</span><span class="n">nx_total</span><span class="p">,</span><span class="w"> </span><span class="n">grid</span><span class="p">%</span><span class="n">ny_total</span><span class="p">)</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">hu</span><span class="p">(</span><span class="n">grid</span><span class="p">%</span><span class="n">nx_total</span><span class="p">,</span><span class="w"> </span><span class="n">grid</span><span class="p">%</span><span class="n">ny_total</span><span class="p">)</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">hv</span><span class="p">(</span><span class="n">grid</span><span class="p">%</span><span class="n">nx_total</span><span class="p">,</span><span class="w"> </span><span class="n">grid</span><span class="p">%</span><span class="n">ny_total</span><span class="p">)</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">dt</span>
+<span class="w">         </span><span class="c">!! Timestep (s)</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">manning_n</span>
+<span class="w">         </span><span class="c">!! Manning roughness coefficient (s/m^{1/3})</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">wind_x</span><span class="p">(</span><span class="n">grid</span><span class="p">%</span><span class="n">nx_total</span><span class="p">,</span><span class="w"> </span><span class="n">grid</span><span class="p">%</span><span class="n">ny_total</span><span class="p">)</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">wind_y</span><span class="p">(</span><span class="n">grid</span><span class="p">%</span><span class="n">nx_total</span><span class="p">,</span><span class="w"> </span><span class="n">grid</span><span class="p">%</span><span class="n">ny_total</span><span class="p">)</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">atm_pressure</span><span class="p">(</span><span class="n">grid</span><span class="p">%</span><span class="n">nx_total</span><span class="p">,</span><span class="w"> </span><span class="n">grid</span><span class="p">%</span><span class="n">ny_total</span><span class="p">)</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">precipitation</span><span class="p">(</span><span class="n">grid</span><span class="p">%</span><span class="n">nx_total</span><span class="p">,</span><span class="w"> </span><span class="n">grid</span><span class="p">%</span><span class="n">ny_total</span><span class="p">)</span>
+<span class="w">      </span><span class="kt">logical</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">),</span><span class="w"> </span><span class="k">optional</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">forcing_active</span>
+<span class="w">         </span><span class="c">!! When .false., skip wind/pressure/precipitation (default: .true.)</span>
+<span class="w">      </span><span class="kt">logical</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">),</span><span class="w"> </span><span class="k">optional</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">include_wind</span>
+<span class="w">         </span><span class="c">!! When .false., skip the wind stress (it is applied to the surface</span>
+<span class="w">         </span><span class="c">!! layer instead — wind_surface_layer).  Default: .true.</span>
+
+<span class="w">      </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">,</span><span class="w"> </span><span class="n">nx</span><span class="p">,</span><span class="w"> </span><span class="n">ny</span><span class="p">,</span><span class="w"> </span><span class="n">nghost</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">dx</span><span class="p">,</span><span class="w"> </span><span class="n">dy</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">u_val</span><span class="p">,</span><span class="w"> </span><span class="n">v_val</span><span class="p">,</span><span class="w"> </span><span class="n">speed</span><span class="p">,</span><span class="w"> </span><span class="n">cf</span><span class="p">,</span><span class="w"> </span><span class="n">denom</span><span class="p">,</span><span class="w"> </span><span class="n">h_val</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">dpdx</span><span class="p">,</span><span class="w"> </span><span class="n">dpdy</span>
+<span class="w">      </span><span class="kt">logical</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">has_friction</span><span class="p">,</span><span class="w"> </span><span class="n">has_forcing</span><span class="p">,</span><span class="w"> </span><span class="n">apply_wind</span>
+
+<span class="w">      </span><span class="n">nx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">grid</span><span class="p">%</span><span class="n">nx_total</span>
+<span class="w">      </span><span class="n">ny</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">grid</span><span class="p">%</span><span class="n">ny_total</span>
+<span class="w">      </span><span class="n">nghost</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">grid</span><span class="p">%</span><span class="n">nghost</span>
+<span class="w">      </span><span class="n">dx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">grid</span><span class="p">%</span><span class="n">dx</span>
+<span class="w">      </span><span class="n">dy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">grid</span><span class="p">%</span><span class="n">dy</span>
+
+<span class="w">      </span><span class="n">has_friction</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">manning_n</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mf">0.0_wp</span><span class="p">)</span>
+<span class="w">      </span><span class="n">has_forcing</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">present</span><span class="p">(</span><span class="n">forcing_active</span><span class="p">))</span><span class="w"> </span><span class="n">has_forcing</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">forcing_active</span>
+<span class="w">      </span><span class="n">apply_wind</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">present</span><span class="p">(</span><span class="n">include_wind</span><span class="p">))</span><span class="w"> </span><span class="n">apply_wind</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">include_wind</span>
+
+<span class="w">      </span><span class="c">! Early exit: no friction and no atmospheric forcing</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="w"> </span><span class="n">has_friction</span><span class="w"> </span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="w"> </span><span class="p">.</span><span class="nb">not</span><span class="p">.</span><span class="w"> </span><span class="n">has_forcing</span><span class="p">)</span><span class="w"> </span><span class="k">return</span>
+
+<span class="k">      if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="w"> </span><span class="n">has_forcing</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="w">         </span><span class="c">! Fast path: friction only, no forcing array reads</span>
+<span class="w">         </span><span class="k">do</span><span class="w"> </span><span class="k">concurrent</span><span class="p">(</span><span class="n">j</span><span class="o">=</span><span class="n">nghost</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="n">ny</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">nghost</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="o">=</span><span class="n">nghost</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="n">nx</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">nghost</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">            </span><span class="n">local</span><span class="p">(</span><span class="n">u_val</span><span class="p">,</span><span class="w"> </span><span class="n">v_val</span><span class="p">,</span><span class="w"> </span><span class="n">speed</span><span class="p">,</span><span class="w"> </span><span class="n">cf</span><span class="p">,</span><span class="w"> </span><span class="n">denom</span><span class="p">,</span><span class="w"> </span><span class="n">h_val</span><span class="p">)</span>
+<span class="w">            </span><span class="n">h_val</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">h</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">h_val</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">DRY_TOLERANCE</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">               </span><span class="n">u_val</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hu</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="o">/</span><span class="n">h_val</span>
+<span class="w">               </span><span class="n">v_val</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hv</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="o">/</span><span class="n">h_val</span>
+<span class="w">               </span><span class="n">speed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">sqrt</span><span class="p">(</span><span class="n">u_val</span><span class="o">*</span><span class="n">u_val</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">v_val</span><span class="o">*</span><span class="n">v_val</span><span class="p">)</span>
+<span class="w">               </span><span class="n">cf</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">GRAVITY</span><span class="o">*</span><span class="n">manning_n</span><span class="o">*</span><span class="n">manning_n</span><span class="o">/</span><span class="p">(</span><span class="n">h_val</span><span class="o">**</span><span class="p">(</span><span class="mf">1.0_wp</span><span class="o">/</span><span class="mf">3.0_wp</span><span class="p">))</span>
+<span class="w">               </span><span class="n">denom</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0_wp</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">dt</span><span class="o">*</span><span class="n">cf</span><span class="o">*</span><span class="n">speed</span><span class="o">/</span><span class="n">h_val</span>
+<span class="w">               </span><span class="n">hu</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hu</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="o">/</span><span class="n">denom</span>
+<span class="w">               </span><span class="n">hv</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hv</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="o">/</span><span class="n">denom</span>
+<span class="w">            </span><span class="k">end if</span>
+<span class="k">         end do</span>
+<span class="k">      else</span>
+<span class="w">         </span><span class="c">! Full path: friction + wind + pressure + precipitation</span>
+<span class="w">         </span><span class="k">do</span><span class="w"> </span><span class="k">concurrent</span><span class="p">(</span><span class="n">j</span><span class="o">=</span><span class="n">nghost</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="n">ny</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">nghost</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="o">=</span><span class="n">nghost</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="n">nx</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">nghost</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">            </span><span class="n">local</span><span class="p">(</span><span class="n">u_val</span><span class="p">,</span><span class="w"> </span><span class="n">v_val</span><span class="p">,</span><span class="w"> </span><span class="n">speed</span><span class="p">,</span><span class="w"> </span><span class="n">cf</span><span class="p">,</span><span class="w"> </span><span class="n">denom</span><span class="p">,</span><span class="w"> </span><span class="n">h_val</span><span class="p">,</span><span class="w"> </span><span class="n">dpdx</span><span class="p">,</span><span class="w"> </span><span class="n">dpdy</span><span class="p">)</span>
+<span class="w">            </span><span class="n">h_val</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">h</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span>
+
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">h_val</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">DRY_TOLERANCE</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">               </span><span class="n">u_val</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hu</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="o">/</span><span class="n">h_val</span>
+<span class="w">               </span><span class="n">v_val</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hv</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="o">/</span><span class="n">h_val</span>
+<span class="w">               </span><span class="n">speed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">sqrt</span><span class="p">(</span><span class="n">u_val</span><span class="o">*</span><span class="n">u_val</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">v_val</span><span class="o">*</span><span class="n">v_val</span><span class="p">)</span>
+
+<span class="w">               </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">manning_n</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mf">0.0_wp</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                  </span><span class="n">cf</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">GRAVITY</span><span class="o">*</span><span class="n">manning_n</span><span class="o">*</span><span class="n">manning_n</span><span class="o">/</span><span class="p">(</span><span class="n">h_val</span><span class="o">**</span><span class="p">(</span><span class="mf">1.0_wp</span><span class="o">/</span><span class="mf">3.0_wp</span><span class="p">))</span>
+
+<span class="w">                  </span><span class="c">! Semi-implicit: divide by (1 + dt*cf*|u|/h)</span>
+<span class="w">                  </span><span class="n">denom</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0_wp</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">dt</span><span class="o">*</span><span class="n">cf</span><span class="o">*</span><span class="n">speed</span><span class="o">/</span><span class="n">h_val</span>
+<span class="w">                  </span><span class="n">hu</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hu</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="o">/</span><span class="n">denom</span>
+<span class="w">                  </span><span class="n">hv</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hv</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="o">/</span><span class="n">denom</span>
+<span class="w">               </span><span class="k">end if</span>
+
+<span class="w">               </span><span class="c">! Wind stress tau/rho; skipped when wind goes to the surface layer.</span>
+<span class="w">               </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">apply_wind</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                  </span><span class="n">hu</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hu</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">dt</span><span class="o">*</span><span class="n">wind_x</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="o">/</span><span class="n">RHO_WATER</span>
+<span class="w">                  </span><span class="n">hv</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hv</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">dt</span><span class="o">*</span><span class="n">wind_y</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="o">/</span><span class="n">RHO_WATER</span>
+<span class="w">               </span><span class="k">end if</span>
+
+<span class="w">               </span><span class="c">! Atmospheric pressure gradient -(h/rho)*dp/dx, central diff.</span>
+<span class="w">               </span><span class="n">dpdx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">atm_pressure</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">atm_pressure</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">))</span><span class="o">/</span><span class="p">(</span><span class="mf">2.0_wp</span><span class="o">*</span><span class="n">dx</span><span class="p">)</span>
+<span class="w">               </span><span class="n">dpdy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">atm_pressure</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">atm_pressure</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">))</span><span class="o">/</span><span class="p">(</span><span class="mf">2.0_wp</span><span class="o">*</span><span class="n">dy</span><span class="p">)</span>
+<span class="w">               </span><span class="n">hu</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hu</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">dt</span><span class="o">*</span><span class="n">h_val</span><span class="o">*</span><span class="n">dpdx</span><span class="o">/</span><span class="n">RHO_WATER</span>
+<span class="w">               </span><span class="n">hv</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hv</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">dt</span><span class="o">*</span><span class="n">h_val</span><span class="o">*</span><span class="n">dpdy</span><span class="o">/</span><span class="n">RHO_WATER</span>
+<span class="w">            </span><span class="k">end if</span>
+
+<span class="w">            </span><span class="c">! Precipitation: mass source (applied to all cells including dry)</span>
+<span class="w">            </span><span class="n">h</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">h</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">dt</span><span class="o">*</span><span class="n">precipitation</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span>
+<span class="w">         </span><span class="k">end do</span>
+<span class="k">      end if</span>
+
+<span class="k">   end subroutine </span><span class="n">apply_friction</span>
+</pre></div>
+
+    </section>
+    <br>
+    
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Rakali
+ was developed by Jorge Luis Galvez Vallejo<br>              &copy; 2026 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+ on 2026-10-08 12:55 +0000             </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>

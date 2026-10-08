@@ -1,0 +1,1112 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="GPU-native coastal solver — structured Cartesian and unstructured triangular grids, hydrostatic multilayer + non-hydrostatic, portable across NVHPC/gfortran/ifx.">
+    <meta name="author" content="Jorge Luis Galvez Vallejo" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>apply_vertical_preconditioner &ndash; Rakali</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">Rakali </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/absint.html">Abstract Interfaces</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>apply_vertical_preconditioner
+      <small>Subroutine</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.2% of total for procedures.">49 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/rki_kernel_pressure.F90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/rki_kernel_pressure.f90.html'>rki_kernel_pressure.F90</a></li>
+                <li class="breadcrumb-item"><a href='../module/rki_kernel_pressure.html'>rki_kernel_pressure</a></li>
+            <li class="breadcrumb-item active" aria-current="page">apply_vertical_preconditioner</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+  
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#vars-0"
+         aria-expanded="false" aria-controls="vars-0">
+         <h4 class="card-header bg-primary text-white">Variables</h4>
+      </a>
+      <div id="vars-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../proc/apply_vertical_preconditioner.html#variable-nz_max">NZ_MAX</a>
+            <a class="list-group-item" href="../proc/apply_vertical_preconditioner.html#variable-a_k">a_k</a>
+            <a class="list-group-item" href="../proc/apply_vertical_preconditioner.html#variable-c_k">c_k</a>
+            <a class="list-group-item" href="../proc/apply_vertical_preconditioner.html#variable-cp~15">cp</a>
+            <a class="list-group-item" href="../proc/apply_vertical_preconditioner.html#variable-d_k">d_k</a>
+            <a class="list-group-item" href="../proc/apply_vertical_preconditioner.html#variable-dp">dp</a>
+            <a class="list-group-item" href="../proc/apply_vertical_preconditioner.html#variable-h_diag">h_diag</a>
+            <a class="list-group-item" href="../proc/apply_vertical_preconditioner.html#variable-h_val~22">h_val</a>
+            <a class="list-group-item" href="../proc/apply_vertical_preconditioner.html#variable-i~133">i</a>
+            <a class="list-group-item" href="../proc/apply_vertical_preconditioner.html#variable-inv_dt2~3">inv_dt2</a>
+            <a class="list-group-item" href="../proc/apply_vertical_preconditioner.html#variable-inv_dx2~5">inv_dx2</a>
+            <a class="list-group-item" href="../proc/apply_vertical_preconditioner.html#variable-inv_dy2~5">inv_dy2</a>
+            <a class="list-group-item" href="../proc/apply_vertical_preconditioner.html#variable-j~94">j</a>
+            <a class="list-group-item" href="../proc/apply_vertical_preconditioner.html#variable-k~161">k</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../proc/apply_vertical_preconditioner.html#src">apply_vertical_preconditioner</a>
+      </div>
+    </div>
+
+
+  </div>
+
+    </div>
+    
+    <div class="col-md-9" id='text'>
+    <h2>public pure subroutine apply_vertical_preconditioner(h, dsig, r, z, nx, ny, nz, nghost, dx, dy, dt)  
+</h2>
+    
+
+    <p>Public only for the unit-test suite (no production module imports it).
+Vertical-line preconditioner: solve M*z = r per (i,j) column</p>
+<p>M is the vertical tridiagonal part of the Poisson operator plus
+the horizontal diagonal contribution. Thomas algorithm per column
+(serial in k, parallel over i,j via do concurrent).</p>
+
+
+    <h3>Arguments</h3>
+        <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-h~158"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>h</strong>(nx,ny)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-dsig~16"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>dsig</strong>(nz)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-r~21"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>r</strong>(nx,ny,nz)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-z~7"></span>
+              real(kind=wp),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>z</strong>(nx,ny,nz)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nx~92"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nx</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ny~92"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>ny</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nz~153"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nz</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nghost~61"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nghost</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-dx~29"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>dx</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-dy~29"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>dy</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-dt~77"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>dt</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <br>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Calls</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~apply_vertical_preconditioner~~CallsGraph Pages: 1 -->
+<svg id="procapply_vertical_preconditionerCallsGraph" width="268pt" height="32pt"
+ viewBox="0.00 0.00 268.00 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~apply_vertical_preconditioner~~CallsGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<title>proc~~apply_vertical_preconditioner~~CallsGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 264,-28 264,4 -4,4"/>
+<!-- proc~apply_vertical_preconditioner -->
+<g id="proc~~apply_vertical_preconditioner~~CallsGraph_node1" class="node">
+<title>proc~apply_vertical_preconditioner</title>
+<polygon fill="none" stroke="black" points="170,-24 0,-24 0,0 170,0 170,-24"/>
+<text text-anchor="middle" x="85" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">apply_vertical_preconditioner</text>
+</g>
+<!-- local -->
+<g id="proc~~apply_vertical_preconditioner~~CallsGraph_node2" class="node">
+<title>local</title>
+<polygon fill="#777777" stroke="#777777" points="260,-24 206,-24 206,0 260,0 260,-24"/>
+<text text-anchor="middle" x="233" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">local</text>
+</g>
+<!-- proc~apply_vertical_preconditioner&#45;&gt;local -->
+<g id="proc~~apply_vertical_preconditioner~~CallsGraph_edge1" class="edge">
+<title>proc~apply_vertical_preconditioner&#45;&gt;local</title>
+<path fill="none" stroke="#ff0000" d="M170.08,-12C178.97,-12 187.64,-12 195.54,-12"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="195.78,-15.5 205.78,-12 195.78,-8.5 195.78,-15.5"/>
+</g>
+</g>
+</svg>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CallsGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CallsGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Called by</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~apply_vertical_preconditioner~~CalledByGraph Pages: 1 -->
+<svg id="procapply_vertical_preconditionerCalledByGraph" width="641pt" height="80pt"
+ viewBox="0.00 0.00 641.00 79.87" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~apply_vertical_preconditioner~~CalledByGraph" class="graph" transform="scale(0.69 0.69) rotate(0) translate(4 112)">
+<title>proc~~apply_vertical_preconditioner~~CalledByGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-112 927,-112 927,4 -4,4"/>
+<!-- proc~apply_vertical_preconditioner -->
+<g id="proc~~apply_vertical_preconditioner~~CalledByGraph_node1" class="node">
+<title>proc~apply_vertical_preconditioner</title>
+<polygon fill="none" stroke="black" points="923,-66 753,-66 753,-42 923,-42 923,-66"/>
+<text text-anchor="middle" x="838" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50">apply_vertical_preconditioner</text>
+</g>
+<!-- proc~solve_nh_pressure -->
+<g id="proc~~apply_vertical_preconditioner~~CalledByGraph_node2" class="node">
+<title>proc~solve_nh_pressure</title>
+<g id="a_proc~~apply_vertical_preconditioner~~CalledByGraph_node2"><a xlink:href="../proc/solve_nh_pressure.html" xlink:title="solve_nh_pressure">
+<polygon fill="#d9534f" stroke="#d9534f" points="717,-66 608,-66 608,-42 717,-42 717,-66"/>
+<text text-anchor="middle" x="662.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solve_nh_pressure</text>
+</a>
+</g>
+</g>
+<!-- proc~solve_nh_pressure&#45;&gt;proc~apply_vertical_preconditioner -->
+<g id="proc~~apply_vertical_preconditioner~~CalledByGraph_edge1" class="edge">
+<title>proc~solve_nh_pressure&#45;&gt;proc~apply_vertical_preconditioner</title>
+<path fill="none" stroke="#ff0000" d="M717.45,-54C725.52,-54 734.05,-54 742.67,-54"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="742.82,-57.5 752.82,-54 742.82,-50.5 742.82,-57.5"/>
+</g>
+<!-- proc~solver_baroclinic_rk_stage -->
+<g id="proc~~apply_vertical_preconditioner~~CalledByGraph_node3" class="node">
+<title>proc~solver_baroclinic_rk_stage</title>
+<g id="a_proc~~apply_vertical_preconditioner~~CalledByGraph_node3"><a xlink:href="../proc/solver_baroclinic_rk_stage.html" xlink:title="solver_baroclinic_rk_stage">
+<polygon fill="#d9534f" stroke="#d9534f" points="572,-45 420,-45 420,-21 572,-21 572,-45"/>
+<text text-anchor="middle" x="496" y="-30.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_baroclinic_rk_stage</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_baroclinic_rk_stage&#45;&gt;proc~solve_nh_pressure -->
+<g id="proc~~apply_vertical_preconditioner~~CalledByGraph_edge2" class="edge">
+<title>proc~solver_baroclinic_rk_stage&#45;&gt;proc~solve_nh_pressure</title>
+<path fill="none" stroke="#ff0000" d="M572.03,-42.58C580.58,-43.67 589.24,-44.78 597.63,-45.85"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="597.35,-49.34 607.71,-47.13 598.23,-42.39 597.35,-49.34"/>
+</g>
+<!-- proc~solver_nh_rk_stage -->
+<g id="proc~~apply_vertical_preconditioner~~CalledByGraph_node4" class="node">
+<title>proc~solver_nh_rk_stage</title>
+<g id="a_proc~~apply_vertical_preconditioner~~CalledByGraph_node4"><a xlink:href="../proc/solver_nh_rk_stage.html" xlink:title="solver_nh_rk_stage">
+<polygon fill="#d9534f" stroke="#d9534f" points="553,-87 439,-87 439,-63 553,-63 553,-87"/>
+<text text-anchor="middle" x="496" y="-72.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_nh_rk_stage</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_nh_rk_stage&#45;&gt;proc~solve_nh_pressure -->
+<g id="proc~~apply_vertical_preconditioner~~CalledByGraph_edge3" class="edge">
+<title>proc~solver_nh_rk_stage&#45;&gt;proc~solve_nh_pressure</title>
+<path fill="none" stroke="#ff0000" d="M553.15,-67.83C567.52,-66 583.07,-64.01 597.79,-62.13"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="598.35,-65.59 607.82,-60.85 597.46,-58.65 598.35,-65.59"/>
+</g>
+<!-- proc~solver_step_impl -->
+<g id="proc~~apply_vertical_preconditioner~~CalledByGraph_node5" class="node">
+<title>proc~solver_step_impl</title>
+<g id="a_proc~~apply_vertical_preconditioner~~CalledByGraph_node5"><a xlink:href="../proc/solver_step_impl.html" xlink:title="solver_step_impl">
+<polygon fill="#d9534f" stroke="#d9534f" points="370.5,-87 269.5,-87 269.5,-63 370.5,-63 370.5,-87"/>
+<text text-anchor="middle" x="320" y="-72.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_step_impl</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_step_impl&#45;&gt;proc~solver_nh_rk_stage -->
+<g id="proc~~apply_vertical_preconditioner~~CalledByGraph_edge5" class="edge">
+<title>proc~solver_step_impl&#45;&gt;proc~solver_nh_rk_stage</title>
+<path fill="none" stroke="#00ffff" d="M370.86,-75C388.82,-75 409.38,-75 428.54,-75"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="428.7,-78.5 438.7,-75 428.7,-71.5 428.7,-78.5"/>
+</g>
+<!-- proc~solver_step_split_impl -->
+<g id="proc~~apply_vertical_preconditioner~~CalledByGraph_node6" class="node">
+<title>proc~solver_step_split_impl</title>
+<g id="a_proc~~apply_vertical_preconditioner~~CalledByGraph_node6"><a xlink:href="../proc/solver_step_split_impl.html" xlink:title="solver_step_split_impl">
+<polygon fill="#d9534f" stroke="#d9534f" points="384,-45 256,-45 256,-21 384,-21 384,-45"/>
+<text text-anchor="middle" x="320" y="-30.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_step_split_impl</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_step_split_impl&#45;&gt;proc~solver_baroclinic_rk_stage -->
+<g id="proc~~apply_vertical_preconditioner~~CalledByGraph_edge4" class="edge">
+<title>proc~solver_step_split_impl&#45;&gt;proc~solver_baroclinic_rk_stage</title>
+<path fill="none" stroke="#ff0000" d="M384.31,-33C392.62,-33 401.24,-33 409.84,-33"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="409.91,-36.5 419.91,-33 409.91,-29.5 409.91,-36.5"/>
+</g>
+<!-- proc~solver_step -->
+<g id="proc~~apply_vertical_preconditioner~~CalledByGraph_node7" class="node">
+<title>proc~solver_step</title>
+<g id="a_proc~~apply_vertical_preconditioner~~CalledByGraph_node7"><a xlink:href="../proc/solver_step.html" xlink:title="solver_step">
+<polygon fill="#d9534f" stroke="#d9534f" points="220,-66 147,-66 147,-42 220,-42 220,-66"/>
+<text text-anchor="middle" x="183.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_step</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_step&#45;&gt;proc~solver_step_impl -->
+<g id="proc~~apply_vertical_preconditioner~~CalledByGraph_edge6" class="edge">
+<title>proc~solver_step&#45;&gt;proc~solver_step_impl</title>
+<path fill="none" stroke="#ff0000" d="M220.19,-59.57C232.22,-61.45 246,-63.6 259.36,-65.69"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="259.05,-69.18 269.47,-67.27 260.13,-62.27 259.05,-69.18"/>
+</g>
+<!-- proc~solver_step&#45;&gt;proc~solver_step_split_impl -->
+<g id="proc~~apply_vertical_preconditioner~~CalledByGraph_edge7" class="edge">
+<title>proc~solver_step&#45;&gt;proc~solver_step_split_impl</title>
+<path fill="none" stroke="#00ffff" d="M220.19,-48.43C228.16,-47.18 236.9,-45.82 245.78,-44.43"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="246.49,-47.86 255.83,-42.86 245.41,-40.95 246.49,-47.86"/>
+</g>
+<!-- proc~driver_run_coastal -->
+<g id="proc~~apply_vertical_preconditioner~~CalledByGraph_node8" class="node">
+<title>proc~driver_run_coastal</title>
+<g id="a_proc~~apply_vertical_preconditioner~~CalledByGraph_node8"><a xlink:href="../proc/driver_run_coastal.html" xlink:title="driver_run_coastal">
+<polygon fill="#d9534f" stroke="#d9534f" points="111,-108 0,-108 0,-84 111,-84 111,-108"/>
+<text text-anchor="middle" x="55.5" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">driver_run_coastal</text>
+</a>
+</g>
+</g>
+<!-- proc~driver_run_coastal&#45;&gt;proc~solver_step -->
+<g id="proc~~apply_vertical_preconditioner~~CalledByGraph_edge8" class="edge">
+<title>proc~driver_run_coastal&#45;&gt;proc~solver_step</title>
+<path fill="none" stroke="#ff0000" d="M92.61,-83.96C106.43,-79.36 122.39,-74.04 136.98,-69.17"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="138.44,-72.37 146.82,-65.89 136.23,-65.73 138.44,-72.37"/>
+</g>
+<!-- proc~rki_advance -->
+<g id="proc~~apply_vertical_preconditioner~~CalledByGraph_node9" class="node">
+<title>proc~rki_advance</title>
+<g id="a_proc~~apply_vertical_preconditioner~~CalledByGraph_node9"><a xlink:href="../proc/rki_advance.html" xlink:title="rki_advance">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="94,-66 17,-66 17,-42 94,-42 94,-66"/>
+<text text-anchor="middle" x="55.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_advance</text>
+</a>
+</g>
+</g>
+<!-- proc~rki_advance&#45;&gt;proc~solver_step -->
+<g id="proc~~apply_vertical_preconditioner~~CalledByGraph_edge9" class="edge">
+<title>proc~rki_advance&#45;&gt;proc~solver_step</title>
+<path fill="none" stroke="#ff0000" d="M94.3,-54C107.59,-54 122.67,-54 136.55,-54"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="136.88,-57.5 146.88,-54 136.88,-50.5 136.88,-57.5"/>
+</g>
+<!-- proc~rki_step -->
+<g id="proc~~apply_vertical_preconditioner~~CalledByGraph_node10" class="node">
+<title>proc~rki_step</title>
+<g id="a_proc~~apply_vertical_preconditioner~~CalledByGraph_node10"><a xlink:href="../proc/rki_step.html" xlink:title="rki_step">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="82.5,-24 28.5,-24 28.5,0 82.5,0 82.5,-24"/>
+<text text-anchor="middle" x="55.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_step</text>
+</a>
+</g>
+</g>
+<!-- proc~rki_step&#45;&gt;proc~solver_step -->
+<g id="proc~~apply_vertical_preconditioner~~CalledByGraph_edge10" class="edge">
+<title>proc~rki_step&#45;&gt;proc~solver_step</title>
+<path fill="none" stroke="#ff0000" d="M82.61,-20.7C98.37,-25.96 118.89,-32.8 137.23,-38.91"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="136.28,-42.28 146.87,-42.12 138.49,-35.64 136.28,-42.28"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var panprocapply_vertical_preconditionerCalledByGraph = svgPanZoom('#procapply_vertical_preconditionerCalledByGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CalledByGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CalledByGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+
+
+    <section>    
+      <h2>Variables</h2>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Visibility</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+<th></th><th scope="col">Initial</th>        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nz_max"></span>
+              integer,
+            </td>
+              <td>private,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>NZ_MAX</strong></td>
+<td> =</td>
+                <td>64</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-a_k"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>a_k</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-c_k"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>c_k</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-cp~15"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>cp</strong>(NZ_MAX)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-d_k"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>d_k</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-dp"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>dp</strong>(NZ_MAX)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-h_diag"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>h_diag</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-h_val~22"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>h_val</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-i~133"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>i</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-inv_dt2~3"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>inv_dt2</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-inv_dx2~5"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>inv_dx2</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-inv_dy2~5"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>inv_dy2</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-j~94"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>j</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-k~161"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>k</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    </section>
+    <br>
+    
+    
+
+    
+    
+
+
+
+    
+    <section>
+    <h2><span class="anchor" id="src"></span>Source Code</h2>
+    <div class="hl codehilite"><pre><span></span><span class="w">   </span><span class="k">pure subroutine </span><span class="n">apply_vertical_preconditioner</span><span class="p">(</span><span class="n">h</span><span class="p">,</span><span class="w"> </span><span class="n">dsig</span><span class="p">,</span><span class="w"> </span><span class="n">r</span><span class="p">,</span><span class="w"> </span><span class="n">z</span><span class="p">,</span><span class="w"> </span><span class="n">nx</span><span class="p">,</span><span class="w"> </span><span class="n">ny</span><span class="p">,</span><span class="w"> </span><span class="n">nz</span><span class="p">,</span><span class="w"> </span><span class="n">nghost</span><span class="p">,</span><span class="w"> </span><span class="n">dx</span><span class="p">,</span><span class="w"> </span><span class="n">dy</span><span class="p">,</span><span class="w"> </span><span class="n">dt</span><span class="p">)</span>
+<span class="w">      </span><span class="c">!! Public only for the unit-test suite (no production module imports it).</span>
+<span class="w">      </span><span class="c">!! Vertical-line preconditioner: solve M*z = r per (i,j) column</span>
+<span class="w">      </span><span class="c">!!</span>
+<span class="w">      </span><span class="c">!! M is the vertical tridiagonal part of the Poisson operator plus</span>
+<span class="w">      </span><span class="c">!! the horizontal diagonal contribution. Thomas algorithm per column</span>
+<span class="w">      </span><span class="c">!! (serial in k, parallel over i,j via do concurrent).</span>
+<span class="w">      </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">nx</span><span class="p">,</span><span class="w"> </span><span class="n">ny</span><span class="p">,</span><span class="w"> </span><span class="n">nz</span><span class="p">,</span><span class="w"> </span><span class="n">nghost</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">h</span><span class="p">(</span><span class="n">nx</span><span class="p">,</span><span class="w"> </span><span class="n">ny</span><span class="p">)</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">dsig</span><span class="p">(</span><span class="n">nz</span><span class="p">)</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">r</span><span class="p">(</span><span class="n">nx</span><span class="p">,</span><span class="w"> </span><span class="n">ny</span><span class="p">,</span><span class="w"> </span><span class="n">nz</span><span class="p">)</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">z</span><span class="p">(</span><span class="n">nx</span><span class="p">,</span><span class="w"> </span><span class="n">ny</span><span class="p">,</span><span class="w"> </span><span class="n">nz</span><span class="p">)</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">dx</span><span class="p">,</span><span class="w"> </span><span class="n">dy</span><span class="p">,</span><span class="w"> </span><span class="n">dt</span>
+
+<span class="w">      </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">parameter</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">NZ_MAX</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">64</span>
+<span class="w">      </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">,</span><span class="w"> </span><span class="n">k</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">inv_dx2</span><span class="p">,</span><span class="w"> </span><span class="n">inv_dy2</span><span class="p">,</span><span class="w"> </span><span class="n">inv_dt2</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">h_val</span><span class="p">,</span><span class="w"> </span><span class="n">h_diag</span><span class="p">,</span><span class="w"> </span><span class="n">a_k</span><span class="p">,</span><span class="w"> </span><span class="n">c_k</span><span class="p">,</span><span class="w"> </span><span class="n">d_k</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">cp</span><span class="p">(</span><span class="n">NZ_MAX</span><span class="p">),</span><span class="w"> </span><span class="n">dp</span><span class="p">(</span><span class="n">NZ_MAX</span><span class="p">)</span>
+
+<span class="w">      </span><span class="n">inv_dx2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0_wp</span><span class="o">/</span><span class="p">(</span><span class="n">dx</span><span class="o">*</span><span class="n">dx</span><span class="p">)</span>
+<span class="w">      </span><span class="n">inv_dy2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0_wp</span><span class="o">/</span><span class="p">(</span><span class="n">dy</span><span class="o">*</span><span class="n">dy</span><span class="p">)</span>
+<span class="w">      </span><span class="n">inv_dt2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0_wp</span><span class="o">/</span><span class="p">(</span><span class="n">dt</span><span class="o">*</span><span class="n">dt</span><span class="p">)</span>
+
+<span class="w">      </span><span class="c">! Horizontal diagonal contribution (same for all layers)</span>
+<span class="w">      </span><span class="n">h_diag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">2.0_wp</span><span class="o">*</span><span class="n">inv_dx2</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mf">2.0_wp</span><span class="o">*</span><span class="n">inv_dy2</span>
+
+<span class="w">      </span><span class="k">do</span><span class="w"> </span><span class="k">concurrent</span><span class="p">(</span><span class="n">j</span><span class="o">=</span><span class="n">nghost</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="n">ny</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">nghost</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="o">=</span><span class="n">nghost</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="n">nx</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">nghost</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">         </span><span class="n">local</span><span class="p">(</span><span class="n">h_val</span><span class="p">,</span><span class="w"> </span><span class="n">a_k</span><span class="p">,</span><span class="w"> </span><span class="n">c_k</span><span class="p">,</span><span class="w"> </span><span class="n">d_k</span><span class="p">,</span><span class="w"> </span><span class="n">cp</span><span class="p">,</span><span class="w"> </span><span class="n">dp</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">)</span>
+<span class="w">         </span><span class="n">h_val</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">h</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span>
+<span class="w">         </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">h_val</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">NH_MIN_DEPTH</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="w">            </span><span class="c">! Forward sweep (Thomas algorithm)</span>
+<span class="w">            </span><span class="c">! k = 1: a_k = 0 (no layer below)</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">nz</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">               </span><span class="n">c_k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">2.0_wp</span><span class="o">*</span><span class="n">inv_dt2</span><span class="o">/</span><span class="p">(</span><span class="n">h_val</span><span class="o">*</span><span class="p">(</span><span class="n">dsig</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">dsig</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span><span class="o">*</span><span class="n">dsig</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<span class="w">            </span><span class="k">else</span>
+<span class="k">               </span><span class="n">c_k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">            </span><span class="k">end if</span>
+<span class="k">            </span><span class="n">d_k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">-</span><span class="p">(</span><span class="n">c_k</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">h_val</span><span class="o">*</span><span class="n">h_diag</span><span class="p">)</span>
+<span class="w">            </span><span class="n">cp</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">c_k</span><span class="o">/</span><span class="n">d_k</span>
+<span class="w">            </span><span class="n">dp</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">r</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">d_k</span>
+
+<span class="w">            </span><span class="k">do </span><span class="n">k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">nz</span>
+<span class="w">               </span><span class="c">! Sub-diagonal: coupling to k-1</span>
+<span class="w">               </span><span class="n">a_k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">2.0_wp</span><span class="o">*</span><span class="n">inv_dt2</span><span class="o">/</span><span class="p">(</span><span class="n">h_val</span><span class="o">*</span><span class="p">(</span><span class="n">dsig</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">dsig</span><span class="p">(</span><span class="n">k</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">))</span><span class="o">*</span><span class="n">dsig</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
+<span class="w">               </span><span class="c">! Super-diagonal: coupling to k+1</span>
+<span class="w">               </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">k</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">nz</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                  </span><span class="n">c_k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">2.0_wp</span><span class="o">*</span><span class="n">inv_dt2</span><span class="o">/</span><span class="p">(</span><span class="n">h_val</span><span class="o">*</span><span class="p">(</span><span class="n">dsig</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">dsig</span><span class="p">(</span><span class="n">k</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">))</span><span class="o">*</span><span class="n">dsig</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
+<span class="w">               </span><span class="k">else</span>
+<span class="k">                  </span><span class="n">c_k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">               </span><span class="k">end if</span>
+<span class="w">               </span><span class="c">! Modified diagonal and RHS</span>
+<span class="w">               </span><span class="n">d_k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">-</span><span class="p">(</span><span class="n">a_k</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">c_k</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">h_val</span><span class="o">*</span><span class="n">h_diag</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">a_k</span><span class="o">*</span><span class="n">cp</span><span class="p">(</span><span class="n">k</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="w">               </span><span class="n">cp</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">c_k</span><span class="o">/</span><span class="n">d_k</span>
+<span class="w">               </span><span class="n">dp</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">r</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">a_k</span><span class="o">*</span><span class="n">dp</span><span class="p">(</span><span class="n">k</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">))</span><span class="o">/</span><span class="n">d_k</span>
+<span class="w">            </span><span class="k">end do</span>
+
+<span class="w">            </span><span class="c">! Back substitution</span>
+<span class="w">            </span><span class="n">z</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">,</span><span class="w"> </span><span class="n">nz</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">dp</span><span class="p">(</span><span class="n">nz</span><span class="p">)</span>
+<span class="w">            </span><span class="k">do </span><span class="n">k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nz</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="mi">1</span>
+<span class="w">               </span><span class="n">z</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">dp</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">cp</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">*</span><span class="n">z</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="w">            </span><span class="k">end do</span>
+<span class="k">         else</span>
+<span class="k">            do </span><span class="n">k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">nz</span>
+<span class="w">               </span><span class="n">z</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">            </span><span class="k">end do</span>
+<span class="k">         end if</span>
+<span class="k">      end do</span>
+
+<span class="k">   end subroutine </span><span class="n">apply_vertical_preconditioner</span>
+</pre></div>
+
+    </section>
+    <br>
+    
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Rakali
+ was developed by Jorge Luis Galvez Vallejo<br>              &copy; 2026 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+ on 2026-10-08 12:55 +0000             </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>

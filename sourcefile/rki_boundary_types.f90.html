@@ -1,0 +1,1101 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="GPU-native coastal solver — structured Cartesian and unstructured triangular grids, hydrostatic multilayer + non-hydrostatic, portable across NVHPC/gfortran/ifx.">
+    <meta name="author" content="Jorge Luis Galvez Vallejo" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>rki_boundary_types.F90 &ndash; Rakali</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">Rakali </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/absint.html">Abstract Interfaces</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>rki_boundary_types.F90
+      <small>Source File</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.5% of total for source files.">134 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/rki_boundary_types.F90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+            <li class="breadcrumb-item active" aria-current="page">rki_boundary_types.F90</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+        <div id="sidebar">
+      <h3>Contents</h3>
+  
+  
+  
+  
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#mods-0"
+         aria-expanded="false" aria-controls="mods-0">
+         <h4 class="card-header bg-primary text-white">Modules</h4>
+      </a>
+      <div id="mods-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../module/rki_boundary_types.html">rki_boundary_types</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../sourcefile/rki_boundary_types.f90.html#src">rki_boundary_types.F90</a>
+      </div>
+    </div>
+
+
+  </div>
+
+    </div>
+    <div class="col-md-9" id='text'>
+      <p>Boundary condition types, constants, and utility functions</p>
+      <br>
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">This file depends on</h3>
+          </div>
+          <div class="card-body">
+            <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: sourcefile~~rki_boundary_types.f90~~EfferentGraph Pages: 1 -->
+<svg id="sourcefilerki_boundary_typesf90EfferentGraph" width="641pt" height="207pt"
+ viewBox="0.00 0.00 641.00 206.92" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="sourcefile~~rki_boundary_types.f90~~EfferentGraph" class="graph" transform="scale(0.85 0.85) rotate(0) translate(4 239.72)">
+<title>sourcefile~~rki_boundary_types.f90~~EfferentGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-239.72 751,-239.72 751,4 -4,4"/>
+<!-- sourcefile~rki_boundary_types.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~EfferentGraph_node1" class="node">
+<title>sourcefile~rki_boundary_types.f90</title>
+<polygon fill="none" stroke="black" points="747,-67.55 608,-67.55 608,-43.55 747,-43.55 747,-67.55"/>
+<text text-anchor="middle" x="677.5" y="-53.15" font-family="Helvetica,sans-Serif" font-size="10.50">rki_boundary_types.F90</text>
+</g>
+<!-- sourcefile~rki_config.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~EfferentGraph_node2" class="node">
+<title>sourcefile~rki_config.f90</title>
+<g id="a_sourcefile~~rki_boundary_types.f90~~EfferentGraph_node2"><a xlink:href="../sourcefile/rki_config.f90.html" xlink:title="rki_config.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="572,-128.55 485,-128.55 485,-104.55 572,-104.55 572,-128.55"/>
+<text text-anchor="middle" x="528.5" y="-114.15" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_config.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_boundary_types.f90&#45;&gt;sourcefile~rki_config.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~EfferentGraph_edge1" class="edge">
+<title>sourcefile~rki_boundary_types.f90&#45;&gt;sourcefile~rki_config.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M647.46,-67.61C624.71,-77.05 592.85,-90.27 567.98,-100.59"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="566.38,-97.46 558.48,-104.53 569.06,-103.93 566.38,-97.46"/>
+</g>
+<!-- sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~EfferentGraph_node3" class="node">
+<title>sourcefile~rki_constants.f90</title>
+<g id="a_sourcefile~~rki_boundary_types.f90~~EfferentGraph_node3"><a xlink:href="../sourcefile/rki_constants.f90.html" xlink:title="rki_constants.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="105,-129.55 0,-129.55 0,-105.55 105,-105.55 105,-129.55"/>
+<text text-anchor="middle" x="52.5" y="-115.15" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_constants.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_boundary_types.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~EfferentGraph_edge2" class="edge">
+<title>sourcefile~rki_boundary_types.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M637.02,-43.47C545.76,-17.73 314.7,34.73 141,-34.55 109.66,-47.05 83.1,-76.71 67.73,-96.96"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="64.74,-95.12 61.66,-105.25 70.39,-99.25 64.74,-95.12"/>
+</g>
+<!-- sourcefile~rki_config.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~EfferentGraph_edge3" class="edge">
+<title>sourcefile~rki_config.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M387.5,-217.55C281.16,-245.23 241.69,-242.54 141,-198.55 110.76,-185.34 84.25,-157.18 68.55,-137.8"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="71.25,-135.56 62.32,-129.86 65.74,-139.89 71.25,-135.56"/>
+</g>
+<!-- sourcefile~rki_ml_common_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~EfferentGraph_node4" class="node">
+<title>sourcefile~rki_ml_common_unstr.f90</title>
+<g id="a_sourcefile~~rki_boundary_types.f90~~EfferentGraph_node4"><a xlink:href="../sourcefile/rki_ml_common_unstr.f90.html" xlink:title="rki_ml_common_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="292,-189.55 141,-189.55 141,-165.55 292,-165.55 292,-189.55"/>
+<text text-anchor="middle" x="216.5" y="-175.15" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_common_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_config.f90&#45;&gt;sourcefile~rki_ml_common_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~EfferentGraph_edge4" class="edge">
+<title>sourcefile~rki_config.f90&#45;&gt;sourcefile~rki_ml_common_unstr.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M516.95,-128.9C495.75,-152.53 445.24,-203.05 389.5,-217.55"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M387.5,-217.55C364.07,-223.65 303.72,-206.58 261.63,-192.87"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="262.48,-189.46 251.88,-189.65 260.28,-196.11 262.48,-189.46"/>
+</g>
+<!-- sourcefile~rki_nml_schema.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~EfferentGraph_node5" class="node">
+<title>sourcefile~rki_nml_schema.f90</title>
+<g id="a_sourcefile~~rki_boundary_types.f90~~EfferentGraph_node5"><a xlink:href="../sourcefile/rki_nml_schema.f90.html" xlink:title="rki_nml_schema.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="449,-149.55 328,-149.55 328,-125.55 449,-125.55 449,-149.55"/>
+<text text-anchor="middle" x="388.5" y="-135.15" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_nml_schema.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_config.f90&#45;&gt;sourcefile~rki_nml_schema.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~EfferentGraph_edge5" class="edge">
+<title>sourcefile~rki_config.f90&#45;&gt;sourcefile~rki_nml_schema.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M484.97,-123.03C476.74,-124.28 467.92,-125.62 459.09,-126.96"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="458.5,-123.51 449.14,-128.48 459.55,-130.43 458.5,-123.51"/>
+</g>
+<!-- sourcefile~rki_recon_weno.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~EfferentGraph_node6" class="node">
+<title>sourcefile~rki_recon_weno.f90</title>
+<g id="a_sourcefile~~rki_boundary_types.f90~~EfferentGraph_node6"><a xlink:href="../sourcefile/rki_recon_weno.f90.html" xlink:title="rki_recon_weno.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="447,-107.55 330,-107.55 330,-83.55 447,-83.55 447,-107.55"/>
+<text text-anchor="middle" x="388.5" y="-93.15" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_recon_weno.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_config.f90&#45;&gt;sourcefile~rki_recon_weno.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~EfferentGraph_edge6" class="edge">
+<title>sourcefile~rki_config.f90&#45;&gt;sourcefile~rki_recon_weno.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M484.97,-110.08C476.19,-108.75 466.73,-107.31 457.3,-105.87"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="457.53,-102.37 447.12,-104.32 456.48,-109.29 457.53,-102.37"/>
+</g>
+<!-- sourcefile~rki_ml_common_unstr.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~EfferentGraph_edge7" class="edge">
+<title>sourcefile~rki_ml_common_unstr.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M180.17,-165.51C167.75,-161.2 153.72,-156.25 141,-151.55 125.32,-145.77 108.16,-139.17 93.23,-133.33"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="94.36,-130.01 83.77,-129.62 91.8,-136.53 94.36,-130.01"/>
+</g>
+<!-- sourcefile~rki_nml_schema.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~EfferentGraph_edge8" class="edge">
+<title>sourcefile~rki_nml_schema.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#00ff00" stroke-dasharray="5,2" d="M327.71,-137.55C295.13,-137.55 254.1,-137.55 217.5,-137.55"/>
+</g>
+<!-- sourcefile~rki_recon_weno.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~EfferentGraph_edge9" class="edge">
+<title>sourcefile~rki_recon_weno.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M348.22,-107.59C306.34,-120 242.66,-137.55 217.5,-137.55"/>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M215.5,-137.55C182.15,-137.56 145.22,-133.33 115.06,-128.76"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="115.52,-125.29 105.1,-127.2 114.44,-132.21 115.52,-125.29"/>
+</g>
+<!-- sourcefile~rki_grid.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~EfferentGraph_node7" class="node">
+<title>sourcefile~rki_grid.f90</title>
+<g id="a_sourcefile~~rki_boundary_types.f90~~EfferentGraph_node7"><a xlink:href="../sourcefile/rki_grid.f90.html" xlink:title="rki_grid.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="254,-109.55 179,-109.55 179,-85.55 254,-85.55 254,-109.55"/>
+<text text-anchor="middle" x="216.5" y="-95.15" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_grid.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_recon_weno.f90&#45;&gt;sourcefile~rki_grid.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~EfferentGraph_edge10" class="edge">
+<title>sourcefile~rki_recon_weno.f90&#45;&gt;sourcefile~rki_grid.f90</title>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M329.95,-96.23C308.62,-96.48 284.71,-96.76 264.44,-97"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="264.16,-93.51 254.2,-97.12 264.24,-100.5 264.16,-93.51"/>
+</g>
+<!-- sourcefile~rki_ml_common.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~EfferentGraph_node8" class="node">
+<title>sourcefile~rki_ml_common.f90</title>
+<g id="a_sourcefile~~rki_boundary_types.f90~~EfferentGraph_node8"><a xlink:href="../sourcefile/rki_ml_common.f90.html" xlink:title="rki_ml_common.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="276.5,-67.55 156.5,-67.55 156.5,-43.55 276.5,-43.55 276.5,-67.55"/>
+<text text-anchor="middle" x="216.5" y="-53.15" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_common.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_recon_weno.f90&#45;&gt;sourcefile~rki_ml_common.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~EfferentGraph_edge11" class="edge">
+<title>sourcefile~rki_recon_weno.f90&#45;&gt;sourcefile~rki_ml_common.f90</title>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M336.49,-83.55C318.26,-79.26 297.52,-74.38 278.52,-69.91"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="279.3,-66.5 268.76,-67.62 277.7,-73.31 279.3,-66.5"/>
+</g>
+<!-- sourcefile~rki_grid.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~EfferentGraph_edge12" class="edge">
+<title>sourcefile~rki_grid.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M178.74,-102.09C159.96,-104.41 136.61,-107.29 115.17,-109.94"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="114.66,-106.48 105.16,-111.18 115.51,-113.42 114.66,-106.48"/>
+</g>
+<!-- sourcefile~rki_ml_common.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~EfferentGraph_edge13" class="edge">
+<title>sourcefile~rki_ml_common.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M168.23,-67.62C159.11,-70.3 149.69,-73.32 141,-76.55 122.21,-83.55 101.89,-92.95 85.56,-100.99"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="83.84,-97.94 76.45,-105.53 86.96,-104.2 83.84,-97.94"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var pansourcefilerki_boundary_typesf90EfferentGraph = svgPanZoom('#sourcefilerki_boundary_typesf90EfferentGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#EfferentGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="EfferentGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="202pt" height="32pt"
+ viewBox="0.00 0.00 201.50 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 197.5,-28 197.5,4 -4,4"/>
+<!-- Source File -->
+<g id="node1" class="node">
+<title>Source File</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Source File</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node2" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="193.5,-24 88.5,-24 88.5,0 193.5,0 193.5,-24"/>
+<text text-anchor="middle" x="141" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a file to a file which it depends on. A file
+is dependent upon another if the latter must be compiled before the former
+can be.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Files dependent on this one</h3>
+          </div>
+          <div class="card-body">
+            <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: sourcefile~~rki_boundary_types.f90~~AfferentGraph Pages: 1 -->
+<svg id="sourcefilerki_boundary_typesf90AfferentGraph" width="641pt" height="224pt"
+ viewBox="0.00 0.00 641.00 224.46" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="sourcefile~~rki_boundary_types.f90~~AfferentGraph" class="graph" transform="scale(0.57 0.57) rotate(0) translate(4 388.18)">
+<title>sourcefile~~rki_boundary_types.f90~~AfferentGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-388.18 1116,-388.18 1116,4 -4,4"/>
+<!-- sourcefile~rki_boundary_types.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~AfferentGraph_node1" class="node">
+<title>sourcefile~rki_boundary_types.f90</title>
+<polygon fill="none" stroke="black" points="139,-287 0,-287 0,-263 139,-263 139,-287"/>
+<text text-anchor="middle" x="69.5" y="-272.6" font-family="Helvetica,sans-Serif" font-size="10.50">rki_boundary_types.F90</text>
+</g>
+<!-- sourcefile~rki_api.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~AfferentGraph_node2" class="node">
+<title>sourcefile~rki_api.f90</title>
+<g id="a_sourcefile~~rki_boundary_types.f90~~AfferentGraph_node2"><a xlink:href="../sourcefile/rki_api.f90.html" xlink:title="rki_api.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="942.5,-268 872.5,-268 872.5,-244 942.5,-244 942.5,-268"/>
+<text text-anchor="middle" x="907.5" y="-253.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_api.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_api.f90&#45;&gt;sourcefile~rki_boundary_types.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~AfferentGraph_edge1" class="edge">
+<title>sourcefile~rki_api.f90&#45;&gt;sourcefile~rki_boundary_types.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M731.5,-216C695.76,-209.65 441.34,-189.23 405.5,-195"/>
+</g>
+<!-- sourcefile~rki_state.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~AfferentGraph_node9" class="node">
+<title>sourcefile~rki_state.f90</title>
+<g id="a_sourcefile~~rki_boundary_types.f90~~AfferentGraph_node9"><a xlink:href="../sourcefile/rki_state.f90.html" xlink:title="rki_state.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="616,-188 536,-188 536,-164 616,-164 616,-188"/>
+<text text-anchor="middle" x="576" y="-173.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_state.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_api.f90&#45;&gt;sourcefile~rki_state.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~AfferentGraph_edge16" class="edge">
+<title>sourcefile~rki_api.f90&#45;&gt;sourcefile~rki_state.f90</title>
+<path fill="none" stroke="#ff00bf" stroke-dasharray="5,2" d="M872.38,-247.67C829.93,-237.39 759.83,-220.68 733.5,-216"/>
+<path fill="none" stroke="#ff00bf" stroke-dasharray="5,2" d="M731.5,-216C695.72,-209.64 656.04,-199.3 625.86,-190.72"/>
+<polygon fill="#ff00bf" stroke="#ff00bf" points="626.58,-187.29 616,-187.89 624.65,-194.01 626.58,-187.29"/>
+</g>
+<!-- sourcefile~rki_handle.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~AfferentGraph_node14" class="node">
+<title>sourcefile~rki_handle.f90</title>
+<g id="a_sourcefile~~rki_boundary_types.f90~~AfferentGraph_node14"><a xlink:href="../sourcefile/rki_handle.f90.html" xlink:title="rki_handle.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="778,-188 687,-188 687,-164 778,-164 778,-188"/>
+<text text-anchor="middle" x="732.5" y="-173.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_handle.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_api.f90&#45;&gt;sourcefile~rki_handle.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~AfferentGraph_edge30" class="edge">
+<title>sourcefile~rki_api.f90&#45;&gt;sourcefile~rki_handle.f90</title>
+<path fill="none" stroke="#00ffa9" stroke-dasharray="5,2" d="M872.18,-251.33C856.52,-248.22 838.13,-243.15 823,-235 803.89,-224.71 804.95,-214.2 787,-202 782.08,-198.65 776.66,-195.49 771.21,-192.61"/>
+<polygon fill="#00ffa9" stroke="#00ffa9" points="772.62,-189.4 762.12,-188.03 769.47,-195.65 772.62,-189.4"/>
+</g>
+<!-- sourcefile~rki_init.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~AfferentGraph_node15" class="node">
+<title>sourcefile~rki_init.f90</title>
+<g id="a_sourcefile~~rki_boundary_types.f90~~AfferentGraph_node15"><a xlink:href="../sourcefile/rki_init.f90.html" xlink:title="rki_init.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="767.5,-146 697.5,-146 697.5,-122 767.5,-122 767.5,-146"/>
+<text text-anchor="middle" x="732.5" y="-131.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_init.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_api.f90&#45;&gt;sourcefile~rki_init.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~AfferentGraph_edge32" class="edge">
+<title>sourcefile~rki_api.f90&#45;&gt;sourcefile~rki_init.f90</title>
+<path fill="none" stroke="#00a9ff" stroke-dasharray="5,2" d="M872.48,-254.27C855.96,-251.85 836.75,-246.52 823,-235 793.11,-209.97 815.23,-181.89 787,-155 783.91,-152.06 780.36,-149.51 776.59,-147.31"/>
+<polygon fill="#00a9ff" stroke="#00a9ff" points="778.02,-144.12 767.51,-142.79 774.9,-150.38 778.02,-144.12"/>
+</g>
+<!-- sourcefile~rki_output.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~AfferentGraph_node17" class="node">
+<title>sourcefile~rki_output.f90</title>
+<g id="a_sourcefile~~rki_boundary_types.f90~~AfferentGraph_node17"><a xlink:href="../sourcefile/rki_output.f90.html" xlink:title="rki_output.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="776.5,-268 688.5,-268 688.5,-244 776.5,-244 776.5,-268"/>
+<text text-anchor="middle" x="732.5" y="-253.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_output.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_api.f90&#45;&gt;sourcefile~rki_output.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~AfferentGraph_edge36" class="edge">
+<title>sourcefile~rki_api.f90&#45;&gt;sourcefile~rki_output.f90</title>
+<path fill="none" stroke="#aa00ff" stroke-dasharray="5,2" d="M872.32,-256C847.85,-256 814.44,-256 786.52,-256"/>
+<polygon fill="#aa00ff" stroke="#aa00ff" points="786.51,-252.5 776.51,-256 786.51,-259.5 786.51,-252.5"/>
+</g>
+<!-- sourcefile~rki_solver.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~AfferentGraph_node18" class="node">
+<title>sourcefile~rki_solver.f90</title>
+<g id="a_sourcefile~~rki_boundary_types.f90~~AfferentGraph_node18"><a xlink:href="../sourcefile/rki_solver.f90.html" xlink:title="rki_solver.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="775,-348 690,-348 690,-324 775,-324 775,-348"/>
+<text text-anchor="middle" x="732.5" y="-333.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_solver.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_api.f90&#45;&gt;sourcefile~rki_solver.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~AfferentGraph_edge38" class="edge">
+<title>sourcefile~rki_api.f90&#45;&gt;sourcefile~rki_solver.f90</title>
+<path fill="none" stroke="#ff00aa" stroke-dasharray="5,2" d="M880.23,-268.15C850.46,-281.92 801.8,-304.42 768.75,-319.7"/>
+<polygon fill="#ff00aa" stroke="#ff00aa" points="767.06,-316.62 759.46,-324 770,-322.98 767.06,-316.62"/>
+</g>
+<!-- sourcefile~rki_boundary.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~AfferentGraph_node3" class="node">
+<title>sourcefile~rki_boundary.f90</title>
+<g id="a_sourcefile~~rki_boundary_types.f90~~AfferentGraph_node3"><a xlink:href="../sourcefile/rki_boundary.f90.html" xlink:title="rki_boundary.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="456,-348 353,-348 353,-324 456,-324 456,-348"/>
+<text text-anchor="middle" x="404.5" y="-333.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_boundary.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_boundary.f90&#45;&gt;sourcefile~rki_boundary_types.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~AfferentGraph_edge2" class="edge">
+<title>sourcefile~rki_boundary.f90&#45;&gt;sourcefile~rki_boundary_types.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M369.05,-348.06C328.25,-361.68 262.71,-381.32 238,-376"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M236,-376C177.34,-363.38 120.14,-319.37 90.8,-293.8"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="93.08,-291.15 83.28,-287.12 88.43,-296.38 93.08,-291.15"/>
+</g>
+<!-- sourcefile~rki_driver.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~AfferentGraph_node4" class="node">
+<title>sourcefile~rki_driver.f90</title>
+<g id="a_sourcefile~~rki_boundary_types.f90~~AfferentGraph_node4"><a xlink:href="../sourcefile/rki_driver.f90.html" xlink:title="rki_driver.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1112,-125 1028,-125 1028,-101 1112,-101 1112,-125"/>
+<text text-anchor="middle" x="1070" y="-110.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_driver.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_driver.f90&#45;&gt;sourcefile~rki_boundary_types.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~AfferentGraph_edge3" class="edge">
+<title>sourcefile~rki_driver.f90&#45;&gt;sourcefile~rki_boundary_types.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M906.5,-316C704.22,-412.83 629.38,-362.99 405.5,-376"/>
+</g>
+<!-- sourcefile~rki_nesting.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~AfferentGraph_node8" class="node">
+<title>sourcefile~rki_nesting.f90</title>
+<g id="a_sourcefile~~rki_boundary_types.f90~~AfferentGraph_node8"><a xlink:href="../sourcefile/rki_nesting.f90.html" xlink:title="rki_nesting.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="779,-24 686,-24 686,0 779,0 779,-24"/>
+<text text-anchor="middle" x="732.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_nesting.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_driver.f90&#45;&gt;sourcefile~rki_nesting.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~AfferentGraph_edge15" class="edge">
+<title>sourcefile~rki_driver.f90&#45;&gt;sourcefile~rki_nesting.f90</title>
+<path fill="none" stroke="#7f00ff" stroke-dasharray="5,2" d="M1062.13,-100.85C1050.52,-81.65 1025,-44.83 992,-29 927.62,1.88 843.67,1 789.18,-4.13"/>
+<polygon fill="#7f00ff" stroke="#7f00ff" points="788.62,-0.67 779.03,-5.17 789.33,-7.63 788.62,-0.67"/>
+</g>
+<!-- sourcefile~rki_driver.f90&#45;&gt;sourcefile~rki_state.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~AfferentGraph_edge18" class="edge">
+<title>sourcefile~rki_driver.f90&#45;&gt;sourcefile~rki_state.f90</title>
+<path fill="none" stroke="#ff00bf" stroke-dasharray="5,2" d="M906.5,-316C860.07,-338.31 723.76,-300.66 678,-277 640.69,-257.71 608.54,-219.74 591.06,-196.25"/>
+<polygon fill="#ff00bf" stroke="#ff00bf" points="593.79,-194.06 585.09,-188.02 588.13,-198.17 593.79,-194.06"/>
+</g>
+<!-- sourcefile~rki_coastal_console_stats.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~AfferentGraph_node10" class="node">
+<title>sourcefile~rki_coastal_console_stats.f90</title>
+<g id="a_sourcefile~~rki_boundary_types.f90~~AfferentGraph_node10"><a xlink:href="../sourcefile/rki_coastal_console_stats.f90.html" xlink:title="rki_coastal_console_stats.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="992,-146 823,-146 823,-122 992,-122 992,-146"/>
+<text text-anchor="middle" x="907.5" y="-131.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_coastal_console_stats.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_driver.f90&#45;&gt;sourcefile~rki_coastal_console_stats.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~AfferentGraph_edge27" class="edge">
+<title>sourcefile~rki_driver.f90&#45;&gt;sourcefile~rki_coastal_console_stats.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M1027.67,-118.41C1019.7,-119.45 1011.07,-120.58 1002.2,-121.74"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="1001.59,-118.29 992.13,-123.06 1002.49,-125.23 1001.59,-118.29"/>
+</g>
+<!-- sourcefile~rki_forcing.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~AfferentGraph_node12" class="node">
+<title>sourcefile~rki_forcing.f90</title>
+<g id="a_sourcefile~~rki_boundary_types.f90~~AfferentGraph_node12"><a xlink:href="../sourcefile/rki_forcing.f90.html" xlink:title="rki_forcing.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="953,-104 862,-104 862,-80 953,-80 953,-104"/>
+<text text-anchor="middle" x="907.5" y="-89.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_forcing.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_driver.f90&#45;&gt;sourcefile~rki_forcing.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~AfferentGraph_edge28" class="edge">
+<title>sourcefile~rki_driver.f90&#45;&gt;sourcefile~rki_forcing.f90</title>
+<path fill="none" stroke="#aaff00" stroke-dasharray="5,2" d="M1027.67,-107.59C1008.03,-105.02 984.29,-101.92 963.19,-99.16"/>
+<polygon fill="#aaff00" stroke="#aaff00" points="963.44,-95.66 953.07,-97.83 962.53,-102.6 963.44,-95.66"/>
+</g>
+<!-- sourcefile~rki_gauges.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~AfferentGraph_node13" class="node">
+<title>sourcefile~rki_gauges.f90</title>
+<g id="a_sourcefile~~rki_boundary_types.f90~~AfferentGraph_node13"><a xlink:href="../sourcefile/rki_gauges.f90.html" xlink:title="rki_gauges.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="954,-62 861,-62 861,-38 954,-38 954,-62"/>
+<text text-anchor="middle" x="907.5" y="-47.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_gauges.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_driver.f90&#45;&gt;sourcefile~rki_gauges.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~AfferentGraph_edge29" class="edge">
+<title>sourcefile~rki_driver.f90&#45;&gt;sourcefile~rki_gauges.f90</title>
+<path fill="none" stroke="#00ff00" stroke-dasharray="5,2" d="M1050.04,-100.89C1034.84,-91.62 1012.7,-79.1 992,-71 983.11,-67.52 973.47,-64.48 964,-61.86"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="964.78,-58.45 954.22,-59.29 963,-65.22 964.78,-58.45"/>
+</g>
+<!-- sourcefile~rki_driver.f90&#45;&gt;sourcefile~rki_init.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~AfferentGraph_edge34" class="edge">
+<title>sourcefile~rki_driver.f90&#45;&gt;sourcefile~rki_init.f90</title>
+<path fill="none" stroke="#00a9ff" stroke-dasharray="5,2" d="M1052.6,-125.13C1037.67,-135.37 1014.58,-149.24 992,-155 918.37,-173.77 829.49,-158.67 777.46,-146.2"/>
+<polygon fill="#00a9ff" stroke="#00a9ff" points="778.1,-142.75 767.56,-143.75 776.42,-149.55 778.1,-142.75"/>
+</g>
+<!-- sourcefile~rki_driver.f90&#45;&gt;sourcefile~rki_output.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~AfferentGraph_edge37" class="edge">
+<title>sourcefile~rki_driver.f90&#45;&gt;sourcefile~rki_output.f90</title>
+<path fill="none" stroke="#aa00ff" stroke-dasharray="5,2" d="M1066.28,-125.38C1059.13,-155.2 1037.2,-231.89 992,-277 963.01,-305.93 945.42,-298.26 908.5,-316"/>
+<path fill="none" stroke="#aa00ff" stroke-dasharray="5,2" d="M906.5,-316C893.97,-322.02 817.77,-291.79 770.78,-272.05"/>
+<polygon fill="#aa00ff" stroke="#aa00ff" points="772.08,-268.8 761.51,-268.13 769.36,-275.25 772.08,-268.8"/>
+</g>
+<!-- sourcefile~rki_driver.f90&#45;&gt;sourcefile~rki_solver.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~AfferentGraph_edge39" class="edge">
+<title>sourcefile~rki_driver.f90&#45;&gt;sourcefile~rki_solver.f90</title>
+<path fill="none" stroke="#ff00aa" stroke-dasharray="5,2" d="M906.5,-316C868.67,-334.17 821.01,-338.52 785.29,-338.69"/>
+<polygon fill="#ff00aa" stroke="#ff00aa" points="785.11,-335.19 775.09,-338.63 785.07,-342.19 785.11,-335.19"/>
+</g>
+<!-- sourcefile~rki_kernel_sponge.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~AfferentGraph_node5" class="node">
+<title>sourcefile~rki_kernel_sponge.f90</title>
+<g id="a_sourcefile~~rki_boundary_types.f90~~AfferentGraph_node5"><a xlink:href="../sourcefile/rki_kernel_sponge.f90.html" xlink:title="rki_kernel_sponge.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="642,-348 510,-348 510,-324 642,-324 642,-348"/>
+<text text-anchor="middle" x="576" y="-333.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_kernel_sponge.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_kernel_sponge.f90&#45;&gt;sourcefile~rki_boundary_types.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~AfferentGraph_edge4" class="edge">
+<title>sourcefile~rki_kernel_sponge.f90&#45;&gt;sourcefile~rki_boundary_types.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M539.82,-348.08C505.9,-358.83 452.89,-373.25 405.5,-376"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M403.5,-376C330.07,-380.27 309.91,-391.47 238,-376"/>
+</g>
+<!-- sourcefile~rki_ml_dynamics.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~AfferentGraph_node6" class="node">
+<title>sourcefile~rki_ml_dynamics.f90</title>
+<g id="a_sourcefile~~rki_boundary_types.f90~~AfferentGraph_node6"><a xlink:href="../sourcefile/rki_ml_dynamics.f90.html" xlink:title="rki_ml_dynamics.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="299,-266 175,-266 175,-242 299,-242 299,-266"/>
+<text text-anchor="middle" x="237" y="-251.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_dynamics.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_ml_dynamics.f90&#45;&gt;sourcefile~rki_boundary_types.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~AfferentGraph_edge5" class="edge">
+<title>sourcefile~rki_ml_dynamics.f90&#45;&gt;sourcefile~rki_boundary_types.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M174.84,-261.76C166.51,-262.82 157.85,-263.92 149.26,-265.01"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="148.69,-261.55 139.21,-266.28 149.57,-268.49 148.69,-261.55"/>
+</g>
+<!-- sourcefile~rki_ml_tracers.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~AfferentGraph_node7" class="node">
+<title>sourcefile~rki_ml_tracers.f90</title>
+<g id="a_sourcefile~~rki_boundary_types.f90~~AfferentGraph_node7"><a xlink:href="../sourcefile/rki_ml_tracers.f90.html" xlink:title="rki_ml_tracers.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="292,-308 182,-308 182,-284 292,-284 292,-308"/>
+<text text-anchor="middle" x="237" y="-293.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_tracers.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_ml_tracers.f90&#45;&gt;sourcefile~rki_boundary_types.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~AfferentGraph_edge6" class="edge">
+<title>sourcefile~rki_ml_tracers.f90&#45;&gt;sourcefile~rki_boundary_types.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M181.81,-289.12C171.34,-287.8 160.18,-286.38 149.12,-284.98"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="149.37,-281.48 139.01,-283.69 148.49,-288.42 149.37,-281.48"/>
+</g>
+<!-- sourcefile~rki_nesting.f90&#45;&gt;sourcefile~rki_boundary_types.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~AfferentGraph_edge7" class="edge">
+<title>sourcefile~rki_nesting.f90&#45;&gt;sourcefile~rki_boundary_types.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M698.32,-24.06C691.51,-26.8 684.45,-29.84 678,-33 614.73,-63.97 475.84,-191.12 405.5,-195"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M403.5,-195C300.95,-204.1 274.12,-205.2 175,-233 151.22,-239.67 125.46,-249.99 105.47,-258.72"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="103.87,-255.6 96.15,-262.86 106.71,-262 103.87,-255.6"/>
+</g>
+<!-- sourcefile~rki_nesting.f90&#45;&gt;sourcefile~rki_state.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~AfferentGraph_edge24" class="edge">
+<title>sourcefile~rki_nesting.f90&#45;&gt;sourcefile~rki_state.f90</title>
+<path fill="none" stroke="#ff00bf" stroke-dasharray="5,2" d="M689.39,-24.11C685.17,-26.55 681.26,-29.49 678,-33 641.01,-72.9 678.86,-109.98 642,-150 637.35,-155.05 631.6,-159.13 625.44,-162.43"/>
+<polygon fill="#ff00bf" stroke="#ff00bf" points="623.81,-159.33 616.23,-166.73 626.77,-165.67 623.81,-159.33"/>
+</g>
+<!-- sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_boundary_types.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~AfferentGraph_edge8" class="edge">
+<title>sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_boundary_types.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M535.72,-181.68C501.43,-186.33 450.29,-192.53 405.5,-195"/>
+</g>
+<!-- sourcefile~rki_multilayer_state.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~AfferentGraph_node16" class="node">
+<title>sourcefile~rki_multilayer_state.f90</title>
+<g id="a_sourcefile~~rki_boundary_types.f90~~AfferentGraph_node16"><a xlink:href="../sourcefile/rki_multilayer_state.f90.html" xlink:title="rki_multilayer_state.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="474,-266 335,-266 335,-242 474,-242 474,-266"/>
+<text text-anchor="middle" x="404.5" y="-251.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_multilayer_state.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_multilayer_state.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~AfferentGraph_edge35" class="edge">
+<title>sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_multilayer_state.f90</title>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M548.89,-188.02C520.02,-201.3 473.35,-222.78 441.14,-237.6"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="439.26,-234.61 431.64,-241.97 442.19,-240.97 439.26,-234.61"/>
+</g>
+<!-- sourcefile~rki_coastal_console_stats.f90&#45;&gt;sourcefile~rki_state.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~AfferentGraph_edge17" class="edge">
+<title>sourcefile~rki_coastal_console_stats.f90&#45;&gt;sourcefile~rki_state.f90</title>
+<path fill="none" stroke="#ff00bf" stroke-dasharray="5,2" d="M856.72,-121.92C806.7,-109.86 736.56,-93.23 733.5,-94"/>
+</g>
+<!-- sourcefile~rki_coastal_console_stats.f90&#45;&gt;sourcefile~rki_init.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~AfferentGraph_edge33" class="edge">
+<title>sourcefile~rki_coastal_console_stats.f90&#45;&gt;sourcefile~rki_init.f90</title>
+<path fill="none" stroke="#00a9ff" stroke-dasharray="5,2" d="M822.79,-134C807.25,-134 791.6,-134 777.84,-134"/>
+<polygon fill="#00a9ff" stroke="#00a9ff" points="777.71,-130.5 767.71,-134 777.71,-137.5 777.71,-130.5"/>
+</g>
+<!-- sourcefile~rki_flux_dump.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~AfferentGraph_node11" class="node">
+<title>sourcefile~rki_flux_dump.f90</title>
+<g id="a_sourcefile~~rki_boundary_types.f90~~AfferentGraph_node11"><a xlink:href="../sourcefile/rki_flux_dump.f90.html" xlink:title="rki_flux_dump.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="787,-66 678,-66 678,-42 787,-42 787,-66"/>
+<text text-anchor="middle" x="732.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_flux_dump.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_flux_dump.f90&#45;&gt;sourcefile~rki_state.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~AfferentGraph_edge19" class="edge">
+<title>sourcefile~rki_flux_dump.f90&#45;&gt;sourcefile~rki_state.f90</title>
+<path fill="none" stroke="#ff00bf" stroke-dasharray="5,2" d="M698.23,-66.06C690.98,-69.76 683.76,-74.37 678,-80 652.98,-104.46 667.88,-126.46 642,-150 637.16,-154.4 631.49,-158.1 625.54,-161.2"/>
+<polygon fill="#ff00bf" stroke="#ff00bf" points="623.65,-158.21 616.05,-165.59 626.59,-164.57 623.65,-158.21"/>
+</g>
+<!-- sourcefile~rki_forcing.f90&#45;&gt;sourcefile~rki_state.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~AfferentGraph_edge20" class="edge">
+<title>sourcefile~rki_forcing.f90&#45;&gt;sourcefile~rki_state.f90</title>
+<path fill="none" stroke="#ff00bf" stroke-dasharray="5,2" d="M861.68,-86.85C826.31,-84.13 776.02,-83.28 733.5,-94"/>
+</g>
+<!-- sourcefile~rki_gauges.f90&#45;&gt;sourcefile~rki_state.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~AfferentGraph_edge21" class="edge">
+<title>sourcefile~rki_gauges.f90&#45;&gt;sourcefile~rki_state.f90</title>
+<path fill="none" stroke="#ff00bf" stroke-dasharray="5,2" d="M860.99,-61.4C848.66,-64.5 835.31,-67.87 823,-71 783.2,-81.12 773.32,-83.96 733.5,-94"/>
+<path fill="none" stroke="#ff00bf" stroke-dasharray="5,2" d="M731.5,-94C707.03,-100.17 699.24,-99.38 678,-113 658.69,-125.38 661.07,-137.24 642,-150 636.44,-153.72 630.26,-157.05 623.98,-159.98"/>
+<polygon fill="#ff00bf" stroke="#ff00bf" points="622.56,-156.78 614.79,-163.98 625.35,-163.2 622.56,-156.78"/>
+</g>
+<!-- sourcefile~rki_handle.f90&#45;&gt;sourcefile~rki_state.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~AfferentGraph_edge22" class="edge">
+<title>sourcefile~rki_handle.f90&#45;&gt;sourcefile~rki_state.f90</title>
+<path fill="none" stroke="#ff00bf" stroke-dasharray="5,2" d="M686.81,-176C667.85,-176 645.69,-176 626.25,-176"/>
+<polygon fill="#ff00bf" stroke="#ff00bf" points="626.08,-172.5 616.08,-176 626.08,-179.5 626.08,-172.5"/>
+</g>
+<!-- sourcefile~rki_init.f90&#45;&gt;sourcefile~rki_state.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~AfferentGraph_edge23" class="edge">
+<title>sourcefile~rki_init.f90&#45;&gt;sourcefile~rki_state.f90</title>
+<path fill="none" stroke="#ff00bf" stroke-dasharray="5,2" d="M697.21,-143.32C676.21,-149.03 648.99,-156.43 625.77,-162.74"/>
+<polygon fill="#ff00bf" stroke="#ff00bf" points="624.82,-159.37 616.09,-165.37 626.66,-166.13 624.82,-159.37"/>
+</g>
+<!-- sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_ml_dynamics.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~AfferentGraph_edge11" class="edge">
+<title>sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_ml_dynamics.f90</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M334.75,-254C326.35,-254 317.76,-254 309.32,-254"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="309.14,-250.5 299.14,-254 309.14,-257.5 309.14,-250.5"/>
+</g>
+<!-- sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_ml_tracers.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~AfferentGraph_edge13" class="edge">
+<title>sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_ml_tracers.f90</title>
+<path fill="none" stroke="#003fff" stroke-dasharray="5,2" d="M356.07,-266.04C337.12,-270.85 315.11,-276.43 295.28,-281.46"/>
+<polygon fill="#003fff" stroke="#003fff" points="294.26,-278.11 285.43,-283.96 295.99,-284.9 294.26,-278.11"/>
+</g>
+<!-- sourcefile~rki_output.f90&#45;&gt;sourcefile~rki_state.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~AfferentGraph_edge25" class="edge">
+<title>sourcefile~rki_output.f90&#45;&gt;sourcefile~rki_state.f90</title>
+<path fill="none" stroke="#ff00bf" stroke-dasharray="5,2" d="M706.09,-243.9C697.17,-239.59 687.11,-234.65 678,-230 654.3,-217.91 627.78,-203.71 607.87,-192.9"/>
+<polygon fill="#ff00bf" stroke="#ff00bf" points="609.4,-189.75 598.94,-188.04 606.05,-195.9 609.4,-189.75"/>
+</g>
+<!-- sourcefile~rki_solver.f90&#45;&gt;sourcefile~rki_boundary.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~AfferentGraph_edge9" class="edge">
+<title>sourcefile~rki_solver.f90&#45;&gt;sourcefile~rki_boundary.f90</title>
+<path fill="none" stroke="#ffbf00" stroke-dasharray="5,2" d="M575,-296C528.73,-292.89 477.07,-307.86 443.08,-320.37"/>
+<polygon fill="#ffbf00" stroke="#ffbf00" points="441.66,-317.16 433.55,-323.98 444.15,-323.71 441.66,-317.16"/>
+</g>
+<!-- sourcefile~rki_solver.f90&#45;&gt;sourcefile~rki_kernel_sponge.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~AfferentGraph_edge10" class="edge">
+<title>sourcefile~rki_solver.f90&#45;&gt;sourcefile~rki_kernel_sponge.f90</title>
+<path fill="none" stroke="#00ff3f" stroke-dasharray="5,2" d="M689.69,-336C678.13,-336 665.21,-336 652.36,-336"/>
+<polygon fill="#00ff3f" stroke="#00ff3f" points="652.1,-332.5 642.1,-336 652.1,-339.5 652.1,-332.5"/>
+</g>
+<!-- sourcefile~rki_solver.f90&#45;&gt;sourcefile~rki_ml_dynamics.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~AfferentGraph_edge12" class="edge">
+<title>sourcefile~rki_solver.f90&#45;&gt;sourcefile~rki_ml_dynamics.f90</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M699.53,-323.99C668.68,-313.3 620.4,-298.92 577,-296"/>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M575,-296C499.84,-290.95 480.69,-300.69 405.5,-296"/>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M403.5,-296C381.22,-294.61 327.89,-280.32 287.75,-268.79"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="288.69,-265.42 278.11,-266.01 286.74,-272.15 288.69,-265.42"/>
+</g>
+<!-- sourcefile~rki_solver.f90&#45;&gt;sourcefile~rki_ml_tracers.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~AfferentGraph_edge14" class="edge">
+<title>sourcefile~rki_solver.f90&#45;&gt;sourcefile~rki_ml_tracers.f90</title>
+<path fill="none" stroke="#003fff" stroke-dasharray="5,2" d="M403.5,-296C370.14,-293.92 332.91,-293.73 302.23,-294.14"/>
+<polygon fill="#003fff" stroke="#003fff" points="302.04,-290.64 292.09,-294.3 302.15,-297.64 302.04,-290.64"/>
+</g>
+<!-- sourcefile~rki_solver.f90&#45;&gt;sourcefile~rki_state.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~AfferentGraph_edge26" class="edge">
+<title>sourcefile~rki_solver.f90&#45;&gt;sourcefile~rki_state.f90</title>
+<path fill="none" stroke="#ff00bf" stroke-dasharray="5,2" d="M700.29,-323.89C692.57,-320.1 684.62,-315.45 678,-310 638.19,-277.23 605.15,-225.72 588.55,-197.05"/>
+<polygon fill="#ff00bf" stroke="#ff00bf" points="591.54,-195.23 583.56,-188.26 585.45,-198.69 591.54,-195.23"/>
+</g>
+<!-- sourcefile~rki_api_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~AfferentGraph_node19" class="node">
+<title>sourcefile~rki_api_unstr.f90</title>
+<g id="a_sourcefile~~rki_boundary_types.f90~~AfferentGraph_node19"><a xlink:href="../sourcefile/rki_api_unstr.f90.html" xlink:title="rki_api_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="958,-226 857,-226 857,-202 958,-202 958,-226"/>
+<text text-anchor="middle" x="907.5" y="-211.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_api_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_api_unstr.f90&#45;&gt;sourcefile~rki_handle.f90 -->
+<g id="sourcefile~~rki_boundary_types.f90~~AfferentGraph_edge31" class="edge">
+<title>sourcefile~rki_api_unstr.f90&#45;&gt;sourcefile~rki_handle.f90</title>
+<path fill="none" stroke="#00ffa9" stroke-dasharray="5,2" d="M856.93,-203.11C835.37,-198.38 810.04,-192.81 787.96,-187.96"/>
+<polygon fill="#00ffa9" stroke="#00ffa9" points="788.58,-184.52 778.06,-185.79 787.08,-191.35 788.58,-184.52"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var pansourcefilerki_boundary_typesf90AfferentGraph = svgPanZoom('#sourcefilerki_boundary_typesf90AfferentGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#AfferentGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="AfferentGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="202pt" height="32pt"
+ viewBox="0.00 0.00 201.50 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 197.5,-28 197.5,4 -4,4"/>
+<!-- Source File -->
+<g id="node1" class="node">
+<title>Source File</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Source File</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node2" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="193.5,-24 88.5,-24 88.5,0 193.5,0 193.5,-24"/>
+<text text-anchor="middle" x="141" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a file to a file which it depends on. A file
+is dependent upon another if the latter must be compiled before the former
+can be.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+          </div>
+        </div>
+<br>
+      <section>
+        <h2><span class="anchor" id="src"></span>Source Code</h2>
+        <div class="hl codehilite"><pre><span></span><a id="ln-1" name="ln-1" href="#ln-1"></a><span class="c">!! Boundary condition types, constants, and utility functions</span>
+<a id="ln-2" name="ln-2" href="#ln-2"></a><span class="k">module </span><span class="n">rki_boundary_types</span>
+<a id="ln-3" name="ln-3" href="#ln-3"></a><span class="w">   </span><span class="c">!! Backend-agnostic boundary-condition definitions: `bc_params_t`,</span>
+<a id="ln-4" name="ln-4" href="#ln-4"></a><span class="w">   </span><span class="c">!! the BC type constants, and helper functions.</span>
+<a id="ln-5" name="ln-5" href="#ln-5"></a><span class="w">   </span><span class="k">use </span><span class="n">rki_constants</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">wp</span><span class="p">,</span><span class="w"> </span><span class="n">TWO_PI</span>
+<a id="ln-6" name="ln-6" href="#ln-6"></a><span class="w">   </span><span class="k">use </span><span class="n">rki_config</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">config_t</span><span class="p">,</span><span class="w"> </span><span class="n">MAX_TIDAL_CONSTITUENTS</span>
+<a id="ln-7" name="ln-7" href="#ln-7"></a><span class="w">   </span><span class="k">implicit none</span>
+<a id="ln-8" name="ln-8" href="#ln-8"></a><span class="k">   private</span>
+<a id="ln-9" name="ln-9" href="#ln-9"></a>
+<a id="ln-10" name="ln-10" href="#ln-10"></a><span class="k">   public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">bc_params_t</span>
+<a id="ln-11" name="ln-11" href="#ln-11"></a><span class="w">   </span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">BC_WALL</span><span class="p">,</span><span class="w"> </span><span class="n">BC_OPEN</span><span class="p">,</span><span class="w"> </span><span class="n">BC_TIDAL</span><span class="p">,</span><span class="w"> </span><span class="n">BC_NESTED</span>
+<a id="ln-12" name="ln-12" href="#ln-12"></a><span class="w">   </span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">BC_INFLOW</span><span class="p">,</span><span class="w"> </span><span class="n">BC_DISCHARGE</span><span class="p">,</span><span class="w"> </span><span class="n">BC_CLAMPED</span><span class="p">,</span><span class="w"> </span><span class="n">BC_SPONGE</span><span class="p">,</span><span class="w"> </span><span class="n">BC_CHAPMAN</span>
+<a id="ln-13" name="ln-13" href="#ln-13"></a><span class="w">   </span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">bc_type_from_string</span>
+<a id="ln-14" name="ln-14" href="#ln-14"></a><span class="w">   </span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">bc_init_from_config</span>
+<a id="ln-15" name="ln-15" href="#ln-15"></a><span class="w">   </span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">bc_init_chapman</span>
+<a id="ln-16" name="ln-16" href="#ln-16"></a><span class="w">   </span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">TWO_PI</span>
+<a id="ln-17" name="ln-17" href="#ln-17"></a>
+<a id="ln-18" name="ln-18" href="#ln-18"></a><span class="w">   </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">parameter</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">BC_WALL</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span>
+<a id="ln-19" name="ln-19" href="#ln-19"></a><span class="w">      </span><span class="c">!! Reflective wall boundary</span>
+<a id="ln-20" name="ln-20" href="#ln-20"></a><span class="w">   </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">parameter</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">BC_OPEN</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span>
+<a id="ln-21" name="ln-21" href="#ln-21"></a><span class="w">      </span><span class="c">!! Open (Flather radiation) boundary</span>
+<a id="ln-22" name="ln-22" href="#ln-22"></a><span class="w">   </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">parameter</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">BC_TIDAL</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span>
+<a id="ln-23" name="ln-23" href="#ln-23"></a><span class="w">      </span><span class="c">!! Tidal forcing (prescribed elevation) boundary</span>
+<a id="ln-24" name="ln-24" href="#ln-24"></a><span class="w">   </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">parameter</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">BC_NESTED</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">4</span>
+<a id="ln-25" name="ln-25" href="#ln-25"></a><span class="w">      </span><span class="c">!! Nested boundary (ghost cells filled by nesting module)</span>
+<a id="ln-26" name="ln-26" href="#ln-26"></a><span class="w">   </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">parameter</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">BC_INFLOW</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">5</span>
+<a id="ln-27" name="ln-27" href="#ln-27"></a><span class="w">      </span><span class="c">!! Prescribed normal velocity boundary</span>
+<a id="ln-28" name="ln-28" href="#ln-28"></a><span class="w">   </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">parameter</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">BC_DISCHARGE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">6</span>
+<a id="ln-29" name="ln-29" href="#ln-29"></a><span class="w">      </span><span class="c">!! Prescribed volume flux boundary</span>
+<a id="ln-30" name="ln-30" href="#ln-30"></a><span class="w">   </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">parameter</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">BC_CLAMPED</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">7</span>
+<a id="ln-31" name="ln-31" href="#ln-31"></a><span class="w">      </span><span class="c">!! Clamped (Dirichlet) elevation boundary</span>
+<a id="ln-32" name="ln-32" href="#ln-32"></a><span class="w">   </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">parameter</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">BC_SPONGE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">8</span>
+<a id="ln-33" name="ln-33" href="#ln-33"></a><span class="w">      </span><span class="c">!! Sponge relaxation zone (ghost cells use wall BC)</span>
+<a id="ln-34" name="ln-34" href="#ln-34"></a><span class="w">   </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">parameter</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">BC_CHAPMAN</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">9</span>
+<a id="ln-35" name="ln-35" href="#ln-35"></a><span class="w">      </span><span class="c">!! Chapman (Orlanski radiation) boundary</span>
+<a id="ln-36" name="ln-36" href="#ln-36"></a>
+<a id="ln-37" name="ln-37" href="#ln-37"></a><span class="w">   </span><span class="k">type</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">bc_params_t</span>
+<a id="ln-38" name="ln-38" href="#ln-38"></a><span class="w">      </span><span class="c">!! Boundary condition parameters for all four edges</span>
+<a id="ln-39" name="ln-39" href="#ln-39"></a><span class="w">      </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">west</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">BC_WALL</span>
+<a id="ln-40" name="ln-40" href="#ln-40"></a><span class="w">         </span><span class="c">!! West boundary type</span>
+<a id="ln-41" name="ln-41" href="#ln-41"></a><span class="w">      </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">east</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">BC_WALL</span>
+<a id="ln-42" name="ln-42" href="#ln-42"></a><span class="w">         </span><span class="c">!! East boundary type</span>
+<a id="ln-43" name="ln-43" href="#ln-43"></a><span class="w">      </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">south</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">BC_WALL</span>
+<a id="ln-44" name="ln-44" href="#ln-44"></a><span class="w">         </span><span class="c">!! South boundary type</span>
+<a id="ln-45" name="ln-45" href="#ln-45"></a><span class="w">      </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">north</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">BC_WALL</span>
+<a id="ln-46" name="ln-46" href="#ln-46"></a><span class="w">         </span><span class="c">!! North boundary type</span>
+<a id="ln-47" name="ln-47" href="#ln-47"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">tidal_amplitude</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<a id="ln-48" name="ln-48" href="#ln-48"></a><span class="w">         </span><span class="c">!! Tidal elevation amplitude (m) — single-constituent legacy</span>
+<a id="ln-49" name="ln-49" href="#ln-49"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">tidal_period</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">4471</span><span class="mf">2.0_wp</span>
+<a id="ln-50" name="ln-50" href="#ln-50"></a><span class="w">         </span><span class="c">!! Tidal period (s), default M2 = 12.42 h — single-constituent legacy</span>
+<a id="ln-51" name="ln-51" href="#ln-51"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="nb">time</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<a id="ln-52" name="ln-52" href="#ln-52"></a><span class="w">         </span><span class="c">!! Current simulation time (s)</span>
+<a id="ln-53" name="ln-53" href="#ln-53"></a>
+<a id="ln-54" name="ln-54" href="#ln-54"></a><span class="w">      </span><span class="c">! Multi-constituent tidal forcing</span>
+<a id="ln-55" name="ln-55" href="#ln-55"></a><span class="w">      </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">n_tidal_constituents</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+<a id="ln-56" name="ln-56" href="#ln-56"></a><span class="w">         </span><span class="c">!! Number of active tidal constituents (0 = use legacy single)</span>
+<a id="ln-57" name="ln-57" href="#ln-57"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">tidal_amp</span><span class="p">(</span><span class="n">MAX_TIDAL_CONSTITUENTS</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<a id="ln-58" name="ln-58" href="#ln-58"></a><span class="w">         </span><span class="c">!! Constituent amplitudes (m)</span>
+<a id="ln-59" name="ln-59" href="#ln-59"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">tidal_phase</span><span class="p">(</span><span class="n">MAX_TIDAL_CONSTITUENTS</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<a id="ln-60" name="ln-60" href="#ln-60"></a><span class="w">         </span><span class="c">!! Constituent phases (radians)</span>
+<a id="ln-61" name="ln-61" href="#ln-61"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">tidal_omega</span><span class="p">(</span><span class="n">MAX_TIDAL_CONSTITUENTS</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<a id="ln-62" name="ln-62" href="#ln-62"></a><span class="w">         </span><span class="c">!! Constituent angular frequencies (rad/s)</span>
+<a id="ln-63" name="ln-63" href="#ln-63"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">inflow_velocity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<a id="ln-64" name="ln-64" href="#ln-64"></a><span class="w">         </span><span class="c">!! Prescribed normal velocity for BC_INFLOW (m/s)</span>
+<a id="ln-65" name="ln-65" href="#ln-65"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">inflow_salinity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">-</span><span class="mf">1.0_wp</span>
+<a id="ln-66" name="ln-66" href="#ln-66"></a><span class="w">         </span><span class="c">!! Prescribed salinity for BC_INFLOW (PSU); &lt;0 = zero-gradient</span>
+<a id="ln-67" name="ln-67" href="#ln-67"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">inflow_temperature</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">-</span><span class="mi">99</span><span class="mf">9.0_wp</span>
+<a id="ln-68" name="ln-68" href="#ln-68"></a><span class="w">         </span><span class="c">!! Prescribed temperature for BC_INFLOW (degC); &lt;0 = zero-gradient</span>
+<a id="ln-69" name="ln-69" href="#ln-69"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">discharge_flux</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<a id="ln-70" name="ln-70" href="#ln-70"></a><span class="w">         </span><span class="c">!! Prescribed volume flux for BC_DISCHARGE (m^2/s)</span>
+<a id="ln-71" name="ln-71" href="#ln-71"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">clamped_elevation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<a id="ln-72" name="ln-72" href="#ln-72"></a><span class="w">         </span><span class="c">!! Prescribed surface elevation for BC_CLAMPED (m)</span>
+<a id="ln-73" name="ln-73" href="#ln-73"></a><span class="w">      </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">sponge_width</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+<a id="ln-74" name="ln-74" href="#ln-74"></a><span class="w">         </span><span class="c">!! Sponge layer width in cells</span>
+<a id="ln-75" name="ln-75" href="#ln-75"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">sponge_strength</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<a id="ln-76" name="ln-76" href="#ln-76"></a><span class="w">         </span><span class="c">!! Sponge relaxation rate (1/s)</span>
+<a id="ln-77" name="ln-77" href="#ln-77"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">sponge_h_ref</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<a id="ln-78" name="ln-78" href="#ln-78"></a><span class="w">         </span><span class="c">!! Sponge reference depth (m)</span>
+<a id="ln-79" name="ln-79" href="#ln-79"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">eta_old_west</span><span class="p">(:)</span>
+<a id="ln-80" name="ln-80" href="#ln-80"></a><span class="w">         </span><span class="c">!! Chapman: previous-step eta at west boundary (ny)</span>
+<a id="ln-81" name="ln-81" href="#ln-81"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">eta_old_east</span><span class="p">(:)</span>
+<a id="ln-82" name="ln-82" href="#ln-82"></a><span class="w">         </span><span class="c">!! Chapman: previous-step eta at east boundary (ny)</span>
+<a id="ln-83" name="ln-83" href="#ln-83"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">eta_old_south</span><span class="p">(:)</span>
+<a id="ln-84" name="ln-84" href="#ln-84"></a><span class="w">         </span><span class="c">!! Chapman: previous-step eta at south boundary (nx)</span>
+<a id="ln-85" name="ln-85" href="#ln-85"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">eta_old_north</span><span class="p">(:)</span>
+<a id="ln-86" name="ln-86" href="#ln-86"></a><span class="w">         </span><span class="c">!! Chapman: previous-step eta at north boundary (nx)</span>
+<a id="ln-87" name="ln-87" href="#ln-87"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">dx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0_wp</span>
+<a id="ln-88" name="ln-88" href="#ln-88"></a><span class="w">         </span><span class="c">!! Cell size in x-direction (m), needed for Chapman</span>
+<a id="ln-89" name="ln-89" href="#ln-89"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">dy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0_wp</span>
+<a id="ln-90" name="ln-90" href="#ln-90"></a><span class="w">         </span><span class="c">!! Cell size in y-direction (m), needed for Chapman</span>
+<a id="ln-91" name="ln-91" href="#ln-91"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">dt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<a id="ln-92" name="ln-92" href="#ln-92"></a><span class="w">         </span><span class="c">!! Current timestep (s), needed for Chapman</span>
+<a id="ln-93" name="ln-93" href="#ln-93"></a><span class="w">   </span><span class="k">end type </span><span class="n">bc_params_t</span>
+<a id="ln-94" name="ln-94" href="#ln-94"></a>
+<a id="ln-95" name="ln-95" href="#ln-95"></a><span class="k">contains</span>
+<a id="ln-96" name="ln-96" href="#ln-96"></a>
+<a id="ln-97" name="ln-97" href="#ln-97"></a><span class="k">   pure function </span><span class="n">bc_type_from_string</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="w"> </span><span class="k">result</span><span class="p">(</span><span class="n">bc_type</span><span class="p">)</span>
+<a id="ln-98" name="ln-98" href="#ln-98"></a><span class="w">      </span><span class="c">!! Convert boundary type string to integer constant</span>
+<a id="ln-99" name="ln-99" href="#ln-99"></a><span class="w">      </span><span class="kt">character</span><span class="p">(</span><span class="nb">len</span><span class="o">=*</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">name</span>
+<a id="ln-100" name="ln-100" href="#ln-100"></a><span class="w">      </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">bc_type</span>
+<a id="ln-101" name="ln-101" href="#ln-101"></a>
+<a id="ln-102" name="ln-102" href="#ln-102"></a><span class="w">      </span><span class="k">select case</span><span class="w"> </span><span class="p">(</span><span class="nb">trim</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+<a id="ln-103" name="ln-103" href="#ln-103"></a><span class="w">      </span><span class="k">case</span><span class="w"> </span><span class="p">(</span><span class="s2">"wall"</span><span class="p">)</span>
+<a id="ln-104" name="ln-104" href="#ln-104"></a><span class="w">         </span><span class="n">bc_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">BC_WALL</span>
+<a id="ln-105" name="ln-105" href="#ln-105"></a><span class="w">      </span><span class="k">case</span><span class="w"> </span><span class="p">(</span><span class="s2">"open"</span><span class="p">)</span>
+<a id="ln-106" name="ln-106" href="#ln-106"></a><span class="w">         </span><span class="n">bc_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">BC_OPEN</span>
+<a id="ln-107" name="ln-107" href="#ln-107"></a><span class="w">      </span><span class="k">case</span><span class="w"> </span><span class="p">(</span><span class="s2">"tidal"</span><span class="p">)</span>
+<a id="ln-108" name="ln-108" href="#ln-108"></a><span class="w">         </span><span class="n">bc_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">BC_TIDAL</span>
+<a id="ln-109" name="ln-109" href="#ln-109"></a><span class="w">      </span><span class="k">case</span><span class="w"> </span><span class="p">(</span><span class="s2">"nested"</span><span class="p">)</span>
+<a id="ln-110" name="ln-110" href="#ln-110"></a><span class="w">         </span><span class="n">bc_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">BC_NESTED</span>
+<a id="ln-111" name="ln-111" href="#ln-111"></a><span class="w">      </span><span class="k">case</span><span class="w"> </span><span class="p">(</span><span class="s2">"inflow"</span><span class="p">)</span>
+<a id="ln-112" name="ln-112" href="#ln-112"></a><span class="w">         </span><span class="n">bc_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">BC_INFLOW</span>
+<a id="ln-113" name="ln-113" href="#ln-113"></a><span class="w">      </span><span class="k">case</span><span class="w"> </span><span class="p">(</span><span class="s2">"discharge"</span><span class="p">)</span>
+<a id="ln-114" name="ln-114" href="#ln-114"></a><span class="w">         </span><span class="n">bc_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">BC_DISCHARGE</span>
+<a id="ln-115" name="ln-115" href="#ln-115"></a><span class="w">      </span><span class="k">case</span><span class="w"> </span><span class="p">(</span><span class="s2">"clamped"</span><span class="p">)</span>
+<a id="ln-116" name="ln-116" href="#ln-116"></a><span class="w">         </span><span class="n">bc_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">BC_CLAMPED</span>
+<a id="ln-117" name="ln-117" href="#ln-117"></a><span class="w">      </span><span class="k">case</span><span class="w"> </span><span class="p">(</span><span class="s2">"sponge"</span><span class="p">)</span>
+<a id="ln-118" name="ln-118" href="#ln-118"></a><span class="w">         </span><span class="n">bc_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">BC_SPONGE</span>
+<a id="ln-119" name="ln-119" href="#ln-119"></a><span class="w">      </span><span class="k">case</span><span class="w"> </span><span class="p">(</span><span class="s2">"chapman"</span><span class="p">)</span>
+<a id="ln-120" name="ln-120" href="#ln-120"></a><span class="w">         </span><span class="n">bc_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">BC_CHAPMAN</span>
+<a id="ln-121" name="ln-121" href="#ln-121"></a><span class="w">      </span><span class="k">case </span><span class="n">default</span>
+<a id="ln-122" name="ln-122" href="#ln-122"></a><span class="w">         </span><span class="n">bc_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">BC_WALL</span>
+<a id="ln-123" name="ln-123" href="#ln-123"></a><span class="w">      </span><span class="k">end select</span>
+<a id="ln-124" name="ln-124" href="#ln-124"></a>
+<a id="ln-125" name="ln-125" href="#ln-125"></a><span class="k">   end function </span><span class="n">bc_type_from_string</span>
+<a id="ln-126" name="ln-126" href="#ln-126"></a>
+<a id="ln-127" name="ln-127" href="#ln-127"></a><span class="w">   </span><span class="k">subroutine </span><span class="n">bc_init_from_config</span><span class="p">(</span><span class="n">bc</span><span class="p">,</span><span class="w"> </span><span class="n">cfg</span><span class="p">)</span>
+<a id="ln-128" name="ln-128" href="#ln-128"></a><span class="w">      </span><span class="c">!! Initialise boundary condition parameters from config</span>
+<a id="ln-129" name="ln-129" href="#ln-129"></a><span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="n">bc_params_t</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">bc</span>
+<a id="ln-130" name="ln-130" href="#ln-130"></a><span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="n">config_t</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">cfg</span>
+<a id="ln-131" name="ln-131" href="#ln-131"></a>
+<a id="ln-132" name="ln-132" href="#ln-132"></a><span class="w">      </span><span class="n">bc</span><span class="p">%</span><span class="n">west</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">bc_type_from_string</span><span class="p">(</span><span class="n">cfg</span><span class="p">%</span><span class="n">bc_west</span><span class="p">)</span>
+<a id="ln-133" name="ln-133" href="#ln-133"></a><span class="w">      </span><span class="n">bc</span><span class="p">%</span><span class="n">east</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">bc_type_from_string</span><span class="p">(</span><span class="n">cfg</span><span class="p">%</span><span class="n">bc_east</span><span class="p">)</span>
+<a id="ln-134" name="ln-134" href="#ln-134"></a><span class="w">      </span><span class="n">bc</span><span class="p">%</span><span class="n">south</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">bc_type_from_string</span><span class="p">(</span><span class="n">cfg</span><span class="p">%</span><span class="n">bc_south</span><span class="p">)</span>
+<a id="ln-135" name="ln-135" href="#ln-135"></a><span class="w">      </span><span class="n">bc</span><span class="p">%</span><span class="n">north</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">bc_type_from_string</span><span class="p">(</span><span class="n">cfg</span><span class="p">%</span><span class="n">bc_north</span><span class="p">)</span>
+<a id="ln-136" name="ln-136" href="#ln-136"></a><span class="w">      </span><span class="n">bc</span><span class="p">%</span><span class="n">tidal_amplitude</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cfg</span><span class="p">%</span><span class="n">tidal_amplitude</span>
+<a id="ln-137" name="ln-137" href="#ln-137"></a><span class="w">      </span><span class="n">bc</span><span class="p">%</span><span class="n">tidal_period</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cfg</span><span class="p">%</span><span class="n">tidal_period</span>
+<a id="ln-138" name="ln-138" href="#ln-138"></a><span class="w">      </span><span class="n">bc</span><span class="p">%</span><span class="n">n_tidal_constituents</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cfg</span><span class="p">%</span><span class="n">n_tidal_constituents</span>
+<a id="ln-139" name="ln-139" href="#ln-139"></a><span class="w">      </span><span class="n">bc</span><span class="p">%</span><span class="n">tidal_amp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cfg</span><span class="p">%</span><span class="n">tidal_amp</span>
+<a id="ln-140" name="ln-140" href="#ln-140"></a><span class="w">      </span><span class="n">bc</span><span class="p">%</span><span class="n">tidal_phase</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cfg</span><span class="p">%</span><span class="n">tidal_phase</span>
+<a id="ln-141" name="ln-141" href="#ln-141"></a><span class="w">      </span><span class="n">bc</span><span class="p">%</span><span class="n">tidal_omega</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cfg</span><span class="p">%</span><span class="n">tidal_omega</span>
+<a id="ln-142" name="ln-142" href="#ln-142"></a><span class="w">      </span><span class="n">bc</span><span class="p">%</span><span class="n">inflow_velocity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cfg</span><span class="p">%</span><span class="n">inflow_velocity</span>
+<a id="ln-143" name="ln-143" href="#ln-143"></a><span class="w">      </span><span class="n">bc</span><span class="p">%</span><span class="n">inflow_salinity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cfg</span><span class="p">%</span><span class="n">inflow_salinity</span>
+<a id="ln-144" name="ln-144" href="#ln-144"></a><span class="w">      </span><span class="n">bc</span><span class="p">%</span><span class="n">inflow_temperature</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cfg</span><span class="p">%</span><span class="n">inflow_temperature</span>
+<a id="ln-145" name="ln-145" href="#ln-145"></a><span class="w">      </span><span class="n">bc</span><span class="p">%</span><span class="n">discharge_flux</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cfg</span><span class="p">%</span><span class="n">discharge_flux</span>
+<a id="ln-146" name="ln-146" href="#ln-146"></a><span class="w">      </span><span class="n">bc</span><span class="p">%</span><span class="n">clamped_elevation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cfg</span><span class="p">%</span><span class="n">clamped_elevation</span>
+<a id="ln-147" name="ln-147" href="#ln-147"></a><span class="w">      </span><span class="n">bc</span><span class="p">%</span><span class="n">sponge_width</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cfg</span><span class="p">%</span><span class="n">sponge_width</span>
+<a id="ln-148" name="ln-148" href="#ln-148"></a><span class="w">      </span><span class="n">bc</span><span class="p">%</span><span class="n">sponge_strength</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cfg</span><span class="p">%</span><span class="n">sponge_strength</span>
+<a id="ln-149" name="ln-149" href="#ln-149"></a><span class="w">      </span><span class="n">bc</span><span class="p">%</span><span class="n">sponge_h_ref</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cfg</span><span class="p">%</span><span class="n">sponge_h_ref</span>
+<a id="ln-150" name="ln-150" href="#ln-150"></a><span class="w">      </span><span class="n">bc</span><span class="p">%</span><span class="n">dx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cfg</span><span class="p">%</span><span class="n">dx</span>
+<a id="ln-151" name="ln-151" href="#ln-151"></a><span class="w">      </span><span class="n">bc</span><span class="p">%</span><span class="n">dy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cfg</span><span class="p">%</span><span class="n">dy</span>
+<a id="ln-152" name="ln-152" href="#ln-152"></a>
+<a id="ln-153" name="ln-153" href="#ln-153"></a><span class="w">   </span><span class="k">end subroutine </span><span class="n">bc_init_from_config</span>
+<a id="ln-154" name="ln-154" href="#ln-154"></a>
+<a id="ln-155" name="ln-155" href="#ln-155"></a><span class="w">   </span><span class="k">subroutine </span><span class="n">bc_init_chapman</span><span class="p">(</span><span class="n">bc</span><span class="p">,</span><span class="w"> </span><span class="n">h</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="n">nx_total</span><span class="p">,</span><span class="w"> </span><span class="n">ny_total</span><span class="p">,</span><span class="w"> </span><span class="n">nghost</span><span class="p">)</span>
+<a id="ln-156" name="ln-156" href="#ln-156"></a><span class="w">      </span><span class="c">!! Allocate Chapman eta_old arrays for all four edges (so they are</span>
+<a id="ln-157" name="ln-157" href="#ln-157"></a><span class="w">      </span><span class="c">!! available for unconditional GPU mapping in `solver_enter_data`)</span>
+<a id="ln-158" name="ln-158" href="#ln-158"></a><span class="w">      </span><span class="c">!! and seed the active edges from current eta. Inactive edges keep</span>
+<a id="ln-159" name="ln-159" href="#ln-159"></a><span class="w">      </span><span class="c">!! their zero source value -- the kernel never reads them when the</span>
+<a id="ln-160" name="ln-160" href="#ln-160"></a><span class="w">      </span><span class="c">!! corresponding `bc%&lt;side&gt;` is not `BC_CHAPMAN`, so the zeros are</span>
+<a id="ln-161" name="ln-161" href="#ln-161"></a><span class="w">      </span><span class="c">!! harmless.</span>
+<a id="ln-162" name="ln-162" href="#ln-162"></a><span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="n">bc_params_t</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">bc</span>
+<a id="ln-163" name="ln-163" href="#ln-163"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">h</span><span class="p">(:,</span><span class="w"> </span><span class="p">:)</span>
+<a id="ln-164" name="ln-164" href="#ln-164"></a><span class="w">         </span><span class="c">!! Water depth array (nx_total, ny_total)</span>
+<a id="ln-165" name="ln-165" href="#ln-165"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">b</span><span class="p">(:,</span><span class="w"> </span><span class="p">:)</span>
+<a id="ln-166" name="ln-166" href="#ln-166"></a><span class="w">         </span><span class="c">!! Bottom elevation array (nx_total, ny_total)</span>
+<a id="ln-167" name="ln-167" href="#ln-167"></a><span class="w">      </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">nx_total</span>
+<a id="ln-168" name="ln-168" href="#ln-168"></a><span class="w">         </span><span class="c">!! Total cells in x including ghost cells</span>
+<a id="ln-169" name="ln-169" href="#ln-169"></a><span class="w">      </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">ny_total</span>
+<a id="ln-170" name="ln-170" href="#ln-170"></a><span class="w">         </span><span class="c">!! Total cells in y including ghost cells</span>
+<a id="ln-171" name="ln-171" href="#ln-171"></a><span class="w">      </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">nghost</span>
+<a id="ln-172" name="ln-172" href="#ln-172"></a><span class="w">         </span><span class="c">!! Ghost cell width</span>
+<a id="ln-173" name="ln-173" href="#ln-173"></a>
+<a id="ln-174" name="ln-174" href="#ln-174"></a><span class="w">      </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">ii</span><span class="p">,</span><span class="w"> </span><span class="n">jj</span>
+<a id="ln-175" name="ln-175" href="#ln-175"></a>
+<a id="ln-176" name="ln-176" href="#ln-176"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="w"> </span><span class="nb">allocated</span><span class="p">(</span><span class="n">bc</span><span class="p">%</span><span class="n">eta_old_west</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+<a id="ln-177" name="ln-177" href="#ln-177"></a><span class="k">         allocate</span><span class="w"> </span><span class="p">(</span><span class="n">bc</span><span class="p">%</span><span class="n">eta_old_west</span><span class="p">(</span><span class="n">ny_total</span><span class="p">),</span><span class="w"> </span><span class="n">source</span><span class="o">=</span><span class="mf">0.0_wp</span><span class="p">)</span>
+<a id="ln-178" name="ln-178" href="#ln-178"></a><span class="w">      </span><span class="k">end if</span>
+<a id="ln-179" name="ln-179" href="#ln-179"></a><span class="k">      if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="w"> </span><span class="nb">allocated</span><span class="p">(</span><span class="n">bc</span><span class="p">%</span><span class="n">eta_old_east</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+<a id="ln-180" name="ln-180" href="#ln-180"></a><span class="k">         allocate</span><span class="w"> </span><span class="p">(</span><span class="n">bc</span><span class="p">%</span><span class="n">eta_old_east</span><span class="p">(</span><span class="n">ny_total</span><span class="p">),</span><span class="w"> </span><span class="n">source</span><span class="o">=</span><span class="mf">0.0_wp</span><span class="p">)</span>
+<a id="ln-181" name="ln-181" href="#ln-181"></a><span class="w">      </span><span class="k">end if</span>
+<a id="ln-182" name="ln-182" href="#ln-182"></a><span class="k">      if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="w"> </span><span class="nb">allocated</span><span class="p">(</span><span class="n">bc</span><span class="p">%</span><span class="n">eta_old_south</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+<a id="ln-183" name="ln-183" href="#ln-183"></a><span class="k">         allocate</span><span class="w"> </span><span class="p">(</span><span class="n">bc</span><span class="p">%</span><span class="n">eta_old_south</span><span class="p">(</span><span class="n">nx_total</span><span class="p">),</span><span class="w"> </span><span class="n">source</span><span class="o">=</span><span class="mf">0.0_wp</span><span class="p">)</span>
+<a id="ln-184" name="ln-184" href="#ln-184"></a><span class="w">      </span><span class="k">end if</span>
+<a id="ln-185" name="ln-185" href="#ln-185"></a><span class="k">      if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="w"> </span><span class="nb">allocated</span><span class="p">(</span><span class="n">bc</span><span class="p">%</span><span class="n">eta_old_north</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+<a id="ln-186" name="ln-186" href="#ln-186"></a><span class="k">         allocate</span><span class="w"> </span><span class="p">(</span><span class="n">bc</span><span class="p">%</span><span class="n">eta_old_north</span><span class="p">(</span><span class="n">nx_total</span><span class="p">),</span><span class="w"> </span><span class="n">source</span><span class="o">=</span><span class="mf">0.0_wp</span><span class="p">)</span>
+<a id="ln-187" name="ln-187" href="#ln-187"></a><span class="w">      </span><span class="k">end if</span>
+<a id="ln-188" name="ln-188" href="#ln-188"></a>
+<a id="ln-189" name="ln-189" href="#ln-189"></a><span class="k">      if</span><span class="w"> </span><span class="p">(</span><span class="n">bc</span><span class="p">%</span><span class="n">west</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">BC_CHAPMAN</span><span class="w"> </span><span class="p">.</span><span class="nb">or</span><span class="p">.</span><span class="w"> </span><span class="n">bc</span><span class="p">%</span><span class="n">east</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">BC_CHAPMAN</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<a id="ln-190" name="ln-190" href="#ln-190"></a><span class="k">         do </span><span class="n">jj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">ny_total</span>
+<a id="ln-191" name="ln-191" href="#ln-191"></a><span class="w">            </span><span class="n">bc</span><span class="p">%</span><span class="n">eta_old_west</span><span class="p">(</span><span class="n">jj</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">h</span><span class="p">(</span><span class="n">nghost</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">jj</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b</span><span class="p">(</span><span class="n">nghost</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">jj</span><span class="p">)</span>
+<a id="ln-192" name="ln-192" href="#ln-192"></a><span class="w">            </span><span class="n">bc</span><span class="p">%</span><span class="n">eta_old_east</span><span class="p">(</span><span class="n">jj</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">h</span><span class="p">(</span><span class="n">nx_total</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">nghost</span><span class="p">,</span><span class="w"> </span><span class="n">jj</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b</span><span class="p">(</span><span class="n">nx_total</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">nghost</span><span class="p">,</span><span class="w"> </span><span class="n">jj</span><span class="p">)</span>
+<a id="ln-193" name="ln-193" href="#ln-193"></a><span class="w">         </span><span class="k">end do</span>
+<a id="ln-194" name="ln-194" href="#ln-194"></a><span class="k">      end if</span>
+<a id="ln-195" name="ln-195" href="#ln-195"></a><span class="k">      if</span><span class="w"> </span><span class="p">(</span><span class="n">bc</span><span class="p">%</span><span class="n">south</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">BC_CHAPMAN</span><span class="w"> </span><span class="p">.</span><span class="nb">or</span><span class="p">.</span><span class="w"> </span><span class="n">bc</span><span class="p">%</span><span class="n">north</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">BC_CHAPMAN</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<a id="ln-196" name="ln-196" href="#ln-196"></a><span class="k">         do </span><span class="n">ii</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">nx_total</span>
+<a id="ln-197" name="ln-197" href="#ln-197"></a><span class="w">            </span><span class="n">bc</span><span class="p">%</span><span class="n">eta_old_south</span><span class="p">(</span><span class="n">ii</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">h</span><span class="p">(</span><span class="n">ii</span><span class="p">,</span><span class="w"> </span><span class="n">nghost</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b</span><span class="p">(</span><span class="n">ii</span><span class="p">,</span><span class="w"> </span><span class="n">nghost</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<a id="ln-198" name="ln-198" href="#ln-198"></a><span class="w">            </span><span class="n">bc</span><span class="p">%</span><span class="n">eta_old_north</span><span class="p">(</span><span class="n">ii</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">h</span><span class="p">(</span><span class="n">ii</span><span class="p">,</span><span class="w"> </span><span class="n">ny_total</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">nghost</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b</span><span class="p">(</span><span class="n">ii</span><span class="p">,</span><span class="w"> </span><span class="n">ny_total</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">nghost</span><span class="p">)</span>
+<a id="ln-199" name="ln-199" href="#ln-199"></a><span class="w">         </span><span class="k">end do</span>
+<a id="ln-200" name="ln-200" href="#ln-200"></a><span class="k">      end if</span>
+<a id="ln-201" name="ln-201" href="#ln-201"></a>
+<a id="ln-202" name="ln-202" href="#ln-202"></a><span class="k">   end subroutine </span><span class="n">bc_init_chapman</span>
+<a id="ln-203" name="ln-203" href="#ln-203"></a>
+<a id="ln-204" name="ln-204" href="#ln-204"></a><span class="k">end module </span><span class="n">rki_boundary_types</span>
+</pre></div>
+
+      </section>
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Rakali
+ was developed by Jorge Luis Galvez Vallejo<br>              &copy; 2026 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+ on 2026-10-08 12:55 +0000             </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>

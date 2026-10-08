@@ -1,0 +1,1785 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="GPU-native coastal solver — structured Cartesian and unstructured triangular grids, hydrostatic multilayer + non-hydrostatic, portable across NVHPC/gfortran/ifx.">
+    <meta name="author" content="Jorge Luis Galvez Vallejo" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>si_unstr_advance &ndash; Rakali</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">Rakali </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/absint.html">Abstract Interfaces</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>si_unstr_advance
+      <small>Subroutine</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.3% of total for procedures.">82 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/rki_si_unstr_step.F90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/rki_si_unstr_step.f90.html'>rki_si_unstr_step.F90</a></li>
+                <li class="breadcrumb-item"><a href='../module/rki_si_unstr_step.html'>rki_si_unstr_step</a></li>
+            <li class="breadcrumb-item active" aria-current="page">si_unstr_advance</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+  
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#vars-0"
+         aria-expanded="false" aria-controls="vars-0">
+         <h4 class="card-header bg-primary text-white">Variables</h4>
+      </a>
+      <div id="vars-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../proc/si_unstr_advance.html#variable-dgdn">dgdn</a>
+            <a class="list-group-item" href="../proc/si_unstr_advance.html#variable-i~99">i</a>
+            <a class="list-group-item" href="../proc/si_unstr_advance.html#variable-inv_delta~2">inv_delta</a>
+            <a class="list-group-item" href="../proc/si_unstr_advance.html#variable-k~94">k</a>
+            <a class="list-group-item" href="../proc/si_unstr_advance.html#variable-kn~11">kn</a>
+            <a class="list-group-item" href="../proc/si_unstr_advance.html#variable-tau_n">tau_n</a>
+            <a class="list-group-item" href="../proc/si_unstr_advance.html#variable-un_e">un_e</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../proc/si_unstr_advance.html#src">si_unstr_advance</a>
+      </div>
+    </div>
+
+
+  </div>
+
+    </div>
+    
+    <div class="col-md-9" id='text'>
+    <h2>private  subroutine si_unstr_advance(mesh, nct, nco, n_bc, stage, xmom, ymom, bed, height, eta, eta_r, eta_p, eta_Ap, eta_z, eta_diag, u_edge, u_star, Hf_edge, eta_ghost_edge, u_n_edge, bc_type, bc_eta_ext, wind_tau_x, wind_tau_y, dt, theta, g_theta2_dt2, gtheta_dt, g_omtheta_dt, precond, rtol, iter_out, mass_res_out, mg)  
+</h2>
+    
+
+    <p>Flat-impl core: explicit-shape state arrays only (NVHPC device
+codegen — assumed-shape dummies in do-concurrent kernels emit
+per-launch descriptor-walk memcpys).  The edge workspaces
+<code>eta_ghost_edge</code> / <code>u_n_edge</code> are persistent slots on the SI state
+(mapped in its enter_data — no per-step allocation).</p>
+
+
+    <h3>Arguments</h3>
+        <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mesh~35"></span>
+              type(<a href='../type/mesh_unstr_t.html'>mesh_unstr_t</a>),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>mesh</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nct~21"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nct</strong></td>
+            <td>
+                <p>Cell array extent (ncells_total) — the explicit-shape dim.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nco~25"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nco</strong></td>
+            <td>
+                <p>Owned-cell loop bound.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-n_bc~6"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>n_bc</strong></td>
+            <td>
+                <p>BC group table size (<code>MAX_BC_GROUPS</code>).</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-stage~3"></span>
+              real(kind=wp),
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>stage</strong>(nct)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-xmom"></span>
+              real(kind=wp),
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>xmom</strong>(nct)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ymom"></span>
+              real(kind=wp),
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>ymom</strong>(nct)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-bed~7"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>bed</strong>(nct)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-height~3"></span>
+              real(kind=wp),
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>height</strong>(nct)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-eta~13"></span>
+              real(kind=wp),
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>eta</strong>(nct)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-eta_r~2"></span>
+              real(kind=wp),
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>eta_r</strong>(nct)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-eta_p"></span>
+              real(kind=wp),
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>eta_p</strong>(nct)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-eta_ap"></span>
+              real(kind=wp),
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>eta_Ap</strong>(nct)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-eta_z"></span>
+              real(kind=wp),
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>eta_z</strong>(nct)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-eta_diag~4"></span>
+              real(kind=wp),
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>eta_diag</strong>(nct)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-u_edge~2"></span>
+              real(kind=wp),
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>u_edge</strong>(EDGES_PER_TRI,nct)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-u_star~4"></span>
+              real(kind=wp),
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>u_star</strong>(EDGES_PER_TRI,nct)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-hf_edge~12"></span>
+              real(kind=wp),
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Hf_edge</strong>(EDGES_PER_TRI,nct)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-eta_ghost_edge~5"></span>
+              real(kind=wp),
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>eta_ghost_edge</strong>(EDGES_PER_TRI,nct)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-u_n_edge~3"></span>
+              real(kind=wp),
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>u_n_edge</strong>(EDGES_PER_TRI,nct)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-bc_type~6"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>bc_type</strong>(n_bc)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-bc_eta_ext~5"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>bc_eta_ext</strong>(n_bc)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-wind_tau_x~2"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>wind_tau_x</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-wind_tau_y~2"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>wind_tau_y</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-dt~47"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>dt</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-theta~4"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>theta</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-g_theta2_dt2~8"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>g_theta2_dt2</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-gtheta_dt~2"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>gtheta_dt</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-g_omtheta_dt~3"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>g_omtheta_dt</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-precond~2"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>precond</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-rtol~2"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>rtol</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-iter_out~5"></span>
+              integer,
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>iter_out</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mass_res_out~2"></span>
+              real(kind=wp),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>mass_res_out</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mg~3"></span>
+              type(<a href='../type/agglom_hierarchy_unstr_t.html'>agglom_hierarchy_unstr_t</a>),
+            </td>
+<td>intent(inout),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>mg</strong></td>
+            <td>
+                <p>Aggregation-MG hierarchy (present iff precond == MG); its operator
+is refreshed here for this step&rsquo;s frozen Hf before the solve.</p>
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <br>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Calls</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~si_unstr_advance~~CallsGraph Pages: 1 -->
+<svg id="procsi_unstr_advanceCallsGraph" width="641pt" height="273pt"
+ viewBox="0.00 0.00 641.00 272.62" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~si_unstr_advance~~CallsGraph" class="graph" transform="scale(0.59 0.59) rotate(0) translate(4 461.72)">
+<title>proc~~si_unstr_advance~~CallsGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-461.72 1091,-461.72 1091,4 -4,4"/>
+<!-- proc~si_unstr_advance -->
+<g id="proc~~si_unstr_advance~~CallsGraph_node1" class="node">
+<title>proc~si_unstr_advance</title>
+<polygon fill="none" stroke="black" points="104,-315 0,-315 0,-291 104,-291 104,-315"/>
+<text text-anchor="middle" x="52" y="-300.6" font-family="Helvetica,sans-Serif" font-size="10.50">si_unstr_advance</text>
+</g>
+<!-- local -->
+<g id="proc~~si_unstr_advance~~CallsGraph_node2" class="node">
+<title>local</title>
+<polygon fill="#777777" stroke="#777777" points="678.5,-356 624.5,-356 624.5,-332 678.5,-332 678.5,-356"/>
+<text text-anchor="middle" x="651.5" y="-341.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">local</text>
+</g>
+<!-- proc~si_unstr_advance&#45;&gt;local -->
+<g id="proc~~si_unstr_advance~~CallsGraph_edge1" class="edge">
+<title>proc~si_unstr_advance&#45;&gt;local</title>
+<path fill="none" stroke="#ff0000" d="M57.32,-315.32C67.21,-341.33 94.21,-401.41 140,-425 305.2,-510.1 537.18,-404.52 619.8,-361.06"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="621.95,-363.89 629.12,-356.09 618.65,-357.71 621.95,-363.89"/>
+</g>
+<!-- proc~agglom_hierarchy_unstr_refresh -->
+<g id="proc~~si_unstr_advance~~CallsGraph_node3" class="node">
+<title>proc~agglom_hierarchy_unstr_refresh</title>
+<g id="a_proc~~si_unstr_advance~~CallsGraph_node3"><a xlink:href="../proc/agglom_hierarchy_unstr_refresh.html" xlink:title="agglom_hierarchy_unstr_refresh">
+<polygon fill="#d9534f" stroke="#d9534f" points="331,-108 148,-108 148,-84 331,-84 331,-108"/>
+<text text-anchor="middle" x="239.5" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">agglom_hierarchy_unstr_refresh</text>
+</a>
+</g>
+</g>
+<!-- proc~si_unstr_advance&#45;&gt;proc~agglom_hierarchy_unstr_refresh -->
+<g id="proc~~si_unstr_advance~~CallsGraph_edge2" class="edge">
+<title>proc~si_unstr_advance&#45;&gt;proc~agglom_hierarchy_unstr_refresh</title>
+<path fill="none" stroke="#ff0000" d="M63,-290.91C78.99,-271.65 111.45,-232.92 140,-201 167.19,-170.61 199.73,-136.3 219.76,-115.42"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="222.38,-117.75 226.78,-108.11 217.33,-112.9 222.38,-117.75"/>
+</g>
+<!-- proc~si_unstr_cg_solve -->
+<g id="proc~~si_unstr_advance~~CallsGraph_node4" class="node">
+<title>proc~si_unstr_cg_solve</title>
+<g id="a_proc~~si_unstr_advance~~CallsGraph_node4"><a xlink:href="../proc/si_unstr_cg_solve.html" xlink:title="si_unstr_cg_solve">
+<polygon fill="#d9534f" stroke="#d9534f" points="291.5,-234 187.5,-234 187.5,-210 291.5,-210 291.5,-234"/>
+<text text-anchor="middle" x="239.5" y="-219.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">si_unstr_cg_solve</text>
+</a>
+</g>
+</g>
+<!-- proc~si_unstr_advance&#45;&gt;proc~si_unstr_cg_solve -->
+<g id="proc~~si_unstr_advance~~CallsGraph_edge3" class="edge">
+<title>proc~si_unstr_advance&#45;&gt;proc~si_unstr_cg_solve</title>
+<path fill="none" stroke="#ff0000" d="M80.77,-290.87C112.83,-276.88 165.7,-253.79 201.29,-238.25"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="203.08,-241.29 210.84,-234.08 200.28,-234.87 203.08,-241.29"/>
+</g>
+<!-- proc~si_unstr_compute_rhs -->
+<g id="proc~~si_unstr_advance~~CallsGraph_node5" class="node">
+<title>proc~si_unstr_compute_rhs</title>
+<g id="a_proc~~si_unstr_advance~~CallsGraph_node5"><a xlink:href="../proc/si_unstr_compute_rhs.html" xlink:title="si_unstr_compute_rhs">
+<polygon fill="#d9534f" stroke="#d9534f" points="303,-416 176,-416 176,-392 303,-392 303,-416"/>
+<text text-anchor="middle" x="239.5" y="-401.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">si_unstr_compute_rhs</text>
+</a>
+</g>
+</g>
+<!-- proc~si_unstr_advance&#45;&gt;proc~si_unstr_compute_rhs -->
+<g id="proc~~si_unstr_advance~~CallsGraph_edge4" class="edge">
+<title>proc~si_unstr_advance&#45;&gt;proc~si_unstr_compute_rhs</title>
+<path fill="none" stroke="#ff0000" d="M67.31,-315.16C83.95,-328.86 112.63,-351.14 140,-366 156.02,-374.7 174.47,-382.38 191.03,-388.51"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="189.94,-391.84 200.53,-391.94 192.32,-385.25 189.94,-391.84"/>
+</g>
+<!-- proc~si_unstr_edge_flux -->
+<g id="proc~~si_unstr_advance~~CallsGraph_node6" class="node">
+<title>proc~si_unstr_edge_flux</title>
+<g id="a_proc~~si_unstr_advance~~CallsGraph_node6"><a xlink:href="../proc/si_unstr_edge_flux.html" xlink:title="si_unstr_edge_flux">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="294.5,-66 184.5,-66 184.5,-42 294.5,-42 294.5,-66"/>
+<text text-anchor="middle" x="239.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">si_unstr_edge_flux</text>
+</a>
+</g>
+</g>
+<!-- proc~si_unstr_advance&#45;&gt;proc~si_unstr_edge_flux -->
+<g id="proc~~si_unstr_advance~~CallsGraph_edge5" class="edge">
+<title>proc~si_unstr_advance&#45;&gt;proc~si_unstr_edge_flux</title>
+<path fill="none" stroke="#ff0000" d="M53.74,-290.83C56.75,-252.56 71.46,-133.7 140,-75 149.69,-66.7 161.87,-61.42 174.32,-58.13"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="175.33,-61.49 184.32,-55.88 173.8,-54.66 175.33,-61.49"/>
+</g>
+<!-- proc~si_unstr_face_depths -->
+<g id="proc~~si_unstr_advance~~CallsGraph_node7" class="node">
+<title>proc~si_unstr_face_depths</title>
+<g id="a_proc~~si_unstr_advance~~CallsGraph_node7"><a xlink:href="../proc/si_unstr_face_depths.html" xlink:title="si_unstr_face_depths">
+<polygon fill="#d9534f" stroke="#d9534f" points="301,-357 178,-357 178,-333 301,-333 301,-357"/>
+<text text-anchor="middle" x="239.5" y="-342.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">si_unstr_face_depths</text>
+</a>
+</g>
+</g>
+<!-- proc~si_unstr_advance&#45;&gt;proc~si_unstr_face_depths -->
+<g id="proc~~si_unstr_advance~~CallsGraph_edge6" class="edge">
+<title>proc~si_unstr_advance&#45;&gt;proc~si_unstr_face_depths</title>
+<path fill="none" stroke="#ff0000" d="M101.72,-315C114.18,-318.01 127.58,-321.18 140,-324 150.01,-326.28 160.62,-328.61 171.01,-330.86"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="170.38,-334.31 180.89,-332.99 171.85,-327.46 170.38,-334.31"/>
+</g>
+<!-- proc~si_unstr_reconstruct_cell_momenta -->
+<g id="proc~~si_unstr_advance~~CallsGraph_node8" class="node">
+<title>proc~si_unstr_reconstruct_cell_momenta</title>
+<g id="a_proc~~si_unstr_advance~~CallsGraph_node8"><a xlink:href="../proc/si_unstr_reconstruct_cell_momenta.html" xlink:title="si_unstr_reconstruct_cell_momenta">
+<polygon fill="#d9534f" stroke="#d9534f" points="339,-315 140,-315 140,-291 339,-291 339,-315"/>
+<text text-anchor="middle" x="239.5" y="-300.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">si_unstr_reconstruct_cell_momenta</text>
+</a>
+</g>
+</g>
+<!-- proc~si_unstr_advance&#45;&gt;proc~si_unstr_reconstruct_cell_momenta -->
+<g id="proc~~si_unstr_advance~~CallsGraph_edge7" class="edge">
+<title>proc~si_unstr_advance&#45;&gt;proc~si_unstr_reconstruct_cell_momenta</title>
+<path fill="none" stroke="#ff0000" d="M104.18,-303C112.28,-303 120.92,-303 129.76,-303"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="129.8,-306.5 139.8,-303 129.8,-299.5 129.8,-306.5"/>
+</g>
+<!-- proc~galerkin_operator -->
+<g id="proc~~si_unstr_advance~~CallsGraph_node9" class="node">
+<title>proc~galerkin_operator</title>
+<g id="a_proc~~si_unstr_advance~~CallsGraph_node9"><a xlink:href="../proc/galerkin_operator.html" xlink:title="galerkin_operator">
+<polygon fill="#d9534f" stroke="#d9534f" points="506,-108 398,-108 398,-84 506,-84 506,-108"/>
+<text text-anchor="middle" x="452" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">galerkin_operator</text>
+</a>
+</g>
+</g>
+<!-- proc~agglom_hierarchy_unstr_refresh&#45;&gt;proc~galerkin_operator -->
+<g id="proc~~si_unstr_advance~~CallsGraph_edge8" class="edge">
+<title>proc~agglom_hierarchy_unstr_refresh&#45;&gt;proc~galerkin_operator</title>
+<path fill="none" stroke="#ffda00" d="M331.3,-96C350.27,-96 369.89,-96 387.61,-96"/>
+<polygon fill="#ffda00" stroke="#ffda00" points="387.81,-99.5 397.81,-96 387.81,-92.5 387.81,-99.5"/>
+</g>
+<!-- proc~level1_operator -->
+<g id="proc~~si_unstr_advance~~CallsGraph_node10" class="node">
+<title>proc~level1_operator</title>
+<g id="a_proc~~si_unstr_advance~~CallsGraph_node10"><a xlink:href="../proc/level1_operator.html" xlink:title="level1_operator">
+<polygon fill="#d9534f" stroke="#d9534f" points="500.5,-66 403.5,-66 403.5,-42 500.5,-42 500.5,-66"/>
+<text text-anchor="middle" x="452" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">level1_operator</text>
+</a>
+</g>
+</g>
+<!-- proc~agglom_hierarchy_unstr_refresh&#45;&gt;proc~level1_operator -->
+<g id="proc~~si_unstr_advance~~CallsGraph_edge9" class="edge">
+<title>proc~agglom_hierarchy_unstr_refresh&#45;&gt;proc~level1_operator</title>
+<path fill="none" stroke="#ffda00" d="M300.82,-83.96C329.95,-78.15 364.72,-71.21 393.47,-65.48"/>
+<polygon fill="#ffda00" stroke="#ffda00" points="394.25,-68.89 403.37,-63.5 392.88,-62.03 394.25,-68.89"/>
+</g>
+<!-- proc~level_coeffs_to_device -->
+<g id="proc~~si_unstr_advance~~CallsGraph_node11" class="node">
+<title>proc~level_coeffs_to_device</title>
+<g id="a_proc~~si_unstr_advance~~CallsGraph_node11"><a xlink:href="../proc/level_coeffs_to_device.html" xlink:title="level_coeffs_to_device">
+<polygon fill="#d9534f" stroke="#d9534f" points="518,-24 386,-24 386,0 518,0 518,-24"/>
+<text text-anchor="middle" x="452" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">level_coeffs_to_device</text>
+</a>
+</g>
+</g>
+<!-- proc~agglom_hierarchy_unstr_refresh&#45;&gt;proc~level_coeffs_to_device -->
+<g id="proc~~si_unstr_advance~~CallsGraph_edge10" class="edge">
+<title>proc~agglom_hierarchy_unstr_refresh&#45;&gt;proc~level_coeffs_to_device</title>
+<path fill="none" stroke="#ffda00" d="M319.95,-83.92C326.61,-81.47 333.06,-78.53 339,-75 360.14,-62.44 354.25,-46.18 375,-33 377.77,-31.24 380.69,-29.62 383.71,-28.14"/>
+<polygon fill="#ffda00" stroke="#ffda00" points="385.23,-31.29 393,-24.08 382.43,-24.88 385.23,-31.29"/>
+</g>
+<!-- proc~si_unstr_apply_helmholtz -->
+<g id="proc~~si_unstr_advance~~CallsGraph_node12" class="node">
+<title>proc~si_unstr_apply_helmholtz</title>
+<g id="a_proc~~si_unstr_advance~~CallsGraph_node12"><a xlink:href="../proc/si_unstr_apply_helmholtz.html" xlink:title="si_unstr_apply_helmholtz">
+<polygon fill="#d9534f" stroke="#d9534f" points="524.5,-276 379.5,-276 379.5,-252 524.5,-252 524.5,-276"/>
+<text text-anchor="middle" x="452" y="-261.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">si_unstr_apply_helmholtz</text>
+</a>
+</g>
+</g>
+<!-- proc~si_unstr_cg_solve&#45;&gt;proc~si_unstr_apply_helmholtz -->
+<g id="proc~~si_unstr_advance~~CallsGraph_edge11" class="edge">
+<title>proc~si_unstr_cg_solve&#45;&gt;proc~si_unstr_apply_helmholtz</title>
+<path fill="none" stroke="#48ff00" d="M291.72,-232.22C318.4,-237.54 351.42,-244.13 380.47,-249.93"/>
+<polygon fill="#48ff00" stroke="#48ff00" points="380.07,-253.42 390.56,-251.94 381.44,-246.55 380.07,-253.42"/>
+</g>
+<!-- proc~si_unstr_compute_diag -->
+<g id="proc~~si_unstr_advance~~CallsGraph_node13" class="node">
+<title>proc~si_unstr_compute_diag</title>
+<g id="a_proc~~si_unstr_advance~~CallsGraph_node13"><a xlink:href="../proc/si_unstr_compute_diag.html" xlink:title="si_unstr_compute_diag">
+<polygon fill="#d9534f" stroke="#d9534f" points="519,-234 385,-234 385,-210 519,-210 519,-234"/>
+<text text-anchor="middle" x="452" y="-219.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">si_unstr_compute_diag</text>
+</a>
+</g>
+</g>
+<!-- proc~si_unstr_cg_solve&#45;&gt;proc~si_unstr_compute_diag -->
+<g id="proc~~si_unstr_advance~~CallsGraph_edge12" class="edge">
+<title>proc~si_unstr_cg_solve&#45;&gt;proc~si_unstr_compute_diag</title>
+<path fill="none" stroke="#48ff00" d="M291.72,-222C316.65,-222 347.13,-222 374.72,-222"/>
+<polygon fill="#48ff00" stroke="#48ff00" points="374.75,-225.5 384.75,-222 374.75,-218.5 374.75,-225.5"/>
+</g>
+<!-- proc~si_unstr_precond_apply -->
+<g id="proc~~si_unstr_advance~~CallsGraph_node15" class="node">
+<title>proc~si_unstr_precond_apply</title>
+<g id="a_proc~~si_unstr_advance~~CallsGraph_node15"><a xlink:href="../proc/si_unstr_precond_apply.html" xlink:title="si_unstr_precond_apply">
+<polygon fill="#d9534f" stroke="#d9534f" points="520,-192 384,-192 384,-168 520,-168 520,-192"/>
+<text text-anchor="middle" x="452" y="-177.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">si_unstr_precond_apply</text>
+</a>
+</g>
+</g>
+<!-- proc~si_unstr_cg_solve&#45;&gt;proc~si_unstr_precond_apply -->
+<g id="proc~~si_unstr_advance~~CallsGraph_edge13" class="edge">
+<title>proc~si_unstr_cg_solve&#45;&gt;proc~si_unstr_precond_apply</title>
+<path fill="none" stroke="#48ff00" d="M291.72,-211.78C318.4,-206.46 351.42,-199.87 380.47,-194.07"/>
+<polygon fill="#48ff00" stroke="#48ff00" points="381.44,-197.45 390.56,-192.06 380.07,-190.58 381.44,-197.45"/>
+</g>
+<!-- reduce -->
+<g id="proc~~si_unstr_advance~~CallsGraph_node16" class="node">
+<title>reduce</title>
+<polygon fill="#777777" stroke="#777777" points="479,-150 425,-150 425,-126 479,-126 479,-150"/>
+<text text-anchor="middle" x="452" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">reduce</text>
+</g>
+<!-- proc~si_unstr_cg_solve&#45;&gt;reduce -->
+<g id="proc~~si_unstr_advance~~CallsGraph_edge14" class="edge">
+<title>proc~si_unstr_cg_solve&#45;&gt;reduce</title>
+<path fill="none" stroke="#48ff00" d="M263.32,-209.86C289.68,-196.18 334.61,-173.92 375,-159 387.87,-154.25 402.31,-150 415.12,-146.59"/>
+<polygon fill="#48ff00" stroke="#48ff00" points="416.17,-149.93 424.98,-144.03 414.42,-143.15 416.17,-149.93"/>
+</g>
+<!-- proc~si_unstr_compute_rhs&#45;&gt;local -->
+<g id="proc~~si_unstr_advance~~CallsGraph_edge15" class="edge">
+<title>proc~si_unstr_compute_rhs&#45;&gt;local</title>
+<path fill="none" stroke="#00ff91" d="M303.2,-402.9C362,-400.94 452.12,-395.59 529,-381 558.38,-375.42 590.73,-365.37 614.66,-357.15"/>
+<polygon fill="#00ff91" stroke="#00ff91" points="616.08,-360.36 624.37,-353.76 613.77,-353.75 616.08,-360.36"/>
+</g>
+<!-- proc~si_unstr_face_depths&#45;&gt;local -->
+<g id="proc~~si_unstr_advance~~CallsGraph_edge16" class="edge">
+<title>proc~si_unstr_face_depths&#45;&gt;local</title>
+<path fill="none" stroke="#4800ff" d="M301.22,-355.97C324.24,-359.62 350.75,-363.21 375,-365 443.26,-370.05 460.81,-370.85 529,-365 557.8,-362.53 590.02,-356.82 614.04,-351.98"/>
+<polygon fill="#4800ff" stroke="#4800ff" points="615.04,-355.35 624.12,-349.9 613.62,-348.49 615.04,-355.35"/>
+</g>
+<!-- proc~si_unstr_face_depth_linear -->
+<g id="proc~~si_unstr_advance~~CallsGraph_node14" class="node">
+<title>proc~si_unstr_face_depth_linear</title>
+<g id="a_proc~~si_unstr_advance~~CallsGraph_node14"><a xlink:href="../proc/si_unstr_face_depth_linear.html" xlink:title="si_unstr_face_depth_linear">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="529,-356 375,-356 375,-332 529,-332 529,-356"/>
+<text text-anchor="middle" x="452" y="-341.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">si_unstr_face_depth_linear</text>
+</a>
+</g>
+</g>
+<!-- proc~si_unstr_face_depths&#45;&gt;proc~si_unstr_face_depth_linear -->
+<g id="proc~~si_unstr_advance~~CallsGraph_edge17" class="edge">
+<title>proc~si_unstr_face_depths&#45;&gt;proc~si_unstr_face_depth_linear</title>
+<path fill="none" stroke="#4800ff" d="M301.1,-344.71C320.92,-344.62 343.33,-344.51 364.67,-344.41"/>
+<polygon fill="#4800ff" stroke="#4800ff" points="364.72,-347.91 374.71,-344.36 364.69,-340.91 364.72,-347.91"/>
+</g>
+<!-- proc~si_unstr_reconstruct_cell_momenta&#45;&gt;local -->
+<g id="proc~~si_unstr_advance~~CallsGraph_edge18" class="edge">
+<title>proc~si_unstr_reconstruct_cell_momenta&#45;&gt;local</title>
+<path fill="none" stroke="#ff00da" d="M339.21,-307.35C395.04,-310.43 466.07,-315.4 529,-323 557.69,-326.47 589.92,-332.12 613.97,-336.68"/>
+<polygon fill="#ff00da" stroke="#ff00da" points="613.59,-340.18 624.07,-338.63 614.91,-333.3 613.59,-340.18"/>
+</g>
+<!-- proc~find_slot -->
+<g id="proc~~si_unstr_advance~~CallsGraph_node18" class="node">
+<title>proc~find_slot</title>
+<g id="a_proc~~si_unstr_advance~~CallsGraph_node18"><a xlink:href="../proc/find_slot.html" xlink:title="find_slot">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="680,-104 623,-104 623,-80 680,-80 680,-104"/>
+<text text-anchor="middle" x="651.5" y="-89.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">find_slot</text>
+</a>
+</g>
+</g>
+<!-- proc~galerkin_operator&#45;&gt;proc~find_slot -->
+<g id="proc~~si_unstr_advance~~CallsGraph_edge19" class="edge">
+<title>proc~galerkin_operator&#45;&gt;proc~find_slot</title>
+<path fill="none" stroke="#ff0000" d="M506.19,-94.92C539.81,-94.24 582.46,-93.38 612.65,-92.77"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="612.85,-96.26 622.78,-92.56 612.71,-89.26 612.85,-96.26"/>
+</g>
+<!-- proc~si_unstr_apply_helmholtz&#45;&gt;local -->
+<g id="proc~~si_unstr_advance~~CallsGraph_edge20" class="edge">
+<title>proc~si_unstr_apply_helmholtz&#45;&gt;local</title>
+<path fill="none" stroke="#00ff3f" d="M490.35,-276.04C502.73,-280.23 516.54,-285.11 529,-290 558.78,-301.69 591.93,-316.55 616.07,-327.72"/>
+<polygon fill="#00ff3f" stroke="#00ff3f" points="614.64,-330.91 625.18,-331.96 617.59,-324.57 614.64,-330.91"/>
+</g>
+<!-- proc~si_unstr_compute_diag&#45;&gt;local -->
+<g id="proc~~si_unstr_advance~~CallsGraph_edge21" class="edge">
+<title>proc~si_unstr_compute_diag&#45;&gt;local</title>
+<path fill="none" stroke="#00ffff" d="M507.64,-234.06C515.01,-236.55 522.33,-239.51 529,-243 570.1,-264.48 609.91,-301.64 632.2,-324.4"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="629.87,-327.03 639.33,-331.8 634.91,-322.17 629.87,-327.03"/>
+</g>
+<!-- proc~agglom_unstr_vcycle_precond -->
+<g id="proc~~si_unstr_advance~~CallsGraph_node17" class="node">
+<title>proc~agglom_unstr_vcycle_precond</title>
+<g id="a_proc~~si_unstr_advance~~CallsGraph_node17"><a xlink:href="../proc/agglom_unstr_vcycle_precond.html" xlink:title="agglom_unstr_vcycle_precond">
+<polygon fill="#d9534f" stroke="#d9534f" points="738,-197 565,-197 565,-173 738,-173 738,-197"/>
+<text text-anchor="middle" x="651.5" y="-182.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">agglom_unstr_vcycle_precond</text>
+</a>
+</g>
+</g>
+<!-- proc~si_unstr_precond_apply&#45;&gt;proc~agglom_unstr_vcycle_precond -->
+<g id="proc~~si_unstr_advance~~CallsGraph_edge22" class="edge">
+<title>proc~si_unstr_precond_apply&#45;&gt;proc~agglom_unstr_vcycle_precond</title>
+<path fill="none" stroke="#7f00ff" d="M520.14,-181.7C531.21,-181.98 542.87,-182.28 554.49,-182.57"/>
+<polygon fill="#7f00ff" stroke="#7f00ff" points="554.58,-186.07 564.66,-182.83 554.76,-179.07 554.58,-186.07"/>
+</g>
+<!-- proc~agglom_copy_out -->
+<g id="proc~~si_unstr_advance~~CallsGraph_node20" class="node">
+<title>proc~agglom_copy_out</title>
+<g id="a_proc~~si_unstr_advance~~CallsGraph_node20"><a xlink:href="../proc/agglom_copy_out.html" xlink:title="agglom_copy_out">
+<polygon fill="#d9534f" stroke="#d9534f" points="898,-248 792,-248 792,-224 898,-224 898,-248"/>
+<text text-anchor="middle" x="845" y="-233.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">agglom_copy_out</text>
+</a>
+</g>
+</g>
+<!-- proc~agglom_unstr_vcycle_precond&#45;&gt;proc~agglom_copy_out -->
+<g id="proc~~si_unstr_advance~~CallsGraph_edge23" class="edge">
+<title>proc~agglom_unstr_vcycle_precond&#45;&gt;proc~agglom_copy_out</title>
+<path fill="none" stroke="#ff0000" d="M697.88,-197.09C725.09,-204.33 759.88,-213.6 788.69,-221.27"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="788.05,-224.72 798.61,-223.91 789.85,-217.96 788.05,-224.72"/>
+</g>
+<!-- proc~agglom_scale_into_shim -->
+<g id="proc~~si_unstr_advance~~CallsGraph_node21" class="node">
+<title>proc~agglom_scale_into_shim</title>
+<g id="a_proc~~si_unstr_advance~~CallsGraph_node21"><a xlink:href="../proc/agglom_scale_into_shim.html" xlink:title="agglom_scale_into_shim">
+<polygon fill="#d9534f" stroke="#d9534f" points="916,-206 774,-206 774,-182 916,-182 916,-206"/>
+<text text-anchor="middle" x="845" y="-191.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">agglom_scale_into_shim</text>
+</a>
+</g>
+</g>
+<!-- proc~agglom_unstr_vcycle_precond&#45;&gt;proc~agglom_scale_into_shim -->
+<g id="proc~~si_unstr_advance~~CallsGraph_edge24" class="edge">
+<title>proc~agglom_unstr_vcycle_precond&#45;&gt;proc~agglom_scale_into_shim</title>
+<path fill="none" stroke="#ff0000" d="M738.17,-189.03C746.66,-189.43 755.27,-189.83 763.71,-190.23"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="763.75,-193.73 773.9,-190.71 764.07,-186.74 763.75,-193.73"/>
+</g>
+<!-- proc~agglom_vcycle -->
+<g id="proc~~si_unstr_advance~~CallsGraph_node22" class="node">
+<title>proc~agglom_vcycle</title>
+<g id="a_proc~~si_unstr_advance~~CallsGraph_node22"><a xlink:href="../proc/agglom_vcycle.html" xlink:title="agglom_vcycle">
+<polygon fill="#d9534f" stroke="#d9534f" points="891,-146 799,-146 799,-122 891,-122 891,-146"/>
+<text text-anchor="middle" x="845" y="-131.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">agglom_vcycle</text>
+</a>
+</g>
+</g>
+<!-- proc~agglom_unstr_vcycle_precond&#45;&gt;proc~agglom_vcycle -->
+<g id="proc~~si_unstr_advance~~CallsGraph_edge25" class="edge">
+<title>proc~agglom_unstr_vcycle_precond&#45;&gt;proc~agglom_vcycle</title>
+<path fill="none" stroke="#ff0000" d="M697.88,-172.91C725.19,-165.64 760.14,-156.33 789.01,-148.65"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="790.18,-151.96 798.94,-146 788.38,-145.19 790.18,-151.96"/>
+</g>
+<!-- error -->
+<g id="proc~~si_unstr_advance~~CallsGraph_node19" class="node">
+<title>error</title>
+<polygon fill="#777777" stroke="#777777" points="872,-104 818,-104 818,-80 872,-80 872,-104"/>
+<text text-anchor="middle" x="845" y="-89.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">error</text>
+</g>
+<!-- proc~find_slot&#45;&gt;error -->
+<g id="proc~~si_unstr_advance~~CallsGraph_edge26" class="edge">
+<title>proc~find_slot&#45;&gt;error</title>
+<path fill="none" stroke="#00ffff" d="M680.35,-92C713.96,-92 770.57,-92 807.61,-92"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="807.96,-95.5 817.96,-92 807.96,-88.5 807.96,-95.5"/>
+</g>
+<!-- proc~itoa -->
+<g id="proc~~si_unstr_advance~~CallsGraph_node23" class="node">
+<title>proc~itoa</title>
+<g id="a_proc~~si_unstr_advance~~CallsGraph_node23"><a xlink:href="../proc/itoa.html" xlink:title="itoa">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="872,-62 818,-62 818,-38 872,-38 872,-62"/>
+<text text-anchor="middle" x="845" y="-47.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">itoa</text>
+</a>
+</g>
+</g>
+<!-- proc~find_slot&#45;&gt;proc~itoa -->
+<g id="proc~~si_unstr_advance~~CallsGraph_edge27" class="edge">
+<title>proc~find_slot&#45;&gt;proc~itoa</title>
+<path fill="none" stroke="#00ffff" d="M680.35,-85.89C714.1,-78.49 771.06,-66 808.08,-57.88"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="808.95,-61.27 817.96,-55.71 807.45,-54.43 808.95,-61.27"/>
+</g>
+<!-- proc~agglom_vcycle&#45;&gt;proc~agglom_vcycle -->
+<g id="proc~~si_unstr_advance~~CallsGraph_edge32" class="edge">
+<title>proc~agglom_vcycle&#45;&gt;proc~agglom_vcycle</title>
+<path fill="none" stroke="#0066ff" d="M816.23,-146.01C806.18,-154.97 815.77,-164 845,-164 863.27,-164 873.86,-160.47 876.79,-155.64"/>
+<polygon fill="#0066ff" stroke="#0066ff" points="880.1,-154.51 873.77,-146.01 873.42,-156.6 880.1,-154.51"/>
+</g>
+<!-- proc~agglom_jacobi_sweeps -->
+<g id="proc~~si_unstr_advance~~CallsGraph_node24" class="node">
+<title>proc~agglom_jacobi_sweeps</title>
+<g id="a_proc~~si_unstr_advance~~CallsGraph_node24"><a xlink:href="../proc/agglom_jacobi_sweeps.html" xlink:title="agglom_jacobi_sweeps">
+<polygon fill="#d9534f" stroke="#d9534f" points="1087,-230 952,-230 952,-206 1087,-206 1087,-230"/>
+<text text-anchor="middle" x="1019.5" y="-215.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">agglom_jacobi_sweeps</text>
+</a>
+</g>
+</g>
+<!-- proc~agglom_vcycle&#45;&gt;proc~agglom_jacobi_sweeps -->
+<g id="proc~~si_unstr_advance~~CallsGraph_edge28" class="edge">
+<title>proc~agglom_vcycle&#45;&gt;proc~agglom_jacobi_sweeps</title>
+<path fill="none" stroke="#0066ff" d="M868.64,-146.02C882.48,-153.51 900.45,-163.5 916,-173 932.41,-183.02 934.66,-188.69 952,-197 956.04,-198.94 960.3,-200.75 964.63,-202.44"/>
+<polygon fill="#0066ff" stroke="#0066ff" points="963.59,-205.78 974.18,-205.93 965.99,-199.21 963.59,-205.78"/>
+</g>
+<!-- proc~agglom_prolong_add -->
+<g id="proc~~si_unstr_advance~~CallsGraph_node25" class="node">
+<title>proc~agglom_prolong_add</title>
+<g id="a_proc~~si_unstr_advance~~CallsGraph_node25"><a xlink:href="../proc/agglom_prolong_add.html" xlink:title="agglom_prolong_add">
+<polygon fill="#d9534f" stroke="#d9534f" points="1081.5,-188 957.5,-188 957.5,-164 1081.5,-164 1081.5,-188"/>
+<text text-anchor="middle" x="1019.5" y="-173.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">agglom_prolong_add</text>
+</a>
+</g>
+</g>
+<!-- proc~agglom_vcycle&#45;&gt;proc~agglom_prolong_add -->
+<g id="proc~~si_unstr_advance~~CallsGraph_edge29" class="edge">
+<title>proc~agglom_vcycle&#45;&gt;proc~agglom_prolong_add</title>
+<path fill="none" stroke="#0066ff" d="M891.32,-145.04C912.01,-150.07 936.79,-156.11 958.96,-161.5"/>
+<polygon fill="#0066ff" stroke="#0066ff" points="958.39,-164.97 968.93,-163.93 960.05,-158.17 958.39,-164.97"/>
+</g>
+<!-- proc~agglom_residual -->
+<g id="proc~~si_unstr_advance~~CallsGraph_node26" class="node">
+<title>proc~agglom_residual</title>
+<g id="a_proc~~si_unstr_advance~~CallsGraph_node26"><a xlink:href="../proc/agglom_residual.html" xlink:title="agglom_residual">
+<polygon fill="#d9534f" stroke="#d9534f" points="1069.5,-146 969.5,-146 969.5,-122 1069.5,-122 1069.5,-146"/>
+<text text-anchor="middle" x="1019.5" y="-131.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">agglom_residual</text>
+</a>
+</g>
+</g>
+<!-- proc~agglom_vcycle&#45;&gt;proc~agglom_residual -->
+<g id="proc~~si_unstr_advance~~CallsGraph_edge30" class="edge">
+<title>proc~agglom_vcycle&#45;&gt;proc~agglom_residual</title>
+<path fill="none" stroke="#0066ff" d="M891.32,-134C912.1,-134 937,-134 959.24,-134"/>
+<polygon fill="#0066ff" stroke="#0066ff" points="959.24,-137.5 969.24,-134 959.24,-130.5 959.24,-137.5"/>
+</g>
+<!-- proc~agglom_restrict -->
+<g id="proc~~si_unstr_advance~~CallsGraph_node27" class="node">
+<title>proc~agglom_restrict</title>
+<g id="a_proc~~si_unstr_advance~~CallsGraph_node27"><a xlink:href="../proc/agglom_restrict.html" xlink:title="agglom_restrict">
+<polygon fill="#d9534f" stroke="#d9534f" points="1067,-104 972,-104 972,-80 1067,-80 1067,-104"/>
+<text text-anchor="middle" x="1019.5" y="-89.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">agglom_restrict</text>
+</a>
+</g>
+</g>
+<!-- proc~agglom_vcycle&#45;&gt;proc~agglom_restrict -->
+<g id="proc~~si_unstr_advance~~CallsGraph_edge31" class="edge">
+<title>proc~agglom_vcycle&#45;&gt;proc~agglom_restrict</title>
+<path fill="none" stroke="#0066ff" d="M891.32,-122.96C912.97,-117.69 939.11,-111.33 962.03,-105.75"/>
+<polygon fill="#0066ff" stroke="#0066ff" points="963.09,-109.09 971.98,-103.33 961.43,-102.29 963.09,-109.09"/>
+</g>
+<!-- proc~agglom_zero -->
+<g id="proc~~si_unstr_advance~~CallsGraph_node28" class="node">
+<title>proc~agglom_zero</title>
+<g id="a_proc~~si_unstr_advance~~CallsGraph_node28"><a xlink:href="../proc/agglom_zero.html" xlink:title="agglom_zero">
+<polygon fill="#d9534f" stroke="#d9534f" points="1060,-62 979,-62 979,-38 1060,-38 1060,-62"/>
+<text text-anchor="middle" x="1019.5" y="-47.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">agglom_zero</text>
+</a>
+</g>
+</g>
+<!-- proc~agglom_vcycle&#45;&gt;proc~agglom_zero -->
+<g id="proc~~si_unstr_advance~~CallsGraph_edge33" class="edge">
+<title>proc~agglom_vcycle&#45;&gt;proc~agglom_zero</title>
+<path fill="none" stroke="#0066ff" d="M891,-124.65C899.7,-121.72 908.45,-117.91 916,-113 936.61,-99.59 931.49,-84.56 952,-71 957.3,-67.5 963.23,-64.54 969.3,-62.07"/>
+<polygon fill="#0066ff" stroke="#0066ff" points="970.7,-65.28 978.88,-58.56 968.29,-58.71 970.7,-65.28"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var panprocsi_unstr_advanceCallsGraph = svgPanZoom('#procsi_unstr_advanceCallsGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CallsGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CallsGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Called by</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~si_unstr_advance~~CalledByGraph Pages: 1 -->
+<svg id="procsi_unstr_advanceCalledByGraph" width="641pt" height="66pt"
+ viewBox="0.00 0.00 641.00 65.55" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~si_unstr_advance~~CalledByGraph" class="graph" transform="scale(0.69 0.69) rotate(0) translate(4 91)">
+<title>proc~~si_unstr_advance~~CalledByGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-91 925,-91 925,4 -4,4"/>
+<!-- proc~si_unstr_advance -->
+<g id="proc~~si_unstr_advance~~CalledByGraph_node1" class="node">
+<title>proc~si_unstr_advance</title>
+<polygon fill="none" stroke="black" points="921,-66 817,-66 817,-42 921,-42 921,-66"/>
+<text text-anchor="middle" x="869" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50">si_unstr_advance</text>
+</g>
+<!-- proc~si_unstr_step -->
+<g id="proc~~si_unstr_advance~~CalledByGraph_node2" class="node">
+<title>proc~si_unstr_step</title>
+<g id="a_proc~~si_unstr_advance~~CalledByGraph_node2"><a xlink:href="../proc/si_unstr_step.html" xlink:title="si_unstr_step">
+<polygon fill="#d9534f" stroke="#d9534f" points="781,-66 700,-66 700,-42 781,-42 781,-66"/>
+<text text-anchor="middle" x="740.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">si_unstr_step</text>
+</a>
+</g>
+</g>
+<!-- proc~si_unstr_step&#45;&gt;proc~si_unstr_advance -->
+<g id="proc~~si_unstr_advance~~CalledByGraph_edge1" class="edge">
+<title>proc~si_unstr_step&#45;&gt;proc~si_unstr_advance</title>
+<path fill="none" stroke="#ff0000" d="M781.18,-54C789.3,-54 798.03,-54 806.71,-54"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="806.84,-57.5 816.84,-54 806.84,-50.5 806.84,-57.5"/>
+</g>
+<!-- proc~solver_unstr_step_semi_implicit -->
+<g id="proc~~si_unstr_advance~~CalledByGraph_node3" class="node">
+<title>proc~solver_unstr_step_semi_implicit</title>
+<g id="a_proc~~si_unstr_advance~~CalledByGraph_node3"><a xlink:href="../proc/solver_unstr_step_semi_implicit.html" xlink:title="solver_unstr_step_semi_implicit">
+<polygon fill="#d9534f" stroke="#d9534f" points="664,-66 484,-66 484,-42 664,-42 664,-66"/>
+<text text-anchor="middle" x="574" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_unstr_step_semi_implicit</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_unstr_step_semi_implicit&#45;&gt;proc~si_unstr_step -->
+<g id="proc~~si_unstr_advance~~CalledByGraph_edge2" class="edge">
+<title>proc~solver_unstr_step_semi_implicit&#45;&gt;proc~si_unstr_step</title>
+<path fill="none" stroke="#ff0000" d="M664.47,-54C673.06,-54 681.55,-54 689.55,-54"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="689.76,-57.5 699.76,-54 689.76,-50.5 689.76,-57.5"/>
+</g>
+<!-- proc~solver_unstr_step -->
+<g id="proc~~si_unstr_advance~~CalledByGraph_node4" class="node">
+<title>proc~solver_unstr_step</title>
+<g id="a_proc~~si_unstr_advance~~CalledByGraph_node4"><a xlink:href="../proc/solver_unstr_step.html" xlink:title="solver_unstr_step">
+<polygon fill="#d9534f" stroke="#d9534f" points="448,-66 343,-66 343,-42 448,-42 448,-66"/>
+<text text-anchor="middle" x="395.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_unstr_step</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_unstr_step&#45;&gt;proc~solver_unstr_step_semi_implicit -->
+<g id="proc~~si_unstr_advance~~CalledByGraph_edge3" class="edge">
+<title>proc~solver_unstr_step&#45;&gt;proc~solver_unstr_step_semi_implicit</title>
+<path fill="none" stroke="#ff0000" d="M448.03,-54C456.23,-54 464.95,-54 473.82,-54"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="473.88,-57.5 483.88,-54 473.88,-50.5 473.88,-57.5"/>
+</g>
+<!-- proc~rki_unstr_step -->
+<g id="proc~~si_unstr_advance~~CalledByGraph_node5" class="node">
+<title>proc~rki_unstr_step</title>
+<g id="a_proc~~si_unstr_advance~~CalledByGraph_node5"><a xlink:href="../proc/rki_unstr_step.html" xlink:title="rki_unstr_step">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="286,-87 200,-87 200,-63 286,-63 286,-87"/>
+<text text-anchor="middle" x="243" y="-72.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_unstr_step</text>
+</a>
+</g>
+</g>
+<!-- proc~rki_unstr_step&#45;&gt;proc~solver_unstr_step -->
+<g id="proc~~si_unstr_advance~~CalledByGraph_edge4" class="edge">
+<title>proc~rki_unstr_step&#45;&gt;proc~solver_unstr_step</title>
+<path fill="none" stroke="#ff0000" d="M286.32,-69.09C300.73,-67.08 317.14,-64.79 332.75,-62.62"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="333.45,-66.05 342.87,-61.2 332.48,-59.12 333.45,-66.05"/>
+</g>
+<!-- proc~solver_unstr_advance -->
+<g id="proc~~si_unstr_advance~~CalledByGraph_node6" class="node">
+<title>proc~solver_unstr_advance</title>
+<g id="a_proc~~si_unstr_advance~~CalledByGraph_node6"><a xlink:href="../proc/solver_unstr_advance.html" xlink:title="solver_unstr_advance">
+<polygon fill="#d9534f" stroke="#d9534f" points="307,-45 179,-45 179,-21 307,-21 307,-45"/>
+<text text-anchor="middle" x="243" y="-30.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_unstr_advance</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_unstr_advance&#45;&gt;proc~solver_unstr_step -->
+<g id="proc~~si_unstr_advance~~CalledByGraph_edge5" class="edge">
+<title>proc~solver_unstr_advance&#45;&gt;proc~solver_unstr_step</title>
+<path fill="none" stroke="#ff0000" d="M307.39,-41.85C315.73,-43.01 324.27,-44.2 332.58,-45.36"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="332.19,-48.84 342.58,-46.76 333.16,-41.91 332.19,-48.84"/>
+</g>
+<!-- proc~driver_run_coastal_unstr -->
+<g id="proc~~si_unstr_advance~~CalledByGraph_node7" class="node">
+<title>proc~driver_run_coastal_unstr</title>
+<g id="a_proc~~si_unstr_advance~~CalledByGraph_node7"><a xlink:href="../proc/driver_run_coastal_unstr.html" xlink:title="driver_run_coastal_unstr">
+<polygon fill="#d9534f" stroke="#d9534f" points="143,-66 0,-66 0,-42 143,-42 143,-66"/>
+<text text-anchor="middle" x="71.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">driver_run_coastal_unstr</text>
+</a>
+</g>
+</g>
+<!-- proc~driver_run_coastal_unstr&#45;&gt;proc~solver_unstr_advance -->
+<g id="proc~~si_unstr_advance~~CalledByGraph_edge6" class="edge">
+<title>proc~driver_run_coastal_unstr&#45;&gt;proc~solver_unstr_advance</title>
+<path fill="none" stroke="#00ffff" d="M143.4,-45.22C151.79,-44.18 160.36,-43.12 168.77,-42.07"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="169.44,-45.52 178.94,-40.81 168.58,-38.57 169.44,-45.52"/>
+</g>
+<!-- proc~rki_unstr_advance -->
+<g id="proc~~si_unstr_advance~~CalledByGraph_node8" class="node">
+<title>proc~rki_unstr_advance</title>
+<g id="a_proc~~si_unstr_advance~~CalledByGraph_node8"><a xlink:href="../proc/rki_unstr_advance.html" xlink:title="rki_unstr_advance">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="126,-24 17,-24 17,0 126,0 126,-24"/>
+<text text-anchor="middle" x="71.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_unstr_advance</text>
+</a>
+</g>
+</g>
+<!-- proc~rki_unstr_advance&#45;&gt;proc~solver_unstr_advance -->
+<g id="proc~~si_unstr_advance~~CalledByGraph_edge7" class="edge">
+<title>proc~rki_unstr_advance&#45;&gt;proc~solver_unstr_advance</title>
+<path fill="none" stroke="#00ffff" d="M126.13,-18.64C139.63,-20.32 154.36,-22.14 168.64,-23.91"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="168.59,-27.43 178.94,-25.19 169.45,-20.48 168.59,-27.43"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var panprocsi_unstr_advanceCalledByGraph = svgPanZoom('#procsi_unstr_advanceCalledByGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CalledByGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CalledByGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+
+
+    <section>    
+      <h2>Variables</h2>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Visibility</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+<th></th><th scope="col">Initial</th>        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-dgdn"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>dgdn</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-i~99"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>i</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-inv_delta~2"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>inv_delta</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-k~94"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>k</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-kn~11"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>kn</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-tau_n"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>tau_n</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-un_e"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>un_e</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    </section>
+    <br>
+    
+    
+
+    
+    
+
+
+
+    
+    <section>
+    <h2><span class="anchor" id="src"></span>Source Code</h2>
+    <div class="hl codehilite"><pre><span></span><span class="w">   </span><span class="k">subroutine </span><span class="n">si_unstr_advance</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span><span class="w"> </span><span class="n">nct</span><span class="p">,</span><span class="w"> </span><span class="n">nco</span><span class="p">,</span><span class="w"> </span><span class="n">n_bc</span><span class="p">,</span><span class="w"> </span><span class="n">stage</span><span class="p">,</span><span class="w"> </span><span class="n">xmom</span><span class="p">,</span><span class="w"> </span><span class="n">ymom</span><span class="p">,</span><span class="w"> </span><span class="n">bed</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                               </span><span class="n">height</span><span class="p">,</span><span class="w"> </span><span class="n">eta</span><span class="p">,</span><span class="w"> </span><span class="n">eta_r</span><span class="p">,</span><span class="w"> </span><span class="n">eta_p</span><span class="p">,</span><span class="w"> </span><span class="n">eta_Ap</span><span class="p">,</span><span class="w"> </span><span class="n">eta_z</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                               </span><span class="n">eta_diag</span><span class="p">,</span><span class="w"> </span><span class="n">u_edge</span><span class="p">,</span><span class="w"> </span><span class="n">u_star</span><span class="p">,</span><span class="w"> </span><span class="n">Hf_edge</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                               </span><span class="n">eta_ghost_edge</span><span class="p">,</span><span class="w"> </span><span class="n">u_n_edge</span><span class="p">,</span><span class="w"> </span><span class="n">bc_type</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                               </span><span class="n">bc_eta_ext</span><span class="p">,</span><span class="w"> </span><span class="n">wind_tau_x</span><span class="p">,</span><span class="w"> </span><span class="n">wind_tau_y</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                               </span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="n">theta</span><span class="p">,</span><span class="w"> </span><span class="n">g_theta2_dt2</span><span class="p">,</span><span class="w"> </span><span class="n">gtheta_dt</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                               </span><span class="n">g_omtheta_dt</span><span class="p">,</span><span class="w"> </span><span class="n">precond</span><span class="p">,</span><span class="w"> </span><span class="n">rtol</span><span class="p">,</span><span class="w"> </span><span class="n">iter_out</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                               </span><span class="n">mass_res_out</span><span class="p">,</span><span class="w"> </span><span class="n">mg</span><span class="p">)</span>
+<span class="w">      </span><span class="c">!! Flat-impl core: explicit-shape state arrays only (NVHPC device</span>
+<span class="w">      </span><span class="c">!! codegen — assumed-shape dummies in do-concurrent kernels emit</span>
+<span class="w">      </span><span class="c">!! per-launch descriptor-walk memcpys).  The edge workspaces</span>
+<span class="w">      </span><span class="c">!! `eta_ghost_edge` / `u_n_edge` are persistent slots on the SI state</span>
+<span class="w">      </span><span class="c">!! (mapped in its enter_data — no per-step allocation).</span>
+<span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="n">mesh_unstr_t</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">mesh</span>
+<span class="w">      </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">nct</span>
+<span class="w">         </span><span class="c">!! Cell array extent (ncells_total) — the explicit-shape dim.</span>
+<span class="w">      </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">nco</span>
+<span class="w">         </span><span class="c">!! Owned-cell loop bound.</span>
+<span class="w">      </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">n_bc</span>
+<span class="w">         </span><span class="c">!! BC group table size (`MAX_BC_GROUPS`).</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">stage</span><span class="p">(</span><span class="n">nct</span><span class="p">),</span><span class="w"> </span><span class="n">xmom</span><span class="p">(</span><span class="n">nct</span><span class="p">),</span><span class="w"> </span><span class="n">ymom</span><span class="p">(</span><span class="n">nct</span><span class="p">),</span><span class="w"> </span><span class="n">height</span><span class="p">(</span><span class="n">nct</span><span class="p">)</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">bed</span><span class="p">(</span><span class="n">nct</span><span class="p">)</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">eta</span><span class="p">(</span><span class="n">nct</span><span class="p">),</span><span class="w"> </span><span class="n">eta_r</span><span class="p">(</span><span class="n">nct</span><span class="p">),</span><span class="w"> </span><span class="n">eta_p</span><span class="p">(</span><span class="n">nct</span><span class="p">),</span><span class="w"> </span><span class="n">eta_Ap</span><span class="p">(</span><span class="n">nct</span><span class="p">)</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">eta_z</span><span class="p">(</span><span class="n">nct</span><span class="p">),</span><span class="w"> </span><span class="n">eta_diag</span><span class="p">(</span><span class="n">nct</span><span class="p">)</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">u_edge</span><span class="p">(</span><span class="n">EDGES_PER_TRI</span><span class="p">,</span><span class="w"> </span><span class="n">nct</span><span class="p">)</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">u_star</span><span class="p">(</span><span class="n">EDGES_PER_TRI</span><span class="p">,</span><span class="w"> </span><span class="n">nct</span><span class="p">)</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">Hf_edge</span><span class="p">(</span><span class="n">EDGES_PER_TRI</span><span class="p">,</span><span class="w"> </span><span class="n">nct</span><span class="p">)</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">eta_ghost_edge</span><span class="p">(</span><span class="n">EDGES_PER_TRI</span><span class="p">,</span><span class="w"> </span><span class="n">nct</span><span class="p">)</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">u_n_edge</span><span class="p">(</span><span class="n">EDGES_PER_TRI</span><span class="p">,</span><span class="w"> </span><span class="n">nct</span><span class="p">)</span>
+<span class="w">      </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">bc_type</span><span class="p">(</span><span class="n">n_bc</span><span class="p">)</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">bc_eta_ext</span><span class="p">(</span><span class="n">n_bc</span><span class="p">)</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">wind_tau_x</span><span class="p">,</span><span class="w"> </span><span class="n">wind_tau_y</span>
+<span class="w">      </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">precond</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="n">theta</span><span class="p">,</span><span class="w"> </span><span class="n">g_theta2_dt2</span><span class="p">,</span><span class="w"> </span><span class="n">gtheta_dt</span><span class="p">,</span><span class="w"> </span><span class="n">g_omtheta_dt</span><span class="p">,</span><span class="w"> </span><span class="n">rtol</span>
+<span class="w">      </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">iter_out</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">mass_res_out</span>
+<span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="n">agglom_hierarchy_unstr_t</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">),</span><span class="w"> </span><span class="k">optional</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">mg</span>
+<span class="w">         </span><span class="c">!! Aggregation-MG hierarchy (present iff precond == MG); its operator</span>
+<span class="w">         </span><span class="c">!! is refreshed here for this step's frozen Hf before the solve.</span>
+
+<span class="w">      </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">kn</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">inv_delta</span><span class="p">,</span><span class="w"> </span><span class="n">dgdn</span><span class="p">,</span><span class="w"> </span><span class="n">un_e</span><span class="p">,</span><span class="w"> </span><span class="n">tau_n</span>
+
+<span class="w">      </span><span class="c">! ---- 1. Save U^n; refresh height h = max(stage - b, 0); eta^n = stage</span>
+<span class="w">      </span><span class="c">!         at circumcentres (stage = h + b already, so eta == stage) ----</span>
+<span class="w">      </span><span class="k">do</span><span class="w"> </span><span class="k">concurrent</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="n">nco</span><span class="p">)</span>
+<span class="w">         </span><span class="k">do </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">EDGES_PER_TRI</span>
+<span class="w">            </span><span class="n">u_n_edge</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">u_edge</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">)</span>
+<span class="w">         </span><span class="k">end do</span>
+<span class="k">         </span><span class="n">height</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">max</span><span class="p">(</span><span class="n">stage</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">bed</span><span class="p">(</span><span class="n">k</span><span class="p">),</span><span class="w"> </span><span class="mf">0.0_wp</span><span class="p">)</span>
+<span class="w">         </span><span class="n">eta</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">stage</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+<span class="w">      </span><span class="k">end do</span>
+
+<span class="w">      </span><span class="c">! ---- 2. Frozen Hf + per-edge Dirichlet ghost eta ----</span>
+<span class="w">      </span><span class="k">call </span><span class="n">si_unstr_face_depths</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span><span class="w"> </span><span class="n">nct</span><span class="p">,</span><span class="w"> </span><span class="n">nco</span><span class="p">,</span><span class="w"> </span><span class="n">n_bc</span><span class="p">,</span><span class="w"> </span><span class="n">height</span><span class="p">,</span><span class="w"> </span><span class="n">bed</span><span class="p">,</span><span class="w"> </span><span class="n">bc_type</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                </span><span class="n">bc_eta_ext</span><span class="p">,</span><span class="w"> </span><span class="n">Hf_edge</span><span class="p">,</span><span class="w"> </span><span class="n">eta_ghost_edge</span><span class="p">)</span>
+
+<span class="w">      </span><span class="c">! ---- 2b. Refresh the aggregation-MG operator for this step's frozen Hf</span>
+<span class="w">      </span><span class="c">!          (host build from the live Hf; structures static).  Once per</span>
+<span class="w">      </span><span class="c">!          step, NOT per V-cycle. ----</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">precond</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">SI_PRECOND_MG</span><span class="w"> </span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="w"> </span><span class="nb">present</span><span class="p">(</span><span class="n">mg</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+<span class="w">         </span><span class="c">!$acc update self(Hf_edge)</span>
+<span class="w">         </span><span class="k">call </span><span class="n">agglom_hierarchy_unstr_refresh</span><span class="p">(</span><span class="n">mg</span><span class="p">,</span><span class="w"> </span><span class="n">mesh</span><span class="p">,</span><span class="w"> </span><span class="n">nco</span><span class="p">,</span><span class="w"> </span><span class="n">g_theta2_dt2</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                             </span><span class="n">Hf_edge</span><span class="p">(:,</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="n">nco</span><span class="p">))</span>
+<span class="w">      </span><span class="k">end if</span>
+
+<span class="w">      </span><span class="c">! ---- 3. EDGE predictor U*_e (dead edges =&gt; 0) + wind ----</span>
+<span class="w">      </span><span class="c">! U^n_e = the saved edge transport; the wind stress projects onto the</span>
+<span class="w">      </span><span class="c">! outward edge-normal.  Wall edges (Hf=0) stay exactly 0.</span>
+<span class="w">      </span><span class="k">do</span><span class="w"> </span><span class="k">concurrent</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="n">nco</span><span class="p">)</span><span class="w"> </span><span class="n">local</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">kn</span><span class="p">,</span><span class="w"> </span><span class="n">inv_delta</span><span class="p">,</span><span class="w"> </span><span class="n">dgdn</span><span class="p">,</span><span class="w"> </span><span class="n">un_e</span><span class="p">,</span><span class="w"> </span><span class="n">tau_n</span><span class="p">)</span>
+<span class="w">         </span><span class="k">do </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">EDGES_PER_TRI</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">Hf_edge</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mf">0.0_wp</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">               </span><span class="n">inv_delta</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0_wp</span><span class="o">/</span><span class="nb">max</span><span class="p">(</span><span class="n">mesh</span><span class="p">%</span><span class="n">edge_delta</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">),</span><span class="w"> </span><span class="n">DELTA_EPS</span><span class="p">)</span>
+<span class="w">               </span><span class="n">kn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mesh</span><span class="p">%</span><span class="n">neighbours</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">)</span>
+<span class="w">               </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">kn</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                  </span><span class="n">dgdn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">si_unstr_edge_flux</span><span class="p">(</span><span class="n">Hf_edge</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">),</span><span class="w"> </span><span class="n">eta</span><span class="p">(</span><span class="n">k</span><span class="p">),</span><span class="w"> </span><span class="n">eta</span><span class="p">(</span><span class="n">kn</span><span class="p">),</span><span class="w"> </span><span class="n">inv_delta</span><span class="p">)</span>
+<span class="w">               </span><span class="k">else</span>
+<span class="w">                  </span><span class="c">! Dirichlet edge: gradient against the seeded ghost surface.</span>
+<span class="w">                  </span><span class="n">dgdn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">si_unstr_edge_flux</span><span class="p">(</span><span class="n">Hf_edge</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">),</span><span class="w"> </span><span class="n">eta</span><span class="p">(</span><span class="n">k</span><span class="p">),</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                            </span><span class="n">eta_ghost_edge</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">),</span><span class="w"> </span><span class="n">inv_delta</span><span class="p">)</span>
+<span class="w">               </span><span class="k">end if</span>
+<span class="k">               </span><span class="n">un_e</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">u_n_edge</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">)</span>
+<span class="w">               </span><span class="c">! Wind stress projected onto the outward edge-normal (Pa/rho).</span>
+<span class="w">               </span><span class="n">tau_n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">wind_tau_x</span><span class="o">*</span><span class="n">mesh</span><span class="p">%</span><span class="n">edge_n1</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                        </span><span class="o">+</span><span class="w"> </span><span class="n">wind_tau_y</span><span class="o">*</span><span class="n">mesh</span><span class="p">%</span><span class="n">edge_n2</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">))</span><span class="o">/</span><span class="n">RHO_WATER</span>
+<span class="w">               </span><span class="n">u_star</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">un_e</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">g_omtheta_dt</span><span class="o">*</span><span class="n">dgdn</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">dt</span><span class="o">*</span><span class="n">tau_n</span>
+<span class="w">            </span><span class="k">else</span>
+<span class="k">               </span><span class="n">u_star</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">               </span><span class="n">u_n_edge</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span><span class="w">   </span><span class="c">! R3: dead edge carries no U^n flux</span>
+<span class="w">            </span><span class="k">end if</span>
+<span class="k">         end do</span>
+<span class="k">      end do</span>
+
+<span class="w">      </span><span class="c">! ---- 4. theta-blend RHS (+ Dirichlet ghost fold) ----</span>
+<span class="w">      </span><span class="k">call </span><span class="n">si_unstr_compute_rhs</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span><span class="w"> </span><span class="n">nct</span><span class="p">,</span><span class="w"> </span><span class="n">nco</span><span class="p">,</span><span class="w"> </span><span class="n">eta</span><span class="p">,</span><span class="w"> </span><span class="n">u_star</span><span class="p">,</span><span class="w"> </span><span class="n">u_n_edge</span><span class="p">,</span><span class="w"> </span><span class="n">eta_r</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                </span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="n">theta</span><span class="p">,</span><span class="w"> </span><span class="n">Hf_edge</span><span class="p">,</span><span class="w"> </span><span class="n">eta_ghost_edge</span><span class="p">,</span><span class="w"> </span><span class="n">g_theta2_dt2</span><span class="p">)</span>
+
+<span class="w">      </span><span class="c">! ---- 5. area-weighted CG solve for eta^{n+1} (warm start eta^n) ----</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">present</span><span class="p">(</span><span class="n">mg</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+<span class="k">         call </span><span class="n">si_unstr_cg_solve</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span><span class="w"> </span><span class="n">nct</span><span class="p">,</span><span class="w"> </span><span class="n">nco</span><span class="p">,</span><span class="w"> </span><span class="n">eta</span><span class="p">,</span><span class="w"> </span><span class="n">eta_r</span><span class="p">,</span><span class="w"> </span><span class="n">eta_p</span><span class="p">,</span><span class="w"> </span><span class="n">eta_Ap</span><span class="p">,</span><span class="w"> </span><span class="n">eta_z</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                </span><span class="n">eta_diag</span><span class="p">,</span><span class="w"> </span><span class="n">Hf_edge</span><span class="p">,</span><span class="w"> </span><span class="n">g_theta2_dt2</span><span class="p">,</span><span class="w"> </span><span class="n">precond</span><span class="p">,</span><span class="w"> </span><span class="n">rtol</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                </span><span class="n">iter_out</span><span class="p">,</span><span class="w"> </span><span class="n">mass_res_out</span><span class="p">,</span><span class="w"> </span><span class="n">mg</span><span class="o">=</span><span class="n">mg</span><span class="p">)</span>
+<span class="w">      </span><span class="k">else</span>
+<span class="k">         call </span><span class="n">si_unstr_cg_solve</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span><span class="w"> </span><span class="n">nct</span><span class="p">,</span><span class="w"> </span><span class="n">nco</span><span class="p">,</span><span class="w"> </span><span class="n">eta</span><span class="p">,</span><span class="w"> </span><span class="n">eta_r</span><span class="p">,</span><span class="w"> </span><span class="n">eta_p</span><span class="p">,</span><span class="w"> </span><span class="n">eta_Ap</span><span class="p">,</span><span class="w"> </span><span class="n">eta_z</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                </span><span class="n">eta_diag</span><span class="p">,</span><span class="w"> </span><span class="n">Hf_edge</span><span class="p">,</span><span class="w"> </span><span class="n">g_theta2_dt2</span><span class="p">,</span><span class="w"> </span><span class="n">precond</span><span class="p">,</span><span class="w"> </span><span class="n">rtol</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                </span><span class="n">iter_out</span><span class="p">,</span><span class="w"> </span><span class="n">mass_res_out</span><span class="p">)</span>
+<span class="w">      </span><span class="k">end if</span>
+
+<span class="w">      </span><span class="c">! ---- 6. EDGE back-substitution with the SAME frozen Hf ----</span>
+<span class="w">      </span><span class="k">do</span><span class="w"> </span><span class="k">concurrent</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="n">nco</span><span class="p">)</span><span class="w"> </span><span class="n">local</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">kn</span><span class="p">,</span><span class="w"> </span><span class="n">inv_delta</span><span class="p">,</span><span class="w"> </span><span class="n">dgdn</span><span class="p">)</span>
+<span class="w">         </span><span class="k">do </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">EDGES_PER_TRI</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">Hf_edge</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mf">0.0_wp</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">               </span><span class="n">inv_delta</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0_wp</span><span class="o">/</span><span class="nb">max</span><span class="p">(</span><span class="n">mesh</span><span class="p">%</span><span class="n">edge_delta</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">),</span><span class="w"> </span><span class="n">DELTA_EPS</span><span class="p">)</span>
+<span class="w">               </span><span class="n">kn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mesh</span><span class="p">%</span><span class="n">neighbours</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">)</span>
+<span class="w">               </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">kn</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                  </span><span class="n">dgdn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">si_unstr_edge_flux</span><span class="p">(</span><span class="n">Hf_edge</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">),</span><span class="w"> </span><span class="n">eta</span><span class="p">(</span><span class="n">k</span><span class="p">),</span><span class="w"> </span><span class="n">eta</span><span class="p">(</span><span class="n">kn</span><span class="p">),</span><span class="w"> </span><span class="n">inv_delta</span><span class="p">)</span>
+<span class="w">               </span><span class="k">else</span>
+<span class="k">                  </span><span class="n">dgdn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">si_unstr_edge_flux</span><span class="p">(</span><span class="n">Hf_edge</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">),</span><span class="w"> </span><span class="n">eta</span><span class="p">(</span><span class="n">k</span><span class="p">),</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                            </span><span class="n">eta_ghost_edge</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">),</span><span class="w"> </span><span class="n">inv_delta</span><span class="p">)</span>
+<span class="w">               </span><span class="k">end if</span>
+<span class="k">               </span><span class="n">u_edge</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">u_star</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">gtheta_dt</span><span class="o">*</span><span class="n">dgdn</span>
+<span class="w">            </span><span class="k">else</span>
+<span class="k">               </span><span class="n">u_edge</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">            </span><span class="k">end if</span>
+<span class="k">         end do</span>
+<span class="k">      end do</span>
+
+<span class="w">      </span><span class="c">! ---- 7. Reconstruct A-grid cell momenta + recover h^{n+1} ----</span>
+<span class="w">      </span><span class="k">call </span><span class="n">si_unstr_reconstruct_cell_momenta</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span><span class="w"> </span><span class="n">nct</span><span class="p">,</span><span class="w"> </span><span class="n">nco</span><span class="p">,</span><span class="w"> </span><span class="n">u_edge</span><span class="p">,</span><span class="w"> </span><span class="n">xmom</span><span class="p">,</span><span class="w"> </span><span class="n">ymom</span><span class="p">)</span>
+
+<span class="w">      </span><span class="k">do</span><span class="w"> </span><span class="k">concurrent</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="n">nco</span><span class="p">)</span>
+<span class="w">         </span><span class="n">stage</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">eta</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+<span class="w">         </span><span class="n">height</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">max</span><span class="p">(</span><span class="n">eta</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">bed</span><span class="p">(</span><span class="n">k</span><span class="p">),</span><span class="w"> </span><span class="mf">0.0_wp</span><span class="p">)</span>
+<span class="w">      </span><span class="k">end do</span>
+<span class="k">   end subroutine </span><span class="n">si_unstr_advance</span>
+</pre></div>
+
+    </section>
+    <br>
+    
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Rakali
+ was developed by Jorge Luis Galvez Vallejo<br>              &copy; 2026 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+ on 2026-10-08 12:55 +0000             </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>

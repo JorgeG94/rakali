@@ -1,0 +1,3123 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="GPU-native coastal solver — structured Cartesian and unstructured triangular grids, hydrostatic multilayer + non-hydrostatic, portable across NVHPC/gfortran/ifx.">
+    <meta name="author" content="Jorge Luis Galvez Vallejo" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>rki_multilayer_state &ndash; Rakali</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">Rakali </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/absint.html">Abstract Interfaces</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>rki_multilayer_state
+      <small>Module</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 1.0% of total for modules and submodules.">267 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/rki_multilayer_state.F90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/rki_multilayer_state.f90.html'>rki_multilayer_state.F90</a></li>
+            <li class="breadcrumb-item active" aria-current="page">rki_multilayer_state</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+
+  <div class="row">
+    <div class="col-md-3">
+        <div id="sidebar">
+      <h3>Contents</h3>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#types-0"
+         aria-expanded="false" aria-controls="types-0">
+         <h4 class="card-header bg-primary text-white">Derived Types</h4>
+      </a>
+      <div id="types-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../module/rki_multilayer_state.html#type-multilayer_state_t">multilayer_state_t</a>
+        </div>
+      </div>
+    </div>
+
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#funcs-0"
+         aria-expanded="false" aria-controls="funcs-0">
+         <h4 class="card-header bg-primary text-white">Functions</h4>
+      </a>
+      <div id="funcs-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../module/rki_multilayer_state.html#proc-multilayer_state_bytes">multilayer_state_bytes</a>
+        </div>
+      </div>
+    </div>
+
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#subs-0"
+         aria-expanded="false" aria-controls="subs-0">
+         <h4 class="card-header bg-primary text-white">Subroutines</h4>
+      </a>
+      <div id="subs-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../module/rki_multilayer_state.html#proc-multilayer_build_vcoord_reference">multilayer_build_vcoord_reference</a>
+            <a class="list-group-item" href="../module/rki_multilayer_state.html#proc-multilayer_init_layers">multilayer_init_layers</a>
+            <a class="list-group-item" href="../module/rki_multilayer_state.html#proc-multilayer_register_passive_tracer">multilayer_register_passive_tracer</a>
+            <a class="list-group-item" href="../module/rki_multilayer_state.html#proc-multilayer_seed_tracers">multilayer_seed_tracers</a>
+            <a class="list-group-item" href="../module/rki_multilayer_state.html#proc-multilayer_state_destroy">multilayer_state_destroy</a>
+            <a class="list-group-item" href="../module/rki_multilayer_state.html#proc-multilayer_state_init">multilayer_state_init</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+
+
+  </div>
+
+    </div>
+
+    <div class="col-md-9" id='text'>
+      <p>Per-layer prognostic arrays, vertical-coordinate definition,
+diagnostic vertical velocity, EOS-derived density + reference
+profile, tracer registry, and the scalar physics params the
+multilayer kernels read (vmix, Smagorinsky, BPG/PPM flags, EOS).
+Lives at <code>state%multilayer</code>; allocated by <code>state_init</code> only when
+<code>use_multilayer = .true.</code> (else only scalar defaults).</p>
+<br>          <div class="card mb-4">
+      <h3 class="card-header card-title bg-light">Uses</h3>
+      <div class="card-body">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <ul class="list-inline">
+                  <li class="list-inline-item"><a href='rki_eos.html'>rki_eos</a></li>
+                  <li class="list-inline-item"><a href='rki_barotropic_state.html'>rki_barotropic_state</a></li>
+                  <li class="list-inline-item"><a href='rki_ml_dynamics.html'>rki_ml_dynamics</a></li>
+                  <li class="list-inline-item">pic_logger</li>
+                  <li class="list-inline-item"><a href='rki_vcoord.html'>rki_vcoord</a></li>
+                  <li class="list-inline-item"><a href='rki_mem_report.html'>rki_mem_report</a></li>
+                  <li class="list-inline-item"><a href='rki_constants.html'>rki_constants</a></li>
+                  <li class="list-inline-item"><a href='rki_tracer.html'>rki_tracer</a></li>
+                  <li class="list-inline-item"><a href='http://fortranwiki.org/fortran/show/iso_fortran_env'>iso_fortran_env</a></li>
+                  <li class="list-inline-item"><a href='rki_grid.html'>rki_grid</a></li>
+                  <li class="list-inline-item"><a href='rki_ml_tracers.html'>rki_ml_tracers</a></li>
+              </ul>
+            </li>
+            <li class="list-group-item">
+              <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: module~~rki_multilayer_state~~UsesGraph Pages: 1 -->
+<svg id="modulerki_multilayer_stateUsesGraph" width="641pt" height="313pt"
+ viewBox="0.00 0.00 641.00 312.63" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="module~~rki_multilayer_state~~UsesGraph" class="graph" transform="scale(0.7 0.7) rotate(0) translate(4 440.31)">
+<title>module~~rki_multilayer_state~~UsesGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-440.31 907,-440.31 907,4 -4,4"/>
+<!-- module~rki_multilayer_state -->
+<g id="module~~rki_multilayer_state~~UsesGraph_node1" class="node">
+<title>module~rki_multilayer_state</title>
+<polygon fill="none" stroke="black" points="903,-259.08 786,-259.08 786,-235.08 903,-235.08 903,-259.08"/>
+<text text-anchor="middle" x="844.5" y="-244.68" font-family="Helvetica,sans-Serif" font-size="10.50">rki_multilayer_state</text>
+</g>
+<!-- iso_fortran_env -->
+<g id="module~~rki_multilayer_state~~UsesGraph_node2" class="node">
+<title>iso_fortran_env</title>
+<g id="a_module~~rki_multilayer_state~~UsesGraph_node2"><a xlink:href="http://fortranwiki.org/fortran/show/iso_fortran_env" xlink:title="iso_fortran_env">
+<polygon fill="#337ab7" stroke="#337ab7" points="445,-361.08 351,-361.08 351,-337.08 445,-337.08 445,-361.08"/>
+<text text-anchor="middle" x="398" y="-346.68" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">iso_fortran_env</text>
+</a>
+</g>
+</g>
+<!-- module~rki_multilayer_state&#45;&gt;iso_fortran_env -->
+<g id="module~~rki_multilayer_state~~UsesGraph_edge1" class="edge">
+<title>module~rki_multilayer_state&#45;&gt;iso_fortran_env</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M838.32,-259.29C822.64,-294.28 771.89,-394.43 692.5,-425.08"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M690.5,-425.08C626.14,-449.92 608.39,-396.13 540,-387.08"/>
+</g>
+<!-- module~rki_barotropic_state -->
+<g id="module~~rki_multilayer_state~~UsesGraph_node3" class="node">
+<title>module~rki_barotropic_state</title>
+<g id="a_module~~rki_multilayer_state~~UsesGraph_node3"><a xlink:href="../module/rki_barotropic_state.html" xlink:title="rki_barotropic_state">
+<polygon fill="#337ab7" stroke="#337ab7" points="750,-319.08 633,-319.08 633,-295.08 750,-295.08 750,-319.08"/>
+<text text-anchor="middle" x="691.5" y="-304.68" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_barotropic_state</text>
+</a>
+</g>
+</g>
+<!-- module~rki_multilayer_state&#45;&gt;module~rki_barotropic_state -->
+<g id="module~~rki_multilayer_state~~UsesGraph_edge2" class="edge">
+<title>module~rki_multilayer_state&#45;&gt;module~rki_barotropic_state</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M812.94,-259.22C789.64,-268.48 757.35,-281.31 732.07,-291.36"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="730.75,-288.11 722.75,-295.06 733.34,-294.62 730.75,-288.11"/>
+</g>
+<!-- module~rki_constants -->
+<g id="module~~rki_multilayer_state~~UsesGraph_node4" class="node">
+<title>module~rki_constants</title>
+<g id="a_module~~rki_multilayer_state~~UsesGraph_node4"><a xlink:href="../module/rki_constants.html" xlink:title="rki_constants">
+<polygon fill="#337ab7" stroke="#337ab7" points="180,-154.08 98,-154.08 98,-130.08 180,-130.08 180,-154.08"/>
+<text text-anchor="middle" x="139" y="-139.68" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_constants</text>
+</a>
+</g>
+</g>
+<!-- module~rki_multilayer_state&#45;&gt;module~rki_constants -->
+<g id="module~~rki_multilayer_state~~UsesGraph_edge3" class="edge">
+<title>module~rki_multilayer_state&#45;&gt;module~rki_constants</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M690.5,-425.08C628.1,-449.17 606.89,-424.82 540,-425.08"/>
+</g>
+<!-- module~rki_eos -->
+<g id="module~~rki_multilayer_state~~UsesGraph_node5" class="node">
+<title>module~rki_eos</title>
+<g id="a_module~~rki_multilayer_state~~UsesGraph_node5"><a xlink:href="../module/rki_eos.html" xlink:title="rki_eos">
+<polygon fill="#337ab7" stroke="#337ab7" points="718.5,-239.08 664.5,-239.08 664.5,-215.08 718.5,-215.08 718.5,-239.08"/>
+<text text-anchor="middle" x="691.5" y="-224.68" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_eos</text>
+</a>
+</g>
+</g>
+<!-- module~rki_multilayer_state&#45;&gt;module~rki_eos -->
+<g id="module~~rki_multilayer_state~~UsesGraph_edge4" class="edge">
+<title>module~rki_multilayer_state&#45;&gt;module~rki_eos</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M785.98,-239.46C766.8,-236.92 745.96,-234.16 728.84,-231.89"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="729.08,-228.39 718.71,-230.55 728.17,-235.33 729.08,-228.39"/>
+</g>
+<!-- module~rki_grid -->
+<g id="module~~rki_multilayer_state~~UsesGraph_node6" class="node">
+<title>module~rki_grid</title>
+<g id="a_module~~rki_multilayer_state~~UsesGraph_node6"><a xlink:href="../module/rki_grid.html" xlink:title="rki_grid">
+<polygon fill="#337ab7" stroke="#337ab7" points="566,-279.08 512,-279.08 512,-255.08 566,-255.08 566,-279.08"/>
+<text text-anchor="middle" x="539" y="-264.68" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_grid</text>
+</a>
+</g>
+</g>
+<!-- module~rki_multilayer_state&#45;&gt;module~rki_grid -->
+<g id="module~~rki_multilayer_state~~UsesGraph_edge5" class="edge">
+<title>module~rki_multilayer_state&#45;&gt;module~rki_grid</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M785.77,-254.68C757.63,-258.39 723.3,-262.94 692.5,-267.08"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M690.5,-267.08C651.81,-272.27 607.03,-271.4 576.44,-269.78"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="576.43,-266.27 566.24,-269.18 576.02,-273.26 576.43,-266.27"/>
+</g>
+<!-- module~rki_mem_report -->
+<g id="module~~rki_multilayer_state~~UsesGraph_node7" class="node">
+<title>module~rki_mem_report</title>
+<g id="a_module~~rki_multilayer_state~~UsesGraph_node7"><a xlink:href="../module/rki_mem_report.html" xlink:title="rki_mem_report">
+<polygon fill="#337ab7" stroke="#337ab7" points="587.5,-321.08 490.5,-321.08 490.5,-297.08 587.5,-297.08 587.5,-321.08"/>
+<text text-anchor="middle" x="539" y="-306.68" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_mem_report</text>
+</a>
+</g>
+</g>
+<!-- module~rki_multilayer_state&#45;&gt;module~rki_mem_report -->
+<g id="module~~rki_multilayer_state~~UsesGraph_edge6" class="edge">
+<title>module~rki_multilayer_state&#45;&gt;module~rki_mem_report</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M690.5,-267.08C653.3,-272.07 612.35,-283.93 582.57,-293.78"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="581.28,-290.53 572.92,-297.03 583.51,-297.16 581.28,-290.53"/>
+</g>
+<!-- module~rki_ml_dynamics -->
+<g id="module~~rki_multilayer_state~~UsesGraph_node8" class="node">
+<title>module~rki_ml_dynamics</title>
+<g id="a_module~~rki_multilayer_state~~UsesGraph_node8"><a xlink:href="../module/rki_ml_dynamics.html" xlink:title="rki_ml_dynamics">
+<polygon fill="#337ab7" stroke="#337ab7" points="742,-155.08 641,-155.08 641,-131.08 742,-131.08 742,-155.08"/>
+<text text-anchor="middle" x="691.5" y="-140.68" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_dynamics</text>
+</a>
+</g>
+</g>
+<!-- module~rki_multilayer_state&#45;&gt;module~rki_ml_dynamics -->
+<g id="module~~rki_multilayer_state~~UsesGraph_edge7" class="edge">
+<title>module~rki_multilayer_state&#45;&gt;module~rki_ml_dynamics</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M832.81,-235.06C816.51,-217.37 783.74,-184.21 750,-164.08 747.17,-162.39 744.18,-160.8 741.12,-159.32"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="742.33,-156.02 731.77,-155.16 739.49,-162.42 742.33,-156.02"/>
+</g>
+<!-- module~rki_ml_tracers -->
+<g id="module~~rki_multilayer_state~~UsesGraph_node9" class="node">
+<title>module~rki_ml_tracers</title>
+<g id="a_module~~rki_multilayer_state~~UsesGraph_node9"><a xlink:href="../module/rki_ml_tracers.html" xlink:title="rki_ml_tracers">
+<polygon fill="#337ab7" stroke="#337ab7" points="735.5,-197.08 647.5,-197.08 647.5,-173.08 735.5,-173.08 735.5,-197.08"/>
+<text text-anchor="middle" x="691.5" y="-182.68" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_tracers</text>
+</a>
+</g>
+</g>
+<!-- module~rki_multilayer_state&#45;&gt;module~rki_ml_tracers -->
+<g id="module~~rki_multilayer_state~~UsesGraph_edge8" class="edge">
+<title>module~rki_multilayer_state&#45;&gt;module~rki_ml_tracers</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M817.09,-234.96C798.46,-226.55 772.86,-215.26 750,-206.08 745.55,-204.29 740.88,-202.48 736.21,-200.71"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="737.28,-197.38 726.69,-197.16 734.83,-203.94 737.28,-197.38"/>
+</g>
+<!-- module~rki_tracer -->
+<g id="module~~rki_multilayer_state~~UsesGraph_node10" class="node">
+<title>module~rki_tracer</title>
+<g id="a_module~~rki_multilayer_state~~UsesGraph_node10"><a xlink:href="../module/rki_tracer.html" xlink:title="rki_tracer">
+<polygon fill="#337ab7" stroke="#337ab7" points="723.5,-361.08 659.5,-361.08 659.5,-337.08 723.5,-337.08 723.5,-361.08"/>
+<text text-anchor="middle" x="691.5" y="-346.68" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_tracer</text>
+</a>
+</g>
+</g>
+<!-- module~rki_multilayer_state&#45;&gt;module~rki_tracer -->
+<g id="module~~rki_multilayer_state~~UsesGraph_edge9" class="edge">
+<title>module~rki_multilayer_state&#45;&gt;module~rki_tracer</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M832.2,-259.36C815.64,-276.74 783.13,-308.58 750,-328.08 744.78,-331.15 739.03,-333.9 733.25,-336.31"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="731.64,-333.18 723.58,-340.05 734.17,-339.71 731.64,-333.18"/>
+</g>
+<!-- module~rki_vcoord -->
+<g id="module~~rki_multilayer_state~~UsesGraph_node11" class="node">
+<title>module~rki_vcoord</title>
+<g id="a_module~~rki_multilayer_state~~UsesGraph_node11"><a xlink:href="../module/rki_vcoord.html" xlink:title="rki_vcoord">
+<polygon fill="#337ab7" stroke="#337ab7" points="432,-37.08 364,-37.08 364,-13.08 432,-13.08 432,-37.08"/>
+<text text-anchor="middle" x="398" y="-22.68" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_vcoord</text>
+</a>
+</g>
+</g>
+<!-- module~rki_multilayer_state&#45;&gt;module~rki_vcoord -->
+<g id="module~~rki_multilayer_state~~UsesGraph_edge10" class="edge">
+<title>module~rki_multilayer_state&#45;&gt;module~rki_vcoord</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M538,-25.08C505.98,-22.82 469.71,-22.91 442.25,-23.51"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="442.1,-20.02 432.19,-23.77 442.27,-27.01 442.1,-20.02"/>
+</g>
+<!-- pic_logger -->
+<g id="module~~rki_multilayer_state~~UsesGraph_node12" class="node">
+<title>pic_logger</title>
+<polygon fill="#337ab7" stroke="#337ab7" points="173,-112.08 105,-112.08 105,-88.08 173,-88.08 173,-112.08"/>
+<text text-anchor="middle" x="139" y="-97.68" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">pic_logger</text>
+</g>
+<!-- module~rki_multilayer_state&#45;&gt;pic_logger -->
+<g id="module~~rki_multilayer_state~~UsesGraph_edge11" class="edge">
+<title>module~rki_multilayer_state&#45;&gt;pic_logger</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M837.06,-234.88C823.72,-210.57 790.86,-155.59 750,-122.08 670.51,-56.88 642.55,-32.31 540,-25.08"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M538,-25.08C457.01,-4.21 434.01,6.08 351,-4.08 312.59,-8.78 303.85,-14.94 266.5,-25.08"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M264.5,-25.08C224.58,-34.95 185.02,-62.65 161.55,-81.48"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="159.17,-78.91 153.66,-87.96 163.61,-84.32 159.17,-78.91"/>
+</g>
+<!-- module~rki_barotropic_state&#45;&gt;iso_fortran_env -->
+<g id="module~~rki_multilayer_state~~UsesGraph_edge12" class="edge">
+<title>module~rki_barotropic_state&#45;&gt;iso_fortran_env</title>
+<path fill="none" stroke="#ff8b00" stroke-dasharray="5,2" d="M538,-349.08C510.8,-350.82 480.55,-351.02 455.23,-350.71"/>
+<polygon fill="#ff8b00" stroke="#ff8b00" points="455.12,-347.21 445.06,-350.55 455.01,-354.21 455.12,-347.21"/>
+</g>
+<!-- module~rki_barotropic_state&#45;&gt;module~rki_constants -->
+<g id="module~~rki_multilayer_state~~UsesGraph_edge13" class="edge">
+<title>module~rki_barotropic_state&#45;&gt;module~rki_constants</title>
+<path fill="none" stroke="#ff8b00" stroke-dasharray="5,2" d="M654.08,-319.12C617.04,-331.02 562.06,-347.67 540,-349.08"/>
+<path fill="none" stroke="#ff8b00" stroke-dasharray="5,2" d="M538,-349.08C473.85,-353.18 463.11,-304.33 399,-309.08"/>
+</g>
+<!-- module~rki_barotropic_state&#45;&gt;module~rki_grid -->
+<g id="module~~rki_multilayer_state~~UsesGraph_edge14" class="edge">
+<title>module~rki_barotropic_state&#45;&gt;module~rki_grid</title>
+<path fill="none" stroke="#ff8b00" stroke-dasharray="5,2" d="M645.35,-295.08C623.17,-289.18 596.82,-282.18 576.03,-276.65"/>
+<polygon fill="#ff8b00" stroke="#ff8b00" points="576.87,-273.25 566.3,-274.07 575.07,-280.02 576.87,-273.25"/>
+</g>
+<!-- module~rki_barotropic_state&#45;&gt;module~rki_mem_report -->
+<g id="module~~rki_multilayer_state~~UsesGraph_edge15" class="edge">
+<title>module~rki_barotropic_state&#45;&gt;module~rki_mem_report</title>
+<path fill="none" stroke="#ff8b00" stroke-dasharray="5,2" d="M632.74,-307.85C621.32,-308 609.33,-308.16 597.9,-308.31"/>
+<polygon fill="#ff8b00" stroke="#ff8b00" points="597.55,-304.81 587.59,-308.45 597.64,-311.81 597.55,-304.81"/>
+</g>
+<!-- pic_types -->
+<g id="module~~rki_multilayer_state~~UsesGraph_node17" class="node">
+<title>pic_types</title>
+<polygon fill="#337ab7" stroke="#337ab7" points="62,-154.08 0,-154.08 0,-130.08 62,-130.08 62,-154.08"/>
+<text text-anchor="middle" x="31" y="-139.68" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">pic_types</text>
+</g>
+<!-- module~rki_constants&#45;&gt;pic_types -->
+<g id="module~~rki_multilayer_state~~UsesGraph_edge16" class="edge">
+<title>module~rki_constants&#45;&gt;pic_types</title>
+<path fill="none" stroke="#e7ff00" stroke-dasharray="5,2" d="M97.93,-142.08C89.6,-142.08 80.82,-142.08 72.48,-142.08"/>
+<polygon fill="#e7ff00" stroke="#e7ff00" points="72.21,-138.58 62.21,-142.08 72.21,-145.58 72.21,-138.58"/>
+</g>
+<!-- module~rki_eos&#45;&gt;module~rki_constants -->
+<g id="module~~rki_multilayer_state~~UsesGraph_edge17" class="edge">
+<title>module~rki_eos&#45;&gt;module~rki_constants</title>
+<path fill="none" stroke="#5cff00" stroke-dasharray="5,2" d="M664.36,-222.05C633.66,-217.27 581.63,-212.74 540,-227.08"/>
+</g>
+<!-- module~rki_eos&#45;&gt;module~rki_grid -->
+<g id="module~~rki_multilayer_state~~UsesGraph_edge18" class="edge">
+<title>module~rki_eos&#45;&gt;module~rki_grid</title>
+<path fill="none" stroke="#5cff00" stroke-dasharray="5,2" d="M664.28,-234.04C639.87,-240.54 603.24,-250.27 576.07,-257.49"/>
+<polygon fill="#5cff00" stroke="#5cff00" points="574.93,-254.17 566.17,-260.12 576.73,-260.94 574.93,-254.17"/>
+</g>
+<!-- module~rki_grid&#45;&gt;module~rki_constants -->
+<g id="module~~rki_multilayer_state~~UsesGraph_edge19" class="edge">
+<title>module~rki_grid&#45;&gt;module~rki_constants</title>
+<path fill="none" stroke="#00ff2e" stroke-dasharray="5,2" d="M511.95,-276.44C478.2,-288.31 421.06,-307.44 399,-309.08"/>
+</g>
+<!-- module~rki_mem_report&#45;&gt;iso_fortran_env -->
+<g id="module~~rki_multilayer_state~~UsesGraph_edge20" class="edge">
+<title>module~rki_mem_report&#45;&gt;iso_fortran_env</title>
+<path fill="none" stroke="#00ffb9" stroke-dasharray="5,2" d="M496.3,-321.08C481.99,-325.19 465.81,-329.85 450.81,-334.17"/>
+<polygon fill="#00ffb9" stroke="#00ffb9" points="449.8,-330.82 441.16,-336.95 451.73,-337.54 449.8,-330.82"/>
+</g>
+<!-- module~rki_mem_report&#45;&gt;module~rki_constants -->
+<g id="module~~rki_multilayer_state~~UsesGraph_edge21" class="edge">
+<title>module~rki_mem_report&#45;&gt;module~rki_constants</title>
+<path fill="none" stroke="#00ffb9" stroke-dasharray="5,2" d="M490.33,-307.34C463.47,-306.8 429.32,-306.83 399,-309.08"/>
+</g>
+<!-- module~rki_mem_report&#45;&gt;pic_logger -->
+<g id="module~~rki_multilayer_state~~UsesGraph_edge22" class="edge">
+<title>module~rki_mem_report&#45;&gt;pic_logger</title>
+<path fill="none" stroke="#00ffb9" stroke-dasharray="5,2" d="M491.6,-297.05C487.61,-294.59 483.98,-291.64 481,-288.08 421.95,-217.44 505.23,-153.71 445,-84.08 438.17,-76.18 276.57,-22.32 266.5,-25.08"/>
+</g>
+<!-- pic_strings -->
+<g id="module~~rki_multilayer_state~~UsesGraph_node16" class="node">
+<title>pic_strings</title>
+<polygon fill="#337ab7" stroke="#337ab7" points="300,-195.08 231,-195.08 231,-171.08 300,-171.08 300,-195.08"/>
+<text text-anchor="middle" x="265.5" y="-180.68" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">pic_strings</text>
+</g>
+<!-- module~rki_mem_report&#45;&gt;pic_strings -->
+<g id="module~~rki_multilayer_state~~UsesGraph_edge23" class="edge">
+<title>module~rki_mem_report&#45;&gt;pic_strings</title>
+<path fill="none" stroke="#00ffb9" stroke-dasharray="5,2" d="M503.41,-296.98C495.97,-294.2 488.18,-291.15 481,-288.08 414.86,-259.79 339.86,-221.62 298.37,-199.96"/>
+<polygon fill="#00ffb9" stroke="#00ffb9" points="299.79,-196.75 289.31,-195.21 296.54,-202.95 299.79,-196.75"/>
+</g>
+<!-- module~rki_ml_dynamics&#45;&gt;module~rki_constants -->
+<g id="module~~rki_multilayer_state~~UsesGraph_edge25" class="edge">
+<title>module~rki_ml_dynamics&#45;&gt;module~rki_constants</title>
+<path fill="none" stroke="#00b9ff" stroke-dasharray="5,2" d="M538,-63.08C511.66,-58.71 502.99,-66.92 481,-82.08 460.2,-96.42 465.29,-111.02 445,-126.08 427.24,-139.26 418.22,-134.13 399,-145.08"/>
+<path fill="none" stroke="#00b9ff" stroke-dasharray="5,2" d="M397,-145.08C316.06,-191.18 357.56,-328.71 266.5,-309.08"/>
+</g>
+<!-- module~rki_ml_dynamics&#45;&gt;module~rki_grid -->
+<g id="module~~rki_multilayer_state~~UsesGraph_edge26" class="edge">
+<title>module~rki_ml_dynamics&#45;&gt;module~rki_grid</title>
+<path fill="none" stroke="#00b9ff" stroke-dasharray="5,2" d="M646.04,-155.16C641.32,-157.62 636.84,-160.56 633,-164.08 605.15,-189.6 623.84,-214.49 597,-241.08 590.96,-247.06 583.29,-251.82 575.55,-255.54"/>
+<polygon fill="#00b9ff" stroke="#00b9ff" points="573.98,-252.4 566.18,-259.57 576.75,-258.83 573.98,-252.4"/>
+</g>
+<!-- module~rki_ml_dynamics&#45;&gt;module~rki_vcoord -->
+<g id="module~~rki_multilayer_state~~UsesGraph_edge29" class="edge">
+<title>module~rki_ml_dynamics&#45;&gt;module~rki_vcoord</title>
+<path fill="none" stroke="#00b9ff" stroke-dasharray="5,2" d="M675.9,-131.07C650.32,-111.05 594.88,-72.17 540,-63.08"/>
+<path fill="none" stroke="#00b9ff" stroke-dasharray="5,2" d="M538,-63.08C505.25,-57.65 469.1,-47.64 441.88,-39.25"/>
+<polygon fill="#00b9ff" stroke="#00b9ff" points="442.87,-35.9 432.28,-36.25 440.78,-42.58 442.87,-35.9"/>
+</g>
+<!-- module~rki_boundary_types -->
+<g id="module~~rki_multilayer_state~~UsesGraph_node13" class="node">
+<title>module~rki_boundary_types</title>
+<g id="a_module~~rki_multilayer_state~~UsesGraph_node13"><a xlink:href="../module/rki_boundary_types.html" xlink:title="rki_boundary_types">
+<polygon fill="#337ab7" stroke="#337ab7" points="597,-115.08 481,-115.08 481,-91.08 597,-91.08 597,-115.08"/>
+<text text-anchor="middle" x="539" y="-100.68" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_boundary_types</text>
+</a>
+</g>
+</g>
+<!-- module~rki_ml_dynamics&#45;&gt;module~rki_boundary_types -->
+<g id="module~~rki_multilayer_state~~UsesGraph_edge24" class="edge">
+<title>module~rki_ml_dynamics&#45;&gt;module~rki_boundary_types</title>
+<path fill="none" stroke="#00b9ff" stroke-dasharray="5,2" d="M645.35,-131.08C629.64,-126.9 611.85,-122.17 595.41,-117.8"/>
+<polygon fill="#00b9ff" stroke="#00b9ff" points="595.95,-114.33 585.38,-115.14 594.15,-121.09 595.95,-114.33"/>
+</g>
+<!-- module~rki_ml_common -->
+<g id="module~~rki_multilayer_state~~UsesGraph_node14" class="node">
+<title>module~rki_ml_common</title>
+<g id="a_module~~rki_multilayer_state~~UsesGraph_node14"><a xlink:href="../module/rki_ml_common.html" xlink:title="rki_ml_common">
+<polygon fill="#337ab7" stroke="#337ab7" points="587.5,-157.08 490.5,-157.08 490.5,-133.08 587.5,-133.08 587.5,-157.08"/>
+<text text-anchor="middle" x="539" y="-142.68" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_common</text>
+</a>
+</g>
+</g>
+<!-- module~rki_ml_dynamics&#45;&gt;module~rki_ml_common -->
+<g id="module~~rki_multilayer_state~~UsesGraph_edge27" class="edge">
+<title>module~rki_ml_dynamics&#45;&gt;module~rki_ml_common</title>
+<path fill="none" stroke="#00b9ff" stroke-dasharray="5,2" d="M640.8,-143.74C627.02,-143.92 611.95,-144.12 597.75,-144.31"/>
+<polygon fill="#00b9ff" stroke="#00b9ff" points="597.55,-140.81 587.6,-144.44 597.65,-147.81 597.55,-140.81"/>
+</g>
+<!-- module~rki_remap_column -->
+<g id="module~~rki_multilayer_state~~UsesGraph_node15" class="node">
+<title>module~rki_remap_column</title>
+<g id="a_module~~rki_multilayer_state~~UsesGraph_node15"><a xlink:href="../module/rki_remap_column.html" xlink:title="rki_remap_column">
+<polygon fill="#337ab7" stroke="#337ab7" points="594.5,-199.08 483.5,-199.08 483.5,-175.08 594.5,-175.08 594.5,-199.08"/>
+<text text-anchor="middle" x="539" y="-184.68" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_remap_column</text>
+</a>
+</g>
+</g>
+<!-- module~rki_ml_dynamics&#45;&gt;module~rki_remap_column -->
+<g id="module~~rki_multilayer_state~~UsesGraph_edge28" class="edge">
+<title>module~rki_ml_dynamics&#45;&gt;module~rki_remap_column</title>
+<path fill="none" stroke="#00b9ff" stroke-dasharray="5,2" d="M649.38,-155.1C631.29,-160.39 609.87,-166.65 590.8,-172.22"/>
+<polygon fill="#00b9ff" stroke="#00b9ff" points="589.69,-168.9 581.08,-175.07 591.66,-175.62 589.69,-168.9"/>
+</g>
+<!-- module~rki_ml_tracers&#45;&gt;module~rki_constants -->
+<g id="module~~rki_multilayer_state~~UsesGraph_edge31" class="edge">
+<title>module~rki_ml_tracers&#45;&gt;module~rki_constants</title>
+<path fill="none" stroke="#002eff" stroke-dasharray="5,2" d="M647.27,-195.68C616.96,-203.47 575.65,-214.79 540,-227.08"/>
+<path fill="none" stroke="#002eff" stroke-dasharray="5,2" d="M538,-227.08C512.75,-235.78 504.58,-233.55 481,-246.08 440.42,-267.64 444.83,-305.68 399,-309.08"/>
+<path fill="none" stroke="#002eff" stroke-dasharray="5,2" d="M397,-309.08C339.16,-313.36 323.2,-321.3 266.5,-309.08"/>
+</g>
+<!-- module~rki_ml_tracers&#45;&gt;module~rki_grid -->
+<g id="module~~rki_multilayer_state~~UsesGraph_edge32" class="edge">
+<title>module~rki_ml_tracers&#45;&gt;module~rki_grid</title>
+<path fill="none" stroke="#002eff" stroke-dasharray="5,2" d="M650.49,-197.19C644.43,-199.73 638.4,-202.69 633,-206.08 614.1,-217.95 615.42,-228.48 597,-241.08 590.37,-245.61 582.82,-249.69 575.44,-253.2"/>
+<polygon fill="#002eff" stroke="#002eff" points="573.94,-250.04 566.26,-257.34 576.81,-256.42 573.94,-250.04"/>
+</g>
+<!-- module~rki_ml_tracers&#45;&gt;module~rki_boundary_types -->
+<g id="module~~rki_multilayer_state~~UsesGraph_edge30" class="edge">
+<title>module~rki_ml_tracers&#45;&gt;module~rki_boundary_types</title>
+<path fill="none" stroke="#002eff" stroke-dasharray="5,2" d="M649.68,-173.01C643.85,-170.49 638.11,-167.53 633,-164.08 613.18,-150.69 616.8,-137.49 597,-124.08 594.63,-122.47 592.11,-120.97 589.52,-119.56"/>
+<polygon fill="#002eff" stroke="#002eff" points="590.99,-116.38 580.46,-115.17 587.93,-122.68 590.99,-116.38"/>
+</g>
+<!-- module~rki_ml_tracers&#45;&gt;module~rki_ml_common -->
+<g id="module~~rki_multilayer_state~~UsesGraph_edge33" class="edge">
+<title>module~rki_ml_tracers&#45;&gt;module~rki_ml_common</title>
+<path fill="none" stroke="#002eff" stroke-dasharray="5,2" d="M647.37,-173.62C631.11,-169.29 612.38,-164.31 595.16,-159.74"/>
+<polygon fill="#002eff" stroke="#002eff" points="595.79,-156.29 585.23,-157.1 594,-163.05 595.79,-156.29"/>
+</g>
+<!-- module~rki_ml_tracers&#45;&gt;module~rki_remap_column -->
+<g id="module~~rki_multilayer_state~~UsesGraph_edge34" class="edge">
+<title>module~rki_ml_tracers&#45;&gt;module~rki_remap_column</title>
+<path fill="none" stroke="#002eff" stroke-dasharray="5,2" d="M647.37,-185.65C634.16,-185.83 619.33,-186.02 605,-186.21"/>
+<polygon fill="#002eff" stroke="#002eff" points="604.63,-182.72 594.68,-186.35 604.73,-189.72 604.63,-182.72"/>
+</g>
+<!-- module~rki_tracer&#45;&gt;iso_fortran_env -->
+<g id="module~~rki_multilayer_state~~UsesGraph_edge35" class="edge">
+<title>module~rki_tracer&#45;&gt;iso_fortran_env</title>
+<path fill="none" stroke="#5c00ff" stroke-dasharray="5,2" d="M666.33,-361.1C636.88,-374.36 585.42,-393.09 540,-387.08"/>
+<path fill="none" stroke="#5c00ff" stroke-dasharray="5,2" d="M538,-387.08C505.42,-382.76 469.67,-372.87 442.59,-364.26"/>
+<polygon fill="#5c00ff" stroke="#5c00ff" points="443.62,-360.91 433.03,-361.16 441.46,-367.57 443.62,-360.91"/>
+</g>
+<!-- module~rki_tracer&#45;&gt;module~rki_constants -->
+<g id="module~~rki_multilayer_state~~UsesGraph_edge36" class="edge">
+<title>module~rki_tracer&#45;&gt;module~rki_constants</title>
+<path fill="none" stroke="#5c00ff" stroke-dasharray="5,2" d="M677.13,-361.32C652.17,-382.85 595.91,-425.24 540,-425.08"/>
+<path fill="none" stroke="#5c00ff" stroke-dasharray="5,2" d="M538,-425.08C451.37,-424.83 428.79,-408.2 351,-370.08 309.41,-349.69 311.78,-318.84 266.5,-309.08"/>
+</g>
+<!-- module~rki_tracer&#45;&gt;module~rki_grid -->
+<g id="module~~rki_multilayer_state~~UsesGraph_edge37" class="edge">
+<title>module~rki_tracer&#45;&gt;module~rki_grid</title>
+<path fill="none" stroke="#5c00ff" stroke-dasharray="5,2" d="M659.32,-340.79C650.39,-337.62 640.93,-333.43 633,-328.08 613.18,-314.69 616.8,-301.49 597,-288.08 590.64,-283.77 583.28,-280.21 576.01,-277.32"/>
+<polygon fill="#5c00ff" stroke="#5c00ff" points="576.84,-273.9 566.24,-273.8 574.46,-280.49 576.84,-273.9"/>
+</g>
+<!-- module~rki_tracer&#45;&gt;module~rki_mem_report -->
+<g id="module~~rki_multilayer_state~~UsesGraph_edge38" class="edge">
+<title>module~rki_tracer&#45;&gt;module~rki_mem_report</title>
+<path fill="none" stroke="#5c00ff" stroke-dasharray="5,2" d="M659.32,-340.79C640.8,-335.87 616.79,-329.49 595.16,-323.74"/>
+<polygon fill="#5c00ff" stroke="#5c00ff" points="595.99,-320.34 585.42,-321.15 594.19,-327.1 595.99,-320.34"/>
+</g>
+<!-- module~rki_vcoord&#45;&gt;module~rki_constants -->
+<g id="module~~rki_multilayer_state~~UsesGraph_edge39" class="edge">
+<title>module~rki_vcoord&#45;&gt;module~rki_constants</title>
+<path fill="none" stroke="#e700ff" stroke-dasharray="5,2" d="M370.46,-37.16C323.98,-58.32 227.82,-102.1 175.61,-125.87"/>
+<polygon fill="#e700ff" stroke="#e700ff" points="174.04,-122.73 166.39,-130.06 176.94,-129.1 174.04,-122.73"/>
+</g>
+<!-- module~rki_vcoord&#45;&gt;pic_logger -->
+<g id="module~~rki_multilayer_state~~UsesGraph_edge40" class="edge">
+<title>module~rki_vcoord&#45;&gt;pic_logger</title>
+<path fill="none" stroke="#e700ff" stroke-dasharray="5,2" d="M363.91,-20.32C337.14,-17.59 298.73,-16.24 266.5,-25.08"/>
+</g>
+<!-- module~rki_vcoord&#45;&gt;pic_strings -->
+<g id="module~~rki_multilayer_state~~UsesGraph_edge41" class="edge">
+<title>module~rki_vcoord&#45;&gt;pic_strings</title>
+<path fill="none" stroke="#e700ff" stroke-dasharray="5,2" d="M386.25,-37.13C376.32,-48.65 361.54,-66.78 351,-84.08 331.13,-116.68 342.32,-135.4 315,-162.08 313.13,-163.9 311.08,-165.58 308.91,-167.12"/>
+<polygon fill="#e700ff" stroke="#e700ff" points="306.86,-164.27 300.08,-172.41 310.46,-170.27 306.86,-164.27"/>
+</g>
+<!-- module~rki_boundary_types&#45;&gt;module~rki_constants -->
+<g id="module~~rki_multilayer_state~~UsesGraph_edge43" class="edge">
+<title>module~rki_boundary_types&#45;&gt;module~rki_constants</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M490.17,-115.09C456.49,-124.01 414.72,-136.12 399,-145.08"/>
+</g>
+<!-- module~rki_config -->
+<g id="module~~rki_multilayer_state~~UsesGraph_node18" class="node">
+<title>module~rki_config</title>
+<g id="a_module~~rki_multilayer_state~~UsesGraph_node18"><a xlink:href="../module/rki_config.html" xlink:title="rki_config">
+<polygon fill="#337ab7" stroke="#337ab7" points="430,-117.08 366,-117.08 366,-93.08 430,-93.08 430,-117.08"/>
+<text text-anchor="middle" x="398" y="-102.68" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_config</text>
+</a>
+</g>
+</g>
+<!-- module~rki_boundary_types&#45;&gt;module~rki_config -->
+<g id="module~~rki_multilayer_state~~UsesGraph_edge42" class="edge">
+<title>module~rki_boundary_types&#45;&gt;module~rki_config</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M480.66,-103.9C467.22,-104.1 453.16,-104.3 440.56,-104.48"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="440.32,-100.98 430.38,-104.63 440.43,-107.98 440.32,-100.98"/>
+</g>
+<!-- module~rki_ml_common&#45;&gt;module~rki_constants -->
+<g id="module~~rki_multilayer_state~~UsesGraph_edge44" class="edge">
+<title>module~rki_ml_common&#45;&gt;module~rki_constants</title>
+<path fill="none" stroke="#cbff00" stroke-dasharray="5,2" d="M490.26,-133.84C461.95,-129.79 426.36,-129.49 399,-145.08"/>
+</g>
+<!-- module~rki_remap_column&#45;&gt;module~rki_constants -->
+<g id="module~~rki_multilayer_state~~UsesGraph_edge45" class="edge">
+<title>module~rki_remap_column&#45;&gt;module~rki_constants</title>
+<path fill="none" stroke="#00ff66" stroke-dasharray="5,2" d="M502.71,-175.03C463.07,-161.7 403.64,-142.43 399,-145.08"/>
+</g>
+<!-- module~rki_config&#45;&gt;module~rki_constants -->
+<g id="module~~rki_multilayer_state~~UsesGraph_edge46" class="edge">
+<title>module~rki_config&#45;&gt;module~rki_constants</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M369.24,-117.15C362.69,-120.93 356.13,-125.57 351,-131.08 291.32,-195.17 352.11,-327.54 266.5,-309.08"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M264.5,-309.08C195.88,-294.28 159.74,-205.92 146.28,-164.05"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="149.55,-162.79 143.27,-154.25 142.86,-164.84 149.55,-162.79"/>
+</g>
+<!-- module~rki_config&#45;&gt;pic_logger -->
+<g id="module~~rki_multilayer_state~~UsesGraph_edge48" class="edge">
+<title>module~rki_config&#45;&gt;pic_logger</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M366,-104.47C320.41,-103.59 235.11,-101.93 183.34,-100.92"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="183.21,-97.42 173.14,-100.72 183.07,-104.42 183.21,-97.42"/>
+</g>
+<!-- module~rki_config&#45;&gt;pic_strings -->
+<g id="module~~rki_multilayer_state~~UsesGraph_edge49" class="edge">
+<title>module~rki_config&#45;&gt;pic_strings</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M373.53,-117.18C366.13,-121.3 358.05,-126.12 351,-131.08 333.73,-143.22 332.89,-150.87 315,-162.08 312.56,-163.61 309.99,-165.08 307.35,-166.48"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="305.67,-163.41 298.25,-170.98 308.77,-169.68 305.67,-163.41"/>
+</g>
+<!-- module~rki_nml_schema -->
+<g id="module~~rki_multilayer_state~~UsesGraph_node19" class="node">
+<title>module~rki_nml_schema</title>
+<g id="a_module~~rki_multilayer_state~~UsesGraph_node19"><a xlink:href="../module/rki_nml_schema.html" xlink:title="rki_nml_schema">
+<polygon fill="#337ab7" stroke="#337ab7" points="315,-153.08 216,-153.08 216,-129.08 315,-129.08 315,-153.08"/>
+<text text-anchor="middle" x="265.5" y="-138.68" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_nml_schema</text>
+</a>
+</g>
+</g>
+<!-- module~rki_config&#45;&gt;module~rki_nml_schema -->
+<g id="module~~rki_multilayer_state~~UsesGraph_edge47" class="edge">
+<title>module~rki_config&#45;&gt;module~rki_nml_schema</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M365.74,-113.7C352.13,-117.45 335.79,-121.96 320.33,-126.23"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="319.04,-122.95 310.33,-128.99 320.9,-129.7 319.04,-122.95"/>
+</g>
+<!-- module~rki_nml_schema&#45;&gt;module~rki_constants -->
+<g id="module~~rki_multilayer_state~~UsesGraph_edge50" class="edge">
+<title>module~rki_nml_schema&#45;&gt;module~rki_constants</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M215.65,-141.47C207.32,-141.54 198.65,-141.61 190.29,-141.67"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="190.25,-138.17 180.27,-141.75 190.3,-145.17 190.25,-138.17"/>
+</g>
+<!-- module~rki_nml_schema&#45;&gt;pic_logger -->
+<g id="module~~rki_multilayer_state~~UsesGraph_edge51" class="edge">
+<title>module~rki_nml_schema&#45;&gt;pic_logger</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M227.82,-129C213.72,-124.35 197.49,-119.01 182.86,-114.19"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="183.62,-110.76 173.03,-110.95 181.43,-117.41 183.62,-110.76"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var panmodulerki_multilayer_stateUsesGraph = svgPanZoom('#modulerki_multilayer_stateUsesGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#UsesGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="UsesGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="518pt" height="32pt"
+ viewBox="0.00 0.00 517.50 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 513.5,-28 513.5,4 -4,4"/>
+<!-- Module -->
+<g id="node1" class="node">
+<title>Module</title>
+<polygon fill="#337ab7" stroke="#337ab7" points="54,-24 0,-24 0,0 54,0 54,-24"/>
+<text text-anchor="middle" x="27" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Module</text>
+</g>
+<!-- Submodule -->
+<g id="node2" class="node">
+<title>Submodule</title>
+<polygon fill="#5bc0de" stroke="#5bc0de" points="145.5,-24 72.5,-24 72.5,0 145.5,0 145.5,-24"/>
+<text text-anchor="middle" x="109" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Submodule</text>
+</g>
+<!-- Subroutine -->
+<g id="node3" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="234,-24 164,-24 164,0 234,0 234,-24"/>
+<text text-anchor="middle" x="199" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node4" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="310,-24 252,-24 252,0 310,0 310,-24"/>
+<text text-anchor="middle" x="281" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Program -->
+<g id="node5" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="386,-24 328,-24 328,0 386,0 386,-24"/>
+<text text-anchor="middle" x="357" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node6" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="509.5,-24 404.5,-24 404.5,0 509.5,0 509.5,-24"/>
+<text text-anchor="middle" x="457" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a submodule to the (sub)module which it is
+descended from. Dashed arrows point from a module or program unit to 
+modules which it uses.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+            </li>
+        </ul>
+      </div>
+    </div>
+
+          <div class="card">
+      <h3 class="card-header card-title bg-light">Used by</h3>
+      <div class="card-body">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: module~~rki_multilayer_state~~UsedByGraph Pages: 1 -->
+<svg id="modulerki_multilayer_stateUsedByGraph" width="623pt" height="400pt"
+ viewBox="0.00 0.00 623.00 400.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="module~~rki_multilayer_state~~UsedByGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 396)">
+<title>module~~rki_multilayer_state~~UsedByGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-396 619,-396 619,4 -4,4"/>
+<!-- module~rki_multilayer_state -->
+<g id="module~~rki_multilayer_state~~UsedByGraph_node1" class="node">
+<title>module~rki_multilayer_state</title>
+<polygon fill="none" stroke="black" points="117,-188 0,-188 0,-164 117,-164 117,-188"/>
+<text text-anchor="middle" x="58.5" y="-173.6" font-family="Helvetica,sans-Serif" font-size="10.50">rki_multilayer_state</text>
+</g>
+<!-- module~rki_state -->
+<g id="module~~rki_multilayer_state~~UsedByGraph_node2" class="node">
+<title>module~rki_state</title>
+<g id="a_module~~rki_multilayer_state~~UsedByGraph_node2"><a xlink:href="../module/rki_state.html" xlink:title="rki_state">
+<polygon fill="#337ab7" stroke="#337ab7" points="211,-188 153,-188 153,-164 211,-164 211,-188"/>
+<text text-anchor="middle" x="182" y="-173.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_state</text>
+</a>
+</g>
+</g>
+<!-- module~rki_state&#45;&gt;module~rki_multilayer_state -->
+<g id="module~~rki_multilayer_state~~UsedByGraph_edge1" class="edge">
+<title>module~rki_state&#45;&gt;module~rki_multilayer_state</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M152.82,-176C145.08,-176 136.33,-176 127.38,-176"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="127.23,-172.5 117.23,-176 127.23,-179.5 127.23,-172.5"/>
+</g>
+<!-- module~rki_api -->
+<g id="module~~rki_multilayer_state~~UsedByGraph_node3" class="node">
+<title>module~rki_api</title>
+<g id="a_module~~rki_multilayer_state~~UsedByGraph_node3"><a xlink:href="../module/rki_api.html" xlink:title="rki_api">
+<polygon fill="#337ab7" stroke="#337ab7" points="470,-228 416,-228 416,-204 470,-204 470,-228"/>
+<text text-anchor="middle" x="443" y="-213.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_api</text>
+</a>
+</g>
+</g>
+<!-- module~rki_api&#45;&gt;module~rki_state -->
+<g id="module~~rki_multilayer_state~~UsedByGraph_edge2" class="edge">
+<title>module~rki_api&#45;&gt;module~rki_state</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M415.86,-215.28C378.18,-213.82 306.58,-209.52 247,-197 238.45,-195.2 229.43,-192.66 220.95,-189.97"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="221.9,-186.6 211.31,-186.77 219.7,-193.24 221.9,-186.6"/>
+</g>
+<!-- module~rki_handle -->
+<g id="module~~rki_multilayer_state~~UsedByGraph_node9" class="node">
+<title>module~rki_handle</title>
+<g id="a_module~~rki_multilayer_state~~UsedByGraph_node9"><a xlink:href="../module/rki_handle.html" xlink:title="rki_handle">
+<polygon fill="#337ab7" stroke="#337ab7" points="324.5,-310 256.5,-310 256.5,-286 324.5,-286 324.5,-310"/>
+<text text-anchor="middle" x="290.5" y="-295.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_handle</text>
+</a>
+</g>
+</g>
+<!-- module~rki_api&#45;&gt;module~rki_handle -->
+<g id="module~~rki_multilayer_state~~UsedByGraph_edge16" class="edge">
+<title>module~rki_api&#45;&gt;module~rki_handle</title>
+<path fill="none" stroke="#00b9ff" stroke-dasharray="5,2" d="M421.48,-228.04C399.89,-240.59 364.84,-260.69 334,-277 331.32,-278.42 328.54,-279.86 325.73,-281.29"/>
+<polygon fill="#00b9ff" stroke="#00b9ff" points="324.15,-278.17 316.79,-285.79 327.29,-284.42 324.15,-278.17"/>
+</g>
+<!-- module~rki_init -->
+<g id="module~~rki_multilayer_state~~UsedByGraph_node10" class="node">
+<title>module~rki_init</title>
+<g id="a_module~~rki_multilayer_state~~UsedByGraph_node10"><a xlink:href="../module/rki_init.html" xlink:title="rki_init">
+<polygon fill="#337ab7" stroke="#337ab7" points="317.5,-146 263.5,-146 263.5,-122 317.5,-122 317.5,-146"/>
+<text text-anchor="middle" x="290.5" y="-131.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_init</text>
+</a>
+</g>
+</g>
+<!-- module~rki_api&#45;&gt;module~rki_init -->
+<g id="module~~rki_multilayer_state~~UsedByGraph_edge18" class="edge">
+<title>module~rki_api&#45;&gt;module~rki_init</title>
+<path fill="none" stroke="#002eff" stroke-dasharray="5,2" d="M415.8,-209.46C401.58,-205.21 384.08,-198.81 370,-190 351.08,-178.17 352.23,-167.88 334,-155 331.67,-153.35 329.19,-151.77 326.64,-150.25"/>
+<polygon fill="#002eff" stroke="#002eff" points="328.31,-147.17 317.86,-145.42 324.93,-153.31 328.31,-147.17"/>
+</g>
+<!-- module~rki_output -->
+<g id="module~~rki_multilayer_state~~UsedByGraph_node12" class="node">
+<title>module~rki_output</title>
+<g id="a_module~~rki_multilayer_state~~UsedByGraph_node12"><a xlink:href="../module/rki_output.html" xlink:title="rki_output">
+<polygon fill="#337ab7" stroke="#337ab7" points="323.5,-268 257.5,-268 257.5,-244 323.5,-244 323.5,-268"/>
+<text text-anchor="middle" x="290.5" y="-253.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_output</text>
+</a>
+</g>
+</g>
+<!-- module~rki_api&#45;&gt;module~rki_output -->
+<g id="module~~rki_multilayer_state~~UsedByGraph_edge22" class="edge">
+<title>module~rki_api&#45;&gt;module~rki_output</title>
+<path fill="none" stroke="#e700ff" stroke-dasharray="5,2" d="M415.78,-222.97C393.08,-229 359.84,-237.84 333.44,-244.85"/>
+<polygon fill="#e700ff" stroke="#e700ff" points="332.46,-241.49 323.69,-247.44 334.26,-248.26 332.46,-241.49"/>
+</g>
+<!-- module~rki_solver -->
+<g id="module~~rki_multilayer_state~~UsedByGraph_node13" class="node">
+<title>module~rki_solver</title>
+<g id="a_module~~rki_multilayer_state~~UsedByGraph_node13"><a xlink:href="../module/rki_solver.html" xlink:title="rki_solver">
+<polygon fill="#337ab7" stroke="#337ab7" points="322.5,-188 258.5,-188 258.5,-164 322.5,-164 322.5,-188"/>
+<text text-anchor="middle" x="290.5" y="-173.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_solver</text>
+</a>
+</g>
+</g>
+<!-- module~rki_api&#45;&gt;module~rki_solver -->
+<g id="module~~rki_multilayer_state~~UsedByGraph_edge24" class="edge">
+<title>module~rki_api&#45;&gt;module~rki_solver</title>
+<path fill="none" stroke="#ff008b" stroke-dasharray="5,2" d="M415.78,-209.03C392.78,-202.92 358.96,-193.93 332.4,-186.87"/>
+<polygon fill="#ff008b" stroke="#ff008b" points="333.18,-183.46 322.62,-184.27 331.38,-190.22 333.18,-183.46"/>
+</g>
+<!-- module~rki_coastal_console_stats -->
+<g id="module~~rki_multilayer_state~~UsedByGraph_node4" class="node">
+<title>module~rki_coastal_console_stats</title>
+<g id="a_module~~rki_multilayer_state~~UsedByGraph_node4"><a xlink:href="../module/rki_coastal_console_stats.html" xlink:title="rki_coastal_console_stats">
+<polygon fill="#337ab7" stroke="#337ab7" points="516,-146 370,-146 370,-122 516,-122 516,-146"/>
+<text text-anchor="middle" x="443" y="-131.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_coastal_console_stats</text>
+</a>
+</g>
+</g>
+<!-- module~rki_coastal_console_stats&#45;&gt;module~rki_state -->
+<g id="module~~rki_multilayer_state~~UsedByGraph_edge3" class="edge">
+<title>module~rki_coastal_console_stats&#45;&gt;module~rki_state</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M404.4,-121.93C363.5,-109.12 302.45,-91.11 291.5,-94"/>
+</g>
+<!-- module~rki_coastal_console_stats&#45;&gt;module~rki_init -->
+<g id="module~~rki_multilayer_state~~UsedByGraph_edge19" class="edge">
+<title>module~rki_coastal_console_stats&#45;&gt;module~rki_init</title>
+<path fill="none" stroke="#002eff" stroke-dasharray="5,2" d="M369.84,-134C355.22,-134 340.45,-134 327.73,-134"/>
+<polygon fill="#002eff" stroke="#002eff" points="327.58,-130.5 317.58,-134 327.58,-137.5 327.58,-130.5"/>
+</g>
+<!-- module~rki_driver -->
+<g id="module~~rki_multilayer_state~~UsedByGraph_node5" class="node">
+<title>module~rki_driver</title>
+<g id="a_module~~rki_multilayer_state~~UsedByGraph_node5"><a xlink:href="../module/rki_driver.html" xlink:title="rki_driver">
+<polygon fill="#337ab7" stroke="#337ab7" points="615,-228 552,-228 552,-204 615,-204 615,-228"/>
+<text text-anchor="middle" x="583.5" y="-213.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_driver</text>
+</a>
+</g>
+</g>
+<!-- module~rki_driver&#45;&gt;module~rki_state -->
+<g id="module~~rki_multilayer_state~~UsedByGraph_edge4" class="edge">
+<title>module~rki_driver&#45;&gt;module~rki_state</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M442,-94C381,-66.56 356.17,-76.91 291.5,-94"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M289.5,-94C269.5,-99.29 264.09,-101.33 247,-113 229.19,-125.16 211.95,-142.56 199.85,-156"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="197,-153.95 193.03,-163.77 202.26,-158.57 197,-153.95"/>
+</g>
+<!-- module~rki_driver&#45;&gt;module~rki_coastal_console_stats -->
+<g id="module~~rki_multilayer_state~~UsedByGraph_edge13" class="edge">
+<title>module~rki_driver&#45;&gt;module~rki_coastal_console_stats</title>
+<path fill="none" stroke="#ff8b00" stroke-dasharray="5,2" d="M570.14,-203.96C557.41,-192.06 536.57,-173.96 516,-162 508.25,-157.5 499.64,-153.43 491.14,-149.89"/>
+<polygon fill="#ff8b00" stroke="#ff8b00" points="492.24,-146.56 481.65,-146.12 489.65,-153.07 492.24,-146.56"/>
+</g>
+<!-- module~rki_forcing -->
+<g id="module~~rki_multilayer_state~~UsedByGraph_node7" class="node">
+<title>module~rki_forcing</title>
+<g id="a_module~~rki_multilayer_state~~UsedByGraph_node7"><a xlink:href="../module/rki_forcing.html" xlink:title="rki_forcing">
+<polygon fill="#337ab7" stroke="#337ab7" points="324.5,-66 256.5,-66 256.5,-42 324.5,-42 324.5,-66"/>
+<text text-anchor="middle" x="290.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_forcing</text>
+</a>
+</g>
+</g>
+<!-- module~rki_driver&#45;&gt;module~rki_forcing -->
+<g id="module~~rki_multilayer_state~~UsedByGraph_edge14" class="edge">
+<title>module~rki_driver&#45;&gt;module~rki_forcing</title>
+<path fill="none" stroke="#00ff2e" stroke-dasharray="5,2" d="M578.05,-203.73C569.51,-181.98 548.73,-136.75 516,-113 489.21,-93.56 474.18,-107.58 444,-94"/>
+<path fill="none" stroke="#00ff2e" stroke-dasharray="5,2" d="M442,-94C407.33,-78.41 365.35,-67.87 334.54,-61.55"/>
+<polygon fill="#00ff2e" stroke="#00ff2e" points="335.04,-58.08 324.55,-59.56 333.67,-64.95 335.04,-58.08"/>
+</g>
+<!-- module~rki_gauges -->
+<g id="module~~rki_multilayer_state~~UsedByGraph_node8" class="node">
+<title>module~rki_gauges</title>
+<g id="a_module~~rki_multilayer_state~~UsedByGraph_node8"><a xlink:href="../module/rki_gauges.html" xlink:title="rki_gauges">
+<polygon fill="#337ab7" stroke="#337ab7" points="478,-392 408,-392 408,-368 478,-368 478,-392"/>
+<text text-anchor="middle" x="443" y="-377.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_gauges</text>
+</a>
+</g>
+</g>
+<!-- module~rki_driver&#45;&gt;module~rki_gauges -->
+<g id="module~~rki_multilayer_state~~UsedByGraph_edge15" class="edge">
+<title>module~rki_driver&#45;&gt;module~rki_gauges</title>
+<path fill="none" stroke="#00ffb9" stroke-dasharray="5,2" d="M580.39,-228C574.93,-255.44 557.75,-323.14 516,-359 508.07,-365.81 498.04,-370.41 488,-373.52"/>
+<polygon fill="#00ffb9" stroke="#00ffb9" points="486.81,-370.22 478.04,-376.16 488.6,-376.99 486.81,-370.22"/>
+</g>
+<!-- module~rki_driver&#45;&gt;module~rki_init -->
+<g id="module~~rki_multilayer_state~~UsedByGraph_edge20" class="edge">
+<title>module~rki_driver&#45;&gt;module~rki_init</title>
+<path fill="none" stroke="#002eff" stroke-dasharray="5,2" d="M551.75,-205.7C523.9,-196.71 481.6,-183.9 444,-176"/>
+<path fill="none" stroke="#002eff" stroke-dasharray="5,2" d="M442,-176C402.29,-167.66 357.6,-154.72 327.31,-145.41"/>
+<polygon fill="#002eff" stroke="#002eff" points="328.2,-142.03 317.62,-142.41 326.13,-148.71 328.2,-142.03"/>
+</g>
+<!-- module~rki_nesting -->
+<g id="module~~rki_multilayer_state~~UsedByGraph_node11" class="node">
+<title>module~rki_nesting</title>
+<g id="a_module~~rki_multilayer_state~~UsedByGraph_node11"><a xlink:href="../module/rki_nesting.html" xlink:title="rki_nesting">
+<polygon fill="#337ab7" stroke="#337ab7" points="478,-350 408,-350 408,-326 478,-326 478,-350"/>
+<text text-anchor="middle" x="443" y="-335.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_nesting</text>
+</a>
+</g>
+</g>
+<!-- module~rki_driver&#45;&gt;module~rki_nesting -->
+<g id="module~~rki_multilayer_state~~UsedByGraph_edge21" class="edge">
+<title>module~rki_driver&#45;&gt;module~rki_nesting</title>
+<path fill="none" stroke="#5c00ff" stroke-dasharray="5,2" d="M577.78,-228.29C568.95,-249.61 547.92,-293.43 516,-317 507.75,-323.09 497.77,-327.42 487.89,-330.5"/>
+<polygon fill="#5c00ff" stroke="#5c00ff" points="486.84,-327.16 478.12,-333.18 488.69,-333.91 486.84,-327.16"/>
+</g>
+<!-- module~rki_driver&#45;&gt;module~rki_output -->
+<g id="module~~rki_multilayer_state~~UsedByGraph_edge23" class="edge">
+<title>module~rki_driver&#45;&gt;module~rki_output</title>
+<path fill="none" stroke="#e700ff" stroke-dasharray="5,2" d="M551.75,-227.27C540.62,-230.93 527.88,-234.65 516,-237 453.34,-249.39 379.29,-253.7 333.86,-255.2"/>
+<polygon fill="#e700ff" stroke="#e700ff" points="333.67,-251.71 323.78,-255.5 333.88,-258.7 333.67,-251.71"/>
+</g>
+<!-- module~rki_driver&#45;&gt;module~rki_solver -->
+<g id="module~~rki_multilayer_state~~UsedByGraph_edge25" class="edge">
+<title>module~rki_driver&#45;&gt;module~rki_solver</title>
+<path fill="none" stroke="#ff008b" stroke-dasharray="5,2" d="M442,-176C405.75,-168.38 363.49,-169.2 332.99,-171.45"/>
+<polygon fill="#ff008b" stroke="#ff008b" points="332.41,-167.99 322.73,-172.29 332.98,-174.96 332.41,-167.99"/>
+</g>
+<!-- module~rki_flux_dump -->
+<g id="module~~rki_multilayer_state~~UsedByGraph_node6" class="node">
+<title>module~rki_flux_dump</title>
+<g id="a_module~~rki_multilayer_state~~UsedByGraph_node6"><a xlink:href="../module/rki_flux_dump.html" xlink:title="rki_flux_dump">
+<polygon fill="#337ab7" stroke="#337ab7" points="334,-24 247,-24 247,0 334,0 334,-24"/>
+<text text-anchor="middle" x="290.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_flux_dump</text>
+</a>
+</g>
+</g>
+<!-- module~rki_flux_dump&#45;&gt;module~rki_state -->
+<g id="module~~rki_multilayer_state~~UsedByGraph_edge5" class="edge">
+<title>module~rki_flux_dump&#45;&gt;module~rki_state</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M258.5,-24.08C254.3,-26.6 250.31,-29.56 247,-33 213.57,-67.73 195.75,-122.91 187.95,-153.58"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="184.46,-153.15 185.52,-163.69 191.26,-154.78 184.46,-153.15"/>
+</g>
+<!-- module~rki_forcing&#45;&gt;module~rki_state -->
+<g id="module~~rki_multilayer_state~~UsedByGraph_edge6" class="edge">
+<title>module~rki_forcing&#45;&gt;module~rki_state</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M265.7,-66.08C259.22,-70 252.49,-74.72 247,-80 223.94,-102.18 204.75,-134.05 193.57,-154.88"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="190.4,-153.39 188.87,-163.87 196.6,-156.63 190.4,-153.39"/>
+</g>
+<!-- module~rki_gauges&#45;&gt;module~rki_state -->
+<g id="module~~rki_multilayer_state~~UsedByGraph_edge7" class="edge">
+<title>module~rki_gauges&#45;&gt;module~rki_state</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M407.73,-382.21C375.63,-382.73 327.37,-379.44 291.5,-359"/>
+</g>
+<!-- module~rki_handle&#45;&gt;module~rki_state -->
+<g id="module~~rki_multilayer_state~~UsedByGraph_edge8" class="edge">
+<title>module~rki_handle&#45;&gt;module~rki_state</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M259.81,-285.98C255.24,-283.4 250.79,-280.41 247,-277 221.84,-254.37 202.77,-219.6 192.24,-197.33"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="195.34,-195.71 188.01,-188.07 188.98,-198.62 195.34,-195.71"/>
+</g>
+<!-- module~rki_init&#45;&gt;module~rki_state -->
+<g id="module~~rki_multilayer_state~~UsedByGraph_edge9" class="edge">
+<title>module~rki_init&#45;&gt;module~rki_state</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M263.45,-144.27C250.54,-149.37 234.71,-155.61 220.53,-161.2"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="219.04,-158.02 211.02,-164.95 221.61,-164.54 219.04,-158.02"/>
+</g>
+<!-- module~rki_nesting&#45;&gt;module~rki_state -->
+<g id="module~~rki_multilayer_state~~UsedByGraph_edge10" class="edge">
+<title>module~rki_nesting&#45;&gt;module~rki_state</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M407.7,-347.63C369.55,-357.5 310.76,-369.97 291.5,-359"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M289.5,-359C228.22,-324.09 198.97,-238.72 188.17,-198.14"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="191.55,-197.23 185.7,-188.39 184.76,-198.95 191.55,-197.23"/>
+</g>
+<!-- module~rki_output&#45;&gt;module~rki_state -->
+<g id="module~~rki_multilayer_state~~UsedByGraph_edge11" class="edge">
+<title>module~rki_output&#45;&gt;module~rki_state</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M268.34,-243.92C261.39,-239.73 253.73,-234.86 247,-230 232.06,-219.22 216.22,-205.88 204.04,-195.15"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="206.04,-192.25 196.25,-188.21 201.39,-197.47 206.04,-192.25"/>
+</g>
+<!-- module~rki_solver&#45;&gt;module~rki_state -->
+<g id="module~~rki_multilayer_state~~UsedByGraph_edge12" class="edge">
+<title>module~rki_solver&#45;&gt;module~rki_state</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M258.41,-176C246.82,-176 233.53,-176 221.37,-176"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="221.04,-172.5 211.04,-176 221.04,-179.5 221.04,-172.5"/>
+</g>
+<!-- module~rki_api_unstr -->
+<g id="module~~rki_multilayer_state~~UsedByGraph_node14" class="node">
+<title>module~rki_api_unstr</title>
+<g id="a_module~~rki_multilayer_state~~UsedByGraph_node14"><a xlink:href="../module/rki_api_unstr.html" xlink:title="rki_api_unstr">
+<polygon fill="#337ab7" stroke="#337ab7" points="483,-308 403,-308 403,-284 483,-284 483,-308"/>
+<text text-anchor="middle" x="443" y="-293.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_api_unstr</text>
+</a>
+</g>
+</g>
+<!-- module~rki_api_unstr&#45;&gt;module~rki_handle -->
+<g id="module~~rki_multilayer_state~~UsedByGraph_edge17" class="edge">
+<title>module~rki_api_unstr&#45;&gt;module~rki_handle</title>
+<path fill="none" stroke="#00b9ff" stroke-dasharray="5,2" d="M402.85,-296.52C382.04,-296.8 356.41,-297.14 334.98,-297.42"/>
+<polygon fill="#00b9ff" stroke="#00b9ff" points="334.8,-293.92 324.84,-297.56 334.89,-300.92 334.8,-293.92"/>
+</g>
+</g>
+</svg>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#UsedByGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="UsedByGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="518pt" height="32pt"
+ viewBox="0.00 0.00 517.50 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 513.5,-28 513.5,4 -4,4"/>
+<!-- Module -->
+<g id="node1" class="node">
+<title>Module</title>
+<polygon fill="#337ab7" stroke="#337ab7" points="54,-24 0,-24 0,0 54,0 54,-24"/>
+<text text-anchor="middle" x="27" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Module</text>
+</g>
+<!-- Submodule -->
+<g id="node2" class="node">
+<title>Submodule</title>
+<polygon fill="#5bc0de" stroke="#5bc0de" points="145.5,-24 72.5,-24 72.5,0 145.5,0 145.5,-24"/>
+<text text-anchor="middle" x="109" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Submodule</text>
+</g>
+<!-- Subroutine -->
+<g id="node3" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="234,-24 164,-24 164,0 234,0 234,-24"/>
+<text text-anchor="middle" x="199" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node4" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="310,-24 252,-24 252,0 310,0 310,-24"/>
+<text text-anchor="middle" x="281" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Program -->
+<g id="node5" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="386,-24 328,-24 328,0 386,0 386,-24"/>
+<text text-anchor="middle" x="357" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node6" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="509.5,-24 404.5,-24 404.5,0 509.5,0 509.5,-24"/>
+<text text-anchor="middle" x="457" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a submodule to the (sub)module which it is
+descended from. Dashed arrows point from a module or program unit to 
+modules which it uses.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+            </li>
+        </ul>
+      </div>
+    </div>
+
+      <br>
+
+
+
+
+
+
+        <section>
+          <h2>Derived Types</h2>
+              <div class="card">
+    <div class="card-header codesum">
+      <span class="anchor" id="type-multilayer_state_t"></span>
+      <h3>
+        type, public&nbsp;::&nbsp;
+        <a href='../type/multilayer_state_t.html'>multilayer_state_t</a>
+        
+      </h3>
+    </div>
+    <div class="card-body">
+      <p>Per-layer prognostic arrays + multilayer scalar config.</p>
+
+        <h4>Components</h4>
+          <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Visibility</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+<th></th><th scope="col">Initial</th>        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-s_init_bottom~2"></span>
+              real(kind=wp),
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>S_init_bottom</strong></td>
+<td> =</td>
+                <td>0.0_wp</td>
+            <td>
+<p>Linear-S(z) stratification, bed (k=1) value.  See S_init_surface.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-s_init_surface~2"></span>
+              real(kind=wp),
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>S_init_surface</strong></td>
+<td> =</td>
+                <td>0.0_wp</td>
+            <td>
+<p>Linear-S(z) stratification, surface (k=nz) value.  When both
+S_init_surface and S_init_bottom are non-zero (and nz&gt;1) the
+salinity seed becomes a linear profile from S_init_bottom at
+the bed (k=1) to S_init_surface at the surface; otherwise the
+uniform initial_salinity is used.  Stable polarity is the
+inverse of temperature: S_init_bottom &gt; S_init_surface (salty
+bed, fresh surface).</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-s_max~3"></span>
+              real(kind=wp),
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>S_max</strong></td>
+<td> =</td>
+                <td>40.0_wp</td>
+            <td>
+<p>Upper physical salinity bound (PSU)</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-s_min~3"></span>
+              real(kind=wp),
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>S_min</strong></td>
+<td> =</td>
+                <td>0.0_wp</td>
+            <td>
+<p>Lower physical salinity bound (PSU)</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-s_ref~6"></span>
+              real(kind=wp),
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>S_ref</strong></td>
+<td> =</td>
+                <td>0.0_wp</td>
+            <td>
+<p>Reference salinity in EOS (PSU)</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-t_init_bottom~2"></span>
+              real(kind=wp),
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>T_init_bottom</strong></td>
+<td> =</td>
+                <td>0.0_wp</td>
+            <td>
+<p>Linear-T(z) stratification, bed (k=1) value.  See T_init_surface.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-t_init_surface~2"></span>
+              real(kind=wp),
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>T_init_surface</strong></td>
+<td> =</td>
+                <td>0.0_wp</td>
+            <td>
+<p>Linear-T(z) stratification, surface (k=nz) value.  When both
+T_init_surface and T_init_bottom are non-zero (and nz&gt;1) the
+temperature seed becomes a linear profile from T_init_bottom at
+the bed (k=1) to T_init_surface at the surface; otherwise the
+uniform initial_temperature is used.  Mirrors the ocean path.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-t_max~3"></span>
+              real(kind=wp),
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>T_max</strong></td>
+<td> =</td>
+                <td>40.0_wp</td>
+            <td>
+<p>Upper physical temperature bound (degC)</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-t_min~3"></span>
+              real(kind=wp),
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>T_min</strong></td>
+<td> =</td>
+                <td>-2.0_wp</td>
+            <td>
+<p>Lower physical temperature bound (degC)</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-t_ref~6"></span>
+              real(kind=wp),
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>T_ref</strong></td>
+<td> =</td>
+                <td>15.0_wp</td>
+            <td>
+<p>Reference temperature in EOS (degC)</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-alpha_t~8"></span>
+              real(kind=wp),
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>alpha_T</strong></td>
+<td> =</td>
+                <td>0.17_wp</td>
+            <td>
+<p>Thermal expansion coefficient (kg/m^3 per degC).
+Set to 0 to make temperature a passive tracer.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-bed_sediment"></span>
+              real(kind=wp),
+            </td>
+              <td>public,</td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>bed_sediment</strong>(:,:)</td>
+                <td></td>
+                <td></td>
+            <td>
+<p>Bed sediment mass reservoir (kg/m^2), per column.  Allocated when
+use_sediment.  Settling deposits into it; total (suspended + bed)
+sediment is conserved.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-beta_s~8"></span>
+              real(kind=wp),
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>beta_S</strong></td>
+<td> =</td>
+                <td>0.78_wp</td>
+            <td>
+<p>Haline contraction coefficient (kg/m^3 per PSU)</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-biharmonic_nu4"></span>
+              real(kind=wp),
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>biharmonic_nu4</strong></td>
+<td> =</td>
+                <td>0.0_wp</td>
+            <td>
+<p>Biharmonic (del^4) lateral viscosity coefficient (m^4/s); 0 = off</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-dsig_ml~3"></span>
+              real(kind=wp),
+            </td>
+              <td>public,</td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>dsig_ml</strong>(:)</td>
+                <td></td>
+                <td></td>
+            <td>
+<p>Sigma layer fractions (nz_ml), sum = 1</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-eos~9"></span>
+              type(<a href='../type/eos_t.html'>eos_t</a>),
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>eos</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+<p>Shared EOS handle (variant tag + scalar coefficients) for
+the opt-in path.  Flat POD (no allocatable components):
+read on the host at dispatch time and passed by value into
+the device kernels, so it needs NO enter_data/exit_data
+mapping.  <code>eos%rho0</code> mirrors <code>rho_0</code> (vanishing-layer
+fallback density); <code>eos%p_ref</code> stays 0 ⇒ surface/potential
+density.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-eos_use_shared~2"></span>
+              logical,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>eos_use_shared</strong></td>
+<td> =</td>
+                <td>.false.</td>
+            <td>
+<p>When .true. the EOS call sites route through the shared
+<code>rki_eos</code> dispatch (<code>ml_equation_of_state_shared</code>)
+instead of the legacy coastal linear kernel.  Default off ⇒
+every existing coastal config is bit-identical by
+construction.  Set from <code>&amp;tracer_nml eos_form</code> via
+<code>ml_parse_eos_form</code> (state_init / driver).</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-evap_latent_cooling~4"></span>
+              logical,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>evap_latent_cooling</strong></td>
+<td> =</td>
+                <td>.false.</td>
+            <td>
+<p>When true (needs evap_mass_sink), evaporation also withdraws its
+latent heat of vaporization from the surface layer (k=nz) — an
+additional cooling on top of the sensible heat that leaves with
+the removed water.  Default false = bit-identical.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-evap_mass_sink~6"></span>
+              logical,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>evap_mass_sink</strong></td>
+<td> =</td>
+                <td>.false.</td>
+            <td>
+<p>When true, net evaporation is a real top-layer water-mass sink
+(h_top -= E*dt) with salt held (concentration rises) and heat
+carried away with the water.  Default false = virtual salt flux.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-h_layer~63"></span>
+              real(kind=wp),
+            </td>
+              <td>public,</td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>h_layer</strong>(:,:,:)</td>
+                <td></td>
+                <td></td>
+            <td>
+<p>Layer thickness</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-h_layer0~4"></span>
+              real(kind=wp),
+            </td>
+              <td>public,</td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>h_layer0</strong>(:,:,:)</td>
+                <td></td>
+                <td></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-hdiff_kappa~5"></span>
+              real(kind=wp),
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>hdiff_kappa</strong></td>
+<td> =</td>
+                <td>0.0_wp</td>
+            <td>
+<p>Horizontal diffusion coefficient for tracers (m^2/s)</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-hu_layer~35"></span>
+              real(kind=wp),
+            </td>
+              <td>public,</td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>hu_layer</strong>(:,:,:)</td>
+                <td></td>
+                <td></td>
+            <td>
+<p>Layer x-momentum h_k*u_k</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-hu_layer0~6"></span>
+              real(kind=wp),
+            </td>
+              <td>public,</td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>hu_layer0</strong>(:,:,:)</td>
+                <td></td>
+                <td></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-hu_ml_pre"></span>
+              real(kind=wp),
+            </td>
+              <td>public,</td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>hu_ml_pre</strong>(:,:)</td>
+                <td></td>
+                <td></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-hv_layer~35"></span>
+              real(kind=wp),
+            </td>
+              <td>public,</td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>hv_layer</strong>(:,:,:)</td>
+                <td></td>
+                <td></td>
+            <td>
+<p>Layer y-momentum h_k*v_k</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-hv_layer0~6"></span>
+              real(kind=wp),
+            </td>
+              <td>public,</td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>hv_layer0</strong>(:,:,:)</td>
+                <td></td>
+                <td></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-hv_ml_pre"></span>
+              real(kind=wp),
+            </td>
+              <td>public,</td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>hv_ml_pre</strong>(:,:)</td>
+                <td></td>
+                <td></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-idx_salinity~2"></span>
+              integer,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>idx_salinity</strong></td>
+<td> =</td>
+                <td>0</td>
+            <td>
+<p>Index into tracers(:) for salinity. 0 = not registered.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-idx_sediment"></span>
+              integer,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>idx_sediment</strong></td>
+<td> =</td>
+                <td>0</td>
+            <td>
+<p>Index into tracers(:) for suspended sediment. 0 = not registered.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-idx_temperature~2"></span>
+              integer,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>idx_temperature</strong></td>
+<td> =</td>
+                <td>0</td>
+            <td>
+<p>Index into tracers(:) for temperature. 0 = not registered.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-initial_salinity~2"></span>
+              real(kind=wp),
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>initial_salinity</strong></td>
+<td> =</td>
+                <td>35.0_wp</td>
+            <td>
+<p>Initial salinity for all layers (PSU)</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-initial_temperature~2"></span>
+              real(kind=wp),
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>initial_temperature</strong></td>
+<td> =</td>
+                <td>15.0_wp</td>
+            <td>
+<p>Initial temperature for all layers (degC)</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-kappa_s_bg~5"></span>
+              real(kind=wp),
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>kappa_S_bg</strong></td>
+<td> =</td>
+                <td>1.0e-5_wp</td>
+            <td>
+<p>Background vertical salinity diffusivity (m^2/s)</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-kappa_t_bg~5"></span>
+              real(kind=wp),
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>kappa_T_bg</strong></td>
+<td> =</td>
+                <td>1.0e-5_wp</td>
+            <td>
+<p>Background vertical temperature diffusivity (m^2/s)</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-keps_eps~2"></span>
+              real(kind=wp),
+            </td>
+              <td>public,</td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>keps_eps</strong>(:,:,:)</td>
+                <td></td>
+                <td></td>
+            <td>
+<p>TKE dissipation rate at interfaces (m^2/s^3).</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-keps_kt~2"></span>
+              real(kind=wp),
+            </td>
+              <td>public,</td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>keps_kt</strong>(:,:,:)</td>
+                <td></td>
+                <td></td>
+            <td>
+<p>k-eps turbulent (scalar) diffusivity at interfaces (m^2/s).</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-keps_nut~3"></span>
+              real(kind=wp),
+            </td>
+              <td>public,</td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>keps_nut</strong>(:,:,:)</td>
+                <td></td>
+                <td></td>
+            <td>
+<p>k-eps turbulent viscosity at interfaces (m^2/s); read as the old
+value by the next diffusion step, so it persists across steps.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-keps_stability~2"></span>
+              integer,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>keps_stability</strong></td>
+<td> =</td>
+                <td>KEPS_STAB_CONSTANT</td>
+            <td>
+<p>Stability-function scheme for nu_t / kappa_t (KEPS_STAB_*): constant
+c_mu (default) or Galperin stratification-aware quasi-equilibrium.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-keps_tke~2"></span>
+              real(kind=wp),
+            </td>
+              <td>public,</td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>keps_tke</strong>(:,:,:)</td>
+                <td></td>
+                <td></td>
+            <td>
+<p>Turbulent kinetic energy at interfaces (m^2/s^2), shape (nx,ny,nz+1).</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-keps_ustar_b~2"></span>
+              real(kind=wp),
+            </td>
+              <td>public,</td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>keps_ustar_b</strong>(:,:)</td>
+                <td></td>
+                <td></td>
+            <td>
+<p>Bed friction velocity for the k-eps wall functions (m/s), (nx,ny).
+Recomputed each step from the bottom-drag law; kept as a field
+(not scratch) so it maps to the device like the KPP u_star.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-keps_ustar_s~2"></span>
+              real(kind=wp),
+            </td>
+              <td>public,</td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>keps_ustar_s</strong>(:,:)</td>
+                <td></td>
+                <td></td>
+            <td>
+<p>Surface friction velocity for the k-eps wall functions (m/s).</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-kpp_bl_depth~2"></span>
+              real(kind=wp),
+            </td>
+              <td>public,</td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>kpp_bl_depth</strong>(:,:)</td>
+                <td></td>
+                <td></td>
+            <td>
+<p>Diagnosed boundary-layer depth (m, positive down).  Persists
+across steps — the previous value seeds the V_t^2 velocity
+scale (self-bootstraps from zero on the first call).</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-kpp_buoy_flux~2"></span>
+              real(kind=wp),
+            </td>
+              <td>public,</td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>kpp_buoy_flux</strong>(:,:)</td>
+                <td></td>
+                <td></td>
+            <td>
+<p>Surface buoyancy flux B_0 (m^2/s^3); &lt;0 = destabilizing.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-kpp_c_vt2~2"></span>
+              real(kind=wp),
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>kpp_c_vt2</strong></td>
+<td> =</td>
+                <td>1.8_wp</td>
+            <td>
+<p>Unresolved-turbulence coefficient for V_t^2 (LMD94 eq 23).</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-kpp_cs_nonlocal~2"></span>
+              real(kind=wp),
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>kpp_cs_nonlocal</strong></td>
+<td> =</td>
+                <td>6.3_wp</td>
+            <td>
+<p>Non-local transport coefficient C_s (LMD94 eq 20).</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-kpp_ri_crit~2"></span>
+              real(kind=wp),
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>kpp_ri_crit</strong></td>
+<td> =</td>
+                <td>0.3_wp</td>
+            <td>
+<p>Critical bulk Richardson number for the BL-depth sweep.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-kpp_u_star~2"></span>
+              real(kind=wp),
+            </td>
+              <td>public,</td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>kpp_u_star</strong>(:,:)</td>
+                <td></td>
+                <td></td>
+            <td>
+<p>Surface friction velocity sqrt(|tau|/rho_0) (m/s), per column.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nz_ml~6"></span>
+              integer,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nz_ml</strong></td>
+<td> =</td>
+                <td>1</td>
+            <td>
+<p>Number of multilayer sigma layers</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nz_ref~10"></span>
+              integer,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nz_ref</strong></td>
+<td> =</td>
+                <td>0</td>
+            <td>
+<p>Highest valid index in <code>rho_ref(0:nz_ref)</code>. 0 = unset.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-registry_locked~2"></span>
+              logical,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>registry_locked</strong></td>
+<td> =</td>
+                <td>.false.</td>
+            <td>
+<p>Set by <code>solver_tracers_enter_data</code>, cleared by
+<code>solver_tracers_exit_data</code>.  While locked,
+<code>register_passive_tracer</code> REFUSES: the device map snapshots
+<code>tracers(:)</code> element-by-element, so growing the registry
+reallocates the array (and deep-copies every element&rsquo;s
+<code>hTr</code>/<code>hTr0</code>), stranding every existing tracer&rsquo;s device
+mapping on freed host addresses — an illegal address or a
+silent stale-host read on the <code>mem:separate</code> GPU build.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-rho_0~33"></span>
+              real(kind=wp),
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>rho_0</strong></td>
+<td> =</td>
+                <td>1000.0_wp</td>
+            <td>
+<p>Reference density for EOS (kg/m^3)</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-rho_layer~24"></span>
+              real(kind=wp),
+            </td>
+              <td>public,</td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>rho_layer</strong>(:,:,:)</td>
+                <td></td>
+                <td></td>
+            <td>
+<p>(nx_total, ny_total, nz_ml)</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-rho_ref~7"></span>
+              real(kind=wp),
+            </td>
+              <td>public,</td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>rho_ref</strong>(:)</td>
+                <td></td>
+                <td></td>
+            <td>
+<p>Reference density profile sampled at <code>iz * rho_ref_dz</code>
+for <code>iz = 0..nz_ref</code>. Index 0 = surface.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-rho_ref_dz~7"></span>
+              real(kind=wp),
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>rho_ref_dz</strong></td>
+<td> =</td>
+                <td>0.0_wp</td>
+            <td>
+<p>Reference-grid spacing (m). 0 = unset.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-sediment_bed_init"></span>
+              real(kind=wp),
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>sediment_bed_init</strong></td>
+<td> =</td>
+                <td>0.0_wp</td>
+            <td>
+<p>Uniform initial bed sediment mass (kg/m^2).</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-sediment_erosion_rate"></span>
+              real(kind=wp),
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>sediment_erosion_rate</strong></td>
+<td> =</td>
+                <td>0.0_wp</td>
+            <td>
+<p>Ariathurai erosion-rate coefficient E0 (kg/m^2/s; 0 = off).</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-sediment_initial_conc"></span>
+              real(kind=wp),
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>sediment_initial_conc</strong></td>
+<td> =</td>
+                <td>0.0_wp</td>
+            <td>
+<p>Uniform initial suspended-sediment concentration (kg/m^3).</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-sediment_porosity"></span>
+              real(kind=wp),
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>sediment_porosity</strong></td>
+<td> =</td>
+                <td>0.0_wp</td>
+            <td>
+<p>Bed porosity (0-1); erosion scaled by (1 - porosity).</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-sediment_tau_crit_erosion"></span>
+              real(kind=wp),
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>sediment_tau_crit_erosion</strong></td>
+<td> =</td>
+                <td>0.0_wp</td>
+            <td>
+<p>Critical bed shear stress for erosion (Pa; 0 = erosion off).</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-sediment_w_s"></span>
+              real(kind=wp),
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>sediment_w_s</strong></td>
+<td> =</td>
+                <td>0.0_wp</td>
+            <td>
+<p>Settling (sinking) velocity (m/s, downward; 0 = no settling).</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-smagorinsky_cs~2"></span>
+              real(kind=wp),
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>smagorinsky_cs</strong></td>
+<td> =</td>
+                <td>0.0_wp</td>
+            <td>
+<p>Smagorinsky horizontal viscosity coefficient</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-tracer_recon_code"></span>
+              integer,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>tracer_recon_code</strong></td>
+<td> =</td>
+                <td>0</td>
+            <td>
+<p>Parsed TRACER_RECON_* code (0 = PPM, 1 = WENO5, 2 = WENO7,
+3 = WENO9).  Set at state init from config%tracer_recon.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-tracers~2"></span>
+              type(<a href='../type/tracer_t.html'>tracer_t</a>),
+            </td>
+              <td>public,</td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>tracers</strong>(:)</td>
+                <td></td>
+                <td></td>
+            <td>
+<p>Registered prognostic tracers (allocated when use_multilayer)</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-use_bpg_jacobian~2"></span>
+              logical,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>use_bpg_jacobian</strong></td>
+<td> =</td>
+                <td>.true.</td>
+            <td>
+<p>Use the pressure-Jacobian BPG (Shchepetkin &amp; McWilliams 2003).
+DEFAULT ON.  The sigma alternative differences the integrated
+density anomaly at constant SIGMA INDEX, which over sloping
+bathymetry produces a fictitious force proportional to
+(uniform density anomaly) x (bed slope) &ndash; so a column of
+spatially UNIFORM density whose value differs from <code>rho_0</code> is
+spuriously accelerated, and the resulting flow leaks mass
+(measured: 1.7e-6 relative over 400 steps, vs 1.3e-14 with the
+Jacobian).  Pinned by <code>test_bpg_uniform_density</code>.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-use_ppm_tracer~2"></span>
+              logical,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>use_ppm_tracer</strong></td>
+<td> =</td>
+                <td>.true.</td>
+            <td>
+<p>Use PPM for tracer advection (false = first-order upwind)</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-use_sediment"></span>
+              logical,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>use_sediment</strong></td>
+<td> =</td>
+                <td>.false.</td>
+            <td>
+<p>Master switch for sediment transport (default off).</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-vcoord~2"></span>
+              type(<a href='../type/vcoord_t.html'>vcoord_t</a>),
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>vcoord</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+<p>Coordinate type (sigma / zsigma), remap method, parameters</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-vcoord_z_ref~2"></span>
+              real(kind=wp),
+            </td>
+              <td>public,</td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>vcoord_z_ref</strong>(:)</td>
+                <td></td>
+                <td></td>
+            <td>
+<p>Reference z-level interfaces (0:nz_ml), GPU-mapped copy of
+vcoord%z_ref.  Top-level allocatable so OpenACC can map it
+without derived-type attach issues.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-vcoord_z_ref_col~2"></span>
+              real(kind=wp),
+            </td>
+              <td>public,</td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>vcoord_z_ref_col</strong>(:,:,:)</td>
+                <td></td>
+                <td></td>
+            <td>
+<p>Per-column reference z-level interfaces for VCOORD_ZSTAR_FULL,
+shape (0:nz_ml, nx_total, ny_total).  Built once at solver
+init from local bathymetry; static thereafter.  Only
+allocated when coord_type == VCOORD_ZSTAR_FULL.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-vmix_nu_bg~2"></span>
+              real(kind=wp),
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>vmix_nu_bg</strong></td>
+<td> =</td>
+                <td>1.0e-4_wp</td>
+            <td>
+<p>Background vertical viscosity (m^2/s)</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-vmix_nu_max~3"></span>
+              real(kind=wp),
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>vmix_nu_max</strong></td>
+<td> =</td>
+                <td>0.01_wp</td>
+            <td>
+<p>Pacanowski-Philander max turbulent viscosity (m^2/s)</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-vmix_ri_alpha~3"></span>
+              real(kind=wp),
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>vmix_ri_alpha</strong></td>
+<td> =</td>
+                <td>5.0_wp</td>
+            <td>
+<p>Richardson number scaling coefficient (shared S+T in PP81)</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-vmix_use_keps~2"></span>
+              logical,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>vmix_use_keps</strong></td>
+<td> =</td>
+                <td>.false.</td>
+            <td>
+<p>Master switch for the two-equation k-epsilon closure (default
+off = PP81/KPP).  Interface-shaped prognostic fields below
+are allocated only when this is set.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-vmix_use_kpp~2"></span>
+              logical,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>vmix_use_kpp</strong></td>
+<td> =</td>
+                <td>.false.</td>
+            <td>
+<p>Master switch for the KPP overlay (default off = pure PP81).</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-w_ml"></span>
+              real(kind=wp),
+            </td>
+              <td>public,</td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>w_ml</strong>(:,:,:)</td>
+                <td></td>
+                <td></td>
+            <td>
+<p>(nx_total, ny_total, nz_ml+1)</p>
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+
+
+        <h4>Type-Bound Procedures</h4>
+        <table class="table table-striped varlist">
+          <tbody>
+              <tr>
+                <td>  procedure, public, non_overridable ::
+  <strong><a href='../type/multilayer_state_t.html#boundprocedure-build_vcoord_reference'>build_vcoord_reference</a></strong> => <a href='/home/runner/work/rakali/rakali/docs/fpm-ford/proc/multilayer_build_vcoord_reference.html'>multilayer_build_vcoord_reference</a></td>
+                  <td></td>
+              </tr>
+              <tr>
+                <td>  procedure, public, non_overridable ::
+  <strong><a href='../type/multilayer_state_t.html#boundprocedure-bytes~13'>bytes</a></strong> => <a href='/home/runner/work/rakali/rakali/docs/fpm-ford/proc/multilayer_state_bytes.html'>multilayer_state_bytes</a></td>
+                  <td></td>
+              </tr>
+              <tr>
+                <td>  procedure, public, non_overridable ::
+  <strong><a href='../type/multilayer_state_t.html#boundprocedure-destroy~14'>destroy</a></strong> => <a href='/home/runner/work/rakali/rakali/docs/fpm-ford/proc/multilayer_state_destroy.html'>multilayer_state_destroy</a></td>
+                  <td></td>
+              </tr>
+              <tr>
+                <td>  procedure, public, non_overridable ::
+  <strong><a href='../type/multilayer_state_t.html#boundprocedure-init~14'>init</a></strong> => <a href='/home/runner/work/rakali/rakali/docs/fpm-ford/proc/multilayer_state_init.html'>multilayer_state_init</a></td>
+                  <td></td>
+              </tr>
+              <tr>
+                <td>  procedure, public, non_overridable ::
+  <strong><a href='../type/multilayer_state_t.html#boundprocedure-init_layers'>init_layers</a></strong> => <a href='/home/runner/work/rakali/rakali/docs/fpm-ford/proc/multilayer_init_layers.html'>multilayer_init_layers</a></td>
+                  <td></td>
+              </tr>
+              <tr>
+                <td>  procedure, public, non_overridable ::
+  <strong><a href='../type/multilayer_state_t.html#boundprocedure-register_passive_tracer~2'>register_passive_tracer</a></strong> => <a href='/home/runner/work/rakali/rakali/docs/fpm-ford/proc/multilayer_register_passive_tracer.html'>multilayer_register_passive_tracer</a></td>
+                  <td></td>
+              </tr>
+              <tr>
+                <td>  procedure, public, non_overridable ::
+  <strong><a href='../type/multilayer_state_t.html#boundprocedure-seed_tracers'>seed_tracers</a></strong> => <a href='/home/runner/work/rakali/rakali/docs/fpm-ford/proc/multilayer_seed_tracers.html'>multilayer_seed_tracers</a></td>
+                  <td></td>
+              </tr>
+          </tbody>
+        </table>
+    </div>
+  </div>
+
+        </section>
+        <br>
+
+        <section>
+          <h2>Functions</h2>
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-multilayer_state_bytes"></span> <h3>private pure function <a href='../proc/multilayer_state_bytes.html'>multilayer_state_bytes</a>(this) result(nbytes)  
+</h3></div>
+    <div class="card-body">
+          
+  <p>Counted allocatable footprint of the multilayer slot: the layer
+prognostics + RK2 saves + vcoord/rho tables + the tracer registry
+(each tracer sums its own arrays) + the gated KPP / k-epsilon /
+sediment workspaces (0 when their closure is off).</p>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-this~61"></span>
+              class(<a href='../type/multilayer_state_t.html'>multilayer_state_t</a>),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>this</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <h4>
+    Return Value
+    <small>integer(kind=int64)</small>
+    </h4>
+    
+
+    </div>
+  </div>
+
+        </section>
+        <br>
+
+        <section>
+          <h2>Subroutines</h2>
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-multilayer_build_vcoord_reference"></span> <h3>private  subroutine <a href='../proc/multilayer_build_vcoord_reference.html'>multilayer_build_vcoord_reference</a>(this, barotropic, grid)  
+</h3></div>
+    <div class="card-body">
+          
+  <p>For VCOORD_ZSTAR_FULL, build the per-column reference z-level
+pattern <code>vcoord_z_ref_col</code> from the bathymetry.  No-op for the
+other vertical coordinates.  Needed both on a cold start (called
+by <code>init_layers</code>) and after a restart read, which restores the
+prognostic layer fields but not this derived array.</p>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-this~57"></span>
+              class(<a href='../type/multilayer_state_t.html'>multilayer_state_t</a>),
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>this</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-barotropic~2"></span>
+              type(<a href='../type/barotropic_state_t.html'>barotropic_state_t</a>),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>barotropic</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-grid~84"></span>
+              type(<a href='../type/hgrid_t.html'>hgrid_t</a>),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>grid</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+    </div>
+  </div>
+
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-multilayer_init_layers"></span> <h3>private  subroutine <a href='../proc/multilayer_init_layers.html'>multilayer_init_layers</a>(this, barotropic, grid)  
+</h3></div>
+    <div class="card-body">
+          
+  <p>Lay out the initial per-layer distribution from the barotropic
+state: for VCOORD_ZSTAR_FULL first build the per-column
+reference z-level pattern from the bathymetry, then split the
+barotropic (h, hu, hv) across layers via the sigma weights
+<code>dsig_ml</code>.  Call once after <code>init</code> and before <code>seed_tracers</code> /
+EOS.</p>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-this~58"></span>
+              class(<a href='../type/multilayer_state_t.html'>multilayer_state_t</a>),
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>this</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-barotropic~3"></span>
+              type(<a href='../type/barotropic_state_t.html'>barotropic_state_t</a>),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>barotropic</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-grid~85"></span>
+              type(<a href='../type/hgrid_t.html'>hgrid_t</a>),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>grid</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+    </div>
+  </div>
+
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-multilayer_register_passive_tracer"></span> <h3>private  subroutine <a href='../proc/multilayer_register_passive_tracer.html'>multilayer_register_passive_tracer</a>(this, grid, name, tr_init, tr_min, tr_max, kappa_bg, hdiff_kappa)  
+</h3></div>
+    <div class="card-body">
+          
+  <p>Append a passive tracer (eos_coeff = 0) to the registry,
+growing <code>tracers(:)</code> past the default S/T pair.  Must be called
+AFTER <code>init</code> and BEFORE the solver&rsquo;s <code>enter_data</code> (so the new
+<code>hTr</code> gets device-mapped) — enforced via <code>registry_locked</code>:
+once the solver has mapped the registry the call logs an error
+and returns without touching it.  Caller populates <code>hTr</code> once
+layer thicknesses are known.  S/T keep their indices.</p>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-this~56"></span>
+              class(<a href='../type/multilayer_state_t.html'>multilayer_state_t</a>),
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>this</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-grid~83"></span>
+              type(<a href='../type/hgrid_t.html'>hgrid_t</a>),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>grid</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-name~32"></span>
+              character(len=*),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>name</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-tr_init~6"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>tr_init</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-tr_min~8"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>tr_min</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-tr_max~8"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>tr_max</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-kappa_bg~10"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>kappa_bg</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-hdiff_kappa~6"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>hdiff_kappa</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+    </div>
+  </div>
+
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-multilayer_seed_tracers"></span> <h3>private pure subroutine <a href='../proc/multilayer_seed_tracers.html'>multilayer_seed_tracers</a>(this, grid)  
+</h3></div>
+    <div class="card-body">
+          
+  <p>Seed salinity + temperature from the IC scalars on the state,
+each dispatching uniform-vs-stratified via <code>ml_seed_tracer</code>.
+Call once after the layer thicknesses are laid out and before
+EOS.</p>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-this~59"></span>
+              class(<a href='../type/multilayer_state_t.html'>multilayer_state_t</a>),
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>this</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-grid~86"></span>
+              type(<a href='../type/hgrid_t.html'>hgrid_t</a>),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>grid</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+    </div>
+  </div>
+
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-multilayer_state_destroy"></span> <h3>private  subroutine <a href='../proc/multilayer_state_destroy.html'>multilayer_state_destroy</a>(this)  
+</h3></div>
+    <div class="card-body">
+          
+  
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-this~60"></span>
+              class(<a href='../type/multilayer_state_t.html'>multilayer_state_t</a>),
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>this</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+    </div>
+  </div>
+
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-multilayer_state_init"></span> <h3>private  subroutine <a href='../proc/multilayer_state_init.html'>multilayer_state_init</a>(this, grid)  
+</h3></div>
+    <div class="card-body">
+          
+  <p>Allocate all multilayer arrays at the grid size and configured
+layer count, init the vcoord object, copy <code>vcoord%z_ref</code> into
+the GPU-mappable <code>vcoord_z_ref</code>, allocate the rho-ref profile,
+and register S + T.  Caller must set <code>nz_ml</code>,
+<code>vcoord%coord_type</code>, <code>vcoord%remap_method</code>, and any other
+vcoord parameters first.</p>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-this~55"></span>
+              class(<a href='../type/multilayer_state_t.html'>multilayer_state_t</a>),
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>this</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-grid~82"></span>
+              type(<a href='../type/hgrid_t.html'>hgrid_t</a>),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>grid</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+    </div>
+  </div>
+
+        </section>
+        <br>
+
+
+
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Rakali
+ was developed by Jorge Luis Galvez Vallejo<br>              &copy; 2026 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+ on 2026-10-08 12:55 +0000             </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,1318 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="GPU-native coastal solver — structured Cartesian and unstructured triangular grids, hydrostatic multilayer + non-hydrostatic, portable across NVHPC/gfortran/ifx.">
+    <meta name="author" content="Jorge Luis Galvez Vallejo" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>load_bathymetry_into_array &ndash; Rakali</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">Rakali </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/absint.html">Abstract Interfaces</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>load_bathymetry_into_array
+      <small>Subroutine</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.2% of total for procedures.">52 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/rki_bathymetry.F90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/rki_bathymetry.f90.html'>rki_bathymetry.F90</a></li>
+                <li class="breadcrumb-item"><a href='../module/rki_bathymetry.html'>rki_bathymetry</a></li>
+            <li class="breadcrumb-item active" aria-current="page">load_bathymetry_into_array</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+  
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#vars-0"
+         aria-expanded="false" aria-controls="vars-0">
+         <h4 class="card-header bg-primary text-white">Variables</h4>
+      </a>
+      <div id="vars-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../proc/load_bathymetry_into_array.html#variable-b_interior">b_interior</a>
+            <a class="list-group-item" href="../proc/load_bathymetry_into_array.html#variable-dim1_len">dim1_len</a>
+            <a class="list-group-item" href="../proc/load_bathymetry_into_array.html#variable-dim1_name">dim1_name</a>
+            <a class="list-group-item" href="../proc/load_bathymetry_into_array.html#variable-dim2_len">dim2_len</a>
+            <a class="list-group-item" href="../proc/load_bathymetry_into_array.html#variable-dim2_name">dim2_name</a>
+            <a class="list-group-item" href="../proc/load_bathymetry_into_array.html#variable-file_nx~2">file_nx</a>
+            <a class="list-group-item" href="../proc/load_bathymetry_into_array.html#variable-file_ny~2">file_ny</a>
+            <a class="list-group-item" href="../proc/load_bathymetry_into_array.html#variable-i~122">i</a>
+            <a class="list-group-item" href="../proc/load_bathymetry_into_array.html#variable-j~83">j</a>
+            <a class="list-group-item" href="../proc/load_bathymetry_into_array.html#variable-ncid~44">ncid</a>
+            <a class="list-group-item" href="../proc/load_bathymetry_into_array.html#variable-needs_transpose">needs_transpose</a>
+            <a class="list-group-item" href="../proc/load_bathymetry_into_array.html#variable-ng~31">ng</a>
+            <a class="list-group-item" href="../proc/load_bathymetry_into_array.html#variable-status~29">status</a>
+            <a class="list-group-item" href="../proc/load_bathymetry_into_array.html#variable-var_dimids">var_dimids</a>
+            <a class="list-group-item" href="../proc/load_bathymetry_into_array.html#variable-var_ndims">var_ndims</a>
+            <a class="list-group-item" href="../proc/load_bathymetry_into_array.html#variable-varid~26">varid</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../proc/load_bathymetry_into_array.html#src">load_bathymetry_into_array</a>
+      </div>
+    </div>
+
+
+  </div>
+
+    </div>
+    
+    <div class="col-md-9" id='text'>
+    <h2>public  subroutine load_bathymetry_into_array(filename, b, grid)  
+</h2>
+    
+
+    <p>Load bathymetry from a NetCDF file into a target 2D array
+shaped <code>(grid%nx_total, grid%ny_total)</code>.</p>
+<p>The file must contain:
+  - Dimensions: x (nx_phys), y (ny_phys)
+  - Variable: b(x, y) or elevation(x, y) or depth(x, y)</p>
+<p>Handles NetCDF C/Fortran dimension reversal: files written by
+Python/C store b(x,y) in C order, which Fortran reads as b(y,x).
+If the direct dimensions don&rsquo;t match but the transposed ones do,
+we read transposed and copy correctly.</p>
+<p>Bathymetry lands in the interior; ghost cells are filled by
+constant extrapolation from the nearest interior cell via
+<code>fill_bathymetry_ghosts_array</code>.</p>
+
+
+    <h3>Arguments</h3>
+        <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-filename~19"></span>
+              character(len=*),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>filename</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-b~31"></span>
+              real(kind=wp),
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>b</strong>(:,:)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-grid~67"></span>
+              type(<a href='../type/hgrid_t.html'>hgrid_t</a>),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>grid</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <br>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Calls</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~load_bathymetry_into_array~~CallsGraph Pages: 1 -->
+<svg id="procload_bathymetry_into_arrayCallsGraph" width="641pt" height="506pt"
+ viewBox="0.00 0.00 641.00 505.85" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~load_bathymetry_into_array~~CallsGraph" class="graph" transform="scale(0.97 0.97) rotate(0) translate(4 520)">
+<title>proc~~load_bathymetry_into_array~~CallsGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-520 660,-520 660,4 -4,4"/>
+<!-- proc~load_bathymetry_into_array -->
+<g id="proc~~load_bathymetry_into_array~~CallsGraph_node1" class="node">
+<title>proc~load_bathymetry_into_array</title>
+<polygon fill="none" stroke="black" points="162,-254 0,-254 0,-230 162,-230 162,-254"/>
+<text text-anchor="middle" x="81" y="-239.6" font-family="Helvetica,sans-Serif" font-size="10.50">load_bathymetry_into_array</text>
+</g>
+<!-- error -->
+<g id="proc~~load_bathymetry_into_array~~CallsGraph_node2" class="node">
+<title>error</title>
+<polygon fill="#777777" stroke="#777777" points="642.5,-438 588.5,-438 588.5,-414 642.5,-414 642.5,-438"/>
+<text text-anchor="middle" x="615.5" y="-423.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">error</text>
+</g>
+<!-- proc~load_bathymetry_into_array&#45;&gt;error -->
+<g id="proc~~load_bathymetry_into_array~~CallsGraph_edge1" class="edge">
+<title>proc~load_bathymetry_into_array&#45;&gt;error</title>
+<path fill="none" stroke="#ff0000" d="M87.05,-254.26C100.17,-284.34 138.5,-361.66 198,-394 263.06,-429.36 489.33,-428.67 578.23,-426.94"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="578.45,-430.44 588.37,-426.73 578.3,-423.44 578.45,-430.44"/>
+</g>
+<!-- info -->
+<g id="proc~~load_bathymetry_into_array~~CallsGraph_node3" class="node">
+<title>info</title>
+<polygon fill="#777777" stroke="#777777" points="308,-150 254,-150 254,-126 308,-126 308,-150"/>
+<text text-anchor="middle" x="281" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">info</text>
+</g>
+<!-- proc~load_bathymetry_into_array&#45;&gt;info -->
+<g id="proc~~load_bathymetry_into_array~~CallsGraph_edge2" class="edge">
+<title>proc~load_bathymetry_into_array&#45;&gt;info</title>
+<path fill="none" stroke="#ff0000" d="M95.23,-229.97C115.75,-211.95 157.15,-178.03 198,-159 212.26,-152.36 228.93,-147.6 243.5,-144.31"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="244.61,-147.65 253.67,-142.17 243.16,-140.8 244.61,-147.65"/>
+</g>
+<!-- nf90_inquire_dimension -->
+<g id="proc~~load_bathymetry_into_array~~CallsGraph_node4" class="node">
+<title>nf90_inquire_dimension</title>
+<polygon fill="#777777" stroke="#777777" points="539,-398 400,-398 400,-374 539,-374 539,-398"/>
+<text text-anchor="middle" x="469.5" y="-383.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nf90_inquire_dimension</text>
+</g>
+<!-- proc~load_bathymetry_into_array&#45;&gt;nf90_inquire_dimension -->
+<g id="proc~~load_bathymetry_into_array~~CallsGraph_edge3" class="edge">
+<title>proc~load_bathymetry_into_array&#45;&gt;nf90_inquire_dimension</title>
+<path fill="none" stroke="#ff0000" d="M89.09,-254.22C104.85,-280.06 145.57,-339.93 198,-365 257.81,-393.6 333.61,-397.1 389.75,-394.46"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="390.2,-397.94 399.99,-393.89 389.81,-390.95 390.2,-397.94"/>
+</g>
+<!-- nf90_inquire_variable -->
+<g id="proc~~load_bathymetry_into_array~~CallsGraph_node5" class="node">
+<title>nf90_inquire_variable</title>
+<polygon fill="#777777" stroke="#777777" points="344.5,-108 217.5,-108 217.5,-84 344.5,-84 344.5,-108"/>
+<text text-anchor="middle" x="281" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nf90_inquire_variable</text>
+</g>
+<!-- proc~load_bathymetry_into_array&#45;&gt;nf90_inquire_variable -->
+<g id="proc~~load_bathymetry_into_array~~CallsGraph_edge4" class="edge">
+<title>proc~load_bathymetry_into_array&#45;&gt;nf90_inquire_variable</title>
+<path fill="none" stroke="#ff0000" d="M89.66,-229.89C106.2,-204.77 147.88,-146.82 198,-117 201.06,-115.18 204.28,-113.51 207.59,-111.99"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="209.22,-115.11 217.15,-108.07 206.57,-108.63 209.22,-115.11"/>
+</g>
+<!-- proc~fill_bathymetry_ghosts_array -->
+<g id="proc~~load_bathymetry_into_array~~CallsGraph_node6" class="node">
+<title>proc~fill_bathymetry_ghosts_array</title>
+<g id="a_proc~~load_bathymetry_into_array~~CallsGraph_node6"><a xlink:href="../proc/fill_bathymetry_ghosts_array.html" xlink:title="fill_bathymetry_ghosts_array">
+<polygon fill="#d9534f" stroke="#d9534f" points="364,-66 198,-66 198,-42 364,-42 364,-66"/>
+<text text-anchor="middle" x="281" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">fill_bathymetry_ghosts_array</text>
+</a>
+</g>
+</g>
+<!-- proc~load_bathymetry_into_array&#45;&gt;proc~fill_bathymetry_ghosts_array -->
+<g id="proc~~load_bathymetry_into_array~~CallsGraph_edge5" class="edge">
+<title>proc~load_bathymetry_into_array&#45;&gt;proc~fill_bathymetry_ghosts_array</title>
+<path fill="none" stroke="#ff0000" d="M86.9,-229.67C99.94,-198.54 138.57,-116.29 198,-75 200.38,-73.35 202.87,-71.83 205.45,-70.43"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="207,-73.57 214.52,-66.11 203.99,-67.25 207,-73.57"/>
+</g>
+<!-- proc~nc_check -->
+<g id="proc~~load_bathymetry_into_array~~CallsGraph_node7" class="node">
+<title>proc~nc_check</title>
+<g id="a_proc~~load_bathymetry_into_array~~CallsGraph_node7"><a xlink:href="../proc/nc_check.html" xlink:title="nc_check">
+<polygon fill="#d9534f" stroke="#d9534f" points="500.5,-272 438.5,-272 438.5,-248 500.5,-248 500.5,-272"/>
+<text text-anchor="middle" x="469.5" y="-257.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nc_check</text>
+</a>
+</g>
+</g>
+<!-- proc~load_bathymetry_into_array&#45;&gt;proc~nc_check -->
+<g id="proc~~load_bathymetry_into_array~~CallsGraph_edge6" class="edge">
+<title>proc~load_bathymetry_into_array&#45;&gt;proc~nc_check</title>
+<path fill="none" stroke="#ff0000" d="M162.08,-245.73C243.18,-249.51 365.34,-255.2 428.11,-258.12"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="428.23,-261.63 438.38,-258.6 428.56,-254.64 428.23,-261.63"/>
+</g>
+<!-- proc~nc_close -->
+<g id="proc~~load_bathymetry_into_array~~CallsGraph_node8" class="node">
+<title>proc~nc_close</title>
+<g id="a_proc~~load_bathymetry_into_array~~CallsGraph_node8"><a xlink:href="../proc/nc_close.html" xlink:title="nc_close">
+<polygon fill="#d9534f" stroke="#d9534f" points="310,-314 252,-314 252,-290 310,-290 310,-314"/>
+<text text-anchor="middle" x="281" y="-299.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nc_close</text>
+</a>
+</g>
+</g>
+<!-- proc~load_bathymetry_into_array&#45;&gt;proc~nc_close -->
+<g id="proc~~load_bathymetry_into_array~~CallsGraph_edge7" class="edge">
+<title>proc~load_bathymetry_into_array&#45;&gt;proc~nc_close</title>
+<path fill="none" stroke="#ff0000" d="M122.07,-254.14C157.14,-264.77 207.72,-280.1 242.13,-290.52"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="241.23,-293.91 251.81,-293.46 243.26,-287.21 241.23,-293.91"/>
+</g>
+<!-- proc~nc_get_dim_len -->
+<g id="proc~~load_bathymetry_into_array~~CallsGraph_node9" class="node">
+<title>proc~nc_get_dim_len</title>
+<g id="a_proc~~load_bathymetry_into_array~~CallsGraph_node9"><a xlink:href="../proc/nc_get_dim_len.html" xlink:title="nc_get_dim_len">
+<polygon fill="#d9534f" stroke="#d9534f" points="328.5,-356 233.5,-356 233.5,-332 328.5,-332 328.5,-356"/>
+<text text-anchor="middle" x="281" y="-341.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nc_get_dim_len</text>
+</a>
+</g>
+</g>
+<!-- proc~load_bathymetry_into_array&#45;&gt;proc~nc_get_dim_len -->
+<g id="proc~~load_bathymetry_into_array~~CallsGraph_edge8" class="edge">
+<title>proc~load_bathymetry_into_array&#45;&gt;proc~nc_get_dim_len</title>
+<path fill="none" stroke="#ff0000" d="M95.63,-254.01C116.34,-271.65 157.59,-304.46 198,-323 206.05,-326.7 214.87,-329.82 223.63,-332.43"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="222.89,-335.85 233.46,-335.16 224.76,-329.11 222.89,-335.85"/>
+</g>
+<!-- proc~nc_get_var_2d -->
+<g id="proc~~load_bathymetry_into_array~~CallsGraph_node10" class="node">
+<title>proc~nc_get_var_2d</title>
+<g id="a_proc~~load_bathymetry_into_array~~CallsGraph_node10"><a xlink:href="../proc/nc_get_var_2d.html" xlink:title="nc_get_var_2d">
+<polygon fill="#d9534f" stroke="#d9534f" points="325.5,-234 236.5,-234 236.5,-210 325.5,-210 325.5,-234"/>
+<text text-anchor="middle" x="281" y="-219.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nc_get_var_2d</text>
+</a>
+</g>
+</g>
+<!-- proc~load_bathymetry_into_array&#45;&gt;proc~nc_get_var_2d -->
+<g id="proc~~load_bathymetry_into_array~~CallsGraph_edge9" class="edge">
+<title>proc~load_bathymetry_into_array&#45;&gt;proc~nc_get_var_2d</title>
+<path fill="none" stroke="#ff0000" d="M162.25,-233.89C183.79,-231.72 206.57,-229.42 226.28,-227.43"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="226.7,-230.9 236.29,-226.41 225.99,-223.94 226.7,-230.9"/>
+</g>
+<!-- proc~nc_open_read -->
+<g id="proc~~load_bathymetry_into_array~~CallsGraph_node11" class="node">
+<title>proc~nc_open_read</title>
+<g id="a_proc~~load_bathymetry_into_array~~CallsGraph_node11"><a xlink:href="../proc/nc_open_read.html" xlink:title="nc_open_read">
+<polygon fill="#d9534f" stroke="#d9534f" points="324.5,-192 237.5,-192 237.5,-168 324.5,-168 324.5,-192"/>
+<text text-anchor="middle" x="281" y="-177.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nc_open_read</text>
+</a>
+</g>
+</g>
+<!-- proc~load_bathymetry_into_array&#45;&gt;proc~nc_open_read -->
+<g id="proc~~load_bathymetry_into_array~~CallsGraph_edge10" class="edge">
+<title>proc~load_bathymetry_into_array&#45;&gt;proc~nc_open_read</title>
+<path fill="none" stroke="#ff0000" d="M113.75,-229.92C136.92,-221.31 169.19,-209.76 198,-201 207.49,-198.11 217.68,-195.29 227.53,-192.7"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="228.44,-196.08 237.24,-190.18 226.68,-189.3 228.44,-196.08"/>
+</g>
+<!-- proc~try_get_bathymetry_var -->
+<g id="proc~~load_bathymetry_into_array~~CallsGraph_node12" class="node">
+<title>proc~try_get_bathymetry_var</title>
+<g id="a_proc~~load_bathymetry_into_array~~CallsGraph_node12"><a xlink:href="../proc/try_get_bathymetry_var.html" xlink:title="try_get_bathymetry_var">
+<polygon fill="#d9534f" stroke="#d9534f" points="350.5,-478 211.5,-478 211.5,-454 350.5,-454 350.5,-478"/>
+<text text-anchor="middle" x="281" y="-463.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">try_get_bathymetry_var</text>
+</a>
+</g>
+</g>
+<!-- proc~load_bathymetry_into_array&#45;&gt;proc~try_get_bathymetry_var -->
+<g id="proc~~load_bathymetry_into_array~~CallsGraph_edge11" class="edge">
+<title>proc~load_bathymetry_into_array&#45;&gt;proc~try_get_bathymetry_var</title>
+<path fill="none" stroke="#ff0000" d="M85.72,-254.32C96.79,-288.95 132.94,-388.04 198,-440 202.71,-443.76 207.97,-446.98 213.5,-449.74"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="212.43,-453.1 222.99,-453.96 215.27,-446.7 212.43,-453.1"/>
+</g>
+<!-- to_string -->
+<g id="proc~~load_bathymetry_into_array~~CallsGraph_node13" class="node">
+<title>to_string</title>
+<polygon fill="#777777" stroke="#777777" points="310,-24 252,-24 252,0 310,0 310,-24"/>
+<text text-anchor="middle" x="281" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">to_string</text>
+</g>
+<!-- proc~load_bathymetry_into_array&#45;&gt;to_string -->
+<g id="proc~~load_bathymetry_into_array~~CallsGraph_edge12" class="edge">
+<title>proc~load_bathymetry_into_array&#45;&gt;to_string</title>
+<path fill="none" stroke="#ff0000" d="M85.07,-229.86C94.83,-193.79 128.69,-86.51 198,-33 210.48,-23.37 226.89,-18.12 241.75,-15.28"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="242.42,-18.71 251.73,-13.66 241.3,-11.8 242.42,-18.71"/>
+</g>
+<!-- proc~nc_check&#45;&gt;error -->
+<g id="proc~~load_bathymetry_into_array~~CallsGraph_edge13" class="edge">
+<title>proc~nc_check&#45;&gt;error</title>
+<path fill="none" stroke="#00ff7f" d="M500.63,-263.92C513.58,-266.86 528.2,-272.01 539,-281 578.39,-313.79 599.78,-372.47 608.96,-404.2"/>
+<polygon fill="#00ff7f" stroke="#00ff7f" points="605.59,-405.14 611.61,-413.85 612.34,-403.28 605.59,-405.14"/>
+</g>
+<!-- nf90_strerror -->
+<g id="proc~~load_bathymetry_into_array~~CallsGraph_node19" class="node">
+<title>nf90_strerror</title>
+<polygon fill="#777777" stroke="#777777" points="656,-272 575,-272 575,-248 656,-248 656,-272"/>
+<text text-anchor="middle" x="615.5" y="-257.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nf90_strerror</text>
+</g>
+<!-- proc~nc_check&#45;&gt;nf90_strerror -->
+<g id="proc~~load_bathymetry_into_array~~CallsGraph_edge14" class="edge">
+<title>proc~nc_check&#45;&gt;nf90_strerror</title>
+<path fill="none" stroke="#00ff7f" d="M500.69,-260C519.19,-260 543.32,-260 564.6,-260"/>
+<polygon fill="#00ff7f" stroke="#00ff7f" points="564.78,-263.5 574.78,-260 564.78,-256.5 564.78,-263.5"/>
+</g>
+<!-- proc~nc_close&#45;&gt;proc~nc_check -->
+<g id="proc~~load_bathymetry_into_array~~CallsGraph_edge16" class="edge">
+<title>proc~nc_close&#45;&gt;proc~nc_check</title>
+<path fill="none" stroke="#00ffff" d="M310.33,-295.62C341.77,-288.54 392.75,-277.06 428.31,-269.05"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="429.37,-272.4 438.36,-266.79 427.83,-265.57 429.37,-272.4"/>
+</g>
+<!-- nf90_close -->
+<g id="proc~~load_bathymetry_into_array~~CallsGraph_node14" class="node">
+<title>nf90_close</title>
+<polygon fill="#777777" stroke="#777777" points="504.5,-314 434.5,-314 434.5,-290 504.5,-290 504.5,-314"/>
+<text text-anchor="middle" x="469.5" y="-299.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nf90_close</text>
+</g>
+<!-- proc~nc_close&#45;&gt;nf90_close -->
+<g id="proc~~load_bathymetry_into_array~~CallsGraph_edge15" class="edge">
+<title>proc~nc_close&#45;&gt;nf90_close</title>
+<path fill="none" stroke="#00ffff" d="M310.33,-302C340.56,-302 388.87,-302 424.16,-302"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="424.19,-305.5 434.19,-302 424.19,-298.5 424.19,-305.5"/>
+</g>
+<!-- proc~nc_get_dim_len&#45;&gt;nf90_inquire_dimension -->
+<g id="proc~~load_bathymetry_into_array~~CallsGraph_edge18" class="edge">
+<title>proc~nc_get_dim_len&#45;&gt;nf90_inquire_dimension</title>
+<path fill="none" stroke="#007fff" d="M328.58,-354.49C351.73,-359.7 380.04,-366.08 405.13,-371.73"/>
+<polygon fill="#007fff" stroke="#007fff" points="404.4,-375.15 414.93,-373.94 405.94,-368.32 404.4,-375.15"/>
+</g>
+<!-- proc~nc_get_dim_len&#45;&gt;proc~nc_check -->
+<g id="proc~~load_bathymetry_into_array~~CallsGraph_edge19" class="edge">
+<title>proc~nc_get_dim_len&#45;&gt;proc~nc_check</title>
+<path fill="none" stroke="#007fff" d="M328.69,-337.24C340.79,-334.13 353.39,-329.6 364,-323 384.88,-310.01 379.43,-294.47 400,-281 408.58,-275.38 418.75,-271.2 428.59,-268.12"/>
+<polygon fill="#007fff" stroke="#007fff" points="429.57,-271.47 438.24,-265.39 427.67,-264.74 429.57,-271.47"/>
+</g>
+<!-- nf90_inq_dimid -->
+<g id="proc~~load_bathymetry_into_array~~CallsGraph_node16" class="node">
+<title>nf90_inq_dimid</title>
+<polygon fill="#777777" stroke="#777777" points="516.5,-356 422.5,-356 422.5,-332 516.5,-332 516.5,-356"/>
+<text text-anchor="middle" x="469.5" y="-341.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nf90_inq_dimid</text>
+</g>
+<!-- proc~nc_get_dim_len&#45;&gt;nf90_inq_dimid -->
+<g id="proc~~load_bathymetry_into_array~~CallsGraph_edge17" class="edge">
+<title>proc~nc_get_dim_len&#45;&gt;nf90_inq_dimid</title>
+<path fill="none" stroke="#007fff" d="M328.58,-344C353.82,-344 385.21,-344 411.85,-344"/>
+<polygon fill="#007fff" stroke="#007fff" points="412.19,-347.5 422.19,-344 412.19,-340.5 412.19,-347.5"/>
+</g>
+<!-- proc~nc_get_var_2d&#45;&gt;proc~nc_check -->
+<g id="proc~~load_bathymetry_into_array~~CallsGraph_edge21" class="edge">
+<title>proc~nc_get_var_2d&#45;&gt;proc~nc_check</title>
+<path fill="none" stroke="#0000ff" d="M325.73,-230.91C356.74,-237.23 398.04,-245.64 428.25,-251.8"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="427.93,-255.31 438.43,-253.87 429.33,-248.45 427.93,-255.31"/>
+</g>
+<!-- nf90_get_var -->
+<g id="proc~~load_bathymetry_into_array~~CallsGraph_node15" class="node">
+<title>nf90_get_var</title>
+<polygon fill="#777777" stroke="#777777" points="510.5,-230 428.5,-230 428.5,-206 510.5,-206 510.5,-230"/>
+<text text-anchor="middle" x="469.5" y="-215.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nf90_get_var</text>
+</g>
+<!-- proc~nc_get_var_2d&#45;&gt;nf90_get_var -->
+<g id="proc~~load_bathymetry_into_array~~CallsGraph_edge20" class="edge">
+<title>proc~nc_get_var_2d&#45;&gt;nf90_get_var</title>
+<path fill="none" stroke="#0000ff" d="M325.73,-221.06C353.34,-220.47 389.12,-219.7 417.95,-219.08"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="418.31,-222.58 428.23,-218.86 418.16,-215.58 418.31,-222.58"/>
+</g>
+<!-- proc~nc_open_read&#45;&gt;proc~nc_check -->
+<g id="proc~~load_bathymetry_into_array~~CallsGraph_edge23" class="edge">
+<title>proc~nc_open_read&#45;&gt;proc~nc_check</title>
+<path fill="none" stroke="#7f00ff" d="M324.65,-186.17C337.87,-189.31 352.09,-194 364,-201 384.05,-212.79 380.23,-226.74 400,-239 408.72,-244.41 418.94,-248.51 428.78,-251.59"/>
+<polygon fill="#7f00ff" stroke="#7f00ff" points="427.84,-254.96 438.42,-254.33 429.76,-248.23 427.84,-254.96"/>
+</g>
+<!-- nf90_open -->
+<g id="proc~~load_bathymetry_into_array~~CallsGraph_node18" class="node">
+<title>nf90_open</title>
+<polygon fill="#777777" stroke="#777777" points="504,-188 435,-188 435,-164 504,-164 504,-188"/>
+<text text-anchor="middle" x="469.5" y="-173.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nf90_open</text>
+</g>
+<!-- proc~nc_open_read&#45;&gt;nf90_open -->
+<g id="proc~~load_bathymetry_into_array~~CallsGraph_edge22" class="edge">
+<title>proc~nc_open_read&#45;&gt;nf90_open</title>
+<path fill="none" stroke="#7f00ff" d="M324.79,-179.08C354.7,-178.44 394.54,-177.59 424.68,-176.94"/>
+<polygon fill="#7f00ff" stroke="#7f00ff" points="424.98,-180.43 434.91,-176.72 424.83,-173.44 424.98,-180.43"/>
+</g>
+<!-- proc~try_get_bathymetry_var&#45;&gt;error -->
+<g id="proc~~load_bathymetry_into_array~~CallsGraph_edge24" class="edge">
+<title>proc~try_get_bathymetry_var&#45;&gt;error</title>
+<path fill="none" stroke="#ff00ff" d="M350.64,-460.61C402.51,-456.15 475.41,-449.1 539,-440 551.89,-438.16 565.93,-435.68 578.37,-433.33"/>
+<polygon fill="#ff00ff" stroke="#ff00ff" points="579.23,-436.73 588.38,-431.39 577.9,-429.85 579.23,-436.73"/>
+</g>
+<!-- nf90_inq_varid -->
+<g id="proc~~load_bathymetry_into_array~~CallsGraph_node17" class="node">
+<title>nf90_inq_varid</title>
+<polygon fill="#777777" stroke="#777777" points="515,-516 424,-516 424,-492 515,-492 515,-516"/>
+<text text-anchor="middle" x="469.5" y="-501.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nf90_inq_varid</text>
+</g>
+<!-- proc~try_get_bathymetry_var&#45;&gt;nf90_inq_varid -->
+<g id="proc~~load_bathymetry_into_array~~CallsGraph_edge25" class="edge">
+<title>proc~try_get_bathymetry_var&#45;&gt;nf90_inq_varid</title>
+<path fill="none" stroke="#ff00ff" d="M341.01,-478.02C364.34,-482.78 391,-488.21 413.88,-492.87"/>
+<polygon fill="#ff00ff" stroke="#ff00ff" points="413.27,-496.32 423.77,-494.89 414.67,-489.46 413.27,-496.32"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var panprocload_bathymetry_into_arrayCallsGraph = svgPanZoom('#procload_bathymetry_into_arrayCallsGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CallsGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CallsGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Called by</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~load_bathymetry_into_array~~CalledByGraph Pages: 1 -->
+<svg id="procload_bathymetry_into_arrayCalledByGraph" width="641pt" height="98pt"
+ viewBox="0.00 0.00 641.00 98.35" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~load_bathymetry_into_array~~CalledByGraph" class="graph" transform="scale(0.85 0.85) rotate(0) translate(4 112)">
+<title>proc~~load_bathymetry_into_array~~CalledByGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-112 752,-112 752,4 -4,4"/>
+<!-- proc~load_bathymetry_into_array -->
+<g id="proc~~load_bathymetry_into_array~~CalledByGraph_node1" class="node">
+<title>proc~load_bathymetry_into_array</title>
+<polygon fill="none" stroke="black" points="748,-87 586,-87 586,-63 748,-63 748,-87"/>
+<text text-anchor="middle" x="667" y="-72.6" font-family="Helvetica,sans-Serif" font-size="10.50">load_bathymetry_into_array</text>
+</g>
+<!-- proc~load_bathymetry -->
+<g id="proc~~load_bathymetry_into_array~~CalledByGraph_node2" class="node">
+<title>proc~load_bathymetry</title>
+<g id="a_proc~~load_bathymetry_into_array~~CalledByGraph_node2"><a xlink:href="../proc/load_bathymetry.html" xlink:title="load_bathymetry">
+<polygon fill="#d9534f" stroke="#d9534f" points="550,-87 447,-87 447,-63 550,-63 550,-87"/>
+<text text-anchor="middle" x="498.5" y="-72.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">load_bathymetry</text>
+</a>
+</g>
+</g>
+<!-- proc~load_bathymetry&#45;&gt;proc~load_bathymetry_into_array -->
+<g id="proc~~load_bathymetry_into_array~~CalledByGraph_edge1" class="edge">
+<title>proc~load_bathymetry&#45;&gt;proc~load_bathymetry_into_array</title>
+<path fill="none" stroke="#ff0000" d="M550.36,-75C558.4,-75 566.92,-75 575.55,-75"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="575.7,-78.5 585.7,-75 575.7,-71.5 575.7,-78.5"/>
+</g>
+<!-- proc~init_local_state -->
+<g id="proc~~load_bathymetry_into_array~~CalledByGraph_node3" class="node">
+<title>proc~init_local_state</title>
+<g id="a_proc~~load_bathymetry_into_array~~CalledByGraph_node3"><a xlink:href="../proc/init_local_state.html" xlink:title="init_local_state">
+<polygon fill="#d9534f" stroke="#d9534f" points="411,-108 320,-108 320,-84 411,-84 411,-108"/>
+<text text-anchor="middle" x="365.5" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">init_local_state</text>
+</a>
+</g>
+</g>
+<!-- proc~init_local_state&#45;&gt;proc~load_bathymetry -->
+<g id="proc~~load_bathymetry_into_array~~CalledByGraph_edge2" class="edge">
+<title>proc~init_local_state&#45;&gt;proc~load_bathymetry</title>
+<path fill="none" stroke="#ff0000" d="M411.22,-88.83C419.42,-87.52 428.11,-86.12 436.69,-84.75"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="437.36,-88.19 446.68,-83.15 436.25,-81.27 437.36,-88.19"/>
+</g>
+<!-- proc~rki_finalize -->
+<g id="proc~~load_bathymetry_into_array~~CalledByGraph_node4" class="node">
+<title>proc~rki_finalize</title>
+<g id="a_proc~~load_bathymetry_into_array~~CalledByGraph_node4"><a xlink:href="../proc/rki_finalize.html" xlink:title="rki_finalize">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="400.5,-66 330.5,-66 330.5,-42 400.5,-42 400.5,-66"/>
+<text text-anchor="middle" x="365.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_finalize</text>
+</a>
+</g>
+</g>
+<!-- proc~rki_finalize&#45;&gt;proc~load_bathymetry -->
+<g id="proc~~load_bathymetry_into_array~~CalledByGraph_edge3" class="edge">
+<title>proc~rki_finalize&#45;&gt;proc~load_bathymetry</title>
+<path fill="none" stroke="#ff0000" d="M400.58,-59.46C411.7,-61.25 424.41,-63.28 436.89,-65.28"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="436.38,-68.75 446.81,-66.87 437.49,-61.83 436.38,-68.75"/>
+</g>
+<!-- proc~driver_run_coastal -->
+<g id="proc~~load_bathymetry_into_array~~CalledByGraph_node5" class="node">
+<title>proc~driver_run_coastal</title>
+<g id="a_proc~~load_bathymetry_into_array~~CalledByGraph_node5"><a xlink:href="../proc/driver_run_coastal.html" xlink:title="driver_run_coastal">
+<polygon fill="#d9534f" stroke="#d9534f" points="249,-108 138,-108 138,-84 249,-84 249,-108"/>
+<text text-anchor="middle" x="193.5" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">driver_run_coastal</text>
+</a>
+</g>
+</g>
+<!-- proc~driver_run_coastal&#45;&gt;proc~init_local_state -->
+<g id="proc~~load_bathymetry_into_array~~CalledByGraph_edge4" class="edge">
+<title>proc~driver_run_coastal&#45;&gt;proc~init_local_state</title>
+<path fill="none" stroke="#ff0000" d="M249.22,-96C268.56,-96 290.3,-96 309.64,-96"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="309.82,-99.5 319.82,-96 309.82,-92.5 309.82,-99.5"/>
+</g>
+<!-- proc~rki_create_from_namelist -->
+<g id="proc~~load_bathymetry_into_array~~CalledByGraph_node6" class="node">
+<title>proc~rki_create_from_namelist</title>
+<g id="a_proc~~load_bathymetry_into_array~~CalledByGraph_node6"><a xlink:href="../proc/rki_create_from_namelist.html" xlink:title="rki_create_from_namelist">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="266.5,-66 120.5,-66 120.5,-42 266.5,-42 266.5,-66"/>
+<text text-anchor="middle" x="193.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_create_from_namelist</text>
+</a>
+</g>
+</g>
+<!-- proc~rki_create_from_namelist&#45;&gt;proc~rki_finalize -->
+<g id="proc~~load_bathymetry_into_array~~CalledByGraph_edge5" class="edge">
+<title>proc~rki_create_from_namelist&#45;&gt;proc~rki_finalize</title>
+<path fill="none" stroke="#00ffff" d="M266.6,-54C284.71,-54 303.62,-54 319.94,-54"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="320.26,-57.5 330.26,-54 320.26,-50.5 320.26,-57.5"/>
+</g>
+<!-- proc~rki_create_from_namelist_string -->
+<g id="proc~~load_bathymetry_into_array~~CalledByGraph_node7" class="node">
+<title>proc~rki_create_from_namelist_string</title>
+<g id="a_proc~~load_bathymetry_into_array~~CalledByGraph_node7"><a xlink:href="../proc/rki_create_from_namelist_string.html" xlink:title="rki_create_from_namelist_string">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="284,-24 103,-24 103,0 284,0 284,-24"/>
+<text text-anchor="middle" x="193.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_create_from_namelist_string</text>
+</a>
+</g>
+</g>
+<!-- proc~rki_create_from_namelist_string&#45;&gt;proc~rki_finalize -->
+<g id="proc~~load_bathymetry_into_array~~CalledByGraph_edge6" class="edge">
+<title>proc~rki_create_from_namelist_string&#45;&gt;proc~rki_finalize</title>
+<path fill="none" stroke="#00ffff" d="M247.08,-24.11C259.22,-26.97 272.07,-30.05 284,-33 295.94,-35.96 308.84,-39.27 320.75,-42.38"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="319.91,-45.77 330.47,-44.92 321.68,-39 319.91,-45.77"/>
+</g>
+<!-- proc~driver_run -->
+<g id="proc~~load_bathymetry_into_array~~CalledByGraph_node8" class="node">
+<title>proc~driver_run</title>
+<g id="a_proc~~load_bathymetry_into_array~~CalledByGraph_node8"><a xlink:href="../proc/driver_run.html" xlink:title="driver_run">
+<polygon fill="#d9534f" stroke="#d9534f" points="67,-108 0,-108 0,-84 67,-84 67,-108"/>
+<text text-anchor="middle" x="33.5" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">driver_run</text>
+</a>
+</g>
+</g>
+<!-- proc~driver_run&#45;&gt;proc~driver_run_coastal -->
+<g id="proc~~load_bathymetry_into_array~~CalledByGraph_edge7" class="edge">
+<title>proc~driver_run&#45;&gt;proc~driver_run_coastal</title>
+<path fill="none" stroke="#ff0000" d="M67.24,-96C84.72,-96 106.86,-96 127.65,-96"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="127.72,-99.5 137.72,-96 127.72,-92.5 127.72,-99.5"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var panprocload_bathymetry_into_arrayCalledByGraph = svgPanZoom('#procload_bathymetry_into_arrayCalledByGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CalledByGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CalledByGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+
+
+    <section>    
+      <h2>Variables</h2>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Visibility</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+<th></th><th scope="col">Initial</th>        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-b_interior"></span>
+              real(kind=wp),
+            </td>
+              <td>private,</td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>b_interior</strong>(:,:)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-dim1_len"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>dim1_len</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-dim1_name"></span>
+              character(len=64),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>dim1_name</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-dim2_len"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>dim2_len</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-dim2_name"></span>
+              character(len=64),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>dim2_name</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-file_nx~2"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>file_nx</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-file_ny~2"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>file_ny</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-i~122"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>i</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-j~83"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>j</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ncid~44"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>ncid</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-needs_transpose"></span>
+              logical,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>needs_transpose</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ng~31"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>ng</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-status~29"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>status</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-var_dimids"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>var_dimids</strong>(2)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-var_ndims"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>var_ndims</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-varid~26"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>varid</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    </section>
+    <br>
+    
+    
+
+    
+    
+
+
+
+    
+    <section>
+    <h2><span class="anchor" id="src"></span>Source Code</h2>
+    <div class="hl codehilite"><pre><span></span><span class="w">   </span><span class="k">subroutine </span><span class="n">load_bathymetry_into_array</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="n">grid</span><span class="p">)</span>
+<span class="w">      </span><span class="c">!! Load bathymetry from a NetCDF file into a target 2D array</span>
+<span class="w">      </span><span class="c">!! shaped `(grid%nx_total, grid%ny_total)`.</span>
+<span class="w">      </span><span class="c">!!</span>
+<span class="w">      </span><span class="c">!! The file must contain:</span>
+<span class="w">      </span><span class="c">!!   - Dimensions: x (nx_phys), y (ny_phys)</span>
+<span class="w">      </span><span class="c">!!   - Variable: b(x, y) or elevation(x, y) or depth(x, y)</span>
+<span class="w">      </span><span class="c">!!</span>
+<span class="w">      </span><span class="c">!! Handles NetCDF C/Fortran dimension reversal: files written by</span>
+<span class="w">      </span><span class="c">!! Python/C store b(x,y) in C order, which Fortran reads as b(y,x).</span>
+<span class="w">      </span><span class="c">!! If the direct dimensions don't match but the transposed ones do,</span>
+<span class="w">      </span><span class="c">!! we read transposed and copy correctly.</span>
+<span class="w">      </span><span class="c">!!</span>
+<span class="w">      </span><span class="c">!! Bathymetry lands in the interior; ghost cells are filled by</span>
+<span class="w">      </span><span class="c">!! constant extrapolation from the nearest interior cell via</span>
+<span class="w">      </span><span class="c">!! `fill_bathymetry_ghosts_array`.</span>
+<span class="w">      </span><span class="kt">character</span><span class="p">(</span><span class="nb">len</span><span class="o">=*</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">filename</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">b</span><span class="p">(:,</span><span class="w"> </span><span class="p">:)</span>
+<span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="n">hgrid_t</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">grid</span>
+
+<span class="w">      </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">varid</span><span class="p">,</span><span class="w"> </span><span class="n">file_nx</span><span class="p">,</span><span class="w"> </span><span class="n">file_ny</span>
+<span class="w">      </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">ng</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span>
+<span class="w">      </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">var_dimids</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="w">      </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">var_ndims</span><span class="p">,</span><span class="w"> </span><span class="n">dim1_len</span><span class="p">,</span><span class="w"> </span><span class="n">dim2_len</span>
+<span class="w">      </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">status</span>
+<span class="w">      </span><span class="kt">character</span><span class="p">(</span><span class="nb">len</span><span class="o">=</span><span class="mi">64</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">dim1_name</span><span class="p">,</span><span class="w"> </span><span class="n">dim2_name</span>
+<span class="w">      </span><span class="kt">logical</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">needs_transpose</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">b_interior</span><span class="p">(:,</span><span class="w"> </span><span class="p">:)</span>
+
+<span class="w">      </span><span class="k">call </span><span class="n">logger</span><span class="p">%</span><span class="n">info</span><span class="p">(</span><span class="s2">"Loading bathymetry from: "</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+
+<span class="w">      </span><span class="k">call </span><span class="n">nc_open_read</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="w"> </span><span class="n">ncid</span><span class="p">)</span>
+
+<span class="w">      </span><span class="c">! Read grid dimensions (by name — these are the logical sizes)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_get_dim_len</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">"x"</span><span class="p">,</span><span class="w"> </span><span class="n">file_nx</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_get_dim_len</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">"y"</span><span class="p">,</span><span class="w"> </span><span class="n">file_ny</span><span class="p">)</span>
+
+<span class="w">      </span><span class="c">! Try variable names in order: b, elevation, depth</span>
+<span class="w">      </span><span class="k">call </span><span class="n">try_get_bathymetry_var</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">varid</span><span class="p">)</span>
+
+<span class="w">      </span><span class="c">! Query the variable's actual dimension order in the file.</span>
+<span class="w">      </span><span class="c">! Files written by Python/C store b(x,y) in C-order. Fortran's</span>
+<span class="w">      </span><span class="c">! NetCDF library reverses this, so the variable appears as b(y,x)</span>
+<span class="w">      </span><span class="c">! in Fortran. We detect this by checking the first dimension name.</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_check</span><span class="p">(</span><span class="n">nf90_inquire_variable</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">varid</span><span class="p">,</span><span class="w"> </span><span class="n">ndims</span><span class="o">=</span><span class="n">var_ndims</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                          </span><span class="n">dimids</span><span class="o">=</span><span class="n">var_dimids</span><span class="p">),</span><span class="w"> </span><span class="s2">"querying bathymetry variable"</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_check</span><span class="p">(</span><span class="n">nf90_inquire_dimension</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">var_dimids</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                           </span><span class="n">name</span><span class="o">=</span><span class="n">dim1_name</span><span class="p">,</span><span class="w"> </span><span class="nb">len</span><span class="o">=</span><span class="n">dim1_len</span><span class="p">),</span><span class="w"> </span><span class="s2">"querying dim 1"</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_check</span><span class="p">(</span><span class="n">nf90_inquire_dimension</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">var_dimids</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                           </span><span class="n">name</span><span class="o">=</span><span class="n">dim2_name</span><span class="p">,</span><span class="w"> </span><span class="nb">len</span><span class="o">=</span><span class="n">dim2_len</span><span class="p">),</span><span class="w"> </span><span class="s2">"querying dim 2"</span><span class="p">)</span>
+
+<span class="w">      </span><span class="k">call </span><span class="n">logger</span><span class="p">%</span><span class="n">info</span><span class="p">(</span><span class="s2">"Bathymetry variable: "</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">dim1_name</span><span class="p">)</span><span class="o">//</span><span class="s2">"="</span><span class="o">//</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                       </span><span class="n">to_string</span><span class="p">(</span><span class="n">dim1_len</span><span class="p">)</span><span class="o">//</span><span class="s2">" x "</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">dim2_name</span><span class="p">)</span><span class="o">//</span><span class="s2">"="</span><span class="o">//</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                       </span><span class="n">to_string</span><span class="p">(</span><span class="n">dim2_len</span><span class="p">)</span><span class="o">//</span><span class="s2">" (Fortran order)"</span><span class="p">)</span>
+
+<span class="w">      </span><span class="c">! In Fortran, dim1 is the first array index (varies fastest).</span>
+<span class="w">      </span><span class="c">! If dim1 is "x" and matches nx, no transpose needed.</span>
+<span class="w">      </span><span class="c">! If dim1 is "y" (C-order file reversed), we need to transpose.</span>
+<span class="w">      </span><span class="n">needs_transpose</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="nb">trim</span><span class="p">(</span><span class="n">dim1_name</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">"y"</span><span class="p">)</span>
+
+<span class="w">      </span><span class="c">! Validate dimensions</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">needs_transpose</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">         if</span><span class="w"> </span><span class="p">(</span><span class="n">dim1_len</span><span class="w"> </span><span class="o">/=</span><span class="w"> </span><span class="n">grid</span><span class="p">%</span><span class="n">ny_phys</span><span class="w"> </span><span class="p">.</span><span class="nb">or</span><span class="p">.</span><span class="w"> </span><span class="n">dim2_len</span><span class="w"> </span><span class="o">/=</span><span class="w"> </span><span class="n">grid</span><span class="p">%</span><span class="n">nx_phys</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            call </span><span class="n">logger</span><span class="p">%</span><span class="n">error</span><span class="p">(</span><span class="s2">"Bathymetry grid mismatch: file has "</span><span class="o">//</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                              </span><span class="n">to_string</span><span class="p">(</span><span class="n">dim2_len</span><span class="p">)</span><span class="o">//</span><span class="s2">" x "</span><span class="o">//</span><span class="n">to_string</span><span class="p">(</span><span class="n">dim1_len</span><span class="p">)</span><span class="o">//</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                              </span><span class="s2">" but simulation expects "</span><span class="o">//</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                              </span><span class="n">to_string</span><span class="p">(</span><span class="n">grid</span><span class="p">%</span><span class="n">nx_phys</span><span class="p">)</span><span class="o">//</span><span class="s2">" x "</span><span class="o">//</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                              </span><span class="n">to_string</span><span class="p">(</span><span class="n">grid</span><span class="p">%</span><span class="n">ny_phys</span><span class="p">))</span>
+<span class="w">            </span><span class="k">call </span><span class="n">nc_close</span><span class="p">(</span><span class="n">ncid</span><span class="p">)</span>
+<span class="w">            </span><span class="k">error stop</span><span class="w"> </span><span class="s2">"Bathymetry grid mismatch"</span>
+<span class="w">         </span><span class="k">end if</span>
+<span class="k">      else</span>
+<span class="k">         if</span><span class="w"> </span><span class="p">(</span><span class="n">dim1_len</span><span class="w"> </span><span class="o">/=</span><span class="w"> </span><span class="n">grid</span><span class="p">%</span><span class="n">nx_phys</span><span class="w"> </span><span class="p">.</span><span class="nb">or</span><span class="p">.</span><span class="w"> </span><span class="n">dim2_len</span><span class="w"> </span><span class="o">/=</span><span class="w"> </span><span class="n">grid</span><span class="p">%</span><span class="n">ny_phys</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            call </span><span class="n">logger</span><span class="p">%</span><span class="n">error</span><span class="p">(</span><span class="s2">"Bathymetry grid mismatch: file has "</span><span class="o">//</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                              </span><span class="n">to_string</span><span class="p">(</span><span class="n">dim1_len</span><span class="p">)</span><span class="o">//</span><span class="s2">" x "</span><span class="o">//</span><span class="n">to_string</span><span class="p">(</span><span class="n">dim2_len</span><span class="p">)</span><span class="o">//</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                              </span><span class="s2">" but simulation expects "</span><span class="o">//</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                              </span><span class="n">to_string</span><span class="p">(</span><span class="n">grid</span><span class="p">%</span><span class="n">nx_phys</span><span class="p">)</span><span class="o">//</span><span class="s2">" x "</span><span class="o">//</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                              </span><span class="n">to_string</span><span class="p">(</span><span class="n">grid</span><span class="p">%</span><span class="n">ny_phys</span><span class="p">))</span>
+<span class="w">            </span><span class="k">call </span><span class="n">nc_close</span><span class="p">(</span><span class="n">ncid</span><span class="p">)</span>
+<span class="w">            </span><span class="k">error stop</span><span class="w"> </span><span class="s2">"Bathymetry grid mismatch"</span>
+<span class="w">         </span><span class="k">end if</span>
+<span class="k">      end if</span>
+
+<span class="k">      </span><span class="n">ng</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">grid</span><span class="p">%</span><span class="n">nghost</span>
+
+<span class="w">      </span><span class="c">! Read into temporary array matching the Fortran storage order</span>
+<span class="w">      </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">b_interior</span><span class="p">(</span><span class="n">dim1_len</span><span class="p">,</span><span class="w"> </span><span class="n">dim2_len</span><span class="p">))</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_get_var_2d</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">varid</span><span class="p">,</span><span class="w"> </span><span class="n">b_interior</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_close</span><span class="p">(</span><span class="n">ncid</span><span class="p">)</span>
+
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">needs_transpose</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="w">         </span><span class="c">! b_interior is (y, x) in Fortran — transpose to (x, y) for b</span>
+<span class="w">         </span><span class="k">do </span><span class="n">j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">grid</span><span class="p">%</span><span class="n">ny_phys</span>
+<span class="w">            </span><span class="k">do </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">grid</span><span class="p">%</span><span class="n">nx_phys</span>
+<span class="w">               </span><span class="n">b</span><span class="p">(</span><span class="n">ng</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">ng</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">b_interior</span><span class="p">(</span><span class="n">j</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">)</span>
+<span class="w">            </span><span class="k">end do</span>
+<span class="k">         end do</span>
+<span class="k">      else</span>
+<span class="k">         </span><span class="n">b</span><span class="p">(</span><span class="n">ng</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="n">ng</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">grid</span><span class="p">%</span><span class="n">nx_phys</span><span class="p">,</span><span class="w"> </span><span class="n">ng</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="n">ng</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">grid</span><span class="p">%</span><span class="n">ny_phys</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">b_interior</span>
+<span class="w">      </span><span class="k">end if</span>
+
+<span class="k">      deallocate</span><span class="w"> </span><span class="p">(</span><span class="n">b_interior</span><span class="p">)</span>
+
+<span class="w">      </span><span class="c">! Fill ghost cells by constant extrapolation from nearest interior cell.</span>
+<span class="w">      </span><span class="c">! Without this, ghost cells retain b=0 which creates artificial cliffs</span>
+<span class="w">      </span><span class="c">! against real bathymetry (e.g. b=-50m interior vs b=0 ghost), generating</span>
+<span class="w">      </span><span class="c">! extreme velocities and tiny CFL timesteps.</span>
+<span class="w">      </span><span class="k">call </span><span class="n">fill_bathymetry_ghosts_array</span><span class="p">(</span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="n">grid</span><span class="p">)</span>
+
+<span class="w">      </span><span class="k">call </span><span class="n">logger</span><span class="p">%</span><span class="n">info</span><span class="p">(</span><span class="s2">"Bathymetry loaded: min = "</span><span class="o">//</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                       </span><span class="n">to_string</span><span class="p">(</span><span class="nb">minval</span><span class="p">(</span><span class="n">b</span><span class="p">(</span><span class="n">ng</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="n">ng</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">grid</span><span class="p">%</span><span class="n">nx_phys</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                          </span><span class="n">ng</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="n">ng</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">grid</span><span class="p">%</span><span class="n">ny_phys</span><span class="p">)))</span><span class="o">//</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                       </span><span class="s2">" m, max = "</span><span class="o">//</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                       </span><span class="n">to_string</span><span class="p">(</span><span class="nb">maxval</span><span class="p">(</span><span class="n">b</span><span class="p">(</span><span class="n">ng</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="n">ng</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">grid</span><span class="p">%</span><span class="n">nx_phys</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                          </span><span class="n">ng</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="n">ng</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">grid</span><span class="p">%</span><span class="n">ny_phys</span><span class="p">)))</span><span class="o">//</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                       </span><span class="s2">" m"</span><span class="p">)</span>
+
+<span class="w">   </span><span class="k">end subroutine </span><span class="n">load_bathymetry_into_array</span>
+</pre></div>
+
+    </section>
+    <br>
+    
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Rakali
+ was developed by Jorge Luis Galvez Vallejo<br>              &copy; 2026 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+ on 2026-10-08 12:55 +0000             </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>

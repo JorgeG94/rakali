@@ -1,0 +1,1361 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="GPU-native coastal solver — structured Cartesian and unstructured triangular grids, hydrostatic multilayer + non-hydrostatic, portable across NVHPC/gfortran/ifx.">
+    <meta name="author" content="Jorge Luis Galvez Vallejo" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>rki_coastal_console_stats.F90 &ndash; Rakali</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">Rakali </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/absint.html">Abstract Interfaces</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>rki_coastal_console_stats.F90
+      <small>Source File</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.5% of total for source files.">135 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/rki_coastal_console_stats.F90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+            <li class="breadcrumb-item active" aria-current="page">rki_coastal_console_stats.F90</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+        <div id="sidebar">
+      <h3>Contents</h3>
+  
+  
+  
+  
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#mods-0"
+         aria-expanded="false" aria-controls="mods-0">
+         <h4 class="card-header bg-primary text-white">Modules</h4>
+      </a>
+      <div id="mods-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../module/rki_coastal_console_stats.html">rki_coastal_console_stats</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../sourcefile/rki_coastal_console_stats.f90.html#src">rki_coastal_console_stats.F90</a>
+      </div>
+    </div>
+
+
+  </div>
+
+    </div>
+    <div class="col-md-9" id='text'>
+      <p>Coastal-regime MOM6-style console statistics.</p>
+      <br>
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">This file depends on</h3>
+          </div>
+          <div class="card-body">
+            <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph Pages: 1 -->
+<svg id="sourcefilerki_coastal_console_statsf90EfferentGraph" width="641pt" height="385pt"
+ viewBox="0.00 0.00 641.00 384.86" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph" class="graph" transform="scale(0.4 0.4) rotate(0) translate(4 968.06)">
+<title>sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-968.06 1615,-968.06 1615,4 -4,4"/>
+<!-- sourcefile~rki_coastal_console_stats.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_node1" class="node">
+<title>sourcefile~rki_coastal_console_stats.f90</title>
+<polygon fill="none" stroke="black" points="1611,-866 1442,-866 1442,-842 1611,-842 1611,-866"/>
+<text text-anchor="middle" x="1526.5" y="-851.6" font-family="Helvetica,sans-Serif" font-size="10.50">rki_coastal_console_stats.F90</text>
+</g>
+<!-- sourcefile~rki_console_stats.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_node2" class="node">
+<title>sourcefile~rki_console_stats.f90</title>
+<g id="a_sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_node2"><a xlink:href="../sourcefile/rki_console_stats.f90.html" xlink:title="rki_console_stats.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1406,-926 1281,-926 1281,-902 1406,-902 1406,-926"/>
+<text text-anchor="middle" x="1343.5" y="-911.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_console_stats.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_coastal_console_stats.f90&#45;&gt;sourcefile~rki_console_stats.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge1" class="edge">
+<title>sourcefile~rki_coastal_console_stats.f90&#45;&gt;sourcefile~rki_console_stats.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M1488.87,-866.14C1460.44,-875.57 1420.86,-888.69 1390.33,-898.81"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="1389.16,-895.51 1380.76,-901.98 1391.36,-902.15 1389.16,-895.51"/>
+</g>
+<!-- sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_node3" class="node">
+<title>sourcefile~rki_constants.f90</title>
+<g id="a_sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_node3"><a xlink:href="../sourcefile/rki_constants.f90.html" xlink:title="rki_constants.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="105,-366 0,-366 0,-342 105,-342 105,-366"/>
+<text text-anchor="middle" x="52.5" y="-351.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_constants.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_coastal_console_stats.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge2" class="edge">
+<title>sourcefile~rki_coastal_console_stats.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M1441.97,-858.99C1351.89,-865.08 1214.7,-876.64 1165,-893 1113.92,-909.82 1113.61,-945.55 1060.5,-954"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M1058.5,-954C880.62,-979.16 833.45,-950.76 655,-930 618.93,-925.8 610.81,-915.51 574.5,-916"/>
+</g>
+<!-- sourcefile~rki_grid.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_node4" class="node">
+<title>sourcefile~rki_grid.f90</title>
+<g id="a_sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_node4"><a xlink:href="../sourcefile/rki_grid.f90.html" xlink:title="rki_grid.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="254,-346 179,-346 179,-322 254,-322 254,-346"/>
+<text text-anchor="middle" x="216.5" y="-331.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_grid.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_coastal_console_stats.f90&#45;&gt;sourcefile~rki_grid.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge3" class="edge">
+<title>sourcefile~rki_coastal_console_stats.f90&#45;&gt;sourcefile~rki_grid.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M1342.5,-260C1263.61,-192.51 514.15,-345.83 411,-334"/>
+</g>
+<!-- sourcefile~rki_init.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_node5" class="node">
+<title>sourcefile~rki_init.f90</title>
+<g id="a_sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_node5"><a xlink:href="../sourcefile/rki_init.f90.html" xlink:title="rki_init.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1378.5,-846 1308.5,-846 1308.5,-822 1378.5,-822 1378.5,-846"/>
+<text text-anchor="middle" x="1343.5" y="-831.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_init.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_coastal_console_stats.f90&#45;&gt;sourcefile~rki_init.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge4" class="edge">
+<title>sourcefile~rki_coastal_console_stats.f90&#45;&gt;sourcefile~rki_init.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M1441.89,-844.76C1423.65,-842.75 1405.04,-840.69 1389.04,-838.92"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="1389.25,-835.42 1378.93,-837.8 1388.49,-842.38 1389.25,-835.42"/>
+</g>
+<!-- sourcefile~rki_state.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_node6" class="node">
+<title>sourcefile~rki_state.f90</title>
+<g id="a_sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_node6"><a xlink:href="../sourcefile/rki_state.f90.html" xlink:title="rki_state.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1245,-232 1165,-232 1165,-208 1245,-208 1245,-232"/>
+<text text-anchor="middle" x="1205" y="-217.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_state.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_coastal_console_stats.f90&#45;&gt;sourcefile~rki_state.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge5" class="edge">
+<title>sourcefile~rki_coastal_console_stats.f90&#45;&gt;sourcefile~rki_state.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M1523.61,-841.96C1511.28,-764.91 1439.73,-341.47 1344.5,-260"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M1342.5,-260C1318.18,-239.2 1283.51,-229.21 1255.19,-224.41"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="1255.49,-220.92 1245.08,-222.87 1254.44,-227.84 1255.49,-220.92"/>
+</g>
+<!-- sourcefile~rki_console_stats.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge6" class="edge">
+<title>sourcefile~rki_console_stats.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M1291.84,-926.01C1276.83,-929.27 1260.31,-932.57 1245,-935 1163.59,-947.92 1142.19,-942.98 1060.5,-954"/>
+</g>
+<!-- sourcefile~rki_efp.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_node11" class="node">
+<title>sourcefile~rki_efp.f90</title>
+<g id="a_sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_node11"><a xlink:href="../sourcefile/rki_efp.f90.html" xlink:title="rki_efp.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1240.5,-926 1169.5,-926 1169.5,-902 1240.5,-902 1240.5,-926"/>
+<text text-anchor="middle" x="1205" y="-911.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_efp.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_console_stats.f90&#45;&gt;sourcefile~rki_efp.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge7" class="edge">
+<title>sourcefile~rki_console_stats.f90&#45;&gt;sourcefile~rki_efp.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M1280.64,-914C1270.59,-914 1260.35,-914 1250.81,-914"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="1250.78,-910.5 1240.78,-914 1250.78,-917.5 1250.78,-910.5"/>
+</g>
+<!-- sourcefile~rki_grid.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge8" class="edge">
+<title>sourcefile~rki_grid.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#00ff66" stroke-dasharray="5,2" d="M178.74,-338.54C159.96,-340.86 136.61,-343.74 115.17,-346.39"/>
+<polygon fill="#00ff66" stroke="#00ff66" points="114.66,-342.92 105.16,-347.62 115.51,-349.87 114.66,-342.92"/>
+</g>
+<!-- sourcefile~rki_init.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge10" class="edge">
+<title>sourcefile~rki_init.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#0066ff" stroke-dasharray="5,2" d="M723.5,-916C658.23,-904.83 640.72,-915.11 574.5,-916"/>
+</g>
+<!-- sourcefile~rki_init.f90&#45;&gt;sourcefile~rki_grid.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge11" class="edge">
+<title>sourcefile~rki_init.f90&#45;&gt;sourcefile~rki_grid.f90</title>
+<path fill="none" stroke="#0066ff" stroke-dasharray="5,2" d="M1308.3,-841.37C1279.82,-845.86 1238.77,-848.47 1206,-835"/>
+<path fill="none" stroke="#0066ff" stroke-dasharray="5,2" d="M1204,-835C1110.01,-796.37 1175.88,-709.16 1129,-619 1104.99,-572.82 1099.36,-558.63 1060.5,-524"/>
+<path fill="none" stroke="#0066ff" stroke-dasharray="5,2" d="M1058.5,-524C1019.92,-489.62 1004.35,-484.63 954,-473 900.3,-460.6 885.01,-469.59 830,-473 783.29,-475.89 772.24,-488.5 725.5,-486"/>
+<path fill="none" stroke="#0066ff" stroke-dasharray="5,2" d="M723.5,-486C657.51,-480.43 632.69,-517.62 574.5,-486"/>
+<path fill="none" stroke="#0066ff" stroke-dasharray="5,2" d="M572.5,-486C551.76,-474.73 542.53,-475.6 528,-457 497.89,-418.46 528.32,-385.76 492,-353 464.54,-328.23 447.74,-338.21 411,-334"/>
+</g>
+<!-- sourcefile~rki_init.f90&#45;&gt;sourcefile~rki_state.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge14" class="edge">
+<title>sourcefile~rki_init.f90&#45;&gt;sourcefile~rki_state.f90</title>
+<path fill="none" stroke="#0066ff" stroke-dasharray="5,2" d="M1339.77,-821.74C1322.91,-745.9 1232.87,-340.87 1210.86,-241.85"/>
+<polygon fill="#0066ff" stroke="#0066ff" points="1214.26,-241.04 1208.68,-232.04 1207.43,-242.56 1214.26,-241.04"/>
+</g>
+<!-- sourcefile~rki_config.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_node10" class="node">
+<title>sourcefile~rki_config.f90</title>
+<g id="a_sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_node10"><a xlink:href="../sourcefile/rki_config.f90.html" xlink:title="rki_config.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="617,-538 530,-538 530,-514 617,-514 617,-538"/>
+<text text-anchor="middle" x="573.5" y="-523.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_config.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_init.f90&#45;&gt;sourcefile~rki_config.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge9" class="edge">
+<title>sourcefile~rki_init.f90&#45;&gt;sourcefile~rki_config.f90</title>
+<path fill="none" stroke="#0066ff" stroke-dasharray="5,2" d="M1058.5,-524C943.25,-431.15 872.12,-503.87 725.5,-524"/>
+</g>
+<!-- sourcefile~rki_ml_common.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_node13" class="node">
+<title>sourcefile~rki_ml_common.f90</title>
+<g id="a_sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_node13"><a xlink:href="../sourcefile/rki_ml_common.f90.html" xlink:title="rki_ml_common.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="276.5,-736 156.5,-736 156.5,-712 276.5,-712 276.5,-736"/>
+<text text-anchor="middle" x="216.5" y="-721.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_common.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_init.f90&#45;&gt;sourcefile~rki_ml_common.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge12" class="edge">
+<title>sourcefile~rki_init.f90&#45;&gt;sourcefile~rki_ml_common.f90</title>
+<path fill="none" stroke="#0066ff" stroke-dasharray="5,2" d="M723.5,-916C535.16,-884.12 326.83,-781.78 249.05,-741"/>
+<polygon fill="#0066ff" stroke="#0066ff" points="250.28,-737.69 239.8,-736.12 247.01,-743.88 250.28,-737.69"/>
+</g>
+<!-- sourcefile~rki_ml_eos.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_node14" class="node">
+<title>sourcefile~rki_ml_eos.f90</title>
+<g id="a_sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_node14"><a xlink:href="../sourcefile/rki_ml_eos.f90.html" xlink:title="rki_ml_eos.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="619,-774 528,-774 528,-750 619,-750 619,-774"/>
+<text text-anchor="middle" x="573.5" y="-759.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_eos.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_init.f90&#45;&gt;sourcefile~rki_ml_eos.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge13" class="edge">
+<title>sourcefile~rki_init.f90&#45;&gt;sourcefile~rki_ml_eos.f90</title>
+<path fill="none" stroke="#0066ff" stroke-dasharray="5,2" d="M1204,-835C1096.22,-797.98 1066.43,-873.35 954,-892 853.26,-908.71 825.57,-936.33 725.5,-916"/>
+<path fill="none" stroke="#0066ff" stroke-dasharray="5,2" d="M723.5,-916C691.84,-910.64 677.78,-915.64 655,-893 620.01,-858.23 650.26,-826.17 619,-788 616.59,-785.06 613.75,-782.38 610.7,-779.95"/>
+<polygon fill="#0066ff" stroke="#0066ff" points="612.47,-776.92 602.25,-774.12 608.49,-782.68 612.47,-776.92"/>
+</g>
+<!-- sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge19" class="edge">
+<title>sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#cc00ff" stroke-dasharray="5,2" d="M572.5,-52C500.9,-46.92 481.85,-40.49 411,-52"/>
+<path fill="none" stroke="#cc00ff" stroke-dasharray="5,2" d="M409,-52C353.18,-61.07 344.48,-80.94 292,-102 259.17,-115.18 248.54,-113.03 217.5,-130"/>
+<path fill="none" stroke="#cc00ff" stroke-dasharray="5,2" d="M215.5,-130C177.95,-150.53 168.2,-157.96 141,-191 103.79,-236.2 75.21,-299.67 61.83,-332.48"/>
+<polygon fill="#cc00ff" stroke="#cc00ff" points="58.49,-331.4 58.03,-341.99 64.99,-334 58.49,-331.4"/>
+</g>
+<!-- sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_grid.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge20" class="edge">
+<title>sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_grid.f90</title>
+<path fill="none" stroke="#cc00ff" stroke-dasharray="5,2" d="M572.5,-296C499.77,-308.15 484.26,-342.4 411,-334"/>
+<path fill="none" stroke="#cc00ff" stroke-dasharray="5,2" d="M409,-334C360.09,-328.39 303.69,-329.27 264.83,-331.01"/>
+<polygon fill="#cc00ff" stroke="#cc00ff" points="264.17,-327.54 254.35,-331.52 264.51,-334.53 264.17,-327.54"/>
+</g>
+<!-- sourcefile~rki_barotropic_state.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_node7" class="node">
+<title>sourcefile~rki_barotropic_state.f90</title>
+<g id="a_sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_node7"><a xlink:href="../sourcefile/rki_barotropic_state.f90.html" xlink:title="rki_barotropic_state.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="479.5,-264 340.5,-264 340.5,-240 479.5,-240 479.5,-264"/>
+<text text-anchor="middle" x="410" y="-249.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_barotropic_state.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_barotropic_state.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge15" class="edge">
+<title>sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_barotropic_state.f90</title>
+<path fill="none" stroke="#cc00ff" stroke-dasharray="5,2" d="M723.5,-220C635.18,-208.08 532.29,-224.42 469.41,-237.79"/>
+<polygon fill="#cc00ff" stroke="#cc00ff" points="468.32,-234.45 459.29,-239.99 469.81,-241.29 468.32,-234.45"/>
+</g>
+<!-- sourcefile~rki_bathymetry.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_node8" class="node">
+<title>sourcefile~rki_bathymetry.f90</title>
+<g id="a_sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_node8"><a xlink:href="../sourcefile/rki_bathymetry.f90.html" xlink:title="rki_bathymetry.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="467,-24 353,-24 353,0 467,0 467,-24"/>
+<text text-anchor="middle" x="410" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_bathymetry.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_bathymetry.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge16" class="edge">
+<title>sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_bathymetry.f90</title>
+<path fill="none" stroke="#cc00ff" stroke-dasharray="5,2" d="M1198.85,-207.7C1188.87,-185.45 1164.67,-138.62 1129,-115 1022.8,-44.67 608.46,-54.07 574.5,-52"/>
+<path fill="none" stroke="#cc00ff" stroke-dasharray="5,2" d="M572.5,-52C531.77,-49.11 486.77,-37.21 454.64,-27.14"/>
+<polygon fill="#cc00ff" stroke="#cc00ff" points="455.69,-23.8 445.1,-24.08 453.56,-30.47 455.69,-23.8"/>
+</g>
+<!-- sourcefile~rki_boundary_types.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_node9" class="node">
+<title>sourcefile~rki_boundary_types.f90</title>
+<g id="a_sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_node9"><a xlink:href="../sourcefile/rki_boundary_types.f90.html" xlink:title="rki_boundary_types.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="794,-614 655,-614 655,-590 794,-590 794,-614"/>
+<text text-anchor="middle" x="724.5" y="-599.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_boundary_types.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_boundary_types.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge17" class="edge">
+<title>sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_boundary_types.f90</title>
+<path fill="none" stroke="#cc00ff" stroke-dasharray="5,2" d="M1202.89,-232.35C1197.86,-285.61 1175.35,-494.97 1129,-538 1041.53,-619.2 894.73,-621.3 804.37,-613.21"/>
+<polygon fill="#cc00ff" stroke="#cc00ff" points="804.47,-609.71 794.18,-612.23 803.8,-616.67 804.47,-609.71"/>
+</g>
+<!-- sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_config.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge18" class="edge">
+<title>sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_config.f90</title>
+<path fill="none" stroke="#cc00ff" stroke-dasharray="5,2" d="M1058.5,-335C897.59,-390.38 891.59,-486.93 725.5,-524"/>
+<path fill="none" stroke="#cc00ff" stroke-dasharray="5,2" d="M723.5,-524C691.77,-528.36 655.89,-528.97 627.28,-528.44"/>
+<polygon fill="#cc00ff" stroke="#cc00ff" points="627.18,-524.93 617.1,-528.19 627.01,-531.93 627.18,-524.93"/>
+</g>
+<!-- sourcefile~rki_mem_report.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_node12" class="node">
+<title>sourcefile~rki_mem_report.f90</title>
+<g id="a_sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_node12"><a xlink:href="../sourcefile/rki_mem_report.f90.html" xlink:title="rki_mem_report.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="276,-224 157,-224 157,-200 276,-200 276,-224"/>
+<text text-anchor="middle" x="216.5" y="-209.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_mem_report.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_mem_report.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge21" class="edge">
+<title>sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_mem_report.f90</title>
+<path fill="none" stroke="#cc00ff" stroke-dasharray="5,2" d="M1164.68,-218.43C1105.62,-216.43 990.54,-213.91 893,-220"/>
+<path fill="none" stroke="#cc00ff" stroke-dasharray="5,2" d="M891,-220C817.63,-225.24 798.43,-229.61 725.5,-220"/>
+<path fill="none" stroke="#cc00ff" stroke-dasharray="5,2" d="M723.5,-220C648.35,-210.1 647.54,-157.27 574.5,-137"/>
+<path fill="none" stroke="#cc00ff" stroke-dasharray="5,2" d="M572.5,-137C536,-126.87 529.35,-115.31 492,-109 420.13,-96.86 395.54,-81.58 328,-109 307.32,-117.39 308.24,-128.7 292,-144 274.25,-160.72 253.78,-179.36 238.79,-192.89"/>
+<polygon fill="#cc00ff" stroke="#cc00ff" points="236.16,-190.55 231.08,-199.84 240.85,-195.75 236.16,-190.55"/>
+</g>
+<!-- sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_ml_eos.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge22" class="edge">
+<title>sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_ml_eos.f90</title>
+<path fill="none" stroke="#cc00ff" stroke-dasharray="5,2" d="M891,-878C788.27,-900.8 742.38,-917.63 655,-859 625.62,-839.29 643.26,-813.75 619,-788 616.1,-784.92 612.76,-782.1 609.23,-779.53"/>
+<polygon fill="#cc00ff" stroke="#cc00ff" points="611.08,-776.56 600.79,-774.03 607.26,-782.42 611.08,-776.56"/>
+</g>
+<!-- sourcefile~rki_multilayer_state.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_node15" class="node">
+<title>sourcefile~rki_multilayer_state.f90</title>
+<g id="a_sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_node15"><a xlink:href="../sourcefile/rki_multilayer_state.f90.html" xlink:title="rki_multilayer_state.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1129,-652 990,-652 990,-628 1129,-628 1129,-652"/>
+<text text-anchor="middle" x="1059.5" y="-637.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_multilayer_state.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_multilayer_state.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge23" class="edge">
+<title>sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_multilayer_state.f90</title>
+<path fill="none" stroke="#cc00ff" stroke-dasharray="5,2" d="M1203.26,-232.08C1199.39,-291.65 1179.68,-553.59 1129,-614 1126.24,-617.29 1123.02,-620.16 1119.5,-622.67"/>
+<polygon fill="#cc00ff" stroke="#cc00ff" points="1117.6,-619.73 1110.85,-627.9 1121.22,-625.73 1117.6,-619.73"/>
+</g>
+<!-- sourcefile~rki_nonhydrostatic_state.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_node16" class="node">
+<title>sourcefile~rki_nonhydrostatic_state.f90</title>
+<g id="a_sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_node16"><a xlink:href="../sourcefile/rki_nonhydrostatic_state.f90.html" xlink:title="rki_nonhydrostatic_state.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="492,-184 328,-184 328,-160 492,-160 492,-184"/>
+<text text-anchor="middle" x="410" y="-169.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_nonhydrostatic_state.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_nonhydrostatic_state.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge24" class="edge">
+<title>sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_nonhydrostatic_state.f90</title>
+<path fill="none" stroke="#cc00ff" stroke-dasharray="5,2" d="M572.5,-137C567.41,-135.59 514.67,-147.4 470.82,-157.68"/>
+<polygon fill="#cc00ff" stroke="#cc00ff" points="469.98,-154.28 461.05,-159.98 471.59,-161.09 469.98,-154.28"/>
+</g>
+<!-- sourcefile~rki_recon_weno.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_node17" class="node">
+<title>sourcefile~rki_recon_weno.f90</title>
+<g id="a_sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_node17"><a xlink:href="../sourcefile/rki_recon_weno.f90.html" xlink:title="rki_recon_weno.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="468.5,-386 351.5,-386 351.5,-362 468.5,-362 468.5,-386"/>
+<text text-anchor="middle" x="410" y="-371.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_recon_weno.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_recon_weno.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge25" class="edge">
+<title>sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_recon_weno.f90</title>
+<path fill="none" stroke="#cc00ff" stroke-dasharray="5,2" d="M1193.1,-232.11C1170.8,-256.06 1117.23,-309.36 1060.5,-335"/>
+<path fill="none" stroke="#cc00ff" stroke-dasharray="5,2" d="M1058.5,-335C956.59,-381.06 623.09,-379.12 478.67,-375.94"/>
+<polygon fill="#cc00ff" stroke="#cc00ff" points="478.68,-372.44 468.61,-375.71 478.52,-379.44 478.68,-372.44"/>
+</g>
+<!-- sourcefile~rki_surface_forcing.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_node18" class="node">
+<title>sourcefile~rki_surface_forcing.f90</title>
+<g id="a_sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_node18"><a xlink:href="../sourcefile/rki_surface_forcing.f90.html" xlink:title="rki_surface_forcing.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="478,-142 342,-142 342,-118 478,-118 478,-142"/>
+<text text-anchor="middle" x="410" y="-127.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_surface_forcing.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_surface_forcing.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge26" class="edge">
+<title>sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_surface_forcing.f90</title>
+<path fill="none" stroke="#cc00ff" stroke-dasharray="5,2" d="M572.5,-137C545.64,-129.55 515.32,-126.82 488.26,-126.28"/>
+<polygon fill="#cc00ff" stroke="#cc00ff" points="488.1,-122.78 478.06,-126.18 488.02,-129.78 488.1,-122.78"/>
+</g>
+<!-- sourcefile~rki_timestepper.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_node19" class="node">
+<title>sourcefile~rki_timestepper.f90</title>
+<g id="a_sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_node19"><a xlink:href="../sourcefile/rki_timestepper.f90.html" xlink:title="rki_timestepper.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1118,-148 1001,-148 1001,-124 1118,-124 1118,-148"/>
+<text text-anchor="middle" x="1059.5" y="-133.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_timestepper.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_timestepper.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge27" class="edge">
+<title>sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_timestepper.f90</title>
+<path fill="none" stroke="#cc00ff" stroke-dasharray="5,2" d="M1183.44,-207.96C1158.93,-193.62 1117.79,-169.54 1089.92,-153.22"/>
+<polygon fill="#cc00ff" stroke="#cc00ff" points="1091.42,-150.04 1081.02,-148.01 1087.88,-156.09 1091.42,-150.04"/>
+</g>
+<!-- sourcefile~rki_tracer.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_node20" class="node">
+<title>sourcefile~rki_tracer.f90</title>
+<g id="a_sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_node20"><a xlink:href="../sourcefile/rki_tracer.f90.html" xlink:title="rki_tracer.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="452.5,-306 367.5,-306 367.5,-282 452.5,-282 452.5,-306"/>
+<text text-anchor="middle" x="410" y="-291.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_tracer.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_tracer.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge28" class="edge">
+<title>sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_tracer.f90</title>
+<path fill="none" stroke="#cc00ff" stroke-dasharray="5,2" d="M891,-220C747.23,-236.1 718.95,-288.07 574.5,-296"/>
+<path fill="none" stroke="#cc00ff" stroke-dasharray="5,2" d="M572.5,-296C536.19,-302.07 494.64,-301.39 462.79,-299.28"/>
+<polygon fill="#cc00ff" stroke="#cc00ff" points="463.03,-295.79 452.8,-298.55 462.52,-302.77 463.03,-295.79"/>
+</g>
+<!-- sourcefile~rki_vcoord.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_node21" class="node">
+<title>sourcefile~rki_vcoord.f90</title>
+<g id="a_sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_node21"><a xlink:href="../sourcefile/rki_vcoord.f90.html" xlink:title="rki_vcoord.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="770,-850 679,-850 679,-826 770,-826 770,-850"/>
+<text text-anchor="middle" x="724.5" y="-835.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_vcoord.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_vcoord.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge29" class="edge">
+<title>sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_vcoord.f90</title>
+<path fill="none" stroke="#cc00ff" stroke-dasharray="5,2" d="M1204.05,-232.03C1203.79,-322.78 1190.35,-895.69 893,-878"/>
+<path fill="none" stroke="#cc00ff" stroke-dasharray="5,2" d="M891,-878C868.21,-883.06 810.52,-866.64 769.69,-853.33"/>
+<polygon fill="#cc00ff" stroke="#cc00ff" points="770.55,-849.93 759.96,-850.11 768.36,-856.57 770.55,-849.93"/>
+</g>
+<!-- sourcefile~rki_barotropic_state.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge30" class="edge">
+<title>sourcefile~rki_barotropic_state.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M352.35,-264C314.18,-272.2 262.74,-283.43 217.5,-294"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M215.5,-294C182.22,-301.77 173.17,-301.48 141,-313 122.12,-319.76 101.79,-329.15 85.49,-337.23"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="83.75,-334.19 76.39,-341.82 86.9,-340.44 83.75,-334.19"/>
+</g>
+<!-- sourcefile~rki_barotropic_state.f90&#45;&gt;sourcefile~rki_grid.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge31" class="edge">
+<title>sourcefile~rki_barotropic_state.f90&#45;&gt;sourcefile~rki_grid.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M347.94,-264.14C341,-266.59 334.2,-269.51 328,-273 308.55,-283.94 310.98,-296.27 292,-308 283.35,-313.35 273.45,-317.78 263.75,-321.38"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="262.47,-318.12 254.18,-324.7 264.77,-324.73 262.47,-318.12"/>
+</g>
+<!-- sourcefile~rki_barotropic_state.f90&#45;&gt;sourcefile~rki_mem_report.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge32" class="edge">
+<title>sourcefile~rki_barotropic_state.f90&#45;&gt;sourcefile~rki_mem_report.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M351.54,-240C330.62,-235.63 306.78,-230.65 285.06,-226.11"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="285.75,-222.68 275.25,-224.06 284.32,-229.53 285.75,-222.68"/>
+</g>
+<!-- sourcefile~rki_bathymetry.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge33" class="edge">
+<title>sourcefile~rki_bathymetry.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#ff6600" stroke-dasharray="5,2" d="M352.98,-6.15C293.1,-3.14 198.97,-8.18 141,-60 59.83,-132.55 52.5,-276.69 52.84,-331.84"/>
+<polygon fill="#ff6600" stroke="#ff6600" points="49.34,-331.97 53,-341.91 56.34,-331.86 49.34,-331.97"/>
+</g>
+<!-- sourcefile~rki_bathymetry.f90&#45;&gt;sourcefile~rki_grid.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge34" class="edge">
+<title>sourcefile~rki_bathymetry.f90&#45;&gt;sourcefile~rki_grid.f90</title>
+<path fill="none" stroke="#ff6600" stroke-dasharray="5,2" d="M395,-24.25C376.51,-41.29 344.35,-74.02 328,-109 289.93,-190.42 350.38,-239.66 292,-308 284.71,-316.53 274.46,-322.27 263.88,-326.12"/>
+<polygon fill="#ff6600" stroke="#ff6600" points="262.66,-322.83 254.16,-329.16 264.75,-329.52 262.66,-322.83"/>
+</g>
+<!-- sourcefile~rki_io_netcdf.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_node23" class="node">
+<title>sourcefile~rki_io_netcdf.f90</title>
+<g id="a_sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_node23"><a xlink:href="../sourcefile/rki_io_netcdf.f90.html" xlink:title="rki_io_netcdf.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="267.5,-93 165.5,-93 165.5,-69 267.5,-69 267.5,-93"/>
+<text text-anchor="middle" x="216.5" y="-78.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_io_netcdf.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_bathymetry.f90&#45;&gt;sourcefile~rki_io_netcdf.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge35" class="edge">
+<title>sourcefile~rki_bathymetry.f90&#45;&gt;sourcefile~rki_io_netcdf.f90</title>
+<path fill="none" stroke="#ff6600" stroke-dasharray="5,2" d="M369.7,-24.09C356.4,-28.32 341.5,-33.21 328,-38 304.22,-46.44 277.87,-56.65 256.88,-65.01"/>
+<polygon fill="#ff6600" stroke="#ff6600" points="255.32,-61.86 247.33,-68.83 257.92,-68.36 255.32,-61.86"/>
+</g>
+<!-- sourcefile~rki_boundary_types.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge37" class="edge">
+<title>sourcefile~rki_boundary_types.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#ffcc00" stroke-dasharray="5,2" d="M654.81,-605.71C575.85,-610.24 442.4,-618.71 328,-630 278.74,-634.86 261.01,-667.61 217.5,-644"/>
+<path fill="none" stroke="#ffcc00" stroke-dasharray="5,2" d="M215.5,-644C113.98,-582.54 71,-432.5 58.04,-376"/>
+<polygon fill="#ffcc00" stroke="#ffcc00" points="61.4,-375.02 55.84,-366.01 54.57,-376.52 61.4,-375.02"/>
+</g>
+<!-- sourcefile~rki_boundary_types.f90&#45;&gt;sourcefile~rki_config.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge36" class="edge">
+<title>sourcefile~rki_boundary_types.f90&#45;&gt;sourcefile~rki_config.f90</title>
+<path fill="none" stroke="#ffcc00" stroke-dasharray="5,2" d="M687.74,-589.92C677.03,-585.9 665.38,-581.13 655,-576 652.21,-574.62 624.65,-557.44 602.54,-543.59"/>
+<polygon fill="#ffcc00" stroke="#ffcc00" points="604.12,-540.45 593.79,-538.11 600.41,-546.39 604.12,-540.45"/>
+</g>
+<!-- sourcefile~rki_config.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge38" class="edge">
+<title>sourcefile~rki_config.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#cbff00" stroke-dasharray="5,2" d="M550.49,-513.75C543.23,-509.55 535.18,-504.72 528,-500 474.06,-464.56 472.68,-432.98 411,-414"/>
+<path fill="none" stroke="#cbff00" stroke-dasharray="5,2" d="M409,-414C388.22,-407.61 239.1,-376.43 217.5,-374"/>
+</g>
+<!-- sourcefile~rki_config.f90&#45;&gt;sourcefile~rki_recon_weno.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge41" class="edge">
+<title>sourcefile~rki_config.f90&#45;&gt;sourcefile~rki_recon_weno.f90</title>
+<path fill="none" stroke="#cbff00" stroke-dasharray="5,2" d="M544.81,-513.83C538.64,-510.11 532.58,-505.5 528,-500 497.79,-463.68 525.98,-432.81 492,-400 487.78,-395.93 482.92,-392.49 477.72,-389.59"/>
+<polygon fill="#cbff00" stroke="#cbff00" points="479.22,-386.43 468.7,-385.21 476.16,-392.73 479.22,-386.43"/>
+</g>
+<!-- sourcefile~rki_ml_common_unstr.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_node24" class="node">
+<title>sourcefile~rki_ml_common_unstr.f90</title>
+<g id="a_sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_node24"><a xlink:href="../sourcefile/rki_ml_common_unstr.f90.html" xlink:title="rki_ml_common_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="292,-468 141,-468 141,-444 292,-444 292,-468"/>
+<text text-anchor="middle" x="216.5" y="-453.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_common_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_config.f90&#45;&gt;sourcefile~rki_ml_common_unstr.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge39" class="edge">
+<title>sourcefile~rki_config.f90&#45;&gt;sourcefile~rki_ml_common_unstr.f90</title>
+<path fill="none" stroke="#cbff00" stroke-dasharray="5,2" d="M409,-414C395.9,-409.97 323.43,-427.65 271.52,-441.31"/>
+<polygon fill="#cbff00" stroke="#cbff00" points="270.53,-437.95 261.76,-443.89 272.32,-444.71 270.53,-437.95"/>
+</g>
+<!-- sourcefile~rki_nml_schema.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_node27" class="node">
+<title>sourcefile~rki_nml_schema.f90</title>
+<g id="a_sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_node27"><a xlink:href="../sourcefile/rki_nml_schema.f90.html" xlink:title="rki_nml_schema.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="277,-426 156,-426 156,-402 277,-402 277,-426"/>
+<text text-anchor="middle" x="216.5" y="-411.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_nml_schema.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_config.f90&#45;&gt;sourcefile~rki_nml_schema.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge40" class="edge">
+<title>sourcefile~rki_config.f90&#45;&gt;sourcefile~rki_nml_schema.f90</title>
+<path fill="none" stroke="#cbff00" stroke-dasharray="5,2" d="M409,-414C369.93,-401.98 324.23,-401.5 287.26,-404.26"/>
+<polygon fill="#cbff00" stroke="#cbff00" points="286.75,-400.79 277.08,-405.11 287.34,-407.76 286.75,-400.79"/>
+</g>
+<!-- sourcefile~rki_mem_report.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge42" class="edge">
+<title>sourcefile~rki_mem_report.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#00ff00" stroke-dasharray="5,2" d="M201.69,-224.11C173.47,-248.84 109.03,-305.32 75.18,-334.99"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="72.49,-332.7 67.28,-341.92 77.1,-337.96 72.49,-332.7"/>
+</g>
+<!-- sourcefile~rki_ml_common.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge43" class="edge">
+<title>sourcefile~rki_ml_common.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#00ff66" stroke-dasharray="5,2" d="M196.54,-711.86C179.59,-700.07 155.3,-680.65 141,-658 81.75,-564.13 61.51,-428.98 55.62,-376.25"/>
+<polygon fill="#00ff66" stroke="#00ff66" points="59.1,-375.88 54.57,-366.3 52.14,-376.61 59.1,-375.88"/>
+</g>
+<!-- sourcefile~rki_ml_eos.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge44" class="edge">
+<title>sourcefile~rki_ml_eos.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#00ffcb" stroke-dasharray="5,2" d="M409,-764C365.61,-764.15 251.37,-829.11 217.5,-802"/>
+<path fill="none" stroke="#00ffcb" stroke-dasharray="5,2" d="M215.5,-802C182.95,-775.95 163.46,-780.12 141,-745 62.7,-622.55 53.92,-439.5 53.35,-376.35"/>
+<polygon fill="#00ffcb" stroke="#00ffcb" points="56.85,-376.31 53.32,-366.32 49.85,-376.33 56.85,-376.31"/>
+</g>
+<!-- sourcefile~rki_ml_eos.f90&#45;&gt;sourcefile~rki_grid.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge46" class="edge">
+<title>sourcefile~rki_ml_eos.f90&#45;&gt;sourcefile~rki_grid.f90</title>
+<path fill="none" stroke="#00ffcb" stroke-dasharray="5,2" d="M562.49,-749.72C527.8,-706.89 410.37,-559.56 328,-428 309.85,-399.02 317.94,-382.29 292,-360 283.89,-353.03 273.8,-347.9 263.69,-344.12"/>
+<polygon fill="#00ffcb" stroke="#00ffcb" points="264.65,-340.75 254.06,-340.91 262.43,-347.39 264.65,-340.75"/>
+</g>
+<!-- sourcefile~rki_ml_eos.f90&#45;&gt;sourcefile~rki_ml_common.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge47" class="edge">
+<title>sourcefile~rki_ml_eos.f90&#45;&gt;sourcefile~rki_ml_common.f90</title>
+<path fill="none" stroke="#00ffcb" stroke-dasharray="5,2" d="M527.94,-762.76C495.51,-763.27 450.54,-763.86 411,-764"/>
+<path fill="none" stroke="#00ffcb" stroke-dasharray="5,2" d="M409,-764C358.18,-764.18 301.35,-750.48 262.89,-739.07"/>
+<polygon fill="#00ffcb" stroke="#00ffcb" points="263.62,-735.64 253.04,-736.08 261.59,-742.33 263.62,-735.64"/>
+</g>
+<!-- sourcefile~rki_eos.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_node22" class="node">
+<title>sourcefile~rki_eos.f90</title>
+<g id="a_sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_node22"><a xlink:href="../sourcefile/rki_eos.f90.html" xlink:title="rki_eos.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="446.5,-696 373.5,-696 373.5,-672 446.5,-672 446.5,-696"/>
+<text text-anchor="middle" x="410" y="-681.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_eos.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_ml_eos.f90&#45;&gt;sourcefile~rki_eos.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge45" class="edge">
+<title>sourcefile~rki_ml_eos.f90&#45;&gt;sourcefile~rki_eos.f90</title>
+<path fill="none" stroke="#00ffcb" stroke-dasharray="5,2" d="M547.62,-749.98C520.12,-736.7 475.65,-715.22 444.96,-700.4"/>
+<polygon fill="#00ffcb" stroke="#00ffcb" points="446.44,-697.23 435.91,-696.03 443.39,-703.53 446.44,-697.23"/>
+</g>
+<!-- sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge49" class="edge">
+<title>sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#00cbff" stroke-dasharray="5,2" d="M723.5,-798C658.11,-787.36 639.83,-791.03 574.5,-802"/>
+</g>
+<!-- sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_grid.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge51" class="edge">
+<title>sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_grid.f90</title>
+<path fill="none" stroke="#00cbff" stroke-dasharray="5,2" d="M1032.21,-627.95C989.45,-608.22 902.33,-567.46 830,-530 813.75,-521.58 810.7,-517.5 794,-510 764.57,-496.79 757.71,-487.82 725.5,-486"/>
+</g>
+<!-- sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_barotropic_state.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge48" class="edge">
+<title>sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_barotropic_state.f90</title>
+<path fill="none" stroke="#00cbff" stroke-dasharray="5,2" d="M1050.13,-627.85C1037.08,-608.82 1011.18,-570.79 990,-538 973.54,-512.51 977.25,-499.49 954,-480 797.76,-349.07 697.46,-423.31 528,-310 508.93,-297.25 511.84,-284.53 492,-273 488.8,-271.14 485.43,-269.44 481.96,-267.89"/>
+<polygon fill="#00cbff" stroke="#00cbff" points="483.17,-264.6 472.58,-264.12 480.56,-271.1 483.17,-264.6"/>
+</g>
+<!-- sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_mem_report.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge52" class="edge">
+<title>sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_mem_report.f90</title>
+<path fill="none" stroke="#00cbff" stroke-dasharray="5,2" d="M1048.43,-627.91C1033.63,-609.57 1006.02,-573.13 990,-538 964.59,-482.28 995.18,-450.33 954,-405 777.91,-211.16 433.26,-201.76 286.42,-207.41"/>
+<polygon fill="#00cbff" stroke="#00cbff" points="286.03,-203.92 276.19,-207.84 286.33,-210.92 286.03,-203.92"/>
+</g>
+<!-- sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_tracer.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge55" class="edge">
+<title>sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_tracer.f90</title>
+<path fill="none" stroke="#00cbff" stroke-dasharray="5,2" d="M1046.86,-627.76C1028.46,-608.89 990.94,-572.34 954,-548 888.26,-504.68 868.95,-496.09 794,-472 679.63,-435.24 619.26,-502.13 528,-424 490.84,-392.19 526.98,-354.19 492,-320 483.91,-312.1 473.42,-306.59 462.68,-302.76"/>
+<polygon fill="#00cbff" stroke="#00cbff" points="463.4,-299.32 452.81,-299.7 461.32,-306.01 463.4,-299.32"/>
+</g>
+<!-- sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_vcoord.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge56" class="edge">
+<title>sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_vcoord.f90</title>
+<path fill="none" stroke="#00cbff" stroke-dasharray="5,2" d="M891,-798C855.94,-814.4 813.44,-824.49 780.29,-830.43"/>
+<polygon fill="#00cbff" stroke="#00cbff" points="779.58,-827 770.32,-832.15 780.77,-833.9 779.58,-827"/>
+</g>
+<!-- sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_eos.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge50" class="edge">
+<title>sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_eos.f90</title>
+<path fill="none" stroke="#00cbff" stroke-dasharray="5,2" d="M1038.69,-652.09C1024.49,-661.18 1005.26,-674.35 990,-688 941.41,-731.45 952.04,-770.38 893,-798"/>
+<path fill="none" stroke="#00cbff" stroke-dasharray="5,2" d="M891,-798C824.37,-829.17 797.94,-810.78 725.5,-798"/>
+<path fill="none" stroke="#00cbff" stroke-dasharray="5,2" d="M723.5,-798C691.73,-792.39 679.59,-794.89 655,-774 629.54,-752.37 646.71,-726.68 619,-708 570.9,-675.58 501.95,-674.25 456.83,-677.85"/>
+<polygon fill="#00cbff" stroke="#00cbff" points="456.38,-674.38 446.74,-678.77 457.02,-681.35 456.38,-674.38"/>
+</g>
+<!-- sourcefile~rki_ml_dynamics.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_node25" class="node">
+<title>sourcefile~rki_ml_dynamics.f90</title>
+<g id="a_sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_node25"><a xlink:href="../sourcefile/rki_ml_dynamics.f90.html" xlink:title="rki_ml_dynamics.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="954,-694 830,-694 830,-670 954,-670 954,-694"/>
+<text text-anchor="middle" x="892" y="-679.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_dynamics.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_ml_dynamics.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge53" class="edge">
+<title>sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_ml_dynamics.f90</title>
+<path fill="none" stroke="#00cbff" stroke-dasharray="5,2" d="M1011.07,-652.04C992.12,-656.85 970.11,-662.43 950.28,-667.46"/>
+<polygon fill="#00cbff" stroke="#00cbff" points="949.26,-664.11 940.43,-669.96 950.99,-670.9 949.26,-664.11"/>
+</g>
+<!-- sourcefile~rki_ml_tracers.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_node26" class="node">
+<title>sourcefile~rki_ml_tracers.f90</title>
+<g id="a_sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_node26"><a xlink:href="../sourcefile/rki_ml_tracers.f90.html" xlink:title="rki_ml_tracers.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="947,-652 837,-652 837,-628 947,-628 947,-652"/>
+<text text-anchor="middle" x="892" y="-637.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_tracers.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_ml_tracers.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge54" class="edge">
+<title>sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_ml_tracers.f90</title>
+<path fill="none" stroke="#00cbff" stroke-dasharray="5,2" d="M989.75,-640C978.98,-640 967.89,-640 957.23,-640"/>
+<polygon fill="#00cbff" stroke="#00cbff" points="957.16,-636.5 947.16,-640 957.16,-643.5 957.16,-636.5"/>
+</g>
+<!-- sourcefile~rki_nonhydrostatic_state.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge57" class="edge">
+<title>sourcefile~rki_nonhydrostatic_state.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#0066ff" stroke-dasharray="5,2" d="M361.32,-159.91C306.7,-146.31 223.86,-126.52 217.5,-130"/>
+</g>
+<!-- sourcefile~rki_nonhydrostatic_state.f90&#45;&gt;sourcefile~rki_grid.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge58" class="edge">
+<title>sourcefile~rki_nonhydrostatic_state.f90&#45;&gt;sourcefile~rki_grid.f90</title>
+<path fill="none" stroke="#0066ff" stroke-dasharray="5,2" d="M386.66,-184.03C368.89,-194.52 344.38,-211.13 328,-231 303.97,-260.15 320.03,-282.68 292,-308 284.07,-315.17 274.04,-320.38 263.94,-324.17"/>
+<polygon fill="#0066ff" stroke="#0066ff" points="262.69,-320.9 254.3,-327.37 264.9,-327.54 262.69,-320.9"/>
+</g>
+<!-- sourcefile~rki_nonhydrostatic_state.f90&#45;&gt;sourcefile~rki_mem_report.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge59" class="edge">
+<title>sourcefile~rki_nonhydrostatic_state.f90&#45;&gt;sourcefile~rki_mem_report.f90</title>
+<path fill="none" stroke="#0066ff" stroke-dasharray="5,2" d="M351.54,-184C330.62,-188.37 306.78,-193.35 285.06,-197.89"/>
+<polygon fill="#0066ff" stroke="#0066ff" points="284.32,-194.47 275.25,-199.94 285.75,-201.32 284.32,-194.47"/>
+</g>
+<!-- sourcefile~rki_recon_weno.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge60" class="edge">
+<title>sourcefile~rki_recon_weno.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M351.41,-377.35C313.29,-378.75 262.27,-379.04 217.5,-374"/>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M215.5,-374C182.36,-370.27 145.45,-365.74 115.24,-361.94"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="115.63,-358.46 105.27,-360.68 114.75,-365.4 115.63,-358.46"/>
+</g>
+<!-- sourcefile~rki_recon_weno.f90&#45;&gt;sourcefile~rki_grid.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge61" class="edge">
+<title>sourcefile~rki_recon_weno.f90&#45;&gt;sourcefile~rki_grid.f90</title>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M351.54,-362C323.63,-356.17 290.52,-349.25 264.19,-343.75"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="264.59,-340.26 254.09,-341.64 263.16,-347.11 264.59,-340.26"/>
+</g>
+<!-- sourcefile~rki_recon_weno.f90&#45;&gt;sourcefile~rki_ml_common.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge62" class="edge">
+<title>sourcefile~rki_recon_weno.f90&#45;&gt;sourcefile~rki_ml_common.f90</title>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M351.33,-383.55C342.44,-387.36 334.18,-392.65 328,-400 253.47,-488.59 346.72,-555.97 292,-658 281.46,-677.66 262.6,-694.27 246.5,-705.92"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="244.14,-703.29 237.91,-711.86 248.12,-709.05 244.14,-703.29"/>
+</g>
+<!-- sourcefile~rki_surface_forcing.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge63" class="edge">
+<title>sourcefile~rki_surface_forcing.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#6500ff" stroke-dasharray="5,2" d="M361.82,-118C321.04,-110.3 261.84,-105.76 217.5,-130"/>
+</g>
+<!-- sourcefile~rki_surface_forcing.f90&#45;&gt;sourcefile~rki_grid.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge64" class="edge">
+<title>sourcefile~rki_surface_forcing.f90&#45;&gt;sourcefile~rki_grid.f90</title>
+<path fill="none" stroke="#6500ff" stroke-dasharray="5,2" d="M341.97,-140.72C336.81,-143.46 332.05,-146.83 328,-151 278.1,-202.33 339.75,-254.66 292,-308 284.58,-316.28 274.38,-321.93 263.91,-325.77"/>
+<polygon fill="#6500ff" stroke="#6500ff" points="262.76,-322.47 254.28,-328.82 264.87,-329.14 262.76,-322.47"/>
+</g>
+<!-- sourcefile~rki_surface_forcing.f90&#45;&gt;sourcefile~rki_mem_report.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge65" class="edge">
+<title>sourcefile~rki_surface_forcing.f90&#45;&gt;sourcefile~rki_mem_report.f90</title>
+<path fill="none" stroke="#6500ff" stroke-dasharray="5,2" d="M354.8,-142.04C345.73,-144.62 336.5,-147.61 328,-151 298.25,-162.85 266.46,-181.05 244.65,-194.48"/>
+<polygon fill="#6500ff" stroke="#6500ff" points="242.58,-191.65 235.95,-199.92 246.29,-197.59 242.58,-191.65"/>
+</g>
+<!-- sourcefile~rki_timestepper.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge66" class="edge">
+<title>sourcefile~rki_timestepper.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#cc00ff" stroke-dasharray="5,2" d="M1000.94,-128.33C843.73,-107.42 418.32,-51.01 411,-52"/>
+</g>
+<!-- sourcefile~rki_tracer.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge67" class="edge">
+<title>sourcefile~rki_tracer.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#ff00cb" stroke-dasharray="5,2" d="M367.29,-288.6C328.07,-284.79 268.01,-282.21 217.5,-294"/>
+</g>
+<!-- sourcefile~rki_tracer.f90&#45;&gt;sourcefile~rki_grid.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge68" class="edge">
+<title>sourcefile~rki_tracer.f90&#45;&gt;sourcefile~rki_grid.f90</title>
+<path fill="none" stroke="#ff00cb" stroke-dasharray="5,2" d="M367.45,-302.68C336.97,-309.04 295.58,-317.69 264,-324.29"/>
+<polygon fill="#ff00cb" stroke="#ff00cb" points="263.2,-320.88 254.12,-326.35 264.63,-327.73 263.2,-320.88"/>
+</g>
+<!-- sourcefile~rki_tracer.f90&#45;&gt;sourcefile~rki_mem_report.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge69" class="edge">
+<title>sourcefile~rki_tracer.f90&#45;&gt;sourcefile~rki_mem_report.f90</title>
+<path fill="none" stroke="#ff00cb" stroke-dasharray="5,2" d="M367.15,-285.28C354.37,-282.05 340.42,-277.95 328,-273 298.25,-261.15 266.46,-242.95 244.65,-229.52"/>
+<polygon fill="#ff00cb" stroke="#ff00cb" points="246.29,-226.41 235.95,-224.08 242.58,-232.35 246.29,-226.41"/>
+</g>
+<!-- sourcefile~rki_vcoord.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge70" class="edge">
+<title>sourcefile~rki_vcoord.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#ff0066" stroke-dasharray="5,2" d="M710.34,-850.06C685.73,-871.33 630.21,-913.54 574.5,-916"/>
+<path fill="none" stroke="#ff0066" stroke-dasharray="5,2" d="M572.5,-916C463.42,-920.81 428.96,-933.58 328,-892 269.43,-867.88 266.95,-841.58 217.5,-802"/>
+</g>
+<!-- sourcefile~rki_eos.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge71" class="edge">
+<title>sourcefile~rki_eos.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M373.37,-682.64C333.26,-679.78 267.21,-670.97 217.5,-644"/>
+</g>
+<!-- sourcefile~rki_eos.f90&#45;&gt;sourcefile~rki_grid.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge72" class="edge">
+<title>sourcefile~rki_eos.f90&#45;&gt;sourcefile~rki_grid.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M385.33,-671.95C366.53,-661.05 341.27,-643.18 328,-620 270.05,-518.75 365.92,-450.25 292,-360 284.82,-351.24 274.51,-345.42 263.83,-341.57"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="264.6,-338.14 254.01,-338.55 262.54,-344.83 264.6,-338.14"/>
+</g>
+<!-- sourcefile~rki_io_netcdf.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge73" class="edge">
+<title>sourcefile~rki_io_netcdf.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#ffff00" stroke-dasharray="5,2" d="M175.44,-93.07C163.06,-98.44 150.27,-105.89 141,-116 82.46,-179.86 62.22,-286.16 55.98,-331.93"/>
+<polygon fill="#ffff00" stroke="#ffff00" points="52.5,-331.6 54.71,-341.96 59.44,-332.48 52.5,-331.6"/>
+</g>
+<!-- sourcefile~rki_ml_common_unstr.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge74" class="edge">
+<title>sourcefile~rki_ml_common_unstr.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#00ff00" stroke-dasharray="5,2" d="M160.98,-443.9C154.05,-441.42 147.21,-438.48 141,-435 112.66,-419.12 86.17,-392.26 69.93,-373.86"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="72.39,-371.36 63.21,-366.07 67.09,-375.93 72.39,-371.36"/>
+</g>
+<!-- sourcefile~rki_ml_dynamics.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge76" class="edge">
+<title>sourcefile~rki_ml_dynamics.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M723.5,-760C656.42,-775.32 643.11,-796.8 574.5,-802"/>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M572.5,-802C415.17,-813.91 341.51,-899.55 217.5,-802"/>
+</g>
+<!-- sourcefile~rki_ml_dynamics.f90&#45;&gt;sourcefile~rki_grid.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge77" class="edge">
+<title>sourcefile~rki_ml_dynamics.f90&#45;&gt;sourcefile~rki_grid.f90</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M843.19,-669.96C838.4,-667.5 833.89,-664.55 830,-661 801.2,-634.72 823.59,-606.39 794,-581 770.03,-560.42 753.23,-577.15 725.5,-562"/>
+</g>
+<!-- sourcefile~rki_ml_dynamics.f90&#45;&gt;sourcefile~rki_boundary_types.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge75" class="edge">
+<title>sourcefile~rki_ml_dynamics.f90&#45;&gt;sourcefile~rki_boundary_types.f90</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M852.51,-669.95C844.95,-667.24 837.15,-664.22 830,-661 803.02,-648.86 773.82,-632.04 753.17,-619.46"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="754.94,-616.45 744.59,-614.19 751.27,-622.41 754.94,-616.45"/>
+</g>
+<!-- sourcefile~rki_ml_dynamics.f90&#45;&gt;sourcefile~rki_ml_common.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge78" class="edge">
+<title>sourcefile~rki_ml_dynamics.f90&#45;&gt;sourcefile~rki_ml_common.f90</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M872.13,-694.25C842.39,-712.76 782.17,-747.06 725.5,-760"/>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M723.5,-760C656.87,-775.22 642.73,-725.86 574.5,-722"/>
+</g>
+<!-- sourcefile~rki_ml_dynamics.f90&#45;&gt;sourcefile~rki_vcoord.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge80" class="edge">
+<title>sourcefile~rki_ml_dynamics.f90&#45;&gt;sourcefile~rki_vcoord.f90</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M884.98,-694.21C871.86,-719.62 838.29,-778.59 794,-812 789.19,-815.63 783.81,-818.81 778.23,-821.58"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="776.42,-818.56 768.74,-825.86 779.3,-824.94 776.42,-818.56"/>
+</g>
+<!-- sourcefile~rki_remap_column.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_node28" class="node">
+<title>sourcefile~rki_remap_column.f90</title>
+<g id="a_sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_node28"><a xlink:href="../sourcefile/rki_remap_column.f90.html" xlink:title="rki_remap_column.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="791,-694 658,-694 658,-670 791,-670 791,-694"/>
+<text text-anchor="middle" x="724.5" y="-679.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_remap_column.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_ml_dynamics.f90&#45;&gt;sourcefile~rki_remap_column.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge79" class="edge">
+<title>sourcefile~rki_ml_dynamics.f90&#45;&gt;sourcefile~rki_remap_column.f90</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M829.84,-682C820.58,-682 810.93,-682 801.4,-682"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="801.13,-678.5 791.13,-682 801.13,-685.5 801.13,-678.5"/>
+</g>
+<!-- sourcefile~rki_ml_tracers.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge82" class="edge">
+<title>sourcefile~rki_ml_tracers.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M836.91,-643.58C773.85,-647.17 666.53,-651.43 574.5,-646"/>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M572.5,-646C493.79,-640.71 284.98,-684.86 217.5,-644"/>
+</g>
+<!-- sourcefile~rki_ml_tracers.f90&#45;&gt;sourcefile~rki_grid.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge83" class="edge">
+<title>sourcefile~rki_ml_tracers.f90&#45;&gt;sourcefile~rki_grid.f90</title>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M874.26,-627.83C855.51,-614.69 823.85,-593.92 794,-581 765.01,-568.45 753.23,-577.15 725.5,-562"/>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M723.5,-562C677.07,-536.63 666.6,-528.08 619,-505 599.65,-495.62 593.4,-496.27 574.5,-486"/>
+</g>
+<!-- sourcefile~rki_ml_tracers.f90&#45;&gt;sourcefile~rki_boundary_types.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge81" class="edge">
+<title>sourcefile~rki_ml_tracers.f90&#45;&gt;sourcefile~rki_boundary_types.f90</title>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M838.63,-627.98C822.56,-624.29 804.7,-620.19 788.02,-616.35"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="788.34,-612.84 777.81,-614.01 786.77,-619.66 788.34,-612.84"/>
+</g>
+<!-- sourcefile~rki_ml_tracers.f90&#45;&gt;sourcefile~rki_ml_common.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge84" class="edge">
+<title>sourcefile~rki_ml_tracers.f90&#45;&gt;sourcefile~rki_ml_common.f90</title>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M846.66,-652.11C840.82,-654.59 835.1,-657.54 830,-661 809.67,-674.82 815.87,-691.77 794,-703 706.89,-747.72 672.26,-727.53 574.5,-722"/>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M572.5,-722C473.34,-717.21 358.42,-719.24 286.83,-721.4"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="286.47,-717.91 276.59,-721.72 286.69,-724.91 286.47,-717.91"/>
+</g>
+<!-- sourcefile~rki_ml_tracers.f90&#45;&gt;sourcefile~rki_remap_column.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge85" class="edge">
+<title>sourcefile~rki_ml_tracers.f90&#45;&gt;sourcefile~rki_remap_column.f90</title>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M843.57,-652.04C824.62,-656.85 802.61,-662.43 782.78,-667.46"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="781.76,-664.11 772.93,-669.96 783.49,-670.9 781.76,-664.11"/>
+</g>
+<!-- sourcefile~rki_nml_schema.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge86" class="edge">
+<title>sourcefile~rki_nml_schema.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#ff00ff" stroke-dasharray="5,2" d="M180.17,-401.95C167.75,-397.64 153.72,-392.69 141,-388 125.32,-382.22 108.16,-375.61 93.23,-369.77"/>
+<polygon fill="#ff00ff" stroke="#ff00ff" points="94.36,-366.46 83.77,-366.06 91.8,-372.97 94.36,-366.46"/>
+</g>
+<!-- sourcefile~rki_remap_column.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~EfferentGraph_edge87" class="edge">
+<title>sourcefile~rki_remap_column.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M689.11,-669.99C659.25,-660.47 614.62,-648.37 574.5,-646"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var pansourcefilerki_coastal_console_statsf90EfferentGraph = svgPanZoom('#sourcefilerki_coastal_console_statsf90EfferentGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#EfferentGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="EfferentGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="202pt" height="32pt"
+ viewBox="0.00 0.00 201.50 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 197.5,-28 197.5,4 -4,4"/>
+<!-- Source File -->
+<g id="node1" class="node">
+<title>Source File</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Source File</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node2" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="193.5,-24 88.5,-24 88.5,0 193.5,0 193.5,-24"/>
+<text text-anchor="middle" x="141" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a file to a file which it depends on. A file
+is dependent upon another if the latter must be compiled before the former
+can be.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Files dependent on this one</h3>
+          </div>
+          <div class="card-body">
+            <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: sourcefile~~rki_coastal_console_stats.f90~~AfferentGraph Pages: 1 -->
+<svg id="sourcefilerki_coastal_console_statsf90AfferentGraph" width="297pt" height="32pt"
+ viewBox="0.00 0.00 297.00 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="sourcefile~~rki_coastal_console_stats.f90~~AfferentGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<title>sourcefile~~rki_coastal_console_stats.f90~~AfferentGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 293,-28 293,4 -4,4"/>
+<!-- sourcefile~rki_coastal_console_stats.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~AfferentGraph_node1" class="node">
+<title>sourcefile~rki_coastal_console_stats.f90</title>
+<polygon fill="none" stroke="black" points="169,-24 0,-24 0,0 169,0 169,-24"/>
+<text text-anchor="middle" x="84.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">rki_coastal_console_stats.F90</text>
+</g>
+<!-- sourcefile~rki_driver.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~AfferentGraph_node2" class="node">
+<title>sourcefile~rki_driver.f90</title>
+<g id="a_sourcefile~~rki_coastal_console_stats.f90~~AfferentGraph_node2"><a xlink:href="../sourcefile/rki_driver.f90.html" xlink:title="rki_driver.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="289,-24 205,-24 205,0 289,0 289,-24"/>
+<text text-anchor="middle" x="247" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_driver.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_driver.f90&#45;&gt;sourcefile~rki_coastal_console_stats.f90 -->
+<g id="sourcefile~~rki_coastal_console_stats.f90~~AfferentGraph_edge1" class="edge">
+<title>sourcefile~rki_driver.f90&#45;&gt;sourcefile~rki_coastal_console_stats.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M204.67,-12C196.7,-12 188.07,-12 179.2,-12"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="179.13,-8.5 169.13,-12 179.13,-15.5 179.13,-8.5"/>
+</g>
+</g>
+</svg>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#AfferentGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="AfferentGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="202pt" height="32pt"
+ viewBox="0.00 0.00 201.50 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 197.5,-28 197.5,4 -4,4"/>
+<!-- Source File -->
+<g id="node1" class="node">
+<title>Source File</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Source File</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node2" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="193.5,-24 88.5,-24 88.5,0 193.5,0 193.5,-24"/>
+<text text-anchor="middle" x="141" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a file to a file which it depends on. A file
+is dependent upon another if the latter must be compiled before the former
+can be.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+          </div>
+        </div>
+<br>
+      <section>
+        <h2><span class="anchor" id="src"></span>Source Code</h2>
+        <div class="hl codehilite"><pre><span></span><a id="ln-1" name="ln-1" href="#ln-1"></a><span class="c">!! Coastal-regime MOM6-style console statistics.</span>
+<a id="ln-2" name="ln-2" href="#ln-2"></a><span class="k">module </span><span class="n">rki_coastal_console_stats</span>
+<a id="ln-3" name="ln-3" href="#ln-3"></a><span class="w">   </span><span class="c">!! The coastal analogue of `rki_ocean_console_stats`: reduce the coastal</span>
+<a id="ln-4" name="ln-4" href="#ln-4"></a><span class="w">   </span><span class="c">!! state's conservation + stability scalars (total mass, kinetic energy,</span>
+<a id="ln-5" name="ln-5" href="#ln-5"></a><span class="w">   </span><span class="c">!! max advective CFL, and — when multilayer — volume-mean salinity /</span>
+<a id="ln-6" name="ln-6" href="#ln-6"></a><span class="w">   </span><span class="c">!! temperature) and emit them through the SHARED `rki_console_stats`</span>
+<a id="ln-7" name="ln-7" href="#ln-7"></a><span class="w">   </span><span class="c">!! formatter, so the coastal console block looks identical to the ocean's.</span>
+<a id="ln-8" name="ln-8" href="#ln-8"></a><span class="w">   </span><span class="c">!!</span>
+<a id="ln-9" name="ln-9" href="#ln-9"></a><span class="w">   </span><span class="c">!! Reductions run on device (only the scalars cross the bus) and follow</span>
+<a id="ln-10" name="ln-10" href="#ln-10"></a><span class="w">   </span><span class="c">!! the interior-cell + NaN/dry guard pattern of `compute_total_mass`.</span>
+<a id="ln-11" name="ln-11" href="#ln-11"></a><span class="w">   </span><span class="c">!! Mass + layer sums reuse the existing `rki_init` helpers; KE and CFL</span>
+<a id="ln-12" name="ln-12" href="#ln-12"></a><span class="w">   </span><span class="c">!! add their own reductions here.</span>
+<a id="ln-13" name="ln-13" href="#ln-13"></a><span class="w">   </span><span class="k">use </span><span class="n">rki_constants</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">wp</span>
+<a id="ln-14" name="ln-14" href="#ln-14"></a><span class="w">   </span><span class="k">use </span><span class="n">rki_grid</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">hgrid_t</span>
+<a id="ln-15" name="ln-15" href="#ln-15"></a><span class="w">   </span><span class="k">use </span><span class="n">rki_state</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">state_t</span>
+<a id="ln-16" name="ln-16" href="#ln-16"></a><span class="w">   </span><span class="k">use </span><span class="n">rki_console_stats</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">console_stats_t</span><span class="p">,</span><span class="w"> </span><span class="n">console_stats_report</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<a id="ln-17" name="ln-17" href="#ln-17"></a><span class="w">                                </span><span class="n">conservation_budget_t</span>
+<a id="ln-18" name="ln-18" href="#ln-18"></a><span class="w">   </span><span class="k">use </span><span class="n">rki_init</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">compute_total_mass</span><span class="p">,</span><span class="w"> </span><span class="n">compute_layer_sums</span>
+<a id="ln-19" name="ln-19" href="#ln-19"></a><span class="w">   </span><span class="k">implicit none</span>
+<a id="ln-20" name="ln-20" href="#ln-20"></a><span class="k">   private</span>
+<a id="ln-21" name="ln-21" href="#ln-21"></a>
+<a id="ln-22" name="ln-22" href="#ln-22"></a><span class="k">   public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">coastal_console_stats_report</span>
+<a id="ln-23" name="ln-23" href="#ln-23"></a><span class="w">   </span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">coastal_total_ke</span><span class="p">,</span><span class="w"> </span><span class="n">coastal_max_cfl</span>
+<a id="ln-24" name="ln-24" href="#ln-24"></a><span class="w">      </span><span class="c">!! Exposed for analytical unit tests (test_console_stats).</span>
+<a id="ln-25" name="ln-25" href="#ln-25"></a>
+<a id="ln-26" name="ln-26" href="#ln-26"></a><span class="k">contains</span>
+<a id="ln-27" name="ln-27" href="#ln-27"></a>
+<a id="ln-28" name="ln-28" href="#ln-28"></a><span class="k">   subroutine </span><span class="n">coastal_console_stats_report</span><span class="p">(</span><span class="n">this</span><span class="p">,</span><span class="w"> </span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="n">t</span><span class="p">,</span><span class="w"> </span><span class="n">step</span><span class="p">)</span>
+<a id="ln-29" name="ln-29" href="#ln-29"></a><span class="w">      </span><span class="c">!! Reduce the coastal totals and print the shared MOM6-style block.</span>
+<a id="ln-30" name="ln-30" href="#ln-30"></a><span class="w">      </span><span class="c">!! `this` latches the t=0 reference</span>
+<a id="ln-31" name="ln-31" href="#ln-31"></a><span class="w">      </span><span class="c">!! on the first call (see `rki_console_stats`).</span>
+<a id="ln-32" name="ln-32" href="#ln-32"></a><span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="n">console_stats_t</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">this</span>
+<a id="ln-33" name="ln-33" href="#ln-33"></a><span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="n">state_t</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">s</span>
+<a id="ln-34" name="ln-34" href="#ln-34"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="n">t</span>
+<a id="ln-35" name="ln-35" href="#ln-35"></a><span class="w">      </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">step</span>
+<a id="ln-36" name="ln-36" href="#ln-36"></a>
+<a id="ln-37" name="ln-37" href="#ln-37"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">total_mass</span><span class="p">,</span><span class="w"> </span><span class="n">total_ke</span><span class="p">,</span><span class="w"> </span><span class="n">max_cfl</span><span class="p">,</span><span class="w"> </span><span class="n">cell_area</span>
+<a id="ln-38" name="ln-38" href="#ln-38"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">sum_h</span><span class="p">,</span><span class="w"> </span><span class="n">sum_hS</span><span class="p">,</span><span class="w"> </span><span class="n">sum_hT</span><span class="p">,</span><span class="w"> </span><span class="n">mean_S</span><span class="p">,</span><span class="w"> </span><span class="n">mean_T</span><span class="p">,</span><span class="w"> </span><span class="n">total_salt</span><span class="p">,</span><span class="w"> </span><span class="n">total_heat</span>
+<a id="ln-39" name="ln-39" href="#ln-39"></a><span class="w">      </span><span class="kt">logical</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">has_st</span>
+<a id="ln-40" name="ln-40" href="#ln-40"></a><span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="n">conservation_budget_t</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">bud</span>
+<a id="ln-41" name="ln-41" href="#ln-41"></a>
+<a id="ln-42" name="ln-42" href="#ln-42"></a><span class="w">      </span><span class="n">cell_area</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">%</span><span class="n">grid</span><span class="p">%</span><span class="n">dx</span><span class="o">*</span><span class="n">s</span><span class="p">%</span><span class="n">grid</span><span class="p">%</span><span class="n">dy</span>
+<a id="ln-43" name="ln-43" href="#ln-43"></a><span class="w">      </span><span class="n">has_st</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">%</span><span class="n">use_multilayer</span>
+<a id="ln-44" name="ln-44" href="#ln-44"></a>
+<a id="ln-45" name="ln-45" href="#ln-45"></a><span class="w">      </span><span class="n">total_mass</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">compute_total_mass</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+<a id="ln-46" name="ln-46" href="#ln-46"></a><span class="w">      </span><span class="c">! One fused device sweep returns both the KE sum and the max CFL.</span>
+<a id="ln-47" name="ln-47" href="#ln-47"></a><span class="w">      </span><span class="k">call </span><span class="n">coastal_reduce_stats</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="n">total_ke</span><span class="p">,</span><span class="w"> </span><span class="n">max_cfl</span><span class="p">)</span>
+<a id="ln-48" name="ln-48" href="#ln-48"></a>
+<a id="ln-49" name="ln-49" href="#ln-49"></a><span class="w">      </span><span class="c">! Mass conservation budget: cumulative volume out through the domain</span>
+<a id="ln-50" name="ln-50" href="#ln-50"></a><span class="w">      </span><span class="c">! boundaries (accumulated per RK stage in the solver from the flux</span>
+<a id="ln-51" name="ln-51" href="#ln-51"></a><span class="w">      </span><span class="c">! divergence) + cumulative volume added by surface sources (precip,</span>
+<a id="ln-52" name="ln-52" href="#ln-52"></a><span class="w">      </span><span class="c">! evap, sponge h-relaxation).  Both terms must be tracked for the</span>
+<a id="ln-53" name="ln-53" href="#ln-53"></a><span class="w">      </span><span class="c">! closed budget to be valid; if either is absent, fall back to raw</span>
+<a id="ln-54" name="ln-54" href="#ln-54"></a><span class="w">      </span><span class="c">! drift (mass_active=.false.).</span>
+<a id="ln-55" name="ln-55" href="#ln-55"></a><span class="w">      </span><span class="n">bud</span><span class="p">%</span><span class="n">mass_out</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">mass_out</span>
+<a id="ln-56" name="ln-56" href="#ln-56"></a><span class="w">      </span><span class="n">bud</span><span class="p">%</span><span class="n">mass_src</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">mass_src</span>
+<a id="ln-57" name="ln-57" href="#ln-57"></a><span class="w">      </span><span class="n">bud</span><span class="p">%</span><span class="n">mass_active</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">mass_out_tracked</span><span class="w"> </span><span class="p">&amp;</span>
+<a id="ln-58" name="ln-58" href="#ln-58"></a><span class="w">                        </span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="w"> </span><span class="n">s</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">mass_src_tracked</span>
+<a id="ln-59" name="ln-59" href="#ln-59"></a>
+<a id="ln-60" name="ln-60" href="#ln-60"></a><span class="w">      </span><span class="n">sum_h</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<a id="ln-61" name="ln-61" href="#ln-61"></a><span class="w">      </span><span class="n">sum_hS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<a id="ln-62" name="ln-62" href="#ln-62"></a><span class="w">      </span><span class="n">sum_hT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<a id="ln-63" name="ln-63" href="#ln-63"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">s</span><span class="p">%</span><span class="n">use_multilayer</span><span class="p">)</span><span class="w"> </span><span class="k">call </span><span class="n">compute_layer_sums</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="n">sum_h</span><span class="p">,</span><span class="w"> </span><span class="n">sum_hS</span><span class="p">,</span><span class="w"> </span><span class="n">sum_hT</span><span class="p">)</span>
+<a id="ln-64" name="ln-64" href="#ln-64"></a>
+<a id="ln-65" name="ln-65" href="#ln-65"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">s</span><span class="p">%</span><span class="n">use_multilayer</span><span class="w"> </span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="w"> </span><span class="n">sum_h</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mf">0.0_wp</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<a id="ln-66" name="ln-66" href="#ln-66"></a><span class="k">         </span><span class="n">mean_S</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sum_hS</span><span class="o">/</span><span class="n">sum_h</span>
+<a id="ln-67" name="ln-67" href="#ln-67"></a><span class="w">         </span><span class="n">mean_T</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sum_hT</span><span class="o">/</span><span class="n">sum_h</span>
+<a id="ln-68" name="ln-68" href="#ln-68"></a><span class="w">      </span><span class="k">else</span>
+<a id="ln-69" name="ln-69" href="#ln-69"></a><span class="k">         </span><span class="n">mean_S</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<a id="ln-70" name="ln-70" href="#ln-70"></a><span class="w">         </span><span class="n">mean_T</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<a id="ln-71" name="ln-71" href="#ln-71"></a><span class="w">      </span><span class="k">end if</span>
+<a id="ln-72" name="ln-72" href="#ln-72"></a><span class="w">      </span><span class="c">! Column-integrated salt / heat for the drift block (area-weighted so</span>
+<a id="ln-73" name="ln-73" href="#ln-73"></a><span class="w">      </span><span class="c">! the absolute figure is Σ hS·dx·dy; the Error ratio is scale-free).</span>
+<a id="ln-74" name="ln-74" href="#ln-74"></a><span class="w">      </span><span class="n">total_salt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sum_hS</span><span class="o">*</span><span class="n">cell_area</span>
+<a id="ln-75" name="ln-75" href="#ln-75"></a><span class="w">      </span><span class="n">total_heat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sum_hT</span><span class="o">*</span><span class="n">cell_area</span>
+<a id="ln-76" name="ln-76" href="#ln-76"></a>
+<a id="ln-77" name="ln-77" href="#ln-77"></a><span class="w">      </span><span class="k">call </span><span class="n">console_stats_report</span><span class="p">(</span><span class="n">this</span><span class="p">,</span><span class="w"> </span><span class="n">t</span><span class="p">,</span><span class="w"> </span><span class="n">step</span><span class="p">,</span><span class="w"> </span><span class="n">total_mass</span><span class="p">,</span><span class="w"> </span><span class="n">total_ke</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<a id="ln-78" name="ln-78" href="#ln-78"></a><span class="w">                                </span><span class="n">mean_S</span><span class="p">,</span><span class="w"> </span><span class="n">mean_T</span><span class="p">,</span><span class="w"> </span><span class="n">max_cfl</span><span class="p">,</span><span class="w"> </span><span class="n">total_salt</span><span class="p">,</span><span class="w"> </span><span class="n">total_heat</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<a id="ln-79" name="ln-79" href="#ln-79"></a><span class="w">                                </span><span class="n">has_salt</span><span class="o">=</span><span class="n">has_st</span><span class="p">,</span><span class="w"> </span><span class="n">has_temp</span><span class="o">=</span><span class="n">has_st</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<a id="ln-80" name="ln-80" href="#ln-80"></a><span class="w">                                </span><span class="n">mean_age</span><span class="o">=</span><span class="mf">0.0_wp</span><span class="p">,</span><span class="w"> </span><span class="n">has_age</span><span class="o">=</span><span class="p">.</span><span class="n">false</span><span class="p">.,</span><span class="w"> </span><span class="n">budget</span><span class="o">=</span><span class="n">bud</span><span class="p">)</span>
+<a id="ln-81" name="ln-81" href="#ln-81"></a><span class="w">   </span><span class="k">end subroutine </span><span class="n">coastal_console_stats_report</span>
+<a id="ln-82" name="ln-82" href="#ln-82"></a>
+<a id="ln-83" name="ln-83" href="#ln-83"></a><span class="w">   </span><span class="c">! -------- device-side reductions (interior cells, NaN/dry guarded) -----</span>
+<a id="ln-84" name="ln-84" href="#ln-84"></a><span class="w">   </span><span class="c">!</span>
+<a id="ln-85" name="ln-85" href="#ln-85"></a><span class="w">   </span><span class="c">! One fused sweep per rank (barotropic 2D / multilayer 3D) reduces BOTH</span>
+<a id="ln-86" name="ln-86" href="#ln-86"></a><span class="w">   </span><span class="c">! the KE sum and the max advective CFL, so the console cadence touches the</span>
+<a id="ln-87" name="ln-87" href="#ln-87"></a><span class="w">   </span><span class="c">! grid once instead of twice.  The per-cell physics lives in the pure</span>
+<a id="ln-88" name="ln-88" href="#ln-88"></a><span class="w">   </span><span class="c">! `ke_cell` / `cfl_cell` formula helpers (`!$acc routine seq`, dry/NaN</span>
+<a id="ln-89" name="ln-89" href="#ln-89"></a><span class="w">   </span><span class="c">! guard baked in — they return 0, the identity for both `+` and `max`, so</span>
+<a id="ln-90" name="ln-90" href="#ln-90"></a><span class="w">   </span><span class="c">! a guarded cell drops out of either reduction), shared across both ranks.</span>
+<a id="ln-91" name="ln-91" href="#ln-91"></a><span class="w">   </span><span class="c">! Device residency is assumed (`present`, matching the ocean twin): the</span>
+<a id="ln-92" name="ln-92" href="#ln-92"></a><span class="w">   </span><span class="c">! production caller runs inside `solver_enter_data`/`solver_exit_data`, and</span>
+<a id="ln-93" name="ln-93" href="#ln-93"></a><span class="w">   </span><span class="c">! the unit test maps the state the same way.</span>
+<a id="ln-94" name="ln-94" href="#ln-94"></a>
+<a id="ln-95" name="ln-95" href="#ln-95"></a><span class="w">   </span><span class="k">subroutine </span><span class="n">coastal_reduce_stats</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="n">ke</span><span class="p">,</span><span class="w"> </span><span class="n">mcfl</span><span class="p">)</span>
+<a id="ln-96" name="ln-96" href="#ln-96"></a><span class="w">      </span><span class="c">!! Fused KE-sum + max-CFL reduction, dispatched on the layer mode.</span>
+<a id="ln-97" name="ln-97" href="#ln-97"></a><span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="n">state_t</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">s</span>
+<a id="ln-98" name="ln-98" href="#ln-98"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">dt</span>
+<a id="ln-99" name="ln-99" href="#ln-99"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">ke</span><span class="p">,</span><span class="w"> </span><span class="n">mcfl</span>
+<a id="ln-100" name="ln-100" href="#ln-100"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">area</span><span class="p">,</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="n">idy</span>
+<a id="ln-101" name="ln-101" href="#ln-101"></a><span class="w">      </span><span class="n">area</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">%</span><span class="n">grid</span><span class="p">%</span><span class="n">dx</span><span class="o">*</span><span class="n">s</span><span class="p">%</span><span class="n">grid</span><span class="p">%</span><span class="n">dy</span>
+<a id="ln-102" name="ln-102" href="#ln-102"></a><span class="w">      </span><span class="n">idx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0_wp</span><span class="o">/</span><span class="n">s</span><span class="p">%</span><span class="n">grid</span><span class="p">%</span><span class="n">dx</span>
+<a id="ln-103" name="ln-103" href="#ln-103"></a><span class="w">      </span><span class="n">idy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0_wp</span><span class="o">/</span><span class="n">s</span><span class="p">%</span><span class="n">grid</span><span class="p">%</span><span class="n">dy</span>
+<a id="ln-104" name="ln-104" href="#ln-104"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">s</span><span class="p">%</span><span class="n">use_multilayer</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<a id="ln-105" name="ln-105" href="#ln-105"></a><span class="k">         call </span><span class="n">reduce_multilayer</span><span class="p">(</span><span class="n">s</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">h_layer</span><span class="p">,</span><span class="w"> </span><span class="n">s</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">hu_layer</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<a id="ln-106" name="ln-106" href="#ln-106"></a><span class="w">                                </span><span class="n">s</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">hv_layer</span><span class="p">,</span><span class="w"> </span><span class="n">s</span><span class="p">%</span><span class="n">grid</span><span class="p">,</span><span class="w"> </span><span class="n">s</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">nz_ml</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<a id="ln-107" name="ln-107" href="#ln-107"></a><span class="w">                                </span><span class="n">area</span><span class="p">,</span><span class="w"> </span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="n">idy</span><span class="p">,</span><span class="w"> </span><span class="n">ke</span><span class="p">,</span><span class="w"> </span><span class="n">mcfl</span><span class="p">)</span>
+<a id="ln-108" name="ln-108" href="#ln-108"></a><span class="w">      </span><span class="k">else</span>
+<a id="ln-109" name="ln-109" href="#ln-109"></a><span class="k">         call </span><span class="n">reduce_barotropic</span><span class="p">(</span><span class="n">s</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">h</span><span class="p">,</span><span class="w"> </span><span class="n">s</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hu</span><span class="p">,</span><span class="w"> </span><span class="n">s</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hv</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<a id="ln-110" name="ln-110" href="#ln-110"></a><span class="w">                                </span><span class="n">s</span><span class="p">%</span><span class="n">grid</span><span class="p">,</span><span class="w"> </span><span class="n">area</span><span class="p">,</span><span class="w"> </span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="n">idy</span><span class="p">,</span><span class="w"> </span><span class="n">ke</span><span class="p">,</span><span class="w"> </span><span class="n">mcfl</span><span class="p">)</span>
+<a id="ln-111" name="ln-111" href="#ln-111"></a><span class="w">      </span><span class="k">end if</span>
+<a id="ln-112" name="ln-112" href="#ln-112"></a><span class="k">   end subroutine </span><span class="n">coastal_reduce_stats</span>
+<a id="ln-113" name="ln-113" href="#ln-113"></a>
+<a id="ln-114" name="ln-114" href="#ln-114"></a><span class="w">   </span><span class="k">function </span><span class="n">coastal_total_ke</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="k">result</span><span class="p">(</span><span class="n">ke</span><span class="p">)</span>
+<a id="ln-115" name="ln-115" href="#ln-115"></a><span class="w">      </span><span class="c">!! Σ 0.5·(hu²+hv²)/h·area — barotropic (2D) or summed over layers.  Thin</span>
+<a id="ln-116" name="ln-116" href="#ln-116"></a><span class="w">      </span><span class="c">!! wrapper over the fused sweep (max-CFL half discarded); kept public for</span>
+<a id="ln-117" name="ln-117" href="#ln-117"></a><span class="w">      </span><span class="c">!! the analytical KE unit test.</span>
+<a id="ln-118" name="ln-118" href="#ln-118"></a><span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="n">state_t</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">s</span>
+<a id="ln-119" name="ln-119" href="#ln-119"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">ke</span>
+<a id="ln-120" name="ln-120" href="#ln-120"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">mcfl</span>
+<a id="ln-121" name="ln-121" href="#ln-121"></a><span class="w">      </span><span class="k">call </span><span class="n">coastal_reduce_stats</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0_wp</span><span class="p">,</span><span class="w"> </span><span class="n">ke</span><span class="p">,</span><span class="w"> </span><span class="n">mcfl</span><span class="p">)</span>
+<a id="ln-122" name="ln-122" href="#ln-122"></a><span class="w">   </span><span class="k">end function </span><span class="n">coastal_total_ke</span>
+<a id="ln-123" name="ln-123" href="#ln-123"></a>
+<a id="ln-124" name="ln-124" href="#ln-124"></a><span class="w">   </span><span class="k">function </span><span class="n">coastal_max_cfl</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="n">dt</span><span class="p">)</span><span class="w"> </span><span class="k">result</span><span class="p">(</span><span class="n">mcfl</span><span class="p">)</span>
+<a id="ln-125" name="ln-125" href="#ln-125"></a><span class="w">      </span><span class="c">!! max (|u|·dt/dx + |v|·dt/dy) over interior wet cells (advective CFL,</span>
+<a id="ln-126" name="ln-126" href="#ln-126"></a><span class="w">      </span><span class="c">!! matching the ocean's definition).  Thin wrapper over the fused sweep</span>
+<a id="ln-127" name="ln-127" href="#ln-127"></a><span class="w">      </span><span class="c">!! (KE half discarded); kept public for the analytical CFL unit test.</span>
+<a id="ln-128" name="ln-128" href="#ln-128"></a><span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="n">state_t</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">s</span>
+<a id="ln-129" name="ln-129" href="#ln-129"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">dt</span>
+<a id="ln-130" name="ln-130" href="#ln-130"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">mcfl</span>
+<a id="ln-131" name="ln-131" href="#ln-131"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">ke</span>
+<a id="ln-132" name="ln-132" href="#ln-132"></a><span class="w">      </span><span class="k">call </span><span class="n">coastal_reduce_stats</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="n">ke</span><span class="p">,</span><span class="w"> </span><span class="n">mcfl</span><span class="p">)</span>
+<a id="ln-133" name="ln-133" href="#ln-133"></a><span class="w">   </span><span class="k">end function </span><span class="n">coastal_max_cfl</span>
+<a id="ln-134" name="ln-134" href="#ln-134"></a>
+<a id="ln-135" name="ln-135" href="#ln-135"></a><span class="w">   </span><span class="k">subroutine </span><span class="n">reduce_barotropic</span><span class="p">(</span><span class="n">h</span><span class="p">,</span><span class="w"> </span><span class="n">hu</span><span class="p">,</span><span class="w"> </span><span class="n">hv</span><span class="p">,</span><span class="w"> </span><span class="n">grid</span><span class="p">,</span><span class="w"> </span><span class="n">area</span><span class="p">,</span><span class="w"> </span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="n">idy</span><span class="p">,</span><span class="w"> </span><span class="n">ke</span><span class="p">,</span><span class="w"> </span><span class="n">mcfl</span><span class="p">)</span>
+<a id="ln-136" name="ln-136" href="#ln-136"></a><span class="w">      </span><span class="c">!! Single fused sweep over the 2D interior.</span>
+<a id="ln-137" name="ln-137" href="#ln-137"></a><span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="n">hgrid_t</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">grid</span>
+<a id="ln-138" name="ln-138" href="#ln-138"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">h</span><span class="p">(</span><span class="n">grid</span><span class="p">%</span><span class="n">nx_total</span><span class="p">,</span><span class="w"> </span><span class="n">grid</span><span class="p">%</span><span class="n">ny_total</span><span class="p">)</span>
+<a id="ln-139" name="ln-139" href="#ln-139"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">hu</span><span class="p">(</span><span class="n">grid</span><span class="p">%</span><span class="n">nx_total</span><span class="p">,</span><span class="w"> </span><span class="n">grid</span><span class="p">%</span><span class="n">ny_total</span><span class="p">)</span>
+<a id="ln-140" name="ln-140" href="#ln-140"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">hv</span><span class="p">(</span><span class="n">grid</span><span class="p">%</span><span class="n">nx_total</span><span class="p">,</span><span class="w"> </span><span class="n">grid</span><span class="p">%</span><span class="n">ny_total</span><span class="p">)</span>
+<a id="ln-141" name="ln-141" href="#ln-141"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">area</span><span class="p">,</span><span class="w"> </span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="n">idy</span>
+<a id="ln-142" name="ln-142" href="#ln-142"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">ke</span><span class="p">,</span><span class="w"> </span><span class="n">mcfl</span>
+<a id="ln-143" name="ln-143" href="#ln-143"></a><span class="w">      </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">,</span><span class="w"> </span><span class="n">i_lo</span><span class="p">,</span><span class="w"> </span><span class="n">i_hi</span><span class="p">,</span><span class="w"> </span><span class="n">j_lo</span><span class="p">,</span><span class="w"> </span><span class="n">j_hi</span>
+<a id="ln-144" name="ln-144" href="#ln-144"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">ke_acc</span><span class="p">,</span><span class="w"> </span><span class="n">cfl_acc</span>
+<a id="ln-145" name="ln-145" href="#ln-145"></a><span class="w">      </span><span class="k">call </span><span class="n">interior_bounds</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span><span class="w"> </span><span class="n">i_lo</span><span class="p">,</span><span class="w"> </span><span class="n">i_hi</span><span class="p">,</span><span class="w"> </span><span class="n">j_lo</span><span class="p">,</span><span class="w"> </span><span class="n">j_hi</span><span class="p">)</span>
+<a id="ln-146" name="ln-146" href="#ln-146"></a><span class="w">      </span><span class="n">ke_acc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<a id="ln-147" name="ln-147" href="#ln-147"></a><span class="w">      </span><span class="n">cfl_acc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<a id="ln-148" name="ln-148" href="#ln-148"></a><span class="w">      </span><span class="k">do</span><span class="w"> </span><span class="k">concurrent</span><span class="p">(</span><span class="n">j</span><span class="o">=</span><span class="n">j_lo</span><span class="p">:</span><span class="n">j_hi</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="o">=</span><span class="n">i_lo</span><span class="p">:</span><span class="n">i_hi</span><span class="p">)</span><span class="w"> </span><span class="n">reduce</span><span class="p">(</span><span class="o">+</span><span class="p">:</span><span class="n">ke_acc</span><span class="p">)</span><span class="w"> </span><span class="n">reduce</span><span class="p">(</span><span class="nb">max</span><span class="p">:</span><span class="n">cfl_acc</span><span class="p">)</span>
+<a id="ln-149" name="ln-149" href="#ln-149"></a><span class="w">         </span><span class="n">ke_acc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ke_acc</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">ke_cell</span><span class="p">(</span><span class="n">h</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">),</span><span class="w"> </span><span class="n">hu</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">),</span><span class="w"> </span><span class="n">hv</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">),</span><span class="w"> </span><span class="n">area</span><span class="p">)</span>
+<a id="ln-150" name="ln-150" href="#ln-150"></a><span class="w">         </span><span class="n">cfl_acc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">max</span><span class="p">(</span><span class="n">cfl_acc</span><span class="p">,</span><span class="w"> </span><span class="n">cfl_cell</span><span class="p">(</span><span class="n">h</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">),</span><span class="w"> </span><span class="n">hu</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">),</span><span class="w"> </span><span class="n">hv</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">),</span><span class="w"> </span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="n">idy</span><span class="p">))</span>
+<a id="ln-151" name="ln-151" href="#ln-151"></a><span class="w">      </span><span class="k">end do</span>
+<a id="ln-152" name="ln-152" href="#ln-152"></a><span class="k">      </span><span class="n">ke</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ke_acc</span>
+<a id="ln-153" name="ln-153" href="#ln-153"></a><span class="w">      </span><span class="n">mcfl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cfl_acc</span>
+<a id="ln-154" name="ln-154" href="#ln-154"></a><span class="w">   </span><span class="k">end subroutine </span><span class="n">reduce_barotropic</span>
+<a id="ln-155" name="ln-155" href="#ln-155"></a>
+<a id="ln-156" name="ln-156" href="#ln-156"></a><span class="w">   </span><span class="k">subroutine </span><span class="n">reduce_multilayer</span><span class="p">(</span><span class="n">h_layer</span><span class="p">,</span><span class="w"> </span><span class="n">hu_layer</span><span class="p">,</span><span class="w"> </span><span class="n">hv_layer</span><span class="p">,</span><span class="w"> </span><span class="n">grid</span><span class="p">,</span><span class="w"> </span><span class="n">nz</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<a id="ln-157" name="ln-157" href="#ln-157"></a><span class="w">                                </span><span class="n">area</span><span class="p">,</span><span class="w"> </span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="n">idy</span><span class="p">,</span><span class="w"> </span><span class="n">ke</span><span class="p">,</span><span class="w"> </span><span class="n">mcfl</span><span class="p">)</span>
+<a id="ln-158" name="ln-158" href="#ln-158"></a><span class="w">      </span><span class="c">!! Single fused sweep over the 3D interior (summed over layers).</span>
+<a id="ln-159" name="ln-159" href="#ln-159"></a><span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="n">hgrid_t</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">grid</span>
+<a id="ln-160" name="ln-160" href="#ln-160"></a><span class="w">      </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">nz</span>
+<a id="ln-161" name="ln-161" href="#ln-161"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">h_layer</span><span class="p">(</span><span class="n">grid</span><span class="p">%</span><span class="n">nx_total</span><span class="p">,</span><span class="w"> </span><span class="n">grid</span><span class="p">%</span><span class="n">ny_total</span><span class="p">,</span><span class="w"> </span><span class="n">nz</span><span class="p">)</span>
+<a id="ln-162" name="ln-162" href="#ln-162"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">hu_layer</span><span class="p">(</span><span class="n">grid</span><span class="p">%</span><span class="n">nx_total</span><span class="p">,</span><span class="w"> </span><span class="n">grid</span><span class="p">%</span><span class="n">ny_total</span><span class="p">,</span><span class="w"> </span><span class="n">nz</span><span class="p">)</span>
+<a id="ln-163" name="ln-163" href="#ln-163"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">hv_layer</span><span class="p">(</span><span class="n">grid</span><span class="p">%</span><span class="n">nx_total</span><span class="p">,</span><span class="w"> </span><span class="n">grid</span><span class="p">%</span><span class="n">ny_total</span><span class="p">,</span><span class="w"> </span><span class="n">nz</span><span class="p">)</span>
+<a id="ln-164" name="ln-164" href="#ln-164"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">area</span><span class="p">,</span><span class="w"> </span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="n">idy</span>
+<a id="ln-165" name="ln-165" href="#ln-165"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">ke</span><span class="p">,</span><span class="w"> </span><span class="n">mcfl</span>
+<a id="ln-166" name="ln-166" href="#ln-166"></a><span class="w">      </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="n">i_lo</span><span class="p">,</span><span class="w"> </span><span class="n">i_hi</span><span class="p">,</span><span class="w"> </span><span class="n">j_lo</span><span class="p">,</span><span class="w"> </span><span class="n">j_hi</span>
+<a id="ln-167" name="ln-167" href="#ln-167"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">ke_acc</span><span class="p">,</span><span class="w"> </span><span class="n">cfl_acc</span>
+<a id="ln-168" name="ln-168" href="#ln-168"></a><span class="w">      </span><span class="k">call </span><span class="n">interior_bounds</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span><span class="w"> </span><span class="n">i_lo</span><span class="p">,</span><span class="w"> </span><span class="n">i_hi</span><span class="p">,</span><span class="w"> </span><span class="n">j_lo</span><span class="p">,</span><span class="w"> </span><span class="n">j_hi</span><span class="p">)</span>
+<a id="ln-169" name="ln-169" href="#ln-169"></a><span class="w">      </span><span class="n">ke_acc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<a id="ln-170" name="ln-170" href="#ln-170"></a><span class="w">      </span><span class="n">cfl_acc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<a id="ln-171" name="ln-171" href="#ln-171"></a><span class="w">      </span><span class="k">do</span><span class="w"> </span><span class="k">concurrent</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="n">nz</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="o">=</span><span class="n">j_lo</span><span class="p">:</span><span class="n">j_hi</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="o">=</span><span class="n">i_lo</span><span class="p">:</span><span class="n">i_hi</span><span class="p">)</span><span class="w"> </span><span class="n">reduce</span><span class="p">(</span><span class="o">+</span><span class="p">:</span><span class="n">ke_acc</span><span class="p">)</span><span class="w"> </span><span class="n">reduce</span><span class="p">(</span><span class="nb">max</span><span class="p">:</span><span class="n">cfl_acc</span><span class="p">)</span>
+<a id="ln-172" name="ln-172" href="#ln-172"></a><span class="w">         </span><span class="n">ke_acc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ke_acc</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">ke_cell</span><span class="p">(</span><span class="n">h_layer</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">),</span><span class="w"> </span><span class="n">hu_layer</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">),</span><span class="w"> </span><span class="p">&amp;</span>
+<a id="ln-173" name="ln-173" href="#ln-173"></a><span class="w">                                   </span><span class="n">hv_layer</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">),</span><span class="w"> </span><span class="n">area</span><span class="p">)</span>
+<a id="ln-174" name="ln-174" href="#ln-174"></a><span class="w">         </span><span class="n">cfl_acc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">max</span><span class="p">(</span><span class="n">cfl_acc</span><span class="p">,</span><span class="w"> </span><span class="n">cfl_cell</span><span class="p">(</span><span class="n">h_layer</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">),</span><span class="w"> </span><span class="n">hu_layer</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">),</span><span class="w"> </span><span class="p">&amp;</span>
+<a id="ln-175" name="ln-175" href="#ln-175"></a><span class="w">                                         </span><span class="n">hv_layer</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">),</span><span class="w"> </span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="n">idy</span><span class="p">))</span>
+<a id="ln-176" name="ln-176" href="#ln-176"></a><span class="w">      </span><span class="k">end do</span>
+<a id="ln-177" name="ln-177" href="#ln-177"></a><span class="k">      </span><span class="n">ke</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ke_acc</span>
+<a id="ln-178" name="ln-178" href="#ln-178"></a><span class="w">      </span><span class="n">mcfl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cfl_acc</span>
+<a id="ln-179" name="ln-179" href="#ln-179"></a><span class="w">   </span><span class="k">end subroutine </span><span class="n">reduce_multilayer</span>
+<a id="ln-180" name="ln-180" href="#ln-180"></a>
+<a id="ln-181" name="ln-181" href="#ln-181"></a><span class="w">   </span><span class="k">pure subroutine </span><span class="n">interior_bounds</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span><span class="w"> </span><span class="n">i_lo</span><span class="p">,</span><span class="w"> </span><span class="n">i_hi</span><span class="p">,</span><span class="w"> </span><span class="n">j_lo</span><span class="p">,</span><span class="w"> </span><span class="n">j_hi</span><span class="p">)</span>
+<a id="ln-182" name="ln-182" href="#ln-182"></a><span class="w">      </span><span class="c">!! Physical-cell index range (ghost rows excluded) shared by both sweeps.</span>
+<a id="ln-183" name="ln-183" href="#ln-183"></a><span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="n">hgrid_t</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">grid</span>
+<a id="ln-184" name="ln-184" href="#ln-184"></a><span class="w">      </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">i_lo</span><span class="p">,</span><span class="w"> </span><span class="n">i_hi</span><span class="p">,</span><span class="w"> </span><span class="n">j_lo</span><span class="p">,</span><span class="w"> </span><span class="n">j_hi</span>
+<a id="ln-185" name="ln-185" href="#ln-185"></a><span class="w">      </span><span class="n">i_lo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">grid</span><span class="p">%</span><span class="n">nghost</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span>
+<a id="ln-186" name="ln-186" href="#ln-186"></a><span class="w">      </span><span class="n">i_hi</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">grid</span><span class="p">%</span><span class="n">nx_total</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">grid</span><span class="p">%</span><span class="n">nghost</span>
+<a id="ln-187" name="ln-187" href="#ln-187"></a><span class="w">      </span><span class="n">j_lo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">grid</span><span class="p">%</span><span class="n">nghost</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span>
+<a id="ln-188" name="ln-188" href="#ln-188"></a><span class="w">      </span><span class="n">j_hi</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">grid</span><span class="p">%</span><span class="n">ny_total</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">grid</span><span class="p">%</span><span class="n">nghost</span>
+<a id="ln-189" name="ln-189" href="#ln-189"></a><span class="w">   </span><span class="k">end subroutine </span><span class="n">interior_bounds</span>
+<a id="ln-190" name="ln-190" href="#ln-190"></a>
+<a id="ln-191" name="ln-191" href="#ln-191"></a><span class="w">   </span><span class="k">pure function </span><span class="n">ke_cell</span><span class="p">(</span><span class="n">h</span><span class="p">,</span><span class="w"> </span><span class="n">hu</span><span class="p">,</span><span class="w"> </span><span class="n">hv</span><span class="p">,</span><span class="w"> </span><span class="n">area</span><span class="p">)</span><span class="w"> </span><span class="k">result</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+<a id="ln-192" name="ln-192" href="#ln-192"></a><span class="w">      </span><span class="c">!! Per-cell kinetic energy 0.5·(hu²+hv²)/h·area; 0 on a dry / NaN-guarded</span>
+<a id="ln-193" name="ln-193" href="#ln-193"></a><span class="w">      </span><span class="c">!! cell (the additive identity, so it drops out of the KE sum).</span>
+<a id="ln-194" name="ln-194" href="#ln-194"></a><span class="w">      </span><span class="c">!$acc routine seq</span>
+<a id="ln-195" name="ln-195" href="#ln-195"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">h</span><span class="p">,</span><span class="w"> </span><span class="n">hu</span><span class="p">,</span><span class="w"> </span><span class="n">hv</span><span class="p">,</span><span class="w"> </span><span class="n">area</span>
+<a id="ln-196" name="ln-196" href="#ln-196"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">v</span>
+<a id="ln-197" name="ln-197" href="#ln-197"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">h</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mf">0.0_wp</span><span class="w"> </span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="w"> </span><span class="n">h</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mf">1.0e6_wp</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<a id="ln-198" name="ln-198" href="#ln-198"></a><span class="k">         </span><span class="n">v</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.5_wp</span><span class="o">*</span><span class="p">(</span><span class="n">hu</span><span class="o">*</span><span class="n">hu</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">hv</span><span class="o">*</span><span class="n">hv</span><span class="p">)</span><span class="o">/</span><span class="n">h</span><span class="o">*</span><span class="n">area</span>
+<a id="ln-199" name="ln-199" href="#ln-199"></a><span class="w">      </span><span class="k">else</span>
+<a id="ln-200" name="ln-200" href="#ln-200"></a><span class="k">         </span><span class="n">v</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<a id="ln-201" name="ln-201" href="#ln-201"></a><span class="w">      </span><span class="k">end if</span>
+<a id="ln-202" name="ln-202" href="#ln-202"></a><span class="k">   end function </span><span class="n">ke_cell</span>
+<a id="ln-203" name="ln-203" href="#ln-203"></a>
+<a id="ln-204" name="ln-204" href="#ln-204"></a><span class="w">   </span><span class="k">pure function </span><span class="n">cfl_cell</span><span class="p">(</span><span class="n">h</span><span class="p">,</span><span class="w"> </span><span class="n">hu</span><span class="p">,</span><span class="w"> </span><span class="n">hv</span><span class="p">,</span><span class="w"> </span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="n">idy</span><span class="p">)</span><span class="w"> </span><span class="k">result</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+<a id="ln-205" name="ln-205" href="#ln-205"></a><span class="w">      </span><span class="c">!! Per-cell advective CFL |u|·dt·idx + |v|·dt·idy; 0 on a dry / NaN-guarded</span>
+<a id="ln-206" name="ln-206" href="#ln-206"></a><span class="w">      </span><span class="c">!! cell (≤ any real CFL, so it drops out of the max).</span>
+<a id="ln-207" name="ln-207" href="#ln-207"></a><span class="w">      </span><span class="c">!$acc routine seq</span>
+<a id="ln-208" name="ln-208" href="#ln-208"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">h</span><span class="p">,</span><span class="w"> </span><span class="n">hu</span><span class="p">,</span><span class="w"> </span><span class="n">hv</span><span class="p">,</span><span class="w"> </span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="n">idy</span>
+<a id="ln-209" name="ln-209" href="#ln-209"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">v</span>
+<a id="ln-210" name="ln-210" href="#ln-210"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">h</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mf">0.0_wp</span><span class="w"> </span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="w"> </span><span class="n">h</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mf">1.0e6_wp</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<a id="ln-211" name="ln-211" href="#ln-211"></a><span class="k">         </span><span class="n">v</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">abs</span><span class="p">(</span><span class="n">hu</span><span class="p">)</span><span class="o">/</span><span class="n">h</span><span class="o">*</span><span class="n">dt</span><span class="o">*</span><span class="n">idx</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nb">abs</span><span class="p">(</span><span class="n">hv</span><span class="p">)</span><span class="o">/</span><span class="n">h</span><span class="o">*</span><span class="n">dt</span><span class="o">*</span><span class="n">idy</span>
+<a id="ln-212" name="ln-212" href="#ln-212"></a><span class="w">      </span><span class="k">else</span>
+<a id="ln-213" name="ln-213" href="#ln-213"></a><span class="k">         </span><span class="n">v</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<a id="ln-214" name="ln-214" href="#ln-214"></a><span class="w">      </span><span class="k">end if</span>
+<a id="ln-215" name="ln-215" href="#ln-215"></a><span class="k">   end function </span><span class="n">cfl_cell</span>
+<a id="ln-216" name="ln-216" href="#ln-216"></a>
+<a id="ln-217" name="ln-217" href="#ln-217"></a><span class="k">end module </span><span class="n">rki_coastal_console_stats</span>
+</pre></div>
+
+      </section>
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Rakali
+ was developed by Jorge Luis Galvez Vallejo<br>              &copy; 2026 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+ on 2026-10-08 12:55 +0000             </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>

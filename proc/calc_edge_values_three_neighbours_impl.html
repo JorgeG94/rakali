@@ -1,0 +1,1038 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="GPU-native coastal solver — structured Cartesian and unstructured triangular grids, hydrostatic multilayer + non-hydrostatic, portable across NVHPC/gfortran/ifx.">
+    <meta name="author" content="Jorge Luis Galvez Vallejo" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>calc_edge_values_three_neighbours_impl &ndash; Rakali</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">Rakali </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/absint.html">Abstract Interfaces</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>calc_edge_values_three_neighbours_impl
+      <small>Subroutine</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.1% of total for procedures.">26 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/rki_kernel_extrapolate_unstr.F90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/rki_kernel_extrapolate_unstr.f90.html'>rki_kernel_extrapolate_unstr.F90</a></li>
+                <li class="breadcrumb-item"><a href='../module/rki_kernel_extrapolate_unstr.html'>rki_kernel_extrapolate_unstr</a></li>
+            <li class="breadcrumb-item active" aria-current="page">calc_edge_values_three_neighbours_impl</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+  
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#vars-0"
+         aria-expanded="false" aria-controls="vars-0">
+         <h4 class="card-header bg-primary text-white">Variables</h4>
+      </a>
+      <div id="vars-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../proc/calc_edge_values_three_neighbours_impl.html#variable-a~32">a</a>
+            <a class="list-group-item" href="../proc/calc_edge_values_three_neighbours_impl.html#variable-b~45">b</a>
+            <a class="list-group-item" href="../proc/calc_edge_values_three_neighbours_impl.html#variable-dq0~2">dq0</a>
+            <a class="list-group-item" href="../proc/calc_edge_values_three_neighbours_impl.html#variable-dq1~4">dq1</a>
+            <a class="list-group-item" href="../proc/calc_edge_values_three_neighbours_impl.html#variable-dq2~2">dq2</a>
+            <a class="list-group-item" href="../proc/calc_edge_values_three_neighbours_impl.html#variable-dqv~3">dqv</a>
+            <a class="list-group-item" href="../proc/calc_edge_values_three_neighbours_impl.html#variable-qmax~5">qmax</a>
+            <a class="list-group-item" href="../proc/calc_edge_values_three_neighbours_impl.html#variable-qmin~5">qmin</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../proc/calc_edge_values_three_neighbours_impl.html#src">calc_edge_values_three_neighbours_impl</a>
+      </div>
+    </div>
+
+
+  </div>
+
+    </div>
+    
+    <div class="col-md-9" id='text'>
+    <h2>private pure subroutine calc_edge_values_three_neighbours_impl(cv_k, cv_k0, cv_k1, cv_k2, dxv0, dxv1, dxv2, dyv0, dyv1, dyv2, dx1, dx2, dy1, dy2, inv_area2, beta, edge_values)  
+</h2>
+    
+
+
+
+    <h3>Arguments</h3>
+        <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-cv_k"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>cv_k</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-cv_k0"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>cv_k0</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-cv_k1"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>cv_k1</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-cv_k2"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>cv_k2</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-dxv0~4"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>dxv0</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-dxv1~4"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>dxv1</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-dxv2~4"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>dxv2</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-dyv0~4"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>dyv0</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-dyv1~4"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>dyv1</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-dyv2~4"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>dyv2</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-dx1~2"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>dx1</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-dx2~2"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>dx2</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-dy1~2"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>dy1</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-dy2~2"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>dy2</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-inv_area2~2"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>inv_area2</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-beta~6"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>beta</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-edge_values"></span>
+              real(kind=wp),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>edge_values</strong>(3)</td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <br>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Calls</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~calc_edge_values_three_neighbours_impl~~CallsGraph Pages: 1 -->
+<svg id="proccalc_edge_values_three_neighbours_implCallsGraph" width="412pt" height="74pt"
+ viewBox="0.00 0.00 412.00 74.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~calc_edge_values_three_neighbours_impl~~CallsGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 70)">
+<title>proc~~calc_edge_values_three_neighbours_impl~~CallsGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-70 408,-70 408,4 -4,4"/>
+<!-- proc~calc_edge_values_three_neighbours_impl -->
+<g id="proc~~calc_edge_values_three_neighbours_impl~~CallsGraph_node1" class="node">
+<title>proc~calc_edge_values_three_neighbours_impl</title>
+<polygon fill="none" stroke="black" points="233,-45 0,-45 0,-21 233,-21 233,-45"/>
+<text text-anchor="middle" x="116.5" y="-30.6" font-family="Helvetica,sans-Serif" font-size="10.50">calc_edge_values_three_neighbours_impl</text>
+</g>
+<!-- proc~limit_gradient_impl -->
+<g id="proc~~calc_edge_values_three_neighbours_impl~~CallsGraph_node2" class="node">
+<title>proc~limit_gradient_impl</title>
+<g id="a_proc~~calc_edge_values_three_neighbours_impl~~CallsGraph_node2"><a xlink:href="../proc/limit_gradient_impl.html" xlink:title="limit_gradient_impl">
+<polygon fill="#d9534f" stroke="#d9534f" points="394,-66 279,-66 279,-42 394,-42 394,-66"/>
+<text text-anchor="middle" x="336.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">limit_gradient_impl</text>
+</a>
+</g>
+</g>
+<!-- proc~calc_edge_values_three_neighbours_impl&#45;&gt;proc~limit_gradient_impl -->
+<g id="proc~~calc_edge_values_three_neighbours_impl~~CallsGraph_edge1" class="edge">
+<title>proc~calc_edge_values_three_neighbours_impl&#45;&gt;proc~limit_gradient_impl</title>
+<path fill="none" stroke="#ff0000" d="M233.2,-44.15C245.37,-45.32 257.43,-46.48 268.77,-47.57"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="268.67,-51.08 278.96,-48.55 269.34,-44.11 268.67,-51.08"/>
+</g>
+<!-- proc~qrange_three_diff_impl -->
+<g id="proc~~calc_edge_values_three_neighbours_impl~~CallsGraph_node3" class="node">
+<title>proc~qrange_three_diff_impl</title>
+<g id="a_proc~~calc_edge_values_three_neighbours_impl~~CallsGraph_node3"><a xlink:href="../proc/qrange_three_diff_impl.html" xlink:title="qrange_three_diff_impl">
+<polygon fill="#d9534f" stroke="#d9534f" points="404,-24 269,-24 269,0 404,0 404,-24"/>
+<text text-anchor="middle" x="336.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">qrange_three_diff_impl</text>
+</a>
+</g>
+</g>
+<!-- proc~calc_edge_values_three_neighbours_impl&#45;&gt;proc~qrange_three_diff_impl -->
+<g id="proc~~calc_edge_values_three_neighbours_impl~~CallsGraph_edge2" class="edge">
+<title>proc~calc_edge_values_three_neighbours_impl&#45;&gt;proc~qrange_three_diff_impl</title>
+<path fill="none" stroke="#ff0000" d="M233.2,-21.85C241.9,-21.02 250.53,-20.18 258.89,-19.38"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="259.31,-22.86 268.93,-18.41 258.64,-15.89 259.31,-22.86"/>
+</g>
+</g>
+</svg>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CallsGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CallsGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Called by</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~calc_edge_values_three_neighbours_impl~~CalledByGraph Pages: 1 -->
+<svg id="proccalc_edge_values_three_neighbours_implCalledByGraph" width="641pt" height="59pt"
+ viewBox="0.00 0.00 641.00 59.48" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~calc_edge_values_three_neighbours_impl~~CalledByGraph" class="graph" transform="scale(0.51 0.51) rotate(0) translate(4 112)">
+<title>proc~~calc_edge_values_three_neighbours_impl~~CalledByGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-112 1246,-112 1246,4 -4,4"/>
+<!-- proc~calc_edge_values_three_neighbours_impl -->
+<g id="proc~~calc_edge_values_three_neighbours_impl~~CalledByGraph_node1" class="node">
+<title>proc~calc_edge_values_three_neighbours_impl</title>
+<polygon fill="none" stroke="black" points="1242,-66 1009,-66 1009,-42 1242,-42 1242,-66"/>
+<text text-anchor="middle" x="1125.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50">calc_edge_values_three_neighbours_impl</text>
+</g>
+<!-- proc~extrapolate_three_neighbour_branch -->
+<g id="proc~~calc_edge_values_three_neighbours_impl~~CalledByGraph_node2" class="node">
+<title>proc~extrapolate_three_neighbour_branch</title>
+<g id="a_proc~~calc_edge_values_three_neighbours_impl~~CalledByGraph_node2"><a xlink:href="../proc/extrapolate_three_neighbour_branch.html" xlink:title="extrapolate_three_neighbour_branch">
+<polygon fill="#d9534f" stroke="#d9534f" points="973,-66 764,-66 764,-42 973,-42 973,-66"/>
+<text text-anchor="middle" x="868.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">extrapolate_three_neighbour_branch</text>
+</a>
+</g>
+</g>
+<!-- proc~extrapolate_three_neighbour_branch&#45;&gt;proc~calc_edge_values_three_neighbours_impl -->
+<g id="proc~~calc_edge_values_three_neighbours_impl~~CalledByGraph_edge1" class="edge">
+<title>proc~extrapolate_three_neighbour_branch&#45;&gt;proc~calc_edge_values_three_neighbours_impl</title>
+<path fill="none" stroke="#ff0000" d="M973.22,-54C981.64,-54 990.21,-54 998.77,-54"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="998.8,-57.5 1008.8,-54 998.8,-50.5 998.8,-57.5"/>
+</g>
+<!-- proc~extrapolate_one_cell -->
+<g id="proc~~calc_edge_values_three_neighbours_impl~~CalledByGraph_node3" class="node">
+<title>proc~extrapolate_one_cell</title>
+<g id="a_proc~~calc_edge_values_three_neighbours_impl~~CalledByGraph_node3"><a xlink:href="../proc/extrapolate_one_cell.html" xlink:title="extrapolate_one_cell">
+<polygon fill="#d9534f" stroke="#d9534f" points="728,-66 605,-66 605,-42 728,-42 728,-66"/>
+<text text-anchor="middle" x="666.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">extrapolate_one_cell</text>
+</a>
+</g>
+</g>
+<!-- proc~extrapolate_one_cell&#45;&gt;proc~extrapolate_three_neighbour_branch -->
+<g id="proc~~calc_edge_values_three_neighbours_impl~~CalledByGraph_edge2" class="edge">
+<title>proc~extrapolate_one_cell&#45;&gt;proc~extrapolate_three_neighbour_branch</title>
+<path fill="none" stroke="#ff0000" d="M728.05,-54C736.32,-54 745.02,-54 753.86,-54"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="753.89,-57.5 763.89,-54 753.89,-50.5 753.89,-57.5"/>
+</g>
+<!-- proc~per_cell_extrapolation -->
+<g id="proc~~calc_edge_values_three_neighbours_impl~~CalledByGraph_node4" class="node">
+<title>proc~per_cell_extrapolation</title>
+<g id="a_proc~~calc_edge_values_three_neighbours_impl~~CalledByGraph_node4"><a xlink:href="../proc/per_cell_extrapolation.html" xlink:title="per_cell_extrapolation">
+<polygon fill="#d9534f" stroke="#d9534f" points="569,-66 439,-66 439,-42 569,-42 569,-66"/>
+<text text-anchor="middle" x="504" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">per_cell_extrapolation</text>
+</a>
+</g>
+</g>
+<!-- proc~per_cell_extrapolation&#45;&gt;proc~extrapolate_one_cell -->
+<g id="proc~~calc_edge_values_three_neighbours_impl~~CalledByGraph_edge3" class="edge">
+<title>proc~per_cell_extrapolation&#45;&gt;proc~extrapolate_one_cell</title>
+<path fill="none" stroke="#ff0000" d="M569.36,-54C577.66,-54 586.21,-54 594.62,-54"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="594.78,-57.5 604.78,-54 594.78,-50.5 594.78,-57.5"/>
+</g>
+<!-- proc~extrapolate_second_order_edge_unstr -->
+<g id="proc~~calc_edge_values_three_neighbours_impl~~CalledByGraph_node5" class="node">
+<title>proc~extrapolate_second_order_edge_unstr</title>
+<g id="a_proc~~calc_edge_values_three_neighbours_impl~~CalledByGraph_node5"><a xlink:href="../proc/extrapolate_second_order_edge_unstr.html" xlink:title="extrapolate_second_order_edge_unstr">
+<polygon fill="#d9534f" stroke="#d9534f" points="403,-66 187,-66 187,-42 403,-42 403,-66"/>
+<text text-anchor="middle" x="295" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">extrapolate_second_order_edge_unstr</text>
+</a>
+</g>
+</g>
+<!-- proc~extrapolate_second_order_edge_unstr&#45;&gt;proc~per_cell_extrapolation -->
+<g id="proc~~calc_edge_values_three_neighbours_impl~~CalledByGraph_edge4" class="edge">
+<title>proc~extrapolate_second_order_edge_unstr&#45;&gt;proc~per_cell_extrapolation</title>
+<path fill="none" stroke="#ff0000" d="M403.14,-54C411.83,-54 420.5,-54 428.88,-54"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="428.95,-57.5 438.95,-54 428.95,-50.5 428.95,-57.5"/>
+</g>
+<!-- proc~solver_unstr_advance -->
+<g id="proc~~calc_edge_values_three_neighbours_impl~~CalledByGraph_node6" class="node">
+<title>proc~solver_unstr_advance</title>
+<g id="a_proc~~calc_edge_values_three_neighbours_impl~~CalledByGraph_node6"><a xlink:href="../proc/solver_unstr_advance.html" xlink:title="solver_unstr_advance">
+<polygon fill="#d9534f" stroke="#d9534f" points="139.5,-108 11.5,-108 11.5,-84 139.5,-84 139.5,-108"/>
+<text text-anchor="middle" x="75.5" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_unstr_advance</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_unstr_advance&#45;&gt;proc~extrapolate_second_order_edge_unstr -->
+<g id="proc~~calc_edge_values_three_neighbours_impl~~CalledByGraph_edge5" class="edge">
+<title>proc~solver_unstr_advance&#45;&gt;proc~extrapolate_second_order_edge_unstr</title>
+<path fill="none" stroke="#ff0000" d="M138.83,-83.96C164.65,-78.98 194.77,-73.16 221.57,-67.99"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="222.51,-71.37 231.66,-66.04 221.18,-64.5 222.51,-71.37"/>
+</g>
+<!-- proc~solver_unstr_step -->
+<g id="proc~~calc_edge_values_three_neighbours_impl~~CalledByGraph_node7" class="node">
+<title>proc~solver_unstr_step</title>
+<g id="a_proc~~calc_edge_values_three_neighbours_impl~~CalledByGraph_node7"><a xlink:href="../proc/solver_unstr_step.html" xlink:title="solver_unstr_step">
+<polygon fill="#d9534f" stroke="#d9534f" points="128,-66 23,-66 23,-42 128,-42 128,-66"/>
+<text text-anchor="middle" x="75.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_unstr_step</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_unstr_step&#45;&gt;proc~extrapolate_second_order_edge_unstr -->
+<g id="proc~~calc_edge_values_three_neighbours_impl~~CalledByGraph_edge6" class="edge">
+<title>proc~solver_unstr_step&#45;&gt;proc~extrapolate_second_order_edge_unstr</title>
+<path fill="none" stroke="#ff0000" d="M128.04,-54C142.85,-54 159.64,-54 176.7,-54"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="176.77,-57.5 186.77,-54 176.77,-50.5 176.77,-57.5"/>
+</g>
+<!-- proc~solver_unstr_step_generic -->
+<g id="proc~~calc_edge_values_three_neighbours_impl~~CalledByGraph_node8" class="node">
+<title>proc~solver_unstr_step_generic</title>
+<g id="a_proc~~calc_edge_values_three_neighbours_impl~~CalledByGraph_node8"><a xlink:href="../proc/solver_unstr_step_generic.html" xlink:title="solver_unstr_step_generic">
+<polygon fill="#d9534f" stroke="#d9534f" points="151,-24 0,-24 0,0 151,0 151,-24"/>
+<text text-anchor="middle" x="75.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_unstr_step_generic</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_unstr_step_generic&#45;&gt;proc~extrapolate_second_order_edge_unstr -->
+<g id="proc~~calc_edge_values_three_neighbours_impl~~CalledByGraph_edge7" class="edge">
+<title>proc~solver_unstr_step_generic&#45;&gt;proc~extrapolate_second_order_edge_unstr</title>
+<path fill="none" stroke="#ff0000" d="M138.83,-24.04C164.65,-29.02 194.77,-34.84 221.57,-40.01"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="221.18,-43.5 231.66,-41.96 222.51,-36.63 221.18,-43.5"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var panproccalc_edge_values_three_neighbours_implCalledByGraph = svgPanZoom('#proccalc_edge_values_three_neighbours_implCalledByGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CalledByGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CalledByGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+
+
+    <section>    
+      <h2>Variables</h2>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Visibility</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+<th></th><th scope="col">Initial</th>        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-a~32"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>a</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-b~45"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>b</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-dq0~2"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>dq0</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-dq1~4"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>dq1</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-dq2~2"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>dq2</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-dqv~3"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>dqv</strong>(3)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-qmax~5"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>qmax</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-qmin~5"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>qmin</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    </section>
+    <br>
+    
+    
+
+    
+    
+
+
+
+    
+    <section>
+    <h2><span class="anchor" id="src"></span>Source Code</h2>
+    <div class="hl codehilite"><pre><span></span><span class="w">   </span><span class="k">pure subroutine </span><span class="n">calc_edge_values_three_neighbours_impl</span><span class="p">(</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">      </span><span class="n">cv_k</span><span class="p">,</span><span class="w"> </span><span class="n">cv_k0</span><span class="p">,</span><span class="w"> </span><span class="n">cv_k1</span><span class="p">,</span><span class="w"> </span><span class="n">cv_k2</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">      </span><span class="n">dxv0</span><span class="p">,</span><span class="w"> </span><span class="n">dxv1</span><span class="p">,</span><span class="w"> </span><span class="n">dxv2</span><span class="p">,</span><span class="w"> </span><span class="n">dyv0</span><span class="p">,</span><span class="w"> </span><span class="n">dyv1</span><span class="p">,</span><span class="w"> </span><span class="n">dyv2</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">      </span><span class="n">dx1</span><span class="p">,</span><span class="w"> </span><span class="n">dx2</span><span class="p">,</span><span class="w"> </span><span class="n">dy1</span><span class="p">,</span><span class="w"> </span><span class="n">dy2</span><span class="p">,</span><span class="w"> </span><span class="n">inv_area2</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">      </span><span class="n">beta</span><span class="p">,</span><span class="w"> </span><span class="n">edge_values</span><span class="p">)</span>
+<span class="w">      </span><span class="c">!$acc routine seq</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">cv_k</span><span class="p">,</span><span class="w"> </span><span class="n">cv_k0</span><span class="p">,</span><span class="w"> </span><span class="n">cv_k1</span><span class="p">,</span><span class="w"> </span><span class="n">cv_k2</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">dxv0</span><span class="p">,</span><span class="w"> </span><span class="n">dxv1</span><span class="p">,</span><span class="w"> </span><span class="n">dxv2</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">dyv0</span><span class="p">,</span><span class="w"> </span><span class="n">dyv1</span><span class="p">,</span><span class="w"> </span><span class="n">dyv2</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">dx1</span><span class="p">,</span><span class="w"> </span><span class="n">dx2</span><span class="p">,</span><span class="w"> </span><span class="n">dy1</span><span class="p">,</span><span class="w"> </span><span class="n">dy2</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">inv_area2</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">beta</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">edge_values</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">dq0</span><span class="p">,</span><span class="w"> </span><span class="n">dq1</span><span class="p">,</span><span class="w"> </span><span class="n">dq2</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">b</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">dqv</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">qmin</span><span class="p">,</span><span class="w"> </span><span class="n">qmax</span>
+
+<span class="w">      </span><span class="n">dq0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cv_k0</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">cv_k</span>
+<span class="w">      </span><span class="n">dq1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cv_k1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">cv_k0</span>
+<span class="w">      </span><span class="n">dq2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cv_k2</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">cv_k0</span>
+
+<span class="w">      </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">dy2</span><span class="o">*</span><span class="n">dq1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">dy1</span><span class="o">*</span><span class="n">dq2</span><span class="p">)</span><span class="o">*</span><span class="n">inv_area2</span>
+<span class="w">      </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">dx1</span><span class="o">*</span><span class="n">dq2</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">dx2</span><span class="o">*</span><span class="n">dq1</span><span class="p">)</span><span class="o">*</span><span class="n">inv_area2</span>
+
+<span class="w">      </span><span class="n">dqv</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="o">*</span><span class="n">dxv0</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b</span><span class="o">*</span><span class="n">dyv0</span>
+<span class="w">      </span><span class="n">dqv</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="o">*</span><span class="n">dxv1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b</span><span class="o">*</span><span class="n">dyv1</span>
+<span class="w">      </span><span class="n">dqv</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="o">*</span><span class="n">dxv2</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b</span><span class="o">*</span><span class="n">dyv2</span>
+
+<span class="w">      </span><span class="k">call </span><span class="n">qrange_three_diff_impl</span><span class="p">(</span><span class="n">dq0</span><span class="p">,</span><span class="w"> </span><span class="n">dq1</span><span class="p">,</span><span class="w"> </span><span class="n">dq2</span><span class="p">,</span><span class="w"> </span><span class="n">qmin</span><span class="p">,</span><span class="w"> </span><span class="n">qmax</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">limit_gradient_impl</span><span class="p">(</span><span class="n">dqv</span><span class="p">,</span><span class="w"> </span><span class="n">qmin</span><span class="p">,</span><span class="w"> </span><span class="n">qmax</span><span class="p">,</span><span class="w"> </span><span class="n">beta</span><span class="p">)</span>
+
+<span class="w">      </span><span class="n">edge_values</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cv_k</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">dqv</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">      </span><span class="n">edge_values</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cv_k</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">dqv</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="w">      </span><span class="n">edge_values</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cv_k</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">dqv</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="w">   </span><span class="k">end subroutine </span><span class="n">calc_edge_values_three_neighbours_impl</span>
+</pre></div>
+
+    </section>
+    <br>
+    
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Rakali
+ was developed by Jorge Luis Galvez Vallejo<br>              &copy; 2026 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+ on 2026-10-08 12:55 +0000             </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>

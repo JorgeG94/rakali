@@ -1,0 +1,1137 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="GPU-native coastal solver — structured Cartesian and unstructured triangular grids, hydrostatic multilayer + non-hydrostatic, portable across NVHPC/gfortran/ifx.">
+    <meta name="author" content="Jorge Luis Galvez Vallejo" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>rki_ml_common.F90 &ndash; Rakali</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">Rakali </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/absint.html">Abstract Interfaces</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>rki_ml_common.F90
+      <small>Source File</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.1% of total for source files.">15 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/rki_ml_common.F90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+            <li class="breadcrumb-item active" aria-current="page">rki_ml_common.F90</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+        <div id="sidebar">
+      <h3>Contents</h3>
+  
+  
+  
+  
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#mods-0"
+         aria-expanded="false" aria-controls="mods-0">
+         <h4 class="card-header bg-primary text-white">Modules</h4>
+      </a>
+      <div id="mods-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../module/rki_ml_common.html">rki_ml_common</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../sourcefile/rki_ml_common.f90.html#src">rki_ml_common.F90</a>
+      </div>
+    </div>
+
+
+  </div>
+
+    </div>
+    <div class="col-md-9" id='text'>
+      <p>Shared state for the structured multilayer kernels.</p>
+      <br>
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">This file depends on</h3>
+          </div>
+          <div class="card-body">
+            <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: sourcefile~~rki_ml_common.f90~~EfferentGraph Pages: 1 -->
+<svg id="sourcefilerki_ml_commonf90EfferentGraph" width="269pt" height="32pt"
+ viewBox="0.00 0.00 269.00 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="sourcefile~~rki_ml_common.f90~~EfferentGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<title>sourcefile~~rki_ml_common.f90~~EfferentGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 265,-28 265,4 -4,4"/>
+<!-- sourcefile~rki_ml_common.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~EfferentGraph_node1" class="node">
+<title>sourcefile~rki_ml_common.f90</title>
+<polygon fill="none" stroke="black" points="261,-24 141,-24 141,0 261,0 261,-24"/>
+<text text-anchor="middle" x="201" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">rki_ml_common.F90</text>
+</g>
+<!-- sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~EfferentGraph_node2" class="node">
+<title>sourcefile~rki_constants.f90</title>
+<g id="a_sourcefile~~rki_ml_common.f90~~EfferentGraph_node2"><a xlink:href="../sourcefile/rki_constants.f90.html" xlink:title="rki_constants.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="105,-24 0,-24 0,0 105,0 105,-24"/>
+<text text-anchor="middle" x="52.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_constants.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_ml_common.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~EfferentGraph_edge1" class="edge">
+<title>sourcefile~rki_ml_common.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M140.84,-12C132.48,-12 123.87,-12 115.46,-12"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="115.34,-8.5 105.34,-12 115.34,-15.5 115.34,-8.5"/>
+</g>
+</g>
+</svg>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#EfferentGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="EfferentGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="202pt" height="32pt"
+ viewBox="0.00 0.00 201.50 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 197.5,-28 197.5,4 -4,4"/>
+<!-- Source File -->
+<g id="node1" class="node">
+<title>Source File</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Source File</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node2" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="193.5,-24 88.5,-24 88.5,0 193.5,0 193.5,-24"/>
+<text text-anchor="middle" x="141" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a file to a file which it depends on. A file
+is dependent upon another if the latter must be compiled before the former
+can be.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Files dependent on this one</h3>
+          </div>
+          <div class="card-body">
+            <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: sourcefile~~rki_ml_common.f90~~AfferentGraph Pages: 1 -->
+<svg id="sourcefilerki_ml_commonf90AfferentGraph" width="641pt" height="339pt"
+ viewBox="0.00 0.00 641.00 339.09" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph" class="graph" transform="scale(0.39 0.39) rotate(0) translate(4 875.2)">
+<title>sourcefile~~rki_ml_common.f90~~AfferentGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-875.2 1658,-875.2 1658,4 -4,4"/>
+<!-- sourcefile~rki_ml_common.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_node1" class="node">
+<title>sourcefile~rki_ml_common.f90</title>
+<polygon fill="none" stroke="black" points="120,-731.2 0,-731.2 0,-707.2 120,-707.2 120,-731.2"/>
+<text text-anchor="middle" x="60" y="-716.8" font-family="Helvetica,sans-Serif" font-size="10.50">rki_ml_common.F90</text>
+</g>
+<!-- sourcefile~rki_init.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_node2" class="node">
+<title>sourcefile~rki_init.f90</title>
+<g id="a_sourcefile~~rki_ml_common.f90~~AfferentGraph_node2"><a xlink:href="../sourcefile/rki_init.f90.html" xlink:title="rki_init.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1309.5,-43.2 1239.5,-43.2 1239.5,-19.2 1309.5,-19.2 1309.5,-43.2"/>
+<text text-anchor="middle" x="1274.5" y="-28.8" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_init.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_init.f90&#45;&gt;sourcefile~rki_ml_common.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge1" class="edge">
+<title>sourcefile~rki_init.f90&#45;&gt;sourcefile~rki_ml_common.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M1102.5,-157.2C1023.77,-179.38 999.69,-151.22 918.5,-161.2"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M916.5,-161.2C843.49,-170.17 824.38,-156.17 751,-161.2"/>
+</g>
+<!-- sourcefile~rki_ml_eos.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_node4" class="node">
+<title>sourcefile~rki_ml_eos.f90</title>
+<g id="a_sourcefile~~rki_ml_common.f90~~AfferentGraph_node4"><a xlink:href="../sourcefile/rki_ml_eos.f90.html" xlink:title="rki_ml_eos.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="963,-133.2 872,-133.2 872,-109.2 963,-109.2 963,-133.2"/>
+<text text-anchor="middle" x="917.5" y="-118.8" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_eos.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_init.f90&#45;&gt;sourcefile~rki_ml_eos.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge19" class="edge">
+<title>sourcefile~rki_init.f90&#45;&gt;sourcefile~rki_ml_eos.f90</title>
+<path fill="none" stroke="#ffff00" stroke-dasharray="5,2" d="M1239.49,-42.39C1232.81,-45.18 1226.02,-48.46 1220,-52.2 1161.07,-88.81 1171.28,-138.39 1104.5,-157.2"/>
+<path fill="none" stroke="#ffff00" stroke-dasharray="5,2" d="M1102.5,-157.2C1077.76,-164.17 1013.53,-148.84 967.94,-136.07"/>
+<polygon fill="#ffff00" stroke="#ffff00" points="968.81,-132.68 958.23,-133.31 966.89,-139.41 968.81,-132.68"/>
+</g>
+<!-- sourcefile~rki_config.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_node16" class="node">
+<title>sourcefile~rki_config.f90</title>
+<g id="a_sourcefile~~rki_ml_common.f90~~AfferentGraph_node16"><a xlink:href="../sourcefile/rki_config.f90.html" xlink:title="rki_config.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="465.5,-459.2 378.5,-459.2 378.5,-435.2 465.5,-435.2 465.5,-459.2"/>
+<text text-anchor="middle" x="422" y="-444.8" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_config.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_init.f90&#45;&gt;sourcefile~rki_config.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge44" class="edge">
+<title>sourcefile~rki_init.f90&#45;&gt;sourcefile~rki_config.f90</title>
+<path fill="none" stroke="#00ff00" stroke-dasharray="5,2" d="M916.5,-161.2C836.16,-171.07 827.72,-211.39 751,-237.2"/>
+<path fill="none" stroke="#00ff00" stroke-dasharray="5,2" d="M749,-237.2C672.28,-263.01 654.7,-274.71 583.5,-313.2"/>
+<path fill="none" stroke="#00ff00" stroke-dasharray="5,2" d="M581.5,-313.2C524.13,-344.21 468.66,-398.35 441.08,-427.41"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="438.34,-425.22 434.06,-434.91 443.45,-430 438.34,-425.22"/>
+</g>
+<!-- sourcefile~rki_state.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_node19" class="node">
+<title>sourcefile~rki_state.f90</title>
+<g id="a_sourcefile~~rki_ml_common.f90~~AfferentGraph_node19"><a xlink:href="../sourcefile/rki_state.f90.html" xlink:title="rki_state.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1143.5,-247.2 1063.5,-247.2 1063.5,-223.2 1143.5,-223.2 1143.5,-247.2"/>
+<text text-anchor="middle" x="1103.5" y="-232.8" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_state.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_init.f90&#45;&gt;sourcefile~rki_state.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge56" class="edge">
+<title>sourcefile~rki_init.f90&#45;&gt;sourcefile~rki_state.f90</title>
+<path fill="none" stroke="#ff00ff" stroke-dasharray="5,2" d="M1239.25,-39.36C1232.13,-42.4 1225.21,-46.55 1220,-52.2 1182.53,-92.81 1214.9,-125.39 1184,-171.2 1171.18,-190.21 1151,-206.36 1134.18,-217.68"/>
+<polygon fill="#ff00ff" stroke="#ff00ff" points="1132.23,-214.77 1125.74,-223.15 1136.04,-220.64 1132.23,-214.77"/>
+</g>
+<!-- sourcefile~rki_ml_dynamics.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_node3" class="node">
+<title>sourcefile~rki_ml_dynamics.f90</title>
+<g id="a_sourcefile~~rki_ml_common.f90~~AfferentGraph_node3"><a xlink:href="../sourcefile/rki_ml_dynamics.f90.html" xlink:title="rki_ml_dynamics.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="812,-631.2 688,-631.2 688,-607.2 812,-607.2 812,-631.2"/>
+<text text-anchor="middle" x="750" y="-616.8" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_dynamics.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_ml_dynamics.f90&#45;&gt;sourcefile~rki_ml_common.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge2" class="edge">
+<title>sourcefile~rki_ml_dynamics.f90&#45;&gt;sourcefile~rki_ml_common.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M712.59,-631.2C671.86,-644.13 608.36,-662.69 583.5,-661.2"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M581.5,-661.2C534.21,-658.37 524.14,-644.89 477,-640.2 428.35,-635.36 415.28,-632.52 367,-640.2 310.44,-649.2 301.06,-671.2 244.5,-680.2"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M242.5,-680.2C200.69,-686.22 154.12,-696.29 118.62,-704.7"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="117.36,-701.4 108.44,-707.13 118.98,-708.21 117.36,-701.4"/>
+</g>
+<!-- sourcefile~rki_boundary_types.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_node21" class="node">
+<title>sourcefile~rki_boundary_types.f90</title>
+<g id="a_sourcefile~~rki_ml_common.f90~~AfferentGraph_node21"><a xlink:href="../sourcefile/rki_boundary_types.f90.html" xlink:title="rki_boundary_types.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="652,-479.2 513,-479.2 513,-455.2 652,-455.2 652,-479.2"/>
+<text text-anchor="middle" x="582.5" y="-464.8" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_boundary_types.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_ml_dynamics.f90&#45;&gt;sourcefile~rki_boundary_types.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge65" class="edge">
+<title>sourcefile~rki_ml_dynamics.f90&#45;&gt;sourcefile~rki_boundary_types.f90</title>
+<path fill="none" stroke="#ffaa00" stroke-dasharray="5,2" d="M735.74,-607.02C707.05,-580.67 639.04,-518.2 604.46,-486.45"/>
+<polygon fill="#ffaa00" stroke="#ffaa00" points="606.56,-483.63 596.83,-479.44 601.82,-488.78 606.56,-483.63"/>
+</g>
+<!-- sourcefile~rki_ml_eos.f90&#45;&gt;sourcefile~rki_ml_common.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge3" class="edge">
+<title>sourcefile~rki_ml_eos.f90&#45;&gt;sourcefile~rki_ml_common.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M882.18,-133.28C849.08,-144.02 797.33,-158.44 751,-161.2"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M749,-161.2C577.01,-171.43 510.95,-132.53 367,-227.2 184.39,-347.29 91.33,-617.95 67.35,-697.08"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="63.91,-696.36 64.42,-706.94 70.63,-698.35 63.91,-696.36"/>
+</g>
+<!-- sourcefile~rki_ml_friction.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_node5" class="node">
+<title>sourcefile~rki_ml_friction.f90</title>
+<g id="a_sourcefile~~rki_ml_common.f90~~AfferentGraph_node5"><a xlink:href="../sourcefile/rki_ml_friction.f90.html" xlink:title="rki_ml_friction.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="477,-673.2 367,-673.2 367,-649.2 477,-649.2 477,-673.2"/>
+<text text-anchor="middle" x="422" y="-658.8" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_friction.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_ml_friction.f90&#45;&gt;sourcefile~rki_ml_common.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge4" class="edge">
+<title>sourcefile~rki_ml_friction.f90&#45;&gt;sourcefile~rki_ml_common.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M366.74,-665.61C331.73,-668.81 285.29,-673.71 244.5,-680.2"/>
+</g>
+<!-- sourcefile~rki_ml_horizontal_viscosity.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_node6" class="node">
+<title>sourcefile~rki_ml_horizontal_viscosity.f90</title>
+<g id="a_sourcefile~~rki_ml_common.f90~~AfferentGraph_node6"><a xlink:href="../sourcefile/rki_ml_horizontal_viscosity.f90.html" xlink:title="rki_ml_horizontal_viscosity.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="331,-871.2 156,-871.2 156,-847.2 331,-847.2 331,-871.2"/>
+<text text-anchor="middle" x="243.5" y="-856.8" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_horizontal_viscosity.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_ml_horizontal_viscosity.f90&#45;&gt;sourcefile~rki_ml_common.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge5" class="edge">
+<title>sourcefile~rki_ml_horizontal_viscosity.f90&#45;&gt;sourcefile~rki_ml_common.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M185.01,-847.08C174.87,-843.53 164.76,-838.99 156,-833.2 119.06,-808.78 88.89,-765.76 73.06,-740.12"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="76.05,-738.3 67.89,-731.53 70.05,-741.91 76.05,-738.3"/>
+</g>
+<!-- sourcefile~rki_ml_keps.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_node7" class="node">
+<title>sourcefile~rki_ml_keps.f90</title>
+<g id="a_sourcefile~~rki_ml_common.f90~~AfferentGraph_node7"><a xlink:href="../sourcefile/rki_ml_keps.f90.html" xlink:title="rki_ml_keps.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="631,-831.2 534,-831.2 534,-807.2 631,-807.2 631,-831.2"/>
+<text text-anchor="middle" x="582.5" y="-816.8" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_keps.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_ml_keps.f90&#45;&gt;sourcefile~rki_ml_common.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge6" class="edge">
+<title>sourcefile~rki_ml_keps.f90&#45;&gt;sourcefile~rki_ml_common.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M533.78,-824.92C467.97,-831.52 345.98,-839.1 244.5,-819.2"/>
+</g>
+<!-- sourcefile~rki_ml_kpp.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_node8" class="node">
+<title>sourcefile~rki_ml_kpp.f90</title>
+<g id="a_sourcefile~~rki_ml_common.f90~~AfferentGraph_node8"><a xlink:href="../sourcefile/rki_ml_kpp.f90.html" xlink:title="rki_ml_kpp.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="468,-791.2 376,-791.2 376,-767.2 468,-767.2 468,-791.2"/>
+<text text-anchor="middle" x="422" y="-776.8" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_kpp.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_ml_kpp.f90&#45;&gt;sourcefile~rki_ml_common.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge7" class="edge">
+<title>sourcefile~rki_ml_kpp.f90&#45;&gt;sourcefile~rki_ml_common.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M396.83,-791.2C362.91,-806.55 299.23,-829.93 244.5,-819.2"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M242.5,-819.2C179.3,-806.8 115.75,-762.85 83.23,-737.53"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="85.29,-734.7 75.28,-731.23 80.94,-740.18 85.29,-734.7"/>
+</g>
+<!-- sourcefile~rki_ml_pressure.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_node9" class="node">
+<title>sourcefile~rki_ml_pressure.f90</title>
+<g id="a_sourcefile~~rki_ml_common.f90~~AfferentGraph_node9"><a xlink:href="../sourcefile/rki_ml_pressure.f90.html" xlink:title="rki_ml_pressure.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="302.5,-742.2 184.5,-742.2 184.5,-718.2 302.5,-718.2 302.5,-742.2"/>
+<text text-anchor="middle" x="243.5" y="-727.8" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_pressure.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_ml_pressure.f90&#45;&gt;sourcefile~rki_ml_common.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge8" class="edge">
+<title>sourcefile~rki_ml_pressure.f90&#45;&gt;sourcefile~rki_ml_common.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M184.32,-726.67C167.16,-725.63 148.21,-724.48 130.41,-723.41"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="130.29,-719.89 120.09,-722.78 129.86,-726.88 130.29,-719.89"/>
+</g>
+<!-- sourcefile~rki_ml_tracers.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_node10" class="node">
+<title>sourcefile~rki_ml_tracers.f90</title>
+<g id="a_sourcefile~~rki_ml_common.f90~~AfferentGraph_node10"><a xlink:href="../sourcefile/rki_ml_tracers.f90.html" xlink:title="rki_ml_tracers.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="805,-673.2 695,-673.2 695,-649.2 805,-649.2 805,-673.2"/>
+<text text-anchor="middle" x="750" y="-658.8" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_tracers.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_ml_tracers.f90&#45;&gt;sourcefile~rki_ml_common.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge9" class="edge">
+<title>sourcefile~rki_ml_tracers.f90&#45;&gt;sourcefile~rki_ml_common.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M694.91,-662.83C662.56,-663.4 620.64,-663.42 583.5,-661.2"/>
+</g>
+<!-- sourcefile~rki_ml_tracers.f90&#45;&gt;sourcefile~rki_boundary_types.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge66" class="edge">
+<title>sourcefile~rki_ml_tracers.f90&#45;&gt;sourcefile~rki_boundary_types.f90</title>
+<path fill="none" stroke="#ffaa00" stroke-dasharray="5,2" d="M701.28,-649.06C696.48,-646.62 691.93,-643.7 688,-640.2 660.38,-615.61 670.65,-597.12 652,-565.2 635.65,-537.22 613.77,-506.93 599.19,-487.54"/>
+<polygon fill="#ffaa00" stroke="#ffaa00" points="601.88,-485.3 593.04,-479.45 596.3,-489.53 601.88,-485.3"/>
+</g>
+<!-- sourcefile~rki_ml_vertical_viscosity.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_node11" class="node">
+<title>sourcefile~rki_ml_vertical_viscosity.f90</title>
+<g id="a_sourcefile~~rki_ml_common.f90~~AfferentGraph_node11"><a xlink:href="../sourcefile/rki_ml_vertical_viscosity.f90.html" xlink:title="rki_ml_vertical_viscosity.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1184,-712.2 1023,-712.2 1023,-688.2 1184,-688.2 1184,-712.2"/>
+<text text-anchor="middle" x="1103.5" y="-697.8" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_vertical_viscosity.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_ml_vertical_viscosity.f90&#45;&gt;sourcefile~rki_ml_common.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge10" class="edge">
+<title>sourcefile~rki_ml_vertical_viscosity.f90&#45;&gt;sourcefile~rki_ml_common.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M1022.79,-711.92C1010.82,-713.28 998.6,-714.45 987,-715.2 776.77,-728.79 723.04,-731.44 513,-715.2 472.64,-712.08 463.2,-705.94 423,-701.2"/>
+</g>
+<!-- sourcefile~rki_recon_weno.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_node12" class="node">
+<title>sourcefile~rki_recon_weno.f90</title>
+<g id="a_sourcefile~~rki_ml_common.f90~~AfferentGraph_node12"><a xlink:href="../sourcefile/rki_recon_weno.f90.html" xlink:title="rki_recon_weno.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="302,-517.2 185,-517.2 185,-493.2 302,-493.2 302,-517.2"/>
+<text text-anchor="middle" x="243.5" y="-502.8" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_recon_weno.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_recon_weno.f90&#45;&gt;sourcefile~rki_ml_common.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge11" class="edge">
+<title>sourcefile~rki_recon_weno.f90&#45;&gt;sourcefile~rki_ml_common.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M232.22,-517.32C202.28,-552.62 114.91,-655.63 77.89,-699.28"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="75.19,-697.06 71.39,-706.95 80.53,-701.59 75.19,-697.06"/>
+</g>
+<!-- sourcefile~rki_solver.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_node13" class="node">
+<title>sourcefile~rki_solver.f90</title>
+<g id="a_sourcefile~~rki_ml_common.f90~~AfferentGraph_node13"><a xlink:href="../sourcefile/rki_solver.f90.html" xlink:title="rki_solver.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1317,-595.2 1232,-595.2 1232,-571.2 1317,-571.2 1317,-595.2"/>
+<text text-anchor="middle" x="1274.5" y="-580.8" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_solver.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_solver.f90&#45;&gt;sourcefile~rki_ml_common.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge12" class="edge">
+<title>sourcefile~rki_solver.f90&#45;&gt;sourcefile~rki_ml_common.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M581.5,-701.2C511.19,-696.84 493.18,-707.29 423,-701.2"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M421,-701.2C342.3,-694.37 322.69,-668.95 244.5,-680.2"/>
+</g>
+<!-- sourcefile~rki_solver.f90&#45;&gt;sourcefile~rki_ml_dynamics.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge17" class="edge">
+<title>sourcefile~rki_solver.f90&#45;&gt;sourcefile~rki_ml_dynamics.f90</title>
+<path fill="none" stroke="#ff7f00" stroke-dasharray="5,2" d="M1102.5,-621.2C1005.98,-632.14 893.6,-628.71 822.4,-624.54"/>
+<polygon fill="#ff7f00" stroke="#ff7f00" points="822.39,-621.03 812.19,-623.92 821.96,-628.02 822.39,-621.03"/>
+</g>
+<!-- sourcefile~rki_solver.f90&#45;&gt;sourcefile~rki_ml_eos.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge20" class="edge">
+<title>sourcefile~rki_solver.f90&#45;&gt;sourcefile~rki_ml_eos.f90</title>
+<path fill="none" stroke="#ffff00" stroke-dasharray="5,2" d="M1238.49,-571.15C1231.66,-567.52 1225.06,-562.93 1220,-557.2 1187.08,-519.89 1208.24,-494.65 1184,-451.2 1129.25,-353.05 1077.33,-354.58 1023,-256.2 998.34,-211.54 1022.28,-184.06 987,-147.2 982.83,-142.84 977.86,-139.21 972.52,-136.18"/>
+<polygon fill="#ffff00" stroke="#ffff00" points="973.79,-132.9 963.27,-131.63 970.7,-139.18 973.79,-132.9"/>
+</g>
+<!-- sourcefile~rki_solver.f90&#45;&gt;sourcefile~rki_ml_friction.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge22" class="edge">
+<title>sourcefile~rki_solver.f90&#45;&gt;sourcefile~rki_ml_friction.f90</title>
+<path fill="none" stroke="#7fff00" stroke-dasharray="5,2" d="M749,-701.2C675.96,-692.49 656.91,-705.76 583.5,-701.2"/>
+<path fill="none" stroke="#7fff00" stroke-dasharray="5,2" d="M581.5,-701.2C541.37,-698.71 497.12,-686.72 465.59,-676.52"/>
+<polygon fill="#7fff00" stroke="#7fff00" points="466.42,-673.1 455.83,-673.28 464.22,-679.75 466.42,-673.1"/>
+</g>
+<!-- sourcefile~rki_solver.f90&#45;&gt;sourcefile~rki_ml_horizontal_viscosity.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge23" class="edge">
+<title>sourcefile~rki_solver.f90&#45;&gt;sourcefile~rki_ml_horizontal_viscosity.f90</title>
+<path fill="none" stroke="#00ff00" stroke-dasharray="5,2" d="M749,-819.2C704.89,-819.73 695.74,-834.49 652,-840.2 546.33,-854 424.09,-858.14 341.27,-859.21"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="341.08,-855.71 331.12,-859.33 341.16,-862.71 341.08,-855.71"/>
+</g>
+<!-- sourcefile~rki_solver.f90&#45;&gt;sourcefile~rki_ml_keps.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge24" class="edge">
+<title>sourcefile~rki_solver.f90&#45;&gt;sourcefile~rki_ml_keps.f90</title>
+<path fill="none" stroke="#00ff7f" stroke-dasharray="5,2" d="M749,-819.2C713.22,-819.2 673.09,-819.2 641.31,-819.2"/>
+<polygon fill="#00ff7f" stroke="#00ff7f" points="641.3,-815.7 631.3,-819.2 641.3,-822.7 641.3,-815.7"/>
+</g>
+<!-- sourcefile~rki_solver.f90&#45;&gt;sourcefile~rki_ml_kpp.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge25" class="edge">
+<title>sourcefile~rki_solver.f90&#45;&gt;sourcefile~rki_ml_kpp.f90</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M581.5,-779.2C547.56,-773.05 508.87,-772.92 478.2,-774.39"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="477.92,-770.9 468.13,-774.95 478.31,-777.89 477.92,-770.9"/>
+</g>
+<!-- sourcefile~rki_solver.f90&#45;&gt;sourcefile~rki_ml_pressure.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge26" class="edge">
+<title>sourcefile~rki_solver.f90&#45;&gt;sourcefile~rki_ml_pressure.f90</title>
+<path fill="none" stroke="#007fff" stroke-dasharray="5,2" d="M1269.25,-595.43C1259.12,-622.68 1230.84,-688.53 1184,-721.2 1022.16,-834.07 948.31,-819.2 751,-819.2"/>
+<path fill="none" stroke="#007fff" stroke-dasharray="5,2" d="M749,-819.2C711.17,-819.65 620.73,-785.94 583.5,-779.2"/>
+<path fill="none" stroke="#007fff" stroke-dasharray="5,2" d="M581.5,-779.2C534.89,-770.76 523.77,-765.7 477,-758.2 422.02,-749.38 359.33,-741.98 312.91,-737.01"/>
+<polygon fill="#007fff" stroke="#007fff" points="313.28,-733.53 302.96,-735.96 312.54,-740.49 313.28,-733.53"/>
+</g>
+<!-- sourcefile~rki_solver.f90&#45;&gt;sourcefile~rki_ml_tracers.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge28" class="edge">
+<title>sourcefile~rki_solver.f90&#45;&gt;sourcefile~rki_ml_tracers.f90</title>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M1102.5,-621.2C1045.25,-630.82 1040.95,-660.76 987,-682.2 957.64,-693.87 949.77,-696.68 918.5,-701.2"/>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M916.5,-701.2C893.73,-704.49 837.46,-688.99 796.85,-676.33"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="797.74,-672.95 787.15,-673.27 795.63,-679.62 797.74,-672.95"/>
+</g>
+<!-- sourcefile~rki_solver.f90&#45;&gt;sourcefile~rki_ml_vertical_viscosity.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge29" class="edge">
+<title>sourcefile~rki_solver.f90&#45;&gt;sourcefile~rki_ml_vertical_viscosity.f90</title>
+<path fill="none" stroke="#7f00ff" stroke-dasharray="5,2" d="M1256.05,-595.28C1226.2,-615.95 1165.18,-658.19 1130.36,-682.3"/>
+<polygon fill="#7f00ff" stroke="#7f00ff" points="1128.34,-679.44 1122.11,-688.01 1132.32,-685.19 1128.34,-679.44"/>
+</g>
+<!-- sourcefile~rki_solver.f90&#45;&gt;sourcefile~rki_recon_weno.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge31" class="edge">
+<title>sourcefile~rki_solver.f90&#45;&gt;sourcefile~rki_recon_weno.f90</title>
+<path fill="none" stroke="#ff00ff" stroke-dasharray="5,2" d="M916.5,-701.2C843.7,-711.73 824.04,-709.9 751,-701.2"/>
+<path fill="none" stroke="#ff00ff" stroke-dasharray="5,2" d="M749,-701.2C720.8,-697.84 712.4,-696.72 688,-682.2 668.82,-670.79 670.99,-658.93 652,-647.2 620.31,-627.62 391.92,-552.76 291.58,-520.33"/>
+<polygon fill="#ff00ff" stroke="#ff00ff" points="292.58,-516.98 281.99,-517.24 290.43,-523.64 292.58,-516.98"/>
+</g>
+<!-- sourcefile~rki_solver.f90&#45;&gt;sourcefile~rki_state.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge59" class="edge">
+<title>sourcefile~rki_solver.f90&#45;&gt;sourcefile~rki_state.f90</title>
+<path fill="none" stroke="#ff00ff" stroke-dasharray="5,2" d="M1236.19,-571.13C1229.93,-567.56 1224.14,-563 1220,-557.2 1143.03,-449.32 1268.14,-363.59 1184,-261.2 1176.22,-251.73 1164.93,-245.68 1153.3,-241.82"/>
+<polygon fill="#ff00ff" stroke="#ff00ff" points="1154.08,-238.41 1143.51,-239.07 1152.19,-245.15 1154.08,-238.41"/>
+</g>
+<!-- sourcefile~rki_boundary.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_node20" class="node">
+<title>sourcefile~rki_boundary.f90</title>
+<g id="a_sourcefile~~rki_ml_common.f90~~AfferentGraph_node20"><a xlink:href="../sourcefile/rki_boundary.f90.html" xlink:title="rki_boundary.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="801.5,-551.2 698.5,-551.2 698.5,-527.2 801.5,-527.2 801.5,-551.2"/>
+<text text-anchor="middle" x="750" y="-536.8" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_boundary.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_solver.f90&#45;&gt;sourcefile~rki_boundary.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge60" class="edge">
+<title>sourcefile~rki_solver.f90&#45;&gt;sourcefile~rki_boundary.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M1231.9,-595.07C1197.94,-604.15 1148.55,-615.96 1104.5,-621.2"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M1102.5,-621.2C984.37,-635.24 848.14,-583.36 785.62,-555.61"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="786.79,-552.3 776.24,-551.38 783.91,-558.68 786.79,-552.3"/>
+</g>
+<!-- sourcefile~rki_kernel_sponge.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_node30" class="node">
+<title>sourcefile~rki_kernel_sponge.f90</title>
+<g id="a_sourcefile~~rki_ml_common.f90~~AfferentGraph_node30"><a xlink:href="../sourcefile/rki_kernel_sponge.f90.html" xlink:title="rki_kernel_sponge.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="983.5,-517.2 851.5,-517.2 851.5,-493.2 983.5,-493.2 983.5,-517.2"/>
+<text text-anchor="middle" x="917.5" y="-502.8" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_kernel_sponge.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_solver.f90&#45;&gt;sourcefile~rki_kernel_sponge.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge77" class="edge">
+<title>sourcefile~rki_solver.f90&#45;&gt;sourcefile~rki_kernel_sponge.f90</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M1231.73,-574.02C1170.38,-560.54 1055.35,-535.27 983.07,-519.39"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="983.68,-515.94 973.16,-517.21 982.18,-522.77 983.68,-515.94"/>
+</g>
+<!-- sourcefile~rki_api.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_node14" class="node">
+<title>sourcefile~rki_api.f90</title>
+<g id="a_sourcefile~~rki_ml_common.f90~~AfferentGraph_node14"><a xlink:href="../sourcefile/rki_api.f90.html" xlink:title="rki_api.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1484.5,-436.2 1414.5,-436.2 1414.5,-412.2 1484.5,-412.2 1484.5,-436.2"/>
+<text text-anchor="middle" x="1449.5" y="-421.8" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_api.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_api.f90&#45;&gt;sourcefile~rki_init.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge13" class="edge">
+<title>sourcefile~rki_api.f90&#45;&gt;sourcefile~rki_init.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M1443.79,-412.09C1430.45,-377.58 1391.67,-275.67 1365,-189.2 1346.44,-129.04 1370.84,-99.24 1329,-52.2 1326.09,-48.93 1322.61,-46.16 1318.83,-43.82"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="1320.12,-40.55 1309.63,-39.1 1316.93,-46.78 1320.12,-40.55"/>
+</g>
+<!-- sourcefile~rki_api.f90&#45;&gt;sourcefile~rki_solver.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge33" class="edge">
+<title>sourcefile~rki_api.f90&#45;&gt;sourcefile~rki_solver.f90</title>
+<path fill="none" stroke="#ff007f" stroke-dasharray="5,2" d="M1414.34,-425.24C1397.57,-427.46 1378.2,-432.83 1365,-445.2 1326.85,-480.96 1363.27,-517.71 1329,-557.2 1326.22,-560.4 1322.96,-563.25 1319.43,-565.76"/>
+<polygon fill="#ff007f" stroke="#ff007f" points="1317.52,-562.83 1310.86,-571.06 1321.2,-568.79 1317.52,-562.83"/>
+</g>
+<!-- sourcefile~rki_api.f90&#45;&gt;sourcefile~rki_config.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge36" class="edge">
+<title>sourcefile~rki_api.f90&#45;&gt;sourcefile~rki_config.f90</title>
+<path fill="none" stroke="#00ff00" stroke-dasharray="5,2" d="M1273.5,-424.2C1196.32,-428.25 1181.72,-468.38 1104.5,-465.2"/>
+<path fill="none" stroke="#00ff00" stroke-dasharray="5,2" d="M1102.5,-465.2C902.27,-456.96 852.38,-449.33 652,-446.2 591.57,-445.26 522.17,-445.78 475.75,-446.37"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="475.58,-442.87 465.63,-446.5 475.68,-449.87 475.58,-442.87"/>
+</g>
+<!-- sourcefile~rki_api.f90&#45;&gt;sourcefile~rki_state.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge49" class="edge">
+<title>sourcefile~rki_api.f90&#45;&gt;sourcefile~rki_state.f90</title>
+<path fill="none" stroke="#ff00ff" stroke-dasharray="5,2" d="M1444.16,-411.99C1431.92,-379.59 1393.76,-291.39 1329,-254.2 1275.12,-223.26 1201.67,-223.4 1153.68,-227.96"/>
+<polygon fill="#ff00ff" stroke="#ff00ff" points="1153.12,-224.5 1143.55,-229.03 1153.86,-231.46 1153.12,-224.5"/>
+</g>
+<!-- sourcefile~rki_api.f90&#45;&gt;sourcefile~rki_boundary_types.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge61" class="edge">
+<title>sourcefile~rki_api.f90&#45;&gt;sourcefile~rki_boundary_types.f90</title>
+<path fill="none" stroke="#ffaa00" stroke-dasharray="5,2" d="M1414.17,-428.06C1398.33,-431 1379.8,-436.16 1365,-445.2 1344.31,-457.84 1350.63,-475.23 1329,-486.2 1239.67,-531.53 1203.38,-522.25 1104.5,-506.2"/>
+<path fill="none" stroke="#ffaa00" stroke-dasharray="5,2" d="M1102.5,-506.2C1050.88,-498.05 1038.79,-491.2 987,-484.2 882.72,-470.11 856.08,-470.82 751,-465.2"/>
+<path fill="none" stroke="#ffaa00" stroke-dasharray="5,2" d="M749,-465.2C720.79,-463.19 689.81,-463.02 662.35,-463.58"/>
+<polygon fill="#ffaa00" stroke="#ffaa00" points="661.93,-460.09 652.02,-463.82 662.1,-467.08 661.93,-460.09"/>
+</g>
+<!-- sourcefile~rki_config_schema.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_node22" class="node">
+<title>sourcefile~rki_config_schema.f90</title>
+<g id="a_sourcefile~~rki_ml_common.f90~~AfferentGraph_node22"><a xlink:href="../sourcefile/rki_config_schema.f90.html" xlink:title="rki_config_schema.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="649.5,-399.2 515.5,-399.2 515.5,-375.2 649.5,-375.2 649.5,-399.2"/>
+<text text-anchor="middle" x="582.5" y="-384.8" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_config_schema.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_api.f90&#45;&gt;sourcefile~rki_config_schema.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge69" class="edge">
+<title>sourcefile~rki_api.f90&#45;&gt;sourcefile~rki_config_schema.f90</title>
+<path fill="none" stroke="#aaff00" stroke-dasharray="5,2" d="M1414.36,-424.02C1379.47,-423.88 1323.7,-423.78 1275.5,-424.2"/>
+<path fill="none" stroke="#aaff00" stroke-dasharray="5,2" d="M1273.5,-424.2C1155.94,-425.23 813.94,-402.99 660.08,-392.51"/>
+<polygon fill="#aaff00" stroke="#aaff00" points="659.99,-389 649.77,-391.81 659.51,-395.98 659.99,-389"/>
+</g>
+<!-- sourcefile~rki_handle.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_node26" class="node">
+<title>sourcefile~rki_handle.f90</title>
+<g id="a_sourcefile~~rki_ml_common.f90~~AfferentGraph_node26"><a xlink:href="../sourcefile/rki_handle.f90.html" xlink:title="rki_handle.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1320,-477.2 1229,-477.2 1229,-453.2 1320,-453.2 1320,-477.2"/>
+<text text-anchor="middle" x="1274.5" y="-462.8" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_handle.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_api.f90&#45;&gt;sourcefile~rki_handle.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge72" class="edge">
+<title>sourcefile~rki_api.f90&#45;&gt;sourcefile~rki_handle.f90</title>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M1414.32,-432.3C1390.29,-437.99 1357.63,-445.73 1330.03,-452.28"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="1329.03,-448.91 1320.11,-454.63 1330.65,-455.73 1329.03,-448.91"/>
+</g>
+<!-- sourcefile~rki_output.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_node28" class="node">
+<title>sourcefile~rki_output.f90</title>
+<g id="a_sourcefile~~rki_ml_common.f90~~AfferentGraph_node28"><a xlink:href="../sourcefile/rki_output.f90.html" xlink:title="rki_output.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1318.5,-329.2 1230.5,-329.2 1230.5,-305.2 1318.5,-305.2 1318.5,-329.2"/>
+<text text-anchor="middle" x="1274.5" y="-314.8" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_output.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_api.f90&#45;&gt;sourcefile~rki_output.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge75" class="edge">
+<title>sourcefile~rki_api.f90&#45;&gt;sourcefile~rki_output.f90</title>
+<path fill="none" stroke="#ff00aa" stroke-dasharray="5,2" d="M1428.99,-412.13C1398.41,-393.22 1339.04,-356.5 1303.78,-334.69"/>
+<polygon fill="#ff00aa" stroke="#ff00aa" points="1305.28,-331.5 1294.94,-329.22 1301.6,-337.46 1305.28,-331.5"/>
+</g>
+<!-- sourcefile~rki_coastal_console_stats.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_node15" class="node">
+<title>sourcefile~rki_coastal_console_stats.f90</title>
+<g id="a_sourcefile~~rki_ml_common.f90~~AfferentGraph_node15"><a xlink:href="../sourcefile/rki_coastal_console_stats.f90.html" xlink:title="rki_coastal_console_stats.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1534,-125.2 1365,-125.2 1365,-101.2 1534,-101.2 1534,-125.2"/>
+<text text-anchor="middle" x="1449.5" y="-110.8" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_coastal_console_stats.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_coastal_console_stats.f90&#45;&gt;sourcefile~rki_init.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge14" class="edge">
+<title>sourcefile~rki_coastal_console_stats.f90&#45;&gt;sourcefile~rki_init.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M1426.35,-101.07C1402.6,-88.25 1363.62,-67.79 1329,-52.2 1325.16,-50.47 1321.14,-48.74 1317.09,-47.06"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="1318.26,-43.76 1307.68,-43.24 1315.63,-50.25 1318.26,-43.76"/>
+</g>
+<!-- sourcefile~rki_coastal_console_stats.f90&#45;&gt;sourcefile~rki_state.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge50" class="edge">
+<title>sourcefile~rki_coastal_console_stats.f90&#45;&gt;sourcefile~rki_state.f90</title>
+<path fill="none" stroke="#ff00ff" stroke-dasharray="5,2" d="M1364.96,-105.79C1336.29,-105.19 1304.21,-106.71 1275.5,-113.2"/>
+<path fill="none" stroke="#ff00ff" stroke-dasharray="5,2" d="M1273.5,-113.2C1248.89,-118.76 1238.68,-115.23 1220,-132.2 1192.03,-157.6 1212.28,-184.15 1184,-209.2 1175.34,-216.87 1164.37,-222.28 1153.37,-226.1"/>
+<polygon fill="#ff00ff" stroke="#ff00ff" points="1152.28,-222.78 1143.75,-229.06 1154.34,-229.47 1152.28,-222.78"/>
+</g>
+<!-- sourcefile~rki_config.f90&#45;&gt;sourcefile~rki_recon_weno.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge30" class="edge">
+<title>sourcefile~rki_config.f90&#45;&gt;sourcefile~rki_recon_weno.f90</title>
+<path fill="none" stroke="#ff00ff" stroke-dasharray="5,2" d="M384.43,-459.22C357.21,-468.16 319.87,-480.43 290.61,-490.05"/>
+<polygon fill="#ff00ff" stroke="#ff00ff" points="289.43,-486.75 281.02,-493.2 291.62,-493.4 289.43,-486.75"/>
+</g>
+<!-- sourcefile~rki_driver.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_node17" class="node">
+<title>sourcefile~rki_driver.f90</title>
+<g id="a_sourcefile~~rki_ml_common.f90~~AfferentGraph_node17"><a xlink:href="../sourcefile/rki_driver.f90.html" xlink:title="rki_driver.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1654,-166.2 1570,-166.2 1570,-142.2 1654,-142.2 1654,-166.2"/>
+<text text-anchor="middle" x="1612" y="-151.8" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_driver.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_driver.f90&#45;&gt;sourcefile~rki_init.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge15" class="edge">
+<title>sourcefile~rki_driver.f90&#45;&gt;sourcefile~rki_init.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M1448.5,-31.2C1406.49,-17.18 1355.48,-19.31 1319.78,-23.64"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="1319.13,-20.19 1309.68,-24.97 1320.05,-27.13 1319.13,-20.19"/>
+</g>
+<!-- sourcefile~rki_driver.f90&#45;&gt;sourcefile~rki_ml_eos.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge18" class="edge">
+<title>sourcefile~rki_driver.f90&#45;&gt;sourcefile~rki_ml_eos.f90</title>
+<path fill="none" stroke="#ffff00" stroke-dasharray="5,2" d="M1600.53,-141.91C1576.99,-115.37 1516.77,-53.31 1450.5,-31.2"/>
+<path fill="none" stroke="#ffff00" stroke-dasharray="5,2" d="M1448.5,-31.2C1351.76,1.08 1320.4,7.7 1220,-10.2 1118.21,-28.34 1005.75,-78.41 951.44,-104.66"/>
+<polygon fill="#ffff00" stroke="#ffff00" points="949.76,-101.58 942.3,-109.11 952.83,-107.88 949.76,-101.58"/>
+</g>
+<!-- sourcefile~rki_driver.f90&#45;&gt;sourcefile~rki_solver.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge34" class="edge">
+<title>sourcefile~rki_driver.f90&#45;&gt;sourcefile~rki_solver.f90</title>
+<path fill="none" stroke="#ff007f" stroke-dasharray="5,2" d="M1448.5,-543.2C1413.58,-569.44 1364.33,-578.89 1327.3,-582.09"/>
+<polygon fill="#ff007f" stroke="#ff007f" points="1326.91,-578.61 1317.2,-582.84 1327.43,-585.59 1326.91,-578.61"/>
+</g>
+<!-- sourcefile~rki_driver.f90&#45;&gt;sourcefile~rki_coastal_console_stats.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge35" class="edge">
+<title>sourcefile~rki_driver.f90&#45;&gt;sourcefile~rki_coastal_console_stats.f90</title>
+<path fill="none" stroke="#ffff00" stroke-dasharray="5,2" d="M1569.67,-143.64C1550.75,-138.81 1528.03,-133 1507.52,-127.76"/>
+<polygon fill="#ffff00" stroke="#ffff00" points="1508.21,-124.33 1497.65,-125.24 1506.48,-131.11 1508.21,-124.33"/>
+</g>
+<!-- sourcefile~rki_driver.f90&#45;&gt;sourcefile~rki_config.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge40" class="edge">
+<title>sourcefile~rki_driver.f90&#45;&gt;sourcefile~rki_config.f90</title>
+<path fill="none" stroke="#00ff00" stroke-dasharray="5,2" d="M1273.5,-543.2C1119.96,-543.65 730.86,-622.33 583.5,-579.2"/>
+</g>
+<!-- sourcefile~rki_driver.f90&#45;&gt;sourcefile~rki_state.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge51" class="edge">
+<title>sourcefile~rki_driver.f90&#45;&gt;sourcefile~rki_state.f90</title>
+<path fill="none" stroke="#ff00ff" stroke-dasharray="5,2" d="M1569.82,-157.91C1537.24,-161.25 1490.68,-166.91 1450.5,-175.2"/>
+<path fill="none" stroke="#ff00ff" stroke-dasharray="5,2" d="M1448.5,-175.2C1368.51,-191.7 1355.17,-95.2 1275.5,-113.2"/>
+</g>
+<!-- sourcefile~rki_driver.f90&#45;&gt;sourcefile~rki_boundary_types.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge63" class="edge">
+<title>sourcefile~rki_driver.f90&#45;&gt;sourcefile~rki_boundary_types.f90</title>
+<path fill="none" stroke="#ffaa00" stroke-dasharray="5,2" d="M1611.26,-166.35C1611.67,-212.58 1607.76,-380.21 1534,-487.2 1508.64,-523.99 1486.22,-516.36 1450.5,-543.2"/>
+<path fill="none" stroke="#ffaa00" stroke-dasharray="5,2" d="M1448.5,-543.2C1387.03,-589.39 1352.39,-542.97 1275.5,-543.2"/>
+<path fill="none" stroke="#ffaa00" stroke-dasharray="5,2" d="M1273.5,-543.2C1263.89,-543.23 1114.04,-507.4 1104.5,-506.2"/>
+</g>
+<!-- sourcefile~rki_forcing.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_node24" class="node">
+<title>sourcefile~rki_forcing.f90</title>
+<g id="a_sourcefile~~rki_ml_common.f90~~AfferentGraph_node24"><a xlink:href="../sourcefile/rki_forcing.f90.html" xlink:title="rki_forcing.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1320,-207.2 1229,-207.2 1229,-183.2 1320,-183.2 1320,-207.2"/>
+<text text-anchor="middle" x="1274.5" y="-192.8" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_forcing.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_driver.f90&#45;&gt;sourcefile~rki_forcing.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge70" class="edge">
+<title>sourcefile~rki_driver.f90&#45;&gt;sourcefile~rki_forcing.f90</title>
+<path fill="none" stroke="#00ffa9" stroke-dasharray="5,2" d="M1448.5,-175.2C1409.45,-183.25 1364.73,-188.32 1330.54,-191.33"/>
+<polygon fill="#00ffa9" stroke="#00ffa9" points="1329.96,-187.87 1320.29,-192.2 1330.55,-194.84 1329.96,-187.87"/>
+</g>
+<!-- sourcefile~rki_gauges.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_node25" class="node">
+<title>sourcefile~rki_gauges.f90</title>
+<g id="a_sourcefile~~rki_ml_common.f90~~AfferentGraph_node25"><a xlink:href="../sourcefile/rki_gauges.f90.html" xlink:title="rki_gauges.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1321,-85.2 1228,-85.2 1228,-61.2 1321,-61.2 1321,-85.2"/>
+<text text-anchor="middle" x="1274.5" y="-70.8" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_gauges.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_driver.f90&#45;&gt;sourcefile~rki_gauges.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge71" class="edge">
+<title>sourcefile~rki_driver.f90&#45;&gt;sourcefile~rki_gauges.f90</title>
+<path fill="none" stroke="#00a9ff" stroke-dasharray="5,2" d="M1448.5,-31.2C1424.43,-23.17 1360.06,-42.72 1316.99,-57.77"/>
+<polygon fill="#00a9ff" stroke="#00a9ff" points="1315.6,-54.55 1307.34,-61.2 1317.94,-61.15 1315.6,-54.55"/>
+</g>
+<!-- sourcefile~rki_nesting.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_node27" class="node">
+<title>sourcefile~rki_nesting.f90</title>
+<g id="a_sourcefile~~rki_ml_common.f90~~AfferentGraph_node27"><a xlink:href="../sourcefile/rki_nesting.f90.html" xlink:title="rki_nesting.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1321,-287.2 1228,-287.2 1228,-263.2 1321,-263.2 1321,-287.2"/>
+<text text-anchor="middle" x="1274.5" y="-272.8" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_nesting.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_driver.f90&#45;&gt;sourcefile~rki_nesting.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge74" class="edge">
+<title>sourcefile~rki_driver.f90&#45;&gt;sourcefile~rki_nesting.f90</title>
+<path fill="none" stroke="#aa00ff" stroke-dasharray="5,2" d="M1448.5,-175.2C1388.25,-187.63 1328.46,-230.82 1297.4,-256.19"/>
+<polygon fill="#aa00ff" stroke="#aa00ff" points="1294.87,-253.75 1289.43,-262.84 1299.35,-259.12 1294.87,-253.75"/>
+</g>
+<!-- sourcefile~rki_driver.f90&#45;&gt;sourcefile~rki_output.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge76" class="edge">
+<title>sourcefile~rki_driver.f90&#45;&gt;sourcefile~rki_output.f90</title>
+<path fill="none" stroke="#ff00aa" stroke-dasharray="5,2" d="M1448.5,-175.2C1374.47,-190.47 1392.1,-254.6 1329,-296.2 1326.58,-297.8 1324.02,-299.3 1321.38,-300.71"/>
+<polygon fill="#ff00aa" stroke="#ff00aa" points="1319.68,-297.65 1312.21,-305.16 1322.73,-303.95 1319.68,-297.65"/>
+</g>
+<!-- sourcefile~rki_multilayer_state.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_node18" class="node">
+<title>sourcefile~rki_multilayer_state.f90</title>
+<g id="a_sourcefile~~rki_ml_common.f90~~AfferentGraph_node18"><a xlink:href="../sourcefile/rki_multilayer_state.f90.html" xlink:title="rki_multilayer_state.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="987,-673.2 848,-673.2 848,-649.2 987,-649.2 987,-673.2"/>
+<text text-anchor="middle" x="917.5" y="-658.8" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_multilayer_state.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_ml_dynamics.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge16" class="edge">
+<title>sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_ml_dynamics.f90</title>
+<path fill="none" stroke="#ff7f00" stroke-dasharray="5,2" d="M869.07,-649.16C850.12,-644.35 828.11,-638.77 808.28,-633.73"/>
+<polygon fill="#ff7f00" stroke="#ff7f00" points="808.99,-630.3 798.43,-631.24 807.26,-637.09 808.99,-630.3"/>
+</g>
+<!-- sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_ml_tracers.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge27" class="edge">
+<title>sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_ml_tracers.f90</title>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M847.75,-661.2C836.98,-661.2 825.89,-661.2 815.23,-661.2"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="815.16,-657.7 805.16,-661.2 815.16,-664.7 815.16,-657.7"/>
+</g>
+<!-- sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_ml_eos.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge21" class="edge">
+<title>sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_ml_eos.f90</title>
+<path fill="none" stroke="#ffff00" stroke-dasharray="5,2" d="M1087.6,-222.99C1061.42,-201.67 1007.94,-158.83 987,-147.2 980.2,-143.42 972.73,-139.96 965.32,-136.89"/>
+<polygon fill="#ffff00" stroke="#ffff00" points="966.58,-133.63 955.99,-133.21 964.01,-140.14 966.58,-133.63"/>
+</g>
+<!-- sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_recon_weno.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge32" class="edge">
+<title>sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_recon_weno.f90</title>
+<path fill="none" stroke="#ff00ff" stroke-dasharray="5,2" d="M1063.36,-228.55C998.59,-218.15 864.95,-199.2 751,-199.2 751,-199.2 751,-199.2 581.5,-199.2 412.02,-199.2 290,-413.94 254.86,-483.64"/>
+<polygon fill="#ff00ff" stroke="#ff00ff" points="251.61,-482.31 250.31,-492.82 257.88,-485.42 251.61,-482.31"/>
+</g>
+<!-- sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_config.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge47" class="edge">
+<title>sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_config.f90</title>
+<path fill="none" stroke="#00ff00" stroke-dasharray="5,2" d="M1063.38,-235.75C1026.13,-236.24 968.5,-236.93 918.5,-237.2"/>
+</g>
+<!-- sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_multilayer_state.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge48" class="edge">
+<title>sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_multilayer_state.f90</title>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M1098.16,-247.28C1083.63,-287.44 1034.93,-419.92 987,-526.2 968.51,-567.2 944.13,-613.71 930,-640.05"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="926.78,-638.63 925.11,-649.1 932.94,-641.96 926.78,-638.63"/>
+</g>
+<!-- sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_boundary_types.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge68" class="edge">
+<title>sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_boundary_types.f90</title>
+<path fill="none" stroke="#ffaa00" stroke-dasharray="5,2" d="M1063.45,-240.59C971.91,-253.87 746.75,-290.52 688,-337.2 660.3,-359.21 673.82,-380.35 652,-408.2 639.82,-423.75 623.05,-438.27 609.16,-449.02"/>
+<polygon fill="#ffaa00" stroke="#ffaa00" points="606.83,-446.39 600.95,-455.2 611.04,-451.98 606.83,-446.39"/>
+</g>
+<!-- sourcefile~rki_boundary.f90&#45;&gt;sourcefile~rki_config.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge37" class="edge">
+<title>sourcefile~rki_boundary.f90&#45;&gt;sourcefile~rki_config.f90</title>
+<path fill="none" stroke="#00ff00" stroke-dasharray="5,2" d="M716.18,-551.23C675.38,-565.47 608.11,-586.4 583.5,-579.2"/>
+<path fill="none" stroke="#00ff00" stroke-dasharray="5,2" d="M581.5,-579.2C517.73,-560.54 463.13,-499.58 437.91,-467.44"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="440.46,-465.01 431.6,-459.2 434.9,-469.27 440.46,-465.01"/>
+</g>
+<!-- sourcefile~rki_boundary.f90&#45;&gt;sourcefile~rki_boundary_types.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge62" class="edge">
+<title>sourcefile~rki_boundary.f90&#45;&gt;sourcefile~rki_boundary_types.f90</title>
+<path fill="none" stroke="#ffaa00" stroke-dasharray="5,2" d="M721.3,-527.15C693.73,-515.16 651.25,-496.67 620.74,-483.4"/>
+<polygon fill="#ffaa00" stroke="#ffaa00" points="621.86,-480.07 611.29,-479.29 619.06,-486.49 621.86,-480.07"/>
+</g>
+<!-- sourcefile~rki_boundary_types.f90&#45;&gt;sourcefile~rki_config.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge38" class="edge">
+<title>sourcefile~rki_boundary_types.f90&#45;&gt;sourcefile~rki_config.f90</title>
+<path fill="none" stroke="#00ff00" stroke-dasharray="5,2" d="M512.9,-458.54C500.48,-456.98 487.7,-455.36 475.81,-453.86"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="475.99,-450.36 465.63,-452.58 475.11,-457.3 475.99,-450.36"/>
+</g>
+<!-- sourcefile~rki_config_schema.f90&#45;&gt;sourcefile~rki_config.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge39" class="edge">
+<title>sourcefile~rki_config_schema.f90&#45;&gt;sourcefile~rki_config.f90</title>
+<path fill="none" stroke="#00ff00" stroke-dasharray="5,2" d="M549.43,-399.34C524.85,-408.64 490.77,-421.55 464.18,-431.61"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="462.87,-428.36 454.76,-435.18 465.35,-434.91 462.87,-428.36"/>
+</g>
+<!-- sourcefile~rki_flux_dump.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_node23" class="node">
+<title>sourcefile~rki_flux_dump.f90</title>
+<g id="a_sourcefile~~rki_ml_common.f90~~AfferentGraph_node23"><a xlink:href="../sourcefile/rki_flux_dump.f90.html" xlink:title="rki_flux_dump.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1329,-165.2 1220,-165.2 1220,-141.2 1329,-141.2 1329,-165.2"/>
+<text text-anchor="middle" x="1274.5" y="-150.8" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_flux_dump.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_flux_dump.f90&#45;&gt;sourcefile~rki_state.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge52" class="edge">
+<title>sourcefile~rki_flux_dump.f90&#45;&gt;sourcefile~rki_state.f90</title>
+<path fill="none" stroke="#ff00ff" stroke-dasharray="5,2" d="M1237.13,-165.2C1231.21,-167.79 1225.28,-170.79 1220,-174.2 1201.25,-186.29 1203.1,-197.66 1184,-209.2 1174.58,-214.89 1163.77,-219.49 1153.22,-223.15"/>
+<polygon fill="#ff00ff" stroke="#ff00ff" points="1152.08,-219.84 1143.65,-226.25 1154.24,-226.5 1152.08,-219.84"/>
+</g>
+<!-- sourcefile~rki_forcing.f90&#45;&gt;sourcefile~rki_config.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge41" class="edge">
+<title>sourcefile~rki_forcing.f90&#45;&gt;sourcefile~rki_config.f90</title>
+<path fill="none" stroke="#00ff00" stroke-dasharray="5,2" d="M1259.29,-207.34C1242.41,-221.14 1212.89,-243.42 1184,-256.2 1150.78,-270.89 1140.82,-274.69 1104.5,-275.2"/>
+<path fill="none" stroke="#00ff00" stroke-dasharray="5,2" d="M1102.5,-275.2C1019,-276.38 1002,-236.75 918.5,-237.2"/>
+</g>
+<!-- sourcefile~rki_forcing.f90&#45;&gt;sourcefile~rki_state.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge53" class="edge">
+<title>sourcefile~rki_forcing.f90&#45;&gt;sourcefile~rki_state.f90</title>
+<path fill="none" stroke="#ff00ff" stroke-dasharray="5,2" d="M1228.65,-205.81C1205.47,-211.3 1177.13,-218.01 1153.38,-223.63"/>
+<polygon fill="#ff00ff" stroke="#ff00ff" points="1152.44,-220.26 1143.51,-225.97 1154.05,-227.07 1152.44,-220.26"/>
+</g>
+<!-- sourcefile~rki_gauges.f90&#45;&gt;sourcefile~rki_config.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge42" class="edge">
+<title>sourcefile~rki_gauges.f90&#45;&gt;sourcefile~rki_config.f90</title>
+<path fill="none" stroke="#00ff00" stroke-dasharray="5,2" d="M1240.18,-85.21C1232.93,-88.91 1225.73,-93.54 1220,-99.2 1194.56,-124.35 1211.92,-148.83 1184,-171.2 1178.07,-175.95 926.1,-237.16 918.5,-237.2"/>
+<path fill="none" stroke="#00ff00" stroke-dasharray="5,2" d="M916.5,-237.2C842.95,-237.79 820.72,-213.75 751,-237.2"/>
+</g>
+<!-- sourcefile~rki_gauges.f90&#45;&gt;sourcefile~rki_state.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge54" class="edge">
+<title>sourcefile~rki_gauges.f90&#45;&gt;sourcefile~rki_state.f90</title>
+<path fill="none" stroke="#ff00ff" stroke-dasharray="5,2" d="M1238.44,-85.21C1231.61,-88.84 1225.02,-93.44 1220,-99.2 1186.18,-137.96 1220.38,-172.83 1184,-209.2 1175.66,-217.54 1164.61,-223.2 1153.41,-227.05"/>
+<polygon fill="#ff00ff" stroke="#ff00ff" points="1152.17,-223.77 1143.59,-229.99 1154.18,-230.47 1152.17,-223.77"/>
+</g>
+<!-- sourcefile~rki_handle.f90&#45;&gt;sourcefile~rki_config.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge43" class="edge">
+<title>sourcefile~rki_handle.f90&#45;&gt;sourcefile~rki_config.f90</title>
+<path fill="none" stroke="#00ff00" stroke-dasharray="5,2" d="M1228.65,-466.2C1194.58,-466.72 1146.57,-466.93 1104.5,-465.2"/>
+</g>
+<!-- sourcefile~rki_handle.f90&#45;&gt;sourcefile~rki_state.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge55" class="edge">
+<title>sourcefile~rki_handle.f90&#45;&gt;sourcefile~rki_state.f90</title>
+<path fill="none" stroke="#ff00ff" stroke-dasharray="5,2" d="M1238.19,-453.1C1231.29,-449.29 1224.73,-444.4 1220,-438.2 1171.29,-374.39 1237.4,-321.14 1184,-261.2 1176.08,-252.31 1165.08,-246.45 1153.78,-242.58"/>
+<polygon fill="#ff00ff" stroke="#ff00ff" points="1154.43,-239.13 1143.85,-239.68 1152.47,-245.85 1154.43,-239.13"/>
+</g>
+<!-- sourcefile~rki_nesting.f90&#45;&gt;sourcefile~rki_config.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge45" class="edge">
+<title>sourcefile~rki_nesting.f90&#45;&gt;sourcefile~rki_config.f90</title>
+<path fill="none" stroke="#00ff00" stroke-dasharray="5,2" d="M1227.95,-274.85C1193.93,-274.68 1146.31,-274.61 1104.5,-275.2"/>
+</g>
+<!-- sourcefile~rki_nesting.f90&#45;&gt;sourcefile~rki_state.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge57" class="edge">
+<title>sourcefile~rki_nesting.f90&#45;&gt;sourcefile~rki_state.f90</title>
+<path fill="none" stroke="#ff00ff" stroke-dasharray="5,2" d="M1227.77,-264.37C1204.76,-258.93 1176.85,-252.32 1153.42,-246.78"/>
+<polygon fill="#ff00ff" stroke="#ff00ff" points="1154.21,-243.37 1143.67,-244.47 1152.6,-250.18 1154.21,-243.37"/>
+</g>
+<!-- sourcefile~rki_nesting.f90&#45;&gt;sourcefile~rki_boundary_types.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge67" class="edge">
+<title>sourcefile~rki_nesting.f90&#45;&gt;sourcefile~rki_boundary_types.f90</title>
+<path fill="none" stroke="#ffaa00" stroke-dasharray="5,2" d="M1230.34,-287.21C1109.57,-320.81 768.46,-415.73 636.52,-452.44"/>
+<polygon fill="#ffaa00" stroke="#ffaa00" points="635.34,-449.14 626.65,-455.19 637.22,-455.88 635.34,-449.14"/>
+</g>
+<!-- sourcefile~rki_output.f90&#45;&gt;sourcefile~rki_config.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge46" class="edge">
+<title>sourcefile~rki_output.f90&#45;&gt;sourcefile~rki_config.f90</title>
+<path fill="none" stroke="#00ff00" stroke-dasharray="5,2" d="M1230.38,-312C1097.7,-296.78 697.59,-256.76 583.5,-313.2"/>
+</g>
+<!-- sourcefile~rki_output.f90&#45;&gt;sourcefile~rki_state.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge58" class="edge">
+<title>sourcefile~rki_output.f90&#45;&gt;sourcefile~rki_state.f90</title>
+<path fill="none" stroke="#ff00ff" stroke-dasharray="5,2" d="M1237.13,-305.2C1231.21,-302.61 1225.28,-299.61 1220,-296.2 1201.25,-284.11 1203.1,-272.74 1184,-261.2 1174.58,-255.51 1163.77,-250.9 1153.22,-247.25"/>
+<polygon fill="#ff00ff" stroke="#ff00ff" points="1154.24,-243.9 1143.65,-244.15 1152.08,-250.56 1154.24,-243.9"/>
+</g>
+<!-- sourcefile~rki_api_unstr.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_node29" class="node">
+<title>sourcefile~rki_api_unstr.f90</title>
+<g id="a_sourcefile~~rki_ml_common.f90~~AfferentGraph_node29"><a xlink:href="../sourcefile/rki_api_unstr.f90.html" xlink:title="rki_api_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1500,-478.2 1399,-478.2 1399,-454.2 1500,-454.2 1500,-478.2"/>
+<text text-anchor="middle" x="1449.5" y="-463.8" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_api_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_api_unstr.f90&#45;&gt;sourcefile~rki_handle.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge73" class="edge">
+<title>sourcefile~rki_api_unstr.f90&#45;&gt;sourcefile~rki_handle.f90</title>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M1398.93,-465.91C1377.46,-465.79 1352.27,-465.64 1330.25,-465.52"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="1330.08,-462.01 1320.06,-465.46 1330.04,-469.01 1330.08,-462.01"/>
+</g>
+<!-- sourcefile~rki_kernel_sponge.f90&#45;&gt;sourcefile~rki_boundary_types.f90 -->
+<g id="sourcefile~~rki_ml_common.f90~~AfferentGraph_edge64" class="edge">
+<title>sourcefile~rki_kernel_sponge.f90&#45;&gt;sourcefile~rki_boundary_types.f90</title>
+<path fill="none" stroke="#ffaa00" stroke-dasharray="5,2" d="M882.81,-493.2C849.75,-482.35 797.64,-467.69 751,-465.2"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var pansourcefilerki_ml_commonf90AfferentGraph = svgPanZoom('#sourcefilerki_ml_commonf90AfferentGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#AfferentGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="AfferentGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="202pt" height="32pt"
+ viewBox="0.00 0.00 201.50 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 197.5,-28 197.5,4 -4,4"/>
+<!-- Source File -->
+<g id="node1" class="node">
+<title>Source File</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Source File</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node2" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="193.5,-24 88.5,-24 88.5,0 193.5,0 193.5,-24"/>
+<text text-anchor="middle" x="141" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a file to a file which it depends on. A file
+is dependent upon another if the latter must be compiled before the former
+can be.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+          </div>
+        </div>
+<br>
+      <section>
+        <h2><span class="anchor" id="src"></span>Source Code</h2>
+        <div class="hl codehilite"><pre><span></span><a id="ln-1" name="ln-1" href="#ln-1"></a><span class="c">!! Shared state for the structured multilayer kernels.</span>
+<a id="ln-2" name="ln-2" href="#ln-2"></a><span class="k">module </span><span class="n">rki_ml_common</span>
+<a id="ln-3" name="ln-3" href="#ln-3"></a><span class="w">   </span><span class="c">!! State and helpers shared by every multilayer sub-module (dynamics,</span>
+<a id="ln-4" name="ln-4" href="#ln-4"></a><span class="w">   </span><span class="c">!! tracers, pressure, EOS, momentum).</span>
+<a id="ln-5" name="ln-5" href="#ln-5"></a><span class="w">   </span><span class="k">use </span><span class="n">rki_constants</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">wp</span>
+<a id="ln-6" name="ln-6" href="#ln-6"></a><span class="w">   </span><span class="k">implicit none</span>
+<a id="ln-7" name="ln-7" href="#ln-7"></a>
+<a id="ln-8" name="ln-8" href="#ln-8"></a><span class="w">   </span><span class="c">! Minimum total water depth for vertical layer operations. Columns shallower</span>
+<a id="ln-9" name="ln-9" href="#ln-9"></a><span class="w">   </span><span class="c">! than this skip vertical exchange, mixing, tracer advection, and BPG.</span>
+<a id="ln-10" name="ln-10" href="#ln-10"></a><span class="w">   </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">protected</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">ML_MIN_DEPTH</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.5_wp</span>
+<a id="ln-11" name="ln-11" href="#ln-11"></a><span class="w">   </span><span class="c">!$acc declare create(ML_MIN_DEPTH)</span>
+<a id="ln-12" name="ln-12" href="#ln-12"></a>
+<a id="ln-13" name="ln-13" href="#ln-13"></a><span class="w">   </span><span class="c">! Vanishing-layer threshold for VCOORD_ZSTAR_FULL. A layer with</span>
+<a id="ln-14" name="ln-14" href="#ln-14"></a><span class="w">   </span><span class="c">! h_layer &lt; VANISHING_LAYER_TOL is treated as a collapsed structural</span>
+<a id="ln-15" name="ln-15" href="#ln-15"></a><span class="w">   </span><span class="c">! placeholder by the multilayer operators (BPG/EOS/PP81/friction/</span>
+<a id="ln-16" name="ln-16" href="#ln-16"></a><span class="w">   </span><span class="c">! truncation/tracers). 1.5× margin over zstar_h_min (1e-4 m) for round-off.</span>
+<a id="ln-17" name="ln-17" href="#ln-17"></a><span class="w">   </span><span class="c">! Other coord types never go below this, so the guards are transparent.</span>
+<a id="ln-18" name="ln-18" href="#ln-18"></a><span class="w">   </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">parameter</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">VANISHING_LAYER_TOL</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.5e-4_wp</span>
+<a id="ln-19" name="ln-19" href="#ln-19"></a>
+<a id="ln-20" name="ln-20" href="#ln-20"></a><span class="w">   </span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">ML_MIN_DEPTH</span>
+<a id="ln-21" name="ln-21" href="#ln-21"></a><span class="w">   </span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">VANISHING_LAYER_TOL</span>
+<a id="ln-22" name="ln-22" href="#ln-22"></a><span class="w">   </span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">ml_set_min_depth</span>
+<a id="ln-23" name="ln-23" href="#ln-23"></a><span class="w">   </span><span class="k">private</span>
+<a id="ln-24" name="ln-24" href="#ln-24"></a>
+<a id="ln-25" name="ln-25" href="#ln-25"></a><span class="k">contains</span>
+<a id="ln-26" name="ln-26" href="#ln-26"></a>
+<a id="ln-27" name="ln-27" href="#ln-27"></a><span class="k">   subroutine </span><span class="n">ml_set_min_depth</span><span class="p">(</span><span class="n">depth</span><span class="p">)</span>
+<a id="ln-28" name="ln-28" href="#ln-28"></a><span class="w">      </span><span class="c">!! Set the minimum total water depth for vertical layer operations.</span>
+<a id="ln-29" name="ln-29" href="#ln-29"></a><span class="w">      </span><span class="c">!! Call once at startup from config.</span>
+<a id="ln-30" name="ln-30" href="#ln-30"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">depth</span>
+<a id="ln-31" name="ln-31" href="#ln-31"></a><span class="w">      </span><span class="n">ML_MIN_DEPTH</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">depth</span>
+<a id="ln-32" name="ln-32" href="#ln-32"></a><span class="w">      </span><span class="c">!$acc update device(ML_MIN_DEPTH)</span>
+<a id="ln-33" name="ln-33" href="#ln-33"></a><span class="w">   </span><span class="k">end subroutine </span><span class="n">ml_set_min_depth</span>
+<a id="ln-34" name="ln-34" href="#ln-34"></a>
+<a id="ln-35" name="ln-35" href="#ln-35"></a><span class="k">end module </span><span class="n">rki_ml_common</span>
+</pre></div>
+
+      </section>
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Rakali
+ was developed by Jorge Luis Galvez Vallejo<br>              &copy; 2026 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+ on 2026-10-08 12:55 +0000             </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>

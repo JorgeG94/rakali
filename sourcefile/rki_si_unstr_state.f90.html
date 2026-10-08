@@ -1,0 +1,1567 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="GPU-native coastal solver — structured Cartesian and unstructured triangular grids, hydrostatic multilayer + non-hydrostatic, portable across NVHPC/gfortran/ifx.">
+    <meta name="author" content="Jorge Luis Galvez Vallejo" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>rki_si_unstr_state.F90 &ndash; Rakali</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">Rakali </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/absint.html">Abstract Interfaces</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>rki_si_unstr_state.F90
+      <small>Source File</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.8% of total for source files.">210 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/rki_si_unstr_state.F90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+            <li class="breadcrumb-item active" aria-current="page">rki_si_unstr_state.F90</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+        <div id="sidebar">
+      <h3>Contents</h3>
+  
+  
+  
+  
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#mods-0"
+         aria-expanded="false" aria-controls="mods-0">
+         <h4 class="card-header bg-primary text-white">Modules</h4>
+      </a>
+      <div id="mods-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../module/rki_si_unstr_state.html">rki_si_unstr_state</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../sourcefile/rki_si_unstr_state.f90.html#src">rki_si_unstr_state.F90</a>
+      </div>
+    </div>
+
+
+  </div>
+
+    </div>
+    <div class="col-md-9" id='text'>
+      <p>Semi-implicit free-surface solver state (unstructured triangular 2D barotropic).</p>
+      <br>
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">This file depends on</h3>
+          </div>
+          <div class="card-body">
+            <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: sourcefile~~rki_si_unstr_state.f90~~EfferentGraph Pages: 1 -->
+<svg id="sourcefilerki_si_unstr_statef90EfferentGraph" width="578pt" height="73pt"
+ viewBox="0.00 0.00 578.00 73.41" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="sourcefile~~rki_si_unstr_state.f90~~EfferentGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 69.41)">
+<title>sourcefile~~rki_si_unstr_state.f90~~EfferentGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-69.41 574,-69.41 574,4 -4,4"/>
+<!-- sourcefile~rki_si_unstr_state.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~EfferentGraph_node1" class="node">
+<title>sourcefile~rki_si_unstr_state.f90</title>
+<polygon fill="none" stroke="black" points="570,-57.37 444,-57.37 444,-33.37 570,-33.37 570,-57.37"/>
+<text text-anchor="middle" x="507" y="-42.97" font-family="Helvetica,sans-Serif" font-size="10.50">rki_si_unstr_state.F90</text>
+</g>
+<!-- sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~EfferentGraph_node2" class="node">
+<title>sourcefile~rki_constants.f90</title>
+<g id="a_sourcefile~~rki_si_unstr_state.f90~~EfferentGraph_node2"><a xlink:href="../sourcefile/rki_constants.f90.html" xlink:title="rki_constants.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="105,-37.37 0,-37.37 0,-13.37 105,-13.37 105,-37.37"/>
+<text text-anchor="middle" x="52.5" y="-22.97" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_constants.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_si_unstr_state.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~EfferentGraph_edge1" class="edge">
+<title>sourcefile~rki_si_unstr_state.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M348.5,-65.37C255.89,-65.14 232.37,-61.44 141,-46.37 130.26,-44.6 118.89,-42.24 108.02,-39.74"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="108.75,-36.32 98.21,-37.42 107.13,-43.13 108.75,-36.32"/>
+</g>
+<!-- sourcefile~rki_mesh_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~EfferentGraph_node3" class="node">
+<title>sourcefile~rki_mesh_unstr.f90</title>
+<g id="a_sourcefile~~rki_si_unstr_state.f90~~EfferentGraph_node3"><a xlink:href="../sourcefile/rki_mesh_unstr.f90.html" xlink:title="rki_mesh_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="255,-37.37 141,-37.37 141,-13.37 255,-13.37 255,-37.37"/>
+<text text-anchor="middle" x="198" y="-22.97" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_mesh_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_si_unstr_state.f90&#45;&gt;sourcefile~rki_mesh_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~EfferentGraph_edge2" class="edge">
+<title>sourcefile~rki_si_unstr_state.f90&#45;&gt;sourcefile~rki_mesh_unstr.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M443.81,-57.14C415.46,-61.53 381.39,-65.45 350.5,-65.37"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M348.5,-65.37C309.27,-65.28 266.17,-52.28 236.36,-41.13"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="237.38,-37.77 226.79,-37.44 234.86,-44.3 237.38,-37.77"/>
+</g>
+<!-- sourcefile~rki_si_unstr_mg.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~EfferentGraph_node4" class="node">
+<title>sourcefile~rki_si_unstr_mg.f90</title>
+<g id="a_sourcefile~~rki_si_unstr_state.f90~~EfferentGraph_node4"><a xlink:href="../sourcefile/rki_si_unstr_mg.f90.html" xlink:title="rki_si_unstr_mg.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="408,-37.37 291,-37.37 291,-13.37 408,-13.37 408,-37.37"/>
+<text text-anchor="middle" x="349.5" y="-22.97" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_si_unstr_mg.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_si_unstr_state.f90&#45;&gt;sourcefile~rki_si_unstr_mg.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~EfferentGraph_edge3" class="edge">
+<title>sourcefile~rki_si_unstr_state.f90&#45;&gt;sourcefile~rki_si_unstr_mg.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M443.65,-37.35C435.3,-36.28 426.7,-35.17 418.26,-34.09"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="418.44,-30.58 408.08,-32.78 417.55,-37.53 418.44,-30.58"/>
+</g>
+<!-- sourcefile~rki_mesh_unstr.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~EfferentGraph_edge4" class="edge">
+<title>sourcefile~rki_mesh_unstr.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#00ff00" stroke-dasharray="5,2" d="M140.7,-25.37C132.44,-25.37 123.89,-25.37 115.52,-25.37"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="115.43,-21.87 105.43,-25.37 115.43,-28.87 115.43,-21.87"/>
+</g>
+<!-- sourcefile~rki_si_unstr_mg.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~EfferentGraph_edge5" class="edge">
+<title>sourcefile~rki_si_unstr_mg.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M304.13,-13.3C288.7,-9.67 271.2,-6.17 255,-4.37 204.64,1.21 191.32,1.58 141,-4.37 129.12,-5.78 116.52,-8.22 104.7,-10.96"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="103.87,-7.55 94.97,-13.3 105.52,-14.36 103.87,-7.55"/>
+</g>
+<!-- sourcefile~rki_si_unstr_mg.f90&#45;&gt;sourcefile~rki_mesh_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~EfferentGraph_edge6" class="edge">
+<title>sourcefile~rki_si_unstr_mg.f90&#45;&gt;sourcefile~rki_mesh_unstr.f90</title>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M290.7,-25.37C282.4,-25.37 273.82,-25.37 265.37,-25.37"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="265.17,-21.87 255.17,-25.37 265.17,-28.87 265.17,-21.87"/>
+</g>
+</g>
+</svg>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#EfferentGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="EfferentGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="202pt" height="32pt"
+ viewBox="0.00 0.00 201.50 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 197.5,-28 197.5,4 -4,4"/>
+<!-- Source File -->
+<g id="node1" class="node">
+<title>Source File</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Source File</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node2" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="193.5,-24 88.5,-24 88.5,0 193.5,0 193.5,-24"/>
+<text text-anchor="middle" x="141" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a file to a file which it depends on. A file
+is dependent upon another if the latter must be compiled before the former
+can be.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Files dependent on this one</h3>
+          </div>
+          <div class="card-body">
+            <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: sourcefile~~rki_si_unstr_state.f90~~AfferentGraph Pages: 1 -->
+<svg id="sourcefilerki_si_unstr_statef90AfferentGraph" width="641pt" height="461pt"
+ viewBox="0.00 0.00 641.00 460.79" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph" class="graph" transform="scale(0.51 0.51) rotate(0) translate(4 903.93)">
+<title>sourcefile~~rki_si_unstr_state.f90~~AfferentGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-903.93 1259,-903.93 1259,4 -4,4"/>
+<!-- sourcefile~rki_si_unstr_state.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_node1" class="node">
+<title>sourcefile~rki_si_unstr_state.f90</title>
+<polygon fill="none" stroke="black" points="126,-635.59 0,-635.59 0,-611.59 126,-611.59 126,-635.59"/>
+<text text-anchor="middle" x="63" y="-621.19" font-family="Helvetica,sans-Serif" font-size="10.50">rki_si_unstr_state.F90</text>
+</g>
+<!-- sourcefile~rki_driver.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_node2" class="node">
+<title>sourcefile~rki_driver.f90</title>
+<g id="a_sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_node2"><a xlink:href="../sourcefile/rki_driver.f90.html" xlink:title="rki_driver.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1246.5,-634.59 1162.5,-634.59 1162.5,-610.59 1246.5,-610.59 1246.5,-634.59"/>
+<text text-anchor="middle" x="1204.5" y="-620.19" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_driver.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_driver.f90&#45;&gt;sourcefile~rki_si_unstr_state.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge1" class="edge">
+<title>sourcefile~rki_driver.f90&#45;&gt;sourcefile~rki_si_unstr_state.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M631.5,-884.59C529.78,-892.09 503.91,-880.2 402,-884.59"/>
+</g>
+<!-- sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_node5" class="node">
+<title>sourcefile~rki_state_unstr.f90</title>
+<g id="a_sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_node5"><a xlink:href="../sourcefile/rki_state_unstr.f90.html" xlink:title="rki_state_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="273,-374.59 162,-374.59 162,-350.59 273,-350.59 273,-374.59"/>
+<text text-anchor="middle" x="217.5" y="-360.19" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_state_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_driver.f90&#45;&gt;sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge10" class="edge">
+<title>sourcefile~rki_driver.f90&#45;&gt;sourcefile~rki_state_unstr.f90</title>
+<path fill="none" stroke="#7f00ff" stroke-dasharray="5,2" d="M1190.03,-634.67C1129.71,-687.42 876.71,-894.56 633.5,-884.59"/>
+<path fill="none" stroke="#7f00ff" stroke-dasharray="5,2" d="M631.5,-884.59C605.72,-886.49 422.69,-862.09 402,-846.59"/>
+</g>
+<!-- sourcefile~rki_solver_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_node30" class="node">
+<title>sourcefile~rki_solver_unstr.f90</title>
+<g id="a_sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_node30"><a xlink:href="../sourcefile/rki_solver_unstr.f90.html" xlink:title="rki_solver_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1118,-392.59 1001,-392.59 1001,-368.59 1118,-368.59 1118,-392.59"/>
+<text text-anchor="middle" x="1059.5" y="-378.19" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_solver_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_driver.f90&#45;&gt;sourcefile~rki_solver_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge73" class="edge">
+<title>sourcefile~rki_driver.f90&#45;&gt;sourcefile~rki_solver_unstr.f90</title>
+<path fill="none" stroke="#ff003d" stroke-dasharray="5,2" d="M1196.41,-610.59C1173.58,-571.97 1101.83,-450.54 1072.84,-401.47"/>
+<polygon fill="#ff003d" stroke="#ff003d" points="1075.73,-399.5 1067.63,-392.67 1069.71,-403.06 1075.73,-399.5"/>
+</g>
+<!-- sourcefile~rki_si_unstr_helmholtz.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_node3" class="node">
+<title>sourcefile~rki_si_unstr_helmholtz.f90</title>
+<g id="a_sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_node3"><a xlink:href="../sourcefile/rki_si_unstr_helmholtz.f90.html" xlink:title="rki_si_unstr_helmholtz.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="477,-818.59 325,-818.59 325,-794.59 477,-794.59 477,-818.59"/>
+<text text-anchor="middle" x="401" y="-804.19" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_si_unstr_helmholtz.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_si_unstr_helmholtz.f90&#45;&gt;sourcefile~rki_si_unstr_state.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge2" class="edge">
+<title>sourcefile~rki_si_unstr_helmholtz.f90&#45;&gt;sourcefile~rki_si_unstr_state.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M381.36,-818.7C341.63,-843.84 249.67,-898.27 218.5,-884.59"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M216.5,-884.59C118.26,-841.49 79.67,-700.81 68.11,-645.86"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="71.49,-644.91 66.1,-635.79 64.63,-646.28 71.49,-644.91"/>
+</g>
+<!-- sourcefile~rki_si_unstr_step.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_node4" class="node">
+<title>sourcefile~rki_si_unstr_step.f90</title>
+<g id="a_sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_node4"><a xlink:href="../sourcefile/rki_si_unstr_step.f90.html" xlink:title="rki_si_unstr_step.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="693.5,-856.59 571.5,-856.59 571.5,-832.59 693.5,-832.59 693.5,-856.59"/>
+<text text-anchor="middle" x="632.5" y="-842.19" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_si_unstr_step.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_si_unstr_step.f90&#45;&gt;sourcefile~rki_si_unstr_state.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge3" class="edge">
+<title>sourcefile~rki_si_unstr_step.f90&#45;&gt;sourcefile~rki_si_unstr_state.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M583.54,-856.69C537.38,-867.43 465.44,-881.86 402,-884.59"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M400,-884.59C319.41,-888.07 292.37,-917 218.5,-884.59"/>
+</g>
+<!-- sourcefile~rki_si_unstr_step.f90&#45;&gt;sourcefile~rki_si_unstr_helmholtz.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge5" class="edge">
+<title>sourcefile~rki_si_unstr_step.f90&#45;&gt;sourcefile~rki_si_unstr_helmholtz.f90</title>
+<path fill="none" stroke="#7fff00" stroke-dasharray="5,2" d="M571.2,-834.61C544.71,-830.22 513.18,-825 484.55,-820.26"/>
+<polygon fill="#7fff00" stroke="#7fff00" points="485,-816.79 474.56,-818.61 483.85,-823.69 485,-816.79"/>
+</g>
+<!-- sourcefile~rki_si_unstr_step.f90&#45;&gt;sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge33" class="edge">
+<title>sourcefile~rki_si_unstr_step.f90&#45;&gt;sourcefile~rki_state_unstr.f90</title>
+<path fill="none" stroke="#7f00ff" stroke-dasharray="5,2" d="M571.3,-853.1C512.35,-860.04 427.75,-865.89 402,-846.59"/>
+<path fill="none" stroke="#7f00ff" stroke-dasharray="5,2" d="M400,-846.59C366.93,-821.82 338.02,-857.01 309,-827.59 245.77,-763.5 224.5,-468.93 219.67,-384.98"/>
+<polygon fill="#7f00ff" stroke="#7f00ff" points="223.15,-384.57 219.1,-374.78 216.16,-384.96 223.15,-384.57"/>
+</g>
+<!-- sourcefile~rki_state_unstr.f90&#45;&gt;sourcefile~rki_si_unstr_state.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge4" class="edge">
+<title>sourcefile~rki_state_unstr.f90&#45;&gt;sourcefile~rki_si_unstr_state.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M209.35,-374.83C185.23,-416.1 106.71,-550.49 76.24,-602.64"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="73.16,-600.98 71.14,-611.38 79.2,-604.51 73.16,-600.98"/>
+</g>
+<!-- sourcefile~rki_api_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_node6" class="node">
+<title>sourcefile~rki_api_unstr.f90</title>
+<g id="a_sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_node6"><a xlink:href="../sourcefile/rki_api_unstr.f90.html" xlink:title="rki_api_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1255,-149.59 1154,-149.59 1154,-125.59 1255,-125.59 1255,-149.59"/>
+<text text-anchor="middle" x="1204.5" y="-135.19" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_api_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_api_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge9" class="edge">
+<title>sourcefile~rki_api_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90</title>
+<path fill="none" stroke="#7f00ff" stroke-dasharray="5,2" d="M1182.56,-125.53C1155.44,-110.66 1106.2,-86.16 1060.5,-76.59"/>
+<path fill="none" stroke="#7f00ff" stroke-dasharray="5,2" d="M1058.5,-76.59C1009.94,-66.42 1012.56,-29.74 965,-15.59 823.49,26.48 781,-30.35 633.5,-36.59"/>
+<path fill="none" stroke="#7f00ff" stroke-dasharray="5,2" d="M631.5,-36.59C485.85,-40.91 419.27,-0.34 309,-95.59 234.29,-160.13 221.13,-288.72 218.9,-340.36"/>
+<polygon fill="#7f00ff" stroke="#7f00ff" points="215.4,-340.32 218.57,-350.43 222.4,-340.55 215.4,-340.32"/>
+</g>
+<!-- sourcefile~rki_gauges_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_node7" class="node">
+<title>sourcefile~rki_gauges_unstr.f90</title>
+<g id="a_sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_node7"><a xlink:href="../sourcefile/rki_gauges_unstr.f90.html" xlink:title="rki_gauges_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="930.5,-170.59 806.5,-170.59 806.5,-146.59 930.5,-146.59 930.5,-170.59"/>
+<text text-anchor="middle" x="868.5" y="-156.19" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_gauges_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_api_unstr.f90&#45;&gt;sourcefile~rki_gauges_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge36" class="edge">
+<title>sourcefile~rki_api_unstr.f90&#45;&gt;sourcefile~rki_gauges_unstr.f90</title>
+<path fill="none" stroke="#ff3d00" stroke-dasharray="5,2" d="M1058.5,-76.59C1009.85,-66.83 1010.75,-118.4 965,-137.59 957.24,-140.85 948.9,-143.63 940.5,-146"/>
+<polygon fill="#ff3d00" stroke="#ff3d00" points="939.41,-142.67 930.64,-148.6 941.2,-149.44 939.41,-142.67"/>
+</g>
+<!-- sourcefile~rki_handle.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_node8" class="node">
+<title>sourcefile~rki_handle.f90</title>
+<g id="a_sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_node8"><a xlink:href="../sourcefile/rki_handle.f90.html" xlink:title="rki_handle.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1105,-170.59 1014,-170.59 1014,-146.59 1105,-146.59 1105,-170.59"/>
+<text text-anchor="middle" x="1059.5" y="-156.19" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_handle.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_api_unstr.f90&#45;&gt;sourcefile~rki_handle.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge39" class="edge">
+<title>sourcefile~rki_api_unstr.f90&#45;&gt;sourcefile~rki_handle.f90</title>
+<path fill="none" stroke="#ff7a00" stroke-dasharray="5,2" d="M1153.89,-144.88C1141.41,-146.71 1127.95,-148.69 1115.24,-150.55"/>
+<polygon fill="#ff7a00" stroke="#ff7a00" points="1114.63,-147.11 1105.24,-152.02 1115.64,-154.03 1114.63,-147.11"/>
+</g>
+<!-- sourcefile~rki_kernel_timestep_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_node15" class="node">
+<title>sourcefile~rki_kernel_timestep_unstr.f90</title>
+<g id="a_sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_node15"><a xlink:href="../sourcefile/rki_kernel_timestep_unstr.f90.html" xlink:title="rki_kernel_timestep_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="953.5,-128.59 783.5,-128.59 783.5,-104.59 953.5,-104.59 953.5,-128.59"/>
+<text text-anchor="middle" x="868.5" y="-114.19" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_kernel_timestep_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_api_unstr.f90&#45;&gt;sourcefile~rki_kernel_timestep_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge46" class="edge">
+<title>sourcefile~rki_api_unstr.f90&#45;&gt;sourcefile~rki_kernel_timestep_unstr.f90</title>
+<path fill="none" stroke="#00ff28" stroke-dasharray="5,2" d="M1058.5,-76.59C1045.59,-74 977.4,-89.64 926.61,-102.12"/>
+<polygon fill="#00ff28" stroke="#00ff28" points="925.58,-98.77 916.71,-104.57 927.26,-105.57 925.58,-98.77"/>
+</g>
+<!-- sourcefile~rki_output_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_node27" class="node">
+<title>sourcefile~rki_output_unstr.f90</title>
+<g id="a_sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_node27"><a xlink:href="../sourcefile/rki_output_unstr.f90.html" xlink:title="rki_output_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="928,-48.59 809,-48.59 809,-24.59 928,-24.59 928,-48.59"/>
+<text text-anchor="middle" x="868.5" y="-34.19" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_output_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_api_unstr.f90&#45;&gt;sourcefile~rki_output_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge68" class="edge">
+<title>sourcefile~rki_api_unstr.f90&#45;&gt;sourcefile~rki_output_unstr.f90</title>
+<path fill="none" stroke="#ff00f4" stroke-dasharray="5,2" d="M1058.5,-76.59C1017.32,-68.33 971.2,-58.58 934.83,-50.77"/>
+<polygon fill="#ff00f4" stroke="#ff00f4" points="935.36,-47.31 924.85,-48.63 933.89,-54.15 935.36,-47.31"/>
+</g>
+<!-- sourcefile~rki_restart_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_node28" class="node">
+<title>sourcefile~rki_restart_unstr.f90</title>
+<g id="a_sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_node28"><a xlink:href="../sourcefile/rki_restart_unstr.f90.html" xlink:title="rki_restart_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="460.5,-128.59 341.5,-128.59 341.5,-104.59 460.5,-104.59 460.5,-128.59"/>
+<text text-anchor="middle" x="401" y="-114.19" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_restart_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_api_unstr.f90&#45;&gt;sourcefile~rki_restart_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge70" class="edge">
+<title>sourcefile~rki_api_unstr.f90&#45;&gt;sourcefile~rki_restart_unstr.f90</title>
+<path fill="none" stroke="#ff00b7" stroke-dasharray="5,2" d="M1058.5,-76.59C843.11,-33.37 580.67,-77.7 463.56,-102.41"/>
+<polygon fill="#ff00b7" stroke="#ff00b7" points="462.74,-99 453.69,-104.51 464.2,-105.85 462.74,-99"/>
+</g>
+<!-- sourcefile~rki_api_unstr.f90&#45;&gt;sourcefile~rki_solver_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge72" class="edge">
+<title>sourcefile~rki_api_unstr.f90&#45;&gt;sourcefile~rki_solver_unstr.f90</title>
+<path fill="none" stroke="#ff003d" stroke-dasharray="5,2" d="M1165.83,-149.8C1161.51,-152.25 1157.43,-155.16 1154,-158.59 1096.42,-216.33 1072.31,-314.89 1064.09,-358.61"/>
+<polygon fill="#ff003d" stroke="#ff003d" points="1060.64,-358.02 1062.33,-368.48 1067.53,-359.25 1060.64,-358.02"/>
+</g>
+<!-- sourcefile~rki_gauges_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge11" class="edge">
+<title>sourcefile~rki_gauges_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90</title>
+<path fill="none" stroke="#7f00ff" stroke-dasharray="5,2" d="M824.32,-170.6C777.64,-182.49 700.88,-198.88 633.5,-198.59"/>
+</g>
+<!-- sourcefile~rki_handle.f90&#45;&gt;sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge12" class="edge">
+<title>sourcefile~rki_handle.f90&#45;&gt;sourcefile~rki_state_unstr.f90</title>
+<path fill="none" stroke="#7f00ff" stroke-dasharray="5,2" d="M1013.59,-170.24C998.28,-173.8 980.98,-177.36 965,-179.59 818.85,-200.05 781.07,-198.91 633.5,-198.59"/>
+</g>
+<!-- sourcefile~rki_handle.f90&#45;&gt;sourcefile~rki_gauges_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge37" class="edge">
+<title>sourcefile~rki_handle.f90&#45;&gt;sourcefile~rki_gauges_unstr.f90</title>
+<path fill="none" stroke="#ff3d00" stroke-dasharray="5,2" d="M1013.71,-158.59C992.03,-158.59 965.47,-158.59 941.07,-158.59"/>
+<polygon fill="#ff3d00" stroke="#ff3d00" points="940.77,-155.09 930.77,-158.59 940.77,-162.09 940.77,-155.09"/>
+</g>
+<!-- sourcefile~rki_handle.f90&#45;&gt;sourcefile~rki_output_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge69" class="edge">
+<title>sourcefile~rki_handle.f90&#45;&gt;sourcefile~rki_output_unstr.f90</title>
+<path fill="none" stroke="#ff00f4" stroke-dasharray="5,2" d="M1041.06,-146.54C1022.38,-133.7 991.81,-112.9 965,-95.59 942.91,-81.33 917.58,-65.72 898.55,-54.13"/>
+<polygon fill="#ff00f4" stroke="#ff00f4" points="900.13,-51 889.77,-48.79 896.5,-56.98 900.13,-51"/>
+</g>
+<!-- sourcefile~rki_kernel_extrapolate_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_node9" class="node">
+<title>sourcefile~rki_kernel_extrapolate_unstr.f90</title>
+<g id="a_sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_node9"><a xlink:href="../sourcefile/rki_kernel_extrapolate_unstr.f90.html" xlink:title="rki_kernel_extrapolate_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="493,-416.59 309,-416.59 309,-392.59 493,-392.59 493,-416.59"/>
+<text text-anchor="middle" x="401" y="-402.19" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_kernel_extrapolate_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_kernel_extrapolate_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge13" class="edge">
+<title>sourcefile~rki_kernel_extrapolate_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90</title>
+<path fill="none" stroke="#7f00ff" stroke-dasharray="5,2" d="M347.55,-392.5C334.92,-389.59 321.48,-386.48 309,-383.59 299.67,-381.43 289.8,-379.15 280.14,-376.91"/>
+<polygon fill="#7f00ff" stroke="#7f00ff" points="280.72,-373.45 270.18,-374.6 279.13,-380.27 280.72,-373.45"/>
+</g>
+<!-- sourcefile~rki_kernel_flux_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_node10" class="node">
+<title>sourcefile~rki_kernel_flux_unstr.f90</title>
+<g id="a_sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_node10"><a xlink:href="../sourcefile/rki_kernel_flux_unstr.f90.html" xlink:title="rki_kernel_flux_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="472.5,-374.59 329.5,-374.59 329.5,-350.59 472.5,-350.59 472.5,-374.59"/>
+<text text-anchor="middle" x="401" y="-360.19" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_kernel_flux_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_kernel_flux_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge14" class="edge">
+<title>sourcefile~rki_kernel_flux_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90</title>
+<path fill="none" stroke="#7f00ff" stroke-dasharray="5,2" d="M329.31,-362.59C314.18,-362.59 298.28,-362.59 283.39,-362.59"/>
+<polygon fill="#7f00ff" stroke="#7f00ff" points="283.26,-359.09 273.26,-362.59 283.26,-366.09 283.26,-359.09"/>
+</g>
+<!-- sourcefile~rki_kernel_friction_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_node11" class="node">
+<title>sourcefile~rki_kernel_friction_unstr.f90</title>
+<g id="a_sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_node11"><a xlink:href="../sourcefile/rki_kernel_friction_unstr.f90.html" xlink:title="rki_kernel_friction_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="481.5,-332.59 320.5,-332.59 320.5,-308.59 481.5,-308.59 481.5,-332.59"/>
+<text text-anchor="middle" x="401" y="-318.19" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_kernel_friction_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_kernel_friction_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge15" class="edge">
+<title>sourcefile~rki_kernel_friction_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90</title>
+<path fill="none" stroke="#7f00ff" stroke-dasharray="5,2" d="M347.55,-332.69C334.92,-335.6 321.48,-338.71 309,-341.59 299.67,-343.75 289.8,-346.04 280.14,-348.28"/>
+<polygon fill="#7f00ff" stroke="#7f00ff" points="279.13,-344.92 270.18,-350.59 280.72,-351.74 279.13,-344.92"/>
+</g>
+<!-- sourcefile~rki_kernel_fused_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_node12" class="node">
+<title>sourcefile~rki_kernel_fused_unstr.f90</title>
+<g id="a_sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_node12"><a xlink:href="../sourcefile/rki_kernel_fused_unstr.f90.html" xlink:title="rki_kernel_fused_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="477.5,-290.59 324.5,-290.59 324.5,-266.59 477.5,-266.59 477.5,-290.59"/>
+<text text-anchor="middle" x="401" y="-276.19" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_kernel_fused_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_kernel_fused_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge16" class="edge">
+<title>sourcefile~rki_kernel_fused_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90</title>
+<path fill="none" stroke="#7f00ff" stroke-dasharray="5,2" d="M333.9,-290.69C325.36,-293.17 316.86,-296.11 309,-299.59 283.43,-310.93 257.57,-329.85 240.08,-344"/>
+<polygon fill="#7f00ff" stroke="#7f00ff" points="237.68,-341.44 232.21,-350.51 242.14,-346.84 237.68,-341.44"/>
+</g>
+<!-- sourcefile~rki_kernel_protect_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_node13" class="node">
+<title>sourcefile~rki_kernel_protect_unstr.f90</title>
+<g id="a_sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_node13"><a xlink:href="../sourcefile/rki_kernel_protect_unstr.f90.html" xlink:title="rki_kernel_protect_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="481.5,-248.59 320.5,-248.59 320.5,-224.59 481.5,-224.59 481.5,-248.59"/>
+<text text-anchor="middle" x="401" y="-234.19" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_kernel_protect_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_kernel_protect_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge17" class="edge">
+<title>sourcefile~rki_kernel_protect_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90</title>
+<path fill="none" stroke="#7f00ff" stroke-dasharray="5,2" d="M327.77,-248.71C321.2,-251.14 314.83,-254.07 309,-257.59 274.26,-278.56 246.02,-317.46 230.79,-341.57"/>
+<polygon fill="#7f00ff" stroke="#7f00ff" points="227.67,-339.96 225.43,-350.32 233.64,-343.62 227.67,-339.96"/>
+</g>
+<!-- sourcefile~rki_kernel_sponge_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_node14" class="node">
+<title>sourcefile~rki_kernel_sponge_unstr.f90</title>
+<g id="a_sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_node14"><a xlink:href="../sourcefile/rki_kernel_sponge_unstr.f90.html" xlink:title="rki_kernel_sponge_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="950,-292.59 787,-292.59 787,-268.59 950,-268.59 950,-292.59"/>
+<text text-anchor="middle" x="868.5" y="-278.19" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_kernel_sponge_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_kernel_sponge_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge18" class="edge">
+<title>sourcefile~rki_kernel_sponge_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90</title>
+<path fill="none" stroke="#7f00ff" stroke-dasharray="5,2" d="M804.35,-268.57C793.46,-265.96 782.33,-262.97 772,-259.59 708.06,-238.71 700.76,-198.88 633.5,-198.59"/>
+</g>
+<!-- sourcefile~rki_kernel_timestep_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge19" class="edge">
+<title>sourcefile~rki_kernel_timestep_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90</title>
+<path fill="none" stroke="#7f00ff" stroke-dasharray="5,2" d="M804.35,-128.62C793.46,-131.22 782.33,-134.22 772,-137.59 708.06,-158.47 700.76,-198.88 633.5,-198.59"/>
+<path fill="none" stroke="#7f00ff" stroke-dasharray="5,2" d="M631.5,-198.59C487.97,-197.97 432.42,-142.31 309,-215.59 261.8,-243.62 235.81,-306.8 224.84,-340.48"/>
+<polygon fill="#7f00ff" stroke="#7f00ff" points="221.42,-339.71 221.8,-350.29 228.11,-341.78 221.42,-339.71"/>
+</g>
+<!-- sourcefile~rki_kernel_update_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_node16" class="node">
+<title>sourcefile~rki_kernel_update_unstr.f90</title>
+<g id="a_sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_node16"><a xlink:href="../sourcefile/rki_kernel_update_unstr.f90.html" xlink:title="rki_kernel_update_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="949,-250.59 788,-250.59 788,-226.59 949,-226.59 949,-250.59"/>
+<text text-anchor="middle" x="868.5" y="-236.19" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_kernel_update_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_kernel_update_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge20" class="edge">
+<title>sourcefile~rki_kernel_update_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90</title>
+<path fill="none" stroke="#7f00ff" stroke-dasharray="5,2" d="M823.03,-226.49C776.24,-214.82 700.27,-198.88 633.5,-198.59"/>
+</g>
+<!-- sourcefile~rki_ml_dynamics_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_node17" class="node">
+<title>sourcefile~rki_ml_dynamics_unstr.f90</title>
+<g id="a_sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_node17"><a xlink:href="../sourcefile/rki_ml_dynamics_unstr.f90.html" xlink:title="rki_ml_dynamics_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="709.5,-616.59 555.5,-616.59 555.5,-592.59 709.5,-592.59 709.5,-616.59"/>
+<text text-anchor="middle" x="632.5" y="-602.19" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_dynamics_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_ml_dynamics_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge21" class="edge">
+<title>sourcefile~rki_ml_dynamics_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90</title>
+<path fill="none" stroke="#7f00ff" stroke-dasharray="5,2" d="M555.35,-594.64C546.15,-591.82 537.14,-588.21 529,-583.59 456.23,-542.28 481.17,-471.71 402,-444.59"/>
+</g>
+<!-- sourcefile~rki_ml_eos_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_node18" class="node">
+<title>sourcefile~rki_ml_eos_unstr.f90</title>
+<g id="a_sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_node18"><a xlink:href="../sourcefile/rki_ml_eos_unstr.f90.html" xlink:title="rki_ml_eos_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="462,-736.59 340,-736.59 340,-712.59 462,-712.59 462,-736.59"/>
+<text text-anchor="middle" x="401" y="-722.19" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_eos_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_ml_eos_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge22" class="edge">
+<title>sourcefile~rki_ml_eos_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90</title>
+<path fill="none" stroke="#7f00ff" stroke-dasharray="5,2" d="M393.96,-712.55C367.69,-660.15 263.16,-451.68 229.21,-383.96"/>
+<polygon fill="#7f00ff" stroke="#7f00ff" points="232.17,-382.05 224.56,-374.68 225.91,-385.19 232.17,-382.05"/>
+</g>
+<!-- sourcefile~rki_ml_friction_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_node19" class="node">
+<title>sourcefile~rki_ml_friction_unstr.f90</title>
+<g id="a_sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_node19"><a xlink:href="../sourcefile/rki_ml_friction_unstr.f90.html" xlink:title="rki_ml_friction_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="703,-574.59 562,-574.59 562,-550.59 703,-550.59 703,-574.59"/>
+<text text-anchor="middle" x="632.5" y="-560.19" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_friction_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_ml_friction_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge23" class="edge">
+<title>sourcefile~rki_ml_friction_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90</title>
+<path fill="none" stroke="#7f00ff" stroke-dasharray="5,2" d="M561.78,-552.73C550.55,-549.9 539.25,-546.26 529,-541.59 464.36,-512.17 469.19,-467.61 402,-444.59"/>
+</g>
+<!-- sourcefile~rki_ml_horizontal_viscosity_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_node20" class="node">
+<title>sourcefile~rki_ml_horizontal_viscosity_unstr.f90</title>
+<g id="a_sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_node20"><a xlink:href="../sourcefile/rki_ml_horizontal_viscosity_unstr.f90.html" xlink:title="rki_ml_horizontal_viscosity_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="736,-532.59 529,-532.59 529,-508.59 736,-508.59 736,-532.59"/>
+<text text-anchor="middle" x="632.5" y="-518.19" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_horizontal_viscosity_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_ml_horizontal_viscosity_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge24" class="edge">
+<title>sourcefile~rki_ml_horizontal_viscosity_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90</title>
+<path fill="none" stroke="#7f00ff" stroke-dasharray="5,2" d="M562.9,-508.59C551.48,-506 539.83,-503.01 529,-499.59 470.34,-481.1 460.19,-464.53 402,-444.59"/>
+</g>
+<!-- sourcefile~rki_ml_keps_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_node21" class="node">
+<title>sourcefile~rki_ml_keps_unstr.f90</title>
+<g id="a_sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_node21"><a xlink:href="../sourcefile/rki_ml_keps_unstr.f90.html" xlink:title="rki_ml_keps_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="696.5,-490.59 568.5,-490.59 568.5,-466.59 696.5,-466.59 696.5,-490.59"/>
+<text text-anchor="middle" x="632.5" y="-476.19" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_keps_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_ml_keps_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge25" class="edge">
+<title>sourcefile~rki_ml_keps_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90</title>
+<path fill="none" stroke="#7f00ff" stroke-dasharray="5,2" d="M568.19,-475.44C521.26,-471.62 456.3,-463.19 402,-444.59"/>
+</g>
+<!-- sourcefile~rki_ml_kpp_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_node22" class="node">
+<title>sourcefile~rki_ml_kpp_unstr.f90</title>
+<g id="a_sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_node22"><a xlink:href="../sourcefile/rki_ml_kpp_unstr.f90.html" xlink:title="rki_ml_kpp_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="694,-410.59 571,-410.59 571,-386.59 694,-386.59 694,-410.59"/>
+<text text-anchor="middle" x="632.5" y="-396.19" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_kpp_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_ml_kpp_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge26" class="edge">
+<title>sourcefile~rki_ml_kpp_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90</title>
+<path fill="none" stroke="#7f00ff" stroke-dasharray="5,2" d="M584.55,-410.63C522.5,-426.13 419.04,-450.43 402,-444.59"/>
+</g>
+<!-- sourcefile~rki_ml_pressure_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_node23" class="node">
+<title>sourcefile~rki_ml_pressure_unstr.f90</title>
+<g id="a_sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_node23"><a xlink:href="../sourcefile/rki_ml_pressure_unstr.f90.html" xlink:title="rki_ml_pressure_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="706.5,-776.59 558.5,-776.59 558.5,-752.59 706.5,-752.59 706.5,-776.59"/>
+<text text-anchor="middle" x="632.5" y="-762.19" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_pressure_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_ml_pressure_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge27" class="edge">
+<title>sourcefile~rki_ml_pressure_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90</title>
+<path fill="none" stroke="#7f00ff" stroke-dasharray="5,2" d="M558.39,-770.02C474.97,-774.59 345.39,-776.17 309,-745.59 252.65,-698.25 227.05,-459.34 220.35,-384.82"/>
+<polygon fill="#7f00ff" stroke="#7f00ff" points="223.82,-384.35 219.47,-374.7 216.85,-384.96 223.82,-384.35"/>
+</g>
+<!-- sourcefile~rki_ml_pressure_unstr.f90&#45;&gt;sourcefile~rki_ml_eos_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge51" class="edge">
+<title>sourcefile~rki_ml_pressure_unstr.f90&#45;&gt;sourcefile~rki_ml_eos_unstr.f90</title>
+<path fill="none" stroke="#00ffe0" stroke-dasharray="5,2" d="M562.64,-752.59C534.06,-747.61 500.93,-741.84 472.21,-736.83"/>
+<polygon fill="#00ffe0" stroke="#00ffe0" points="472.7,-733.36 462.25,-735.09 471.5,-740.26 472.7,-733.36"/>
+</g>
+<!-- sourcefile~rki_ml_tracers_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_node24" class="node">
+<title>sourcefile~rki_ml_tracers_unstr.f90</title>
+<g id="a_sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_node24"><a xlink:href="../sourcefile/rki_ml_tracers_unstr.f90.html" xlink:title="rki_ml_tracers_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="703,-696.59 562,-696.59 562,-672.59 703,-672.59 703,-696.59"/>
+<text text-anchor="middle" x="632.5" y="-682.19" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_tracers_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_ml_tracers_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge28" class="edge">
+<title>sourcefile~rki_ml_tracers_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90</title>
+<path fill="none" stroke="#7f00ff" stroke-dasharray="5,2" d="M561.96,-674.87C550.22,-671.09 538.71,-665.85 529,-658.59 440.41,-592.38 506.63,-480.43 402,-444.59"/>
+</g>
+<!-- sourcefile~rki_ml_truncate_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_node25" class="node">
+<title>sourcefile~rki_ml_truncate_unstr.f90</title>
+<g id="a_sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_node25"><a xlink:href="../sourcefile/rki_ml_truncate_unstr.f90.html" xlink:title="rki_ml_truncate_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="942.5,-452.59 794.5,-452.59 794.5,-428.59 942.5,-428.59 942.5,-452.59"/>
+<text text-anchor="middle" x="868.5" y="-438.19" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_truncate_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_ml_truncate_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge29" class="edge">
+<title>sourcefile~rki_ml_truncate_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90</title>
+<path fill="none" stroke="#7f00ff" stroke-dasharray="5,2" d="M794.02,-443.9C672.14,-448.98 437.94,-456.9 402,-444.59"/>
+</g>
+<!-- sourcefile~rki_ml_vertical_viscosity_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_node26" class="node">
+<title>sourcefile~rki_ml_vertical_viscosity_unstr.f90</title>
+<g id="a_sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_node26"><a xlink:href="../sourcefile/rki_ml_vertical_viscosity_unstr.f90.html" xlink:title="rki_ml_vertical_viscosity_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="965,-372.59 772,-372.59 772,-348.59 965,-348.59 965,-372.59"/>
+<text text-anchor="middle" x="868.5" y="-358.19" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_vertical_viscosity_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_ml_vertical_viscosity_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge30" class="edge">
+<title>sourcefile~rki_ml_vertical_viscosity_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90</title>
+<path fill="none" stroke="#7f00ff" stroke-dasharray="5,2" d="M804.35,-348.55C733.02,-338.26 615.63,-331.53 529,-377.59 505.46,-390.11 515.5,-411.28 493,-425.59 458.14,-447.77 441.09,-457.98 402,-444.59"/>
+</g>
+<!-- sourcefile~rki_output_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge31" class="edge">
+<title>sourcefile~rki_output_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90</title>
+<path fill="none" stroke="#7f00ff" stroke-dasharray="5,2" d="M808.81,-35.22C761.46,-34.44 693.17,-34.07 633.5,-36.59"/>
+</g>
+<!-- sourcefile~rki_restart_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge32" class="edge">
+<title>sourcefile~rki_restart_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90</title>
+<path fill="none" stroke="#7f00ff" stroke-dasharray="5,2" d="M377.44,-128.77C357.44,-140.46 328.47,-159.69 309,-182.59 266.73,-232.31 238,-305.17 225.53,-341.03"/>
+<polygon fill="#7f00ff" stroke="#7f00ff" points="222.21,-339.92 222.31,-350.51 228.84,-342.17 222.21,-339.92"/>
+</g>
+<!-- sourcefile~rki_si_unstr_step_ml.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_node29" class="node">
+<title>sourcefile~rki_si_unstr_step_ml.f90</title>
+<g id="a_sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_node29"><a xlink:href="../sourcefile/rki_si_unstr_step_ml.f90.html" xlink:title="rki_si_unstr_step_ml.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="939,-636.59 798,-636.59 798,-612.59 939,-612.59 939,-636.59"/>
+<text text-anchor="middle" x="868.5" y="-622.19" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_si_unstr_step_ml.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_si_unstr_step_ml.f90&#45;&gt;sourcefile~rki_si_unstr_helmholtz.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge6" class="edge">
+<title>sourcefile~rki_si_unstr_step_ml.f90&#45;&gt;sourcefile~rki_si_unstr_helmholtz.f90</title>
+<path fill="none" stroke="#7fff00" stroke-dasharray="5,2" d="M850.47,-636.64C829.79,-651.94 794.86,-680.05 772,-710.59 749.84,-740.19 766.66,-764.93 736,-785.59 696.82,-812 572.62,-813.33 487.23,-810.79"/>
+<polygon fill="#7fff00" stroke="#7fff00" points="487.13,-807.28 477.02,-810.46 486.9,-814.28 487.13,-807.28"/>
+</g>
+<!-- sourcefile~rki_si_unstr_step_ml.f90&#45;&gt;sourcefile~rki_si_unstr_step.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge7" class="edge">
+<title>sourcefile~rki_si_unstr_step_ml.f90&#45;&gt;sourcefile~rki_si_unstr_step.f90</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M849.06,-636.71C827.66,-651.67 792.66,-679.05 772,-710.59 744.28,-752.92 773.06,-784.15 736,-818.59 726.82,-827.12 715.25,-832.95 703.22,-836.92"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="702.14,-833.58 693.5,-839.71 704.08,-840.31 702.14,-833.58"/>
+</g>
+<!-- sourcefile~rki_si_unstr_step_ml.f90&#45;&gt;sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge34" class="edge">
+<title>sourcefile~rki_si_unstr_step_ml.f90&#45;&gt;sourcefile~rki_state_unstr.f90</title>
+<path fill="none" stroke="#7f00ff" stroke-dasharray="5,2" d="M825,-636.62C757.84,-653.14 624.94,-675.48 529,-625.59 441.81,-580.26 494.9,-476.63 402,-444.59"/>
+</g>
+<!-- sourcefile~rki_si_unstr_step_ml.f90&#45;&gt;sourcefile~rki_ml_dynamics_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge49" class="edge">
+<title>sourcefile~rki_si_unstr_step_ml.f90&#45;&gt;sourcefile~rki_ml_dynamics_unstr.f90</title>
+<path fill="none" stroke="#00ffa3" stroke-dasharray="5,2" d="M797.93,-618.65C773.43,-616.55 745.59,-614.17 719.87,-611.98"/>
+<polygon fill="#00ffa3" stroke="#00ffa3" points="720.02,-608.47 709.75,-611.11 719.42,-615.45 720.02,-608.47"/>
+</g>
+<!-- sourcefile~rki_si_unstr_step_ml.f90&#45;&gt;sourcefile~rki_ml_eos_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge52" class="edge">
+<title>sourcefile~rki_si_unstr_step_ml.f90&#45;&gt;sourcefile~rki_ml_eos_unstr.f90</title>
+<path fill="none" stroke="#00ffe0" stroke-dasharray="5,2" d="M851.91,-636.88C828.27,-654.88 781.29,-688.15 736,-705.59 692.77,-722.25 679.58,-719.77 633.5,-724.59"/>
+<path fill="none" stroke="#00ffe0" stroke-dasharray="5,2" d="M631.5,-724.59C578.27,-730.17 517.7,-729.89 472.16,-728.37"/>
+<polygon fill="#00ffe0" stroke="#00ffe0" points="472.22,-724.87 462.1,-728.01 471.96,-731.87 472.22,-724.87"/>
+</g>
+<!-- sourcefile~rki_si_unstr_step_ml.f90&#45;&gt;sourcefile~rki_ml_friction_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge54" class="edge">
+<title>sourcefile~rki_si_unstr_step_ml.f90&#45;&gt;sourcefile~rki_ml_friction_unstr.f90</title>
+<path fill="none" stroke="#00e0ff" stroke-dasharray="5,2" d="M832.33,-612.58C806.01,-603.84 769,-592.1 736,-583.59 726.73,-581.21 716.93,-578.91 707.22,-576.77"/>
+<polygon fill="#00e0ff" stroke="#00e0ff" points="707.67,-573.29 697.15,-574.6 706.19,-580.13 707.67,-573.29"/>
+</g>
+<!-- sourcefile~rki_si_unstr_step_ml.f90&#45;&gt;sourcefile~rki_ml_horizontal_viscosity_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge56" class="edge">
+<title>sourcefile~rki_si_unstr_step_ml.f90&#45;&gt;sourcefile~rki_ml_horizontal_viscosity_unstr.f90</title>
+<path fill="none" stroke="#00a3ff" stroke-dasharray="5,2" d="M852.32,-612.39C828.82,-594.15 781.58,-559.93 736,-541.59 730.25,-539.28 724.21,-537.21 718.06,-535.36"/>
+<polygon fill="#00a3ff" stroke="#00a3ff" points="718.91,-531.96 708.34,-532.63 717.02,-538.7 718.91,-531.96"/>
+</g>
+<!-- sourcefile~rki_si_unstr_step_ml.f90&#45;&gt;sourcefile~rki_ml_keps_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge58" class="edge">
+<title>sourcefile~rki_si_unstr_step_ml.f90&#45;&gt;sourcefile~rki_ml_keps_unstr.f90</title>
+<path fill="none" stroke="#0066ff" stroke-dasharray="5,2" d="M846.39,-612.55C825.79,-600.1 794.36,-579.21 772,-555.59 751.65,-534.11 760.41,-516.32 736,-499.59 727.11,-493.5 716.83,-489.1 706.29,-485.94"/>
+<polygon fill="#0066ff" stroke="#0066ff" points="707.13,-482.55 696.57,-483.38 705.34,-489.31 707.13,-482.55"/>
+</g>
+<!-- sourcefile~rki_si_unstr_step_ml.f90&#45;&gt;sourcefile~rki_ml_kpp_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge60" class="edge">
+<title>sourcefile~rki_si_unstr_step_ml.f90&#45;&gt;sourcefile~rki_ml_kpp_unstr.f90</title>
+<path fill="none" stroke="#0028ff" stroke-dasharray="5,2" d="M843.16,-612.42C821.72,-600.57 791.03,-580.7 772,-555.59 743.97,-518.61 765.9,-493.07 736,-457.59 720.05,-438.67 696.4,-424.48 675.83,-414.77"/>
+<polygon fill="#0028ff" stroke="#0028ff" points="677.19,-411.55 666.63,-410.62 674.31,-417.93 677.19,-411.55"/>
+</g>
+<!-- sourcefile~rki_si_unstr_step_ml.f90&#45;&gt;sourcefile~rki_ml_pressure_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge62" class="edge">
+<title>sourcefile~rki_si_unstr_step_ml.f90&#45;&gt;sourcefile~rki_ml_pressure_unstr.f90</title>
+<path fill="none" stroke="#1400ff" stroke-dasharray="5,2" d="M854.22,-636.73C823.58,-664.63 749.52,-731.53 736,-738.59 727.73,-742.91 718.7,-746.54 709.54,-749.59"/>
+<polygon fill="#1400ff" stroke="#1400ff" points="708.49,-746.25 699.97,-752.55 710.56,-752.94 708.49,-746.25"/>
+</g>
+<!-- sourcefile~rki_si_unstr_step_ml.f90&#45;&gt;sourcefile~rki_ml_tracers_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge64" class="edge">
+<title>sourcefile~rki_si_unstr_step_ml.f90&#45;&gt;sourcefile~rki_ml_tracers_unstr.f90</title>
+<path fill="none" stroke="#5100ff" stroke-dasharray="5,2" d="M821.26,-636.6C796.06,-643.14 764.33,-651.34 736,-658.59 721.48,-662.31 705.79,-666.3 691.16,-670.02"/>
+<polygon fill="#5100ff" stroke="#5100ff" points="690.06,-666.68 681.23,-672.53 691.78,-673.47 690.06,-666.68"/>
+</g>
+<!-- sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_si_unstr_step.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge8" class="edge">
+<title>sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_si_unstr_step.f90</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M867.5,-724.59C809.27,-764.02 799.44,-782.25 736,-812.59 722.07,-819.26 706.42,-824.96 691.62,-829.63"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="690.59,-826.28 682.05,-832.54 692.63,-832.98 690.59,-826.28"/>
+</g>
+<!-- sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge35" class="edge">
+<title>sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90</title>
+<path fill="none" stroke="#7f00ff" stroke-dasharray="5,2" d="M631.5,-320.59C585.42,-322.06 565.12,-307.94 529,-336.59 495.57,-363.11 525.74,-398.23 493,-425.59 461.3,-452.09 441.07,-458.03 402,-444.59"/>
+<path fill="none" stroke="#7f00ff" stroke-dasharray="5,2" d="M400,-444.59C360.93,-431.16 346.94,-441.95 309,-425.59 283.32,-414.52 257.47,-395.57 240.02,-381.34"/>
+<polygon fill="#7f00ff" stroke="#7f00ff" points="242.08,-378.5 232.16,-374.78 237.6,-383.88 242.08,-378.5"/>
+</g>
+<!-- sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_kernel_extrapolate_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge40" class="edge">
+<title>sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_kernel_extrapolate_unstr.f90</title>
+<path fill="none" stroke="#ffb700" stroke-dasharray="5,2" d="M631.5,-320.59C585.44,-322.65 568.64,-313.05 529,-336.59 506.38,-350.03 515.12,-369.35 493,-383.59 490.36,-385.29 487.6,-386.86 484.74,-388.29"/>
+<polygon fill="#ffb700" stroke="#ffb700" points="483.09,-385.2 475.38,-392.47 485.94,-391.59 483.09,-385.2"/>
+</g>
+<!-- sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_kernel_flux_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge41" class="edge">
+<title>sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_kernel_flux_unstr.f90</title>
+<path fill="none" stroke="#fff400" stroke-dasharray="5,2" d="M631.5,-320.59C600.39,-321.98 523.85,-336.85 467.68,-348.51"/>
+<polygon fill="#fff400" stroke="#fff400" points="466.87,-345.11 457.8,-350.57 468.3,-351.96 466.87,-345.11"/>
+</g>
+<!-- sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_kernel_friction_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge42" class="edge">
+<title>sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_kernel_friction_unstr.f90</title>
+<path fill="none" stroke="#cbff00" stroke-dasharray="5,2" d="M631.5,-320.59C585.44,-322.65 534.12,-322.84 491.72,-322.44"/>
+<polygon fill="#cbff00" stroke="#cbff00" points="491.73,-318.94 481.7,-322.33 491.66,-325.94 491.73,-318.94"/>
+</g>
+<!-- sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_kernel_fused_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge43" class="edge">
+<title>sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_kernel_fused_unstr.f90</title>
+<path fill="none" stroke="#8eff00" stroke-dasharray="5,2" d="M631.5,-320.59C599.43,-322.02 519.11,-305.58 462.57,-292.85"/>
+<polygon fill="#8eff00" stroke="#8eff00" points="463.19,-289.41 452.66,-290.61 461.64,-296.23 463.19,-289.41"/>
+</g>
+<!-- sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_kernel_protect_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge44" class="edge">
+<title>sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_kernel_protect_unstr.f90</title>
+<path fill="none" stroke="#51ff00" stroke-dasharray="5,2" d="M1036.98,-368.51C1018.51,-358.8 990.85,-345.79 965,-339.59 821.49,-305.2 780.93,-314.03 633.5,-320.59"/>
+<path fill="none" stroke="#51ff00" stroke-dasharray="5,2" d="M631.5,-320.59C563.91,-322.74 557.04,-279.3 493,-257.59 486.24,-255.3 479.12,-253.18 471.96,-251.23"/>
+<polygon fill="#51ff00" stroke="#51ff00" points="472.76,-247.82 462.2,-248.69 470.99,-254.6 472.76,-247.82"/>
+</g>
+<!-- sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_kernel_sponge_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge45" class="edge">
+<title>sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_kernel_sponge_unstr.f90</title>
+<path fill="none" stroke="#14ff00" stroke-dasharray="5,2" d="M1046.63,-368.52C1029.88,-352.16 997.71,-323.11 965,-306.59 956.58,-302.34 947.37,-298.71 938.11,-295.64"/>
+<polygon fill="#14ff00" stroke="#14ff00" points="939.05,-292.27 928.46,-292.64 936.97,-298.95 939.05,-292.27"/>
+</g>
+<!-- sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_kernel_timestep_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge47" class="edge">
+<title>sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_kernel_timestep_unstr.f90</title>
+<path fill="none" stroke="#00ff28" stroke-dasharray="5,2" d="M1057.72,-368.49C1054.48,-328.68 1038.53,-200.79 965,-137.59 963.63,-136.41 962.2,-135.3 960.74,-134.24"/>
+<polygon fill="#00ff28" stroke="#00ff28" points="962.24,-131.05 951.89,-128.79 958.57,-137.02 962.24,-131.05"/>
+</g>
+<!-- sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_kernel_update_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge48" class="edge">
+<title>sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_kernel_update_unstr.f90</title>
+<path fill="none" stroke="#00ff66" stroke-dasharray="5,2" d="M1052.74,-368.36C1040.41,-343.57 1008.96,-287.44 965,-259.59 962.2,-257.82 959.28,-256.2 956.26,-254.71"/>
+<polygon fill="#00ff66" stroke="#00ff66" points="957.53,-251.45 946.97,-250.64 954.73,-257.86 957.53,-251.45"/>
+</g>
+<!-- sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_ml_dynamics_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge50" class="edge">
+<title>sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_ml_dynamics_unstr.f90</title>
+<path fill="none" stroke="#00ffa3" stroke-dasharray="5,2" d="M867.5,-541.59C809.87,-562.64 795.36,-568.08 736,-583.59 726.87,-585.98 717.22,-588.26 707.65,-590.38"/>
+<polygon fill="#00ffa3" stroke="#00ffa3" points="706.75,-587 697.72,-592.54 708.23,-593.84 706.75,-587"/>
+</g>
+<!-- sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_ml_eos_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge53" class="edge">
+<title>sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_ml_eos_unstr.f90</title>
+<path fill="none" stroke="#00ffe0" stroke-dasharray="5,2" d="M867.5,-724.59C781.38,-782.9 736.93,-713.76 633.5,-724.59"/>
+</g>
+<!-- sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_ml_friction_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge55" class="edge">
+<title>sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_ml_friction_unstr.f90</title>
+<path fill="none" stroke="#00e0ff" stroke-dasharray="5,2" d="M867.5,-541.59C818.35,-559.55 759.69,-564.78 713.4,-565.53"/>
+<polygon fill="#00e0ff" stroke="#00e0ff" points="713.08,-562.03 703.12,-565.63 713.15,-569.03 713.08,-562.03"/>
+</g>
+<!-- sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_ml_horizontal_viscosity_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge57" class="edge">
+<title>sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_ml_horizontal_viscosity_unstr.f90</title>
+<path fill="none" stroke="#00a3ff" stroke-dasharray="5,2" d="M867.5,-541.59C839.22,-551.92 765.73,-543.35 708.59,-534.25"/>
+<polygon fill="#00a3ff" stroke="#00a3ff" points="708.91,-530.76 698.48,-532.61 707.79,-537.67 708.91,-530.76"/>
+</g>
+<!-- sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_ml_keps_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge59" class="edge">
+<title>sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_ml_keps_unstr.f90</title>
+<path fill="none" stroke="#0066ff" stroke-dasharray="5,2" d="M1049.59,-392.67C1025.16,-424.61 953.31,-510.98 869.5,-541.59"/>
+<path fill="none" stroke="#0066ff" stroke-dasharray="5,2" d="M867.5,-541.59C809.87,-562.64 795.36,-515.11 736,-499.59 726.51,-497.11 716.46,-494.74 706.52,-492.55"/>
+<polygon fill="#0066ff" stroke="#0066ff" points="707.14,-489.11 696.63,-490.42 705.66,-495.95 707.14,-489.11"/>
+</g>
+<!-- sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_ml_kpp_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge61" class="edge">
+<title>sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_ml_kpp_unstr.f90</title>
+<path fill="none" stroke="#0028ff" stroke-dasharray="5,2" d="M1000.74,-383.04C923.72,-386.3 787.47,-392.07 704.34,-395.59"/>
+<polygon fill="#0028ff" stroke="#0028ff" points="704.07,-392.1 694.23,-396.02 704.36,-399.09 704.07,-392.1"/>
+</g>
+<!-- sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_ml_pressure_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge63" class="edge">
+<title>sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_ml_pressure_unstr.f90</title>
+<path fill="none" stroke="#1400ff" stroke-dasharray="5,2" d="M867.5,-724.59C823.45,-754.42 764.34,-764.34 716.55,-766.84"/>
+<polygon fill="#1400ff" stroke="#1400ff" points="716.37,-763.34 706.53,-767.27 716.67,-770.34 716.37,-763.34"/>
+</g>
+<!-- sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_ml_tracers_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge65" class="edge">
+<title>sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_ml_tracers_unstr.f90</title>
+<path fill="none" stroke="#5100ff" stroke-dasharray="5,2" d="M1056.6,-392.74C1049.95,-432.32 1024.76,-559.99 965,-645.59 933.47,-690.76 915.11,-693.71 869.5,-724.59"/>
+<path fill="none" stroke="#5100ff" stroke-dasharray="5,2" d="M867.5,-724.59C853.19,-734.29 757.13,-714.09 692.62,-699.02"/>
+<polygon fill="#5100ff" stroke="#5100ff" points="693.09,-695.54 682.56,-696.66 691.49,-702.35 693.09,-695.54"/>
+</g>
+<!-- sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_ml_truncate_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge66" class="edge">
+<title>sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_ml_truncate_unstr.f90</title>
+<path fill="none" stroke="#8e00ff" stroke-dasharray="5,2" d="M1027.13,-392.74C1009.08,-399.54 985.91,-407.96 965,-414.59 952.72,-418.49 939.45,-422.33 926.81,-425.82"/>
+<polygon fill="#8e00ff" stroke="#8e00ff" points="925.57,-422.53 916.84,-428.54 927.41,-429.28 925.57,-422.53"/>
+</g>
+<!-- sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_ml_vertical_viscosity_unstr.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge67" class="edge">
+<title>sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_ml_vertical_viscosity_unstr.f90</title>
+<path fill="none" stroke="#cc00ff" stroke-dasharray="5,2" d="M1000.77,-374.48C992.65,-373.63 984.11,-372.72 975.44,-371.8"/>
+<polygon fill="#cc00ff" stroke="#cc00ff" points="975.52,-368.29 965.21,-370.72 974.79,-375.25 975.52,-368.29"/>
+</g>
+<!-- sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_si_unstr_step_ml.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge71" class="edge">
+<title>sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_si_unstr_step_ml.f90</title>
+<path fill="none" stroke="#ff007a" stroke-dasharray="5,2" d="M1054.22,-392.77C1043.15,-422.96 1011.22,-502.67 965,-555.59 946.68,-576.57 920.84,-594.75 900.65,-607.18"/>
+<polygon fill="#ff007a" stroke="#ff007a" points="898.6,-604.32 891.82,-612.47 902.2,-610.33 898.6,-604.32"/>
+</g>
+<!-- sourcefile~rki_api.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_node31" class="node">
+<title>sourcefile~rki_api.f90</title>
+<g id="a_sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_node31"><a xlink:href="../sourcefile/rki_api.f90.html" xlink:title="rki_api.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1239.5,-191.59 1169.5,-191.59 1169.5,-167.59 1239.5,-167.59 1239.5,-191.59"/>
+<text text-anchor="middle" x="1204.5" y="-177.19" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_api.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_api.f90&#45;&gt;sourcefile~rki_handle.f90 -->
+<g id="sourcefile~~rki_si_unstr_state.f90~~AfferentGraph_edge38" class="edge">
+<title>sourcefile~rki_api.f90&#45;&gt;sourcefile~rki_handle.f90</title>
+<path fill="none" stroke="#ff7a00" stroke-dasharray="5,2" d="M1169.25,-174.56C1153,-172.18 1133.2,-169.27 1114.97,-166.59"/>
+<polygon fill="#ff7a00" stroke="#ff7a00" points="1115.43,-163.12 1105.03,-165.13 1114.42,-170.05 1115.43,-163.12"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var pansourcefilerki_si_unstr_statef90AfferentGraph = svgPanZoom('#sourcefilerki_si_unstr_statef90AfferentGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#AfferentGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="AfferentGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="202pt" height="32pt"
+ viewBox="0.00 0.00 201.50 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 197.5,-28 197.5,4 -4,4"/>
+<!-- Source File -->
+<g id="node1" class="node">
+<title>Source File</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Source File</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node2" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="193.5,-24 88.5,-24 88.5,0 193.5,0 193.5,-24"/>
+<text text-anchor="middle" x="141" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a file to a file which it depends on. A file
+is dependent upon another if the latter must be compiled before the former
+can be.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+          </div>
+        </div>
+<br>
+      <section>
+        <h2><span class="anchor" id="src"></span>Source Code</h2>
+        <div class="hl codehilite"><pre><span></span><a id="ln-1" name="ln-1" href="#ln-1"></a><span class="c">!! Semi-implicit free-surface solver state (unstructured triangular 2D barotropic).</span>
+<a id="ln-2" name="ln-2" href="#ln-2"></a><span class="k">module </span><span class="n">rki_si_unstr_state</span>
+<a id="ln-3" name="ln-3" href="#ln-3"></a><span class="w">   </span><span class="c">!! Persistent workspace for the semi-implicit (Casulli) free-surface</span>
+<a id="ln-4" name="ln-4" href="#ln-4"></a><span class="w">   </span><span class="c">!! mode on the UNSTRUCTURED (triangular) backend</span>
+<a id="ln-5" name="ln-5" href="#ln-5"></a><span class="w">   </span><span class="c">!! (`time_scheme="semi_implicit"`, `grid_type="unstructured"`).  The</span>
+<a id="ln-6" name="ln-6" href="#ln-6"></a><span class="w">   </span><span class="c">!! semi-implicit workspace for the unstructured backend; allocated only when the mode is</span>
+<a id="ln-7" name="ln-7" href="#ln-7"></a><span class="w">   </span><span class="c">!! on and living at `state%si` on `unstr_state_t`.</span>
+<a id="ln-8" name="ln-8" href="#ln-8"></a><span class="w">   </span><span class="c">!!</span>
+<a id="ln-9" name="ln-9" href="#ln-9"></a><span class="w">   </span><span class="c">!! GEOMETRY OF RECORD (cell-centred FV on a triangulation, prototype</span>
+<a id="ln-10" name="ln-10" href="#ln-10"></a><span class="w">   </span><span class="c">!! `si_unstr_proto.py`): eta lives at the triangle CIRCUMCENTRE (mesh</span>
+<a id="ln-11" name="ln-11" href="#ln-11"></a><span class="w">   </span><span class="c">!! `circumcentre_x/y`, NOT the centroid the KNP path uses); the SI face</span>
+<a id="ln-12" name="ln-12" href="#ln-12"></a><span class="w">   </span><span class="c">!! transports live on EDGES.  A triangle's three edges are stored in the</span>
+<a id="ln-13" name="ln-13" href="#ln-13"></a><span class="w">   </span><span class="c">!! `(3, ncell)` per-edge-of-cell layout (edge i opposite vertex i) — the</span>
+<a id="ln-14" name="ln-14" href="#ln-14"></a><span class="w">   </span><span class="c">!! same double-visit layout as the KNP flux path: each cell owns its 3</span>
+<a id="ln-15" name="ln-15" href="#ln-15"></a><span class="w">   </span><span class="c">!! edge values, interior edges are computed twice (no scatter, no</span>
+<a id="ln-16" name="ln-16" href="#ln-16"></a><span class="w">   </span><span class="c">!! atomics, GPU-race-free).</span>
+<a id="ln-17" name="ln-17" href="#ln-17"></a><span class="w">   </span><span class="c">!!</span>
+<a id="ln-18" name="ln-18" href="#ln-18"></a><span class="w">   </span><span class="c">!! THE LOAD-BEARING CG DETAIL: the cell-centred FV Helmholtz operator is</span>
+<a id="ln-19" name="ln-19" href="#ln-19"></a><span class="w">   </span><span class="c">!! self-adjoint in the AREA-WEIGHTED inner product `&lt;x,y&gt; = sum_c area_c</span>
+<a id="ln-20" name="ln-20" href="#ln-20"></a><span class="w">   </span><span class="c">!! x_c y_c`, NOT the plain dot (variable cell areas scale the rows).  The</span>
+<a id="ln-21" name="ln-21" href="#ln-21"></a><span class="w">   </span><span class="c">!! CG/Jacobi dot products carry the `mesh%area` weight; the residual gate</span>
+<a id="ln-22" name="ln-22" href="#ln-22"></a><span class="w">   </span><span class="c">!! uses the area-weighted norm.  Get it wrong and the operator is</span>
+<a id="ln-23" name="ln-23" href="#ln-23"></a><span class="w">   </span><span class="c">!! non-symmetric and CG stalls.  Uniform area recovers the structured</span>
+<a id="ln-24" name="ln-24" href="#ln-24"></a><span class="w">   </span><span class="c">!! harness.  (See `rki_si_unstr_helmholtz`.)</span>
+<a id="ln-25" name="ln-25" href="#ln-25"></a><span class="w">   </span><span class="c">!!</span>
+<a id="ln-26" name="ln-26" href="#ln-26"></a><span class="w">   </span><span class="c">!! All CG vectors are `(ncell)`; the per-edge workspaces are `(3, ncell)`.</span>
+<a id="ln-27" name="ln-27" href="#ln-27"></a><span class="w">   </span><span class="c">!! The `enter_data`/`exit_data` methods attach the arrays to the device;</span>
+<a id="ln-28" name="ln-28" href="#ln-28"></a><span class="w">   </span><span class="c">!! the parent `unstr_state_t` struct is mapped by `state_unstr_enter_data`</span>
+<a id="ln-29" name="ln-29" href="#ln-29"></a><span class="w">   </span><span class="c">!! BEFORE this runs (same discipline as the structured `si` slot).</span>
+<a id="ln-30" name="ln-30" href="#ln-30"></a><span class="w">   </span><span class="k">use </span><span class="n">rki_constants</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">wp</span>
+<a id="ln-31" name="ln-31" href="#ln-31"></a><span class="w">   </span><span class="k">use </span><span class="n">rki_mesh_unstr</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">mesh_unstr_t</span>
+<a id="ln-32" name="ln-32" href="#ln-32"></a><span class="w">   </span><span class="k">use </span><span class="n">rki_si_unstr_mg</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">agglom_hierarchy_unstr_t</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<a id="ln-33" name="ln-33" href="#ln-33"></a><span class="w">                              </span><span class="n">agglom_hierarchy_unstr_build</span>
+<a id="ln-34" name="ln-34" href="#ln-34"></a><span class="w">   </span><span class="k">use </span><span class="n">pic_logger</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">global_logger</span>
+<a id="ln-35" name="ln-35" href="#ln-35"></a><span class="w">   </span><span class="k">implicit none</span>
+<a id="ln-36" name="ln-36" href="#ln-36"></a><span class="k">   private</span>
+<a id="ln-37" name="ln-37" href="#ln-37"></a>
+<a id="ln-38" name="ln-38" href="#ln-38"></a><span class="k">   public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">semi_implicit_state_unstr_t</span>
+<a id="ln-39" name="ln-39" href="#ln-39"></a><span class="w">   </span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">parse_si_precond_unstr</span>
+<a id="ln-40" name="ln-40" href="#ln-40"></a><span class="w">   </span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">SI_PRECOND_NONE</span><span class="p">,</span><span class="w"> </span><span class="n">SI_PRECOND_JACOBI</span><span class="p">,</span><span class="w"> </span><span class="n">SI_PRECOND_MG</span>
+<a id="ln-41" name="ln-41" href="#ln-41"></a>
+<a id="ln-42" name="ln-42" href="#ln-42"></a><span class="w">   </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">parameter</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">EDGES_PER_TRI</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span>
+<a id="ln-43" name="ln-43" href="#ln-43"></a><span class="w">      </span><span class="c">!! Triangles only.</span>
+<a id="ln-44" name="ln-44" href="#ln-44"></a>
+<a id="ln-45" name="ln-45" href="#ln-45"></a><span class="w">   </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">parameter</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">SI_PRECOND_NONE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+<a id="ln-46" name="ln-46" href="#ln-46"></a><span class="w">      </span><span class="c">!! Unpreconditioned CG (area-weighted plain CG).</span>
+<a id="ln-47" name="ln-47" href="#ln-47"></a><span class="w">   </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">parameter</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">SI_PRECOND_JACOBI</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span>
+<a id="ln-48" name="ln-48" href="#ln-48"></a><span class="w">      </span><span class="c">!! Diagonal (Jacobi) PCG: z = eta_diag*r.  Matters MORE on triangles</span>
+<a id="ln-49" name="ln-49" href="#ln-49"></a><span class="w">      </span><span class="c">!! than on the structured grid — variable cell areas put real</span>
+<a id="ln-50" name="ln-50" href="#ln-50"></a><span class="w">      </span><span class="c">!! disparity on the Helmholtz diagonal even at uniform depth</span>
+<a id="ln-51" name="ln-51" href="#ln-51"></a><span class="w">      </span><span class="c">!! (measured diag spread O(100-1000)x on a jittered basin;</span>
+<a id="ln-52" name="ln-52" href="#ln-52"></a><span class="w">      </span><span class="c">!! ~2.5x iteration win — prototype study 4).</span>
+<a id="ln-53" name="ln-53" href="#ln-53"></a><span class="w">   </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">parameter</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">SI_PRECOND_MG</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span>
+<a id="ln-54" name="ln-54" href="#ln-54"></a><span class="w">      </span><span class="c">!! Aggregation (agglomeration) multigrid V(2,2)-cycle PCG — the triangle</span>
+<a id="ln-55" name="ln-55" href="#ln-55"></a><span class="w">      </span><span class="c">!! plateau-breaker (`rki_si_unstr_mg`).  Greedy pairwise cell-graph</span>
+<a id="ln-56" name="ln-56" href="#ln-56"></a><span class="w">      </span><span class="c">!! coarsening + Galerkin coarse operators + damped-Jacobi smoothing;</span>
+<a id="ln-57" name="ln-57" href="#ln-57"></a><span class="w">      </span><span class="c">!! numpy-prototype-validated to collapse the plain-CG plateau of</span>
+<a id="ln-58" name="ln-58" href="#ln-58"></a><span class="w">      </span><span class="c">!! thousands to tens of iters (Q12).  Opt-in; the hierarchy `mg` slot is</span>
+<a id="ln-59" name="ln-59" href="#ln-59"></a><span class="w">      </span><span class="c">!! built at `enable_si` and refreshed once per step.</span>
+<a id="ln-60" name="ln-60" href="#ln-60"></a>
+<a id="ln-61" name="ln-61" href="#ln-61"></a><span class="w">   </span><span class="k">type</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">semi_implicit_state_unstr_t</span>
+<a id="ln-62" name="ln-62" href="#ln-62"></a><span class="w">      </span><span class="c">!! CG workspace + edge face-depths for the 2D free-surface Helmholtz</span>
+<a id="ln-63" name="ln-63" href="#ln-63"></a><span class="w">      </span><span class="c">!! solve on the triangulation.</span>
+<a id="ln-64" name="ln-64" href="#ln-64"></a>
+<a id="ln-65" name="ln-65" href="#ln-65"></a><span class="w">      </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">ncells_total</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+<a id="ln-66" name="ln-66" href="#ln-66"></a><span class="w">         </span><span class="c">!! Cell count cached at init (all CG vectors are this long).</span>
+<a id="ln-67" name="ln-67" href="#ln-67"></a><span class="w">      </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">nz_si</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+<a id="ln-68" name="ln-68" href="#ln-68"></a><span class="w">         </span><span class="c">!! Layer count for the 3D SI path (0 or 1 = 2D-only; &gt; 1 = the</span>
+<a id="ln-69" name="ln-69" href="#ln-69"></a><span class="w">         </span><span class="c">!! P3.2 multilayer column slots below are allocated).</span>
+<a id="ln-70" name="ln-70" href="#ln-70"></a>
+<a id="ln-71" name="ln-71" href="#ln-71"></a><span class="w">      </span><span class="c">! Free-surface elevation solved implicitly, at the CIRCUMCENTRE.</span>
+<a id="ln-72" name="ln-72" href="#ln-72"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">eta</span><span class="p">(:)</span>
+<a id="ln-73" name="ln-73" href="#ln-73"></a><span class="w">         </span><span class="c">!! Surface elevation eta^{n+1} (m), size ncells_total.  eta = h + b</span>
+<a id="ln-74" name="ln-74" href="#ln-74"></a><span class="w">         </span><span class="c">!! at circumcentres.  Warm-started from eta^n each step; the CG</span>
+<a id="ln-75" name="ln-75" href="#ln-75"></a><span class="w">         </span><span class="c">!! iterate.  Boundary/halo entries hold the seeded Dirichlet ghost.</span>
+<a id="ln-76" name="ln-76" href="#ln-76"></a>
+<a id="ln-77" name="ln-77" href="#ln-77"></a><span class="w">      </span><span class="c">! CG vectors (matrix-free), all size ncells_total.</span>
+<a id="ln-78" name="ln-78" href="#ln-78"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">eta_r</span><span class="p">(:)</span>
+<a id="ln-79" name="ln-79" href="#ln-79"></a><span class="w">         </span><span class="c">!! Residual r = rhs - A*eta.</span>
+<a id="ln-80" name="ln-80" href="#ln-80"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">eta_p</span><span class="p">(:)</span>
+<a id="ln-81" name="ln-81" href="#ln-81"></a><span class="w">         </span><span class="c">!! Search direction p.</span>
+<a id="ln-82" name="ln-82" href="#ln-82"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">eta_Ap</span><span class="p">(:)</span>
+<a id="ln-83" name="ln-83" href="#ln-83"></a><span class="w">         </span><span class="c">!! Operator apply A*p.</span>
+<a id="ln-84" name="ln-84" href="#ln-84"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">eta_z</span><span class="p">(:)</span>
+<a id="ln-85" name="ln-85" href="#ln-85"></a><span class="w">         </span><span class="c">!! Preconditioned residual z = M^{-1} r (Jacobi); unread on plain CG.</span>
+<a id="ln-86" name="ln-86" href="#ln-86"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">eta_diag</span><span class="p">(:)</span>
+<a id="ln-87" name="ln-87" href="#ln-87"></a><span class="w">         </span><span class="c">!! 1/diag of the Helmholtz operator (Jacobi preconditioner).</span>
+<a id="ln-88" name="ln-88" href="#ln-88"></a>
+<a id="ln-89" name="ln-89" href="#ln-89"></a><span class="w">      </span><span class="c">! Per-edge-of-cell prognostic face transport U_e (m^2/s), the</span>
+<a id="ln-90" name="ln-90" href="#ln-90"></a><span class="w">      </span><span class="c">! staggered (Casulli) quantity.  Double-visit `(3, ncell)`: transport</span>
+<a id="ln-91" name="ln-91" href="#ln-91"></a><span class="w">      </span><span class="c">! along the OUTWARD edge-normal of edge i of cell k.  Holds the</span>
+<a id="ln-92" name="ln-92" href="#ln-92"></a><span class="w">      </span><span class="c">! predictor U*_e between the predictor and the back-substitution, then</span>
+<a id="ln-93" name="ln-93" href="#ln-93"></a><span class="w">      </span><span class="c">! the final U^{n+1}_e.  The A-grid cell momenta xmom_cv/ymom_cv are a</span>
+<a id="ln-94" name="ln-94" href="#ln-94"></a><span class="w">      </span><span class="c">! step-end least-squares reconstruction for the KNP seam.</span>
+<a id="ln-95" name="ln-95" href="#ln-95"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">u_edge</span><span class="p">(:,</span><span class="w"> </span><span class="p">:)</span>
+<a id="ln-96" name="ln-96" href="#ln-96"></a><span class="w">         </span><span class="c">!! Edge-normal transport (m^2/s), shape (3, ncells_total); + along</span>
+<a id="ln-97" name="ln-97" href="#ln-97"></a><span class="w">         </span><span class="c">!! the stored outward edge-normal.</span>
+<a id="ln-98" name="ln-98" href="#ln-98"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">u_star</span><span class="p">(:,</span><span class="w"> </span><span class="p">:)</span>
+<a id="ln-99" name="ln-99" href="#ln-99"></a><span class="w">         </span><span class="c">!! Predictor U*_e (m^2/s), shape (3, ncells_total).</span>
+<a id="ln-100" name="ln-100" href="#ln-100"></a>
+<a id="ln-101" name="ln-101" href="#ln-101"></a><span class="w">      </span><span class="c">! Per-edge frozen effective depth Hf weighting the div(Hf grad eta)</span>
+<a id="ln-102" name="ln-102" href="#ln-102"></a><span class="w">      </span><span class="c">! TPFA stencil (wall edges 0; open/Dirichlet edges real).  Shape</span>
+<a id="ln-103" name="ln-103" href="#ln-103"></a><span class="w">      </span><span class="c">! (3, ncell); shared by the operator, back-sub and recovery (frozen</span>
+<a id="ln-104" name="ln-104" href="#ln-104"></a><span class="w">      </span><span class="c">! over the step, rule R2).</span>
+<a id="ln-105" name="ln-105" href="#ln-105"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">Hf_edge</span><span class="p">(:,</span><span class="w"> </span><span class="p">:)</span>
+<a id="ln-106" name="ln-106" href="#ln-106"></a><span class="w">         </span><span class="c">!! Edge effective depth (m), shape (3, ncells_total).</span>
+<a id="ln-107" name="ln-107" href="#ln-107"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">eta_ghost_edge</span><span class="p">(:,</span><span class="w"> </span><span class="p">:)</span>
+<a id="ln-108" name="ln-108" href="#ln-108"></a><span class="w">         </span><span class="c">!! Dirichlet ghost surface eta (m) on tidal/clamped boundary edges,</span>
+<a id="ln-109" name="ln-109" href="#ln-109"></a><span class="w">         </span><span class="c">!! shape (3, ncells_total); 0 elsewhere (unread — Hf=0 there).</span>
+<a id="ln-110" name="ln-110" href="#ln-110"></a><span class="w">         </span><span class="c">!! Filled alongside Hf_edge each step (frozen, rule R2).</span>
+<a id="ln-111" name="ln-111" href="#ln-111"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">u_n_edge</span><span class="p">(:,</span><span class="w"> </span><span class="p">:)</span>
+<a id="ln-112" name="ln-112" href="#ln-112"></a><span class="w">         </span><span class="c">!! Saved U^n edge transport (m^2/s), shape (3, ncells_total) — the</span>
+<a id="ln-113" name="ln-113" href="#ln-113"></a><span class="w">         </span><span class="c">!! (1-theta) side of the theta-blend RHS; dead edges zeroed (R3).</span>
+<a id="ln-114" name="ln-114" href="#ln-114"></a>
+<a id="ln-115" name="ln-115" href="#ln-115"></a><span class="w">      </span><span class="c">! CG controls (`&amp;si_nml`; host scalars, set at init from cfg).</span>
+<a id="ln-116" name="ln-116" href="#ln-116"></a><span class="w">      </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">precond</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SI_PRECOND_NONE</span>
+<a id="ln-117" name="ln-117" href="#ln-117"></a><span class="w">         </span><span class="c">!! Preconditioner (`SI_PRECOND_*`): NONE = plain CG (default),</span>
+<a id="ln-118" name="ln-118" href="#ln-118"></a><span class="w">         </span><span class="c">!! JACOBI = diagonal PCG, MG = aggregation-multigrid PCG.</span>
+<a id="ln-119" name="ln-119" href="#ln-119"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">rtol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0e-10_wp</span>
+<a id="ln-120" name="ln-120" href="#ln-120"></a><span class="w">         </span><span class="c">!! CG relative residual tolerance (area-weighted</span>
+<a id="ln-121" name="ln-121" href="#ln-121"></a><span class="w">         </span><span class="c">!! ||r||^2 &lt; rtol^2*||rhs||^2).</span>
+<a id="ln-122" name="ln-122" href="#ln-122"></a>
+<a id="ln-123" name="ln-123" href="#ln-123"></a><span class="w">      </span><span class="c">! Aggregation-multigrid preconditioner hierarchy — built at enable_si</span>
+<a id="ln-124" name="ln-124" href="#ln-124"></a><span class="w">      </span><span class="c">! (host) only when precond == MG, refreshed once per step, attached to</span>
+<a id="ln-125" name="ln-125" href="#ln-125"></a><span class="w">      </span><span class="c">! the device by this state's enter_data.</span>
+<a id="ln-126" name="ln-126" href="#ln-126"></a><span class="w">      </span><span class="kt">logical</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">use_mg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">false</span><span class="p">.</span>
+<a id="ln-127" name="ln-127" href="#ln-127"></a><span class="w">         </span><span class="c">!! MG preconditioner active (host scalar; set by enable_si).</span>
+<a id="ln-128" name="ln-128" href="#ln-128"></a><span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="n">agglom_hierarchy_unstr_t</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">mg</span>
+<a id="ln-129" name="ln-129" href="#ln-129"></a><span class="w">         </span><span class="c">!! Fine-to-coarse aggregation-MG level stack (`rki_si_unstr_mg`).</span>
+<a id="ln-130" name="ln-130" href="#ln-130"></a>
+<a id="ln-131" name="ln-131" href="#ln-131"></a><span class="w">      </span><span class="c">! Diagnostics (host scalars).</span>
+<a id="ln-132" name="ln-132" href="#ln-132"></a><span class="w">      </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">cg_iters</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+<a id="ln-133" name="ln-133" href="#ln-133"></a><span class="w">         </span><span class="c">!! CG iterations on the most recent step (go/no-go cost number).</span>
+<a id="ln-134" name="ln-134" href="#ln-134"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">mass_res</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<a id="ln-135" name="ln-135" href="#ln-135"></a><span class="w">         </span><span class="c">!! Area-weighted interior residual sum at solve end (m^3) — the</span>
+<a id="ln-136" name="ln-136" href="#ln-136"></a><span class="w">         </span><span class="c">!! per-step mass-consistency diagnostic.</span>
+<a id="ln-137" name="ln-137" href="#ln-137"></a><span class="w">      </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">newton_iters</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+<a id="ln-138" name="ln-138" href="#ln-138"></a><span class="w">         </span><span class="c">!! Wet/dry Newton outer iterations on the most recent step (host</span>
+<a id="ln-139" name="ln-139" href="#ln-139"></a><span class="w">         </span><span class="c">!! scalar; read by tests / logging).</span>
+<a id="ln-140" name="ln-140" href="#ln-140"></a>
+<a id="ln-141" name="ln-141" href="#ln-141"></a><span class="w">      </span><span class="c">! --- Casulli wetting/drying (P3.3) — allocated only when `wetdry`</span>
+<a id="ln-142" name="ln-142" href="#ln-142"></a><span class="w">      </span><span class="c">!     is on.  The V(eta)/a(eta)/Newton machinery; per-cell,</span>
+<a id="ln-143" name="ln-143" href="#ln-143"></a><span class="w">      </span><span class="c">!     mesh-agnostic (prototype-confirmed).  All size (ncells) with</span>
+<a id="ln-144" name="ln-144" href="#ln-144"></a><span class="w">      </span><span class="c">!     the sub-bottom table (n_sub, ncells), cell index LAST. ---</span>
+<a id="ln-145" name="ln-145" href="#ln-145"></a><span class="w">      </span><span class="kt">logical</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">wetdry</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">false</span><span class="p">.</span>
+<a id="ln-146" name="ln-146" href="#ln-146"></a><span class="w">         </span><span class="c">!! Wet/dry mode on (host scalar; set by `state_unstr_enable_si`).</span>
+<a id="ln-147" name="ln-147" href="#ln-147"></a><span class="w">      </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">n_sub</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span>
+<a id="ln-148" name="ln-148" href="#ln-148"></a><span class="w">         </span><span class="c">!! Subgrid sub-bottoms per cell (1 = v1 flat bottom).</span>
+<a id="ln-149" name="ln-149" href="#ln-149"></a><span class="w">      </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">bsub_fill</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+<a id="ln-150" name="ln-150" href="#ln-150"></a><span class="w">         </span><span class="c">!! Sub-bottom fill mode (`SI_BSUB_FILL_*` from rki_si_common; 0=FLAT</span>
+<a id="ln-151" name="ln-151" href="#ln-151"></a><span class="w">         </span><span class="c">!! default ⇒ bit-identical, 1=LINEAR ⇒ analytic subgrid ramp).  Set</span>
+<a id="ln-152" name="ln-152" href="#ln-152"></a><span class="w">         </span><span class="c">!! by `state_unstr_enable_si`.</span>
+<a id="ln-153" name="ln-153" href="#ln-153"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">b_sub</span><span class="p">(:,</span><span class="w"> </span><span class="p">:)</span>
+<a id="ln-154" name="ln-154" href="#ln-154"></a><span class="w">         </span><span class="c">!! Per-cell SORTED sub-bottom bed elevations (n_sub, ncells) (m).</span>
+<a id="ln-155" name="ln-155" href="#ln-155"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">b_min</span><span class="p">(:)</span>
+<a id="ln-156" name="ln-156" href="#ln-156"></a><span class="w">         </span><span class="c">!! Deepest sub-bottom per cell (m) — the sill bed at edges.</span>
+<a id="ln-157" name="ln-157" href="#ln-157"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">a_wet</span><span class="p">(:)</span>
+<a id="ln-158" name="ln-158" href="#ln-158"></a><span class="w">         </span><span class="c">!! Wet fraction a(eta) in [0,1] at the current Newton iterate.</span>
+<a id="ln-159" name="ln-159" href="#ln-159"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">mass_diag</span><span class="p">(:)</span>
+<a id="ln-160" name="ln-160" href="#ln-160"></a><span class="w">         </span><span class="c">!! Newton mass diagonal a+floor — the operator's `M` term.</span>
+<a id="ln-161" name="ln-161" href="#ln-161"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">v_cell</span><span class="p">(:)</span>
+<a id="ln-162" name="ln-162" href="#ln-162"></a><span class="w">         </span><span class="c">!! Wetted mean depth v(eta) at the current iterate (m).</span>
+<a id="ln-163" name="ln-163" href="#ln-163"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">rhs_d</span><span class="p">(:)</span>
+<a id="ln-164" name="ln-164" href="#ln-164"></a><span class="w">         </span><span class="c">!! Depth-units Newton RHS v(eta^n) - dt*div[blend] — held across</span>
+<a id="ln-165" name="ln-165" href="#ln-165"></a><span class="w">         </span><span class="c">!! the Newton loop.</span>
+<a id="ln-166" name="ln-166" href="#ln-166"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">newton_dz</span><span class="p">(:)</span>
+<a id="ln-167" name="ln-167" href="#ln-167"></a><span class="w">         </span><span class="c">!! Newton increment: the inner CG solves J*dz = -F from zero.</span>
+<a id="ln-168" name="ln-168" href="#ln-168"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">newton_F</span><span class="p">(:)</span>
+<a id="ln-169" name="ln-169" href="#ln-169"></a><span class="w">         </span><span class="c">!! Nonlinear residual F = v + T*eta - rhs.</span>
+<a id="ln-170" name="ln-170" href="#ln-170"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">newton_Jeta</span><span class="p">(:)</span>
+<a id="ln-171" name="ln-171" href="#ln-171"></a><span class="w">         </span><span class="c">!! Scratch for the full mass-diag operator apply J*eta (the</span>
+<a id="ln-172" name="ln-172" href="#ln-172"></a><span class="w">         </span><span class="c">!! stiffness is recovered as J*eta - mass_diag*eta).</span>
+<a id="ln-173" name="ln-173" href="#ln-173"></a>
+<a id="ln-174" name="ln-174" href="#ln-174"></a><span class="w">      </span><span class="c">! --- P3.2 (3D multilayer) column slots — allocated only when</span>
+<a id="ln-175" name="ln-175" href="#ln-175"></a><span class="w">      </span><span class="c">!     nz_si &gt; 1.  Layer convention: (nz, ncells) axis order — k=1</span>
+<a id="ln-176" name="ln-176" href="#ln-176"></a><span class="w">      </span><span class="c">!     bed, k=nz surface, cell index LAST (unstructured convention,</span>
+<a id="ln-177" name="ln-177" href="#ln-177"></a><span class="w">      </span><span class="c">!     OPPOSITE of the structured (nx,ny,nz)). ---</span>
+<a id="ln-178" name="ln-178" href="#ln-178"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">g_col_u</span><span class="p">(:,</span><span class="w"> </span><span class="p">:)</span>
+<a id="ln-179" name="ln-179" href="#ln-179"></a><span class="w">         </span><span class="c">!! Column x-velocity response G_k^u = solve(u^n + tendencies)</span>
+<a id="ln-180" name="ln-180" href="#ln-180"></a><span class="w">         </span><span class="c">!! (nz, ncells_total) [m/s].</span>
+<a id="ln-181" name="ln-181" href="#ln-181"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">g_col_v</span><span class="p">(:,</span><span class="w"> </span><span class="p">:)</span>
+<a id="ln-182" name="ln-182" href="#ln-182"></a><span class="w">         </span><span class="c">!! Column y-velocity response G_k^v (nz, ncells_total) [m/s].</span>
+<a id="ln-183" name="ln-183" href="#ln-183"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">r_col</span><span class="p">(:,</span><span class="w"> </span><span class="p">:)</span>
+<a id="ln-184" name="ln-184" href="#ln-184"></a><span class="w">         </span><span class="c">!! Column response R_k = solve(-1) (nz, ncells_total) [m/s]</span>
+<a id="ln-185" name="ln-185" href="#ln-185"></a><span class="w">         </span><span class="c">!! (&lt;= 0); axis-independent — u and v share the tridiagonal.</span>
+<a id="ln-186" name="ln-186" href="#ln-186"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">nu_iface</span><span class="p">(:,</span><span class="w"> </span><span class="p">:)</span>
+<a id="ln-187" name="ln-187" href="#ln-187"></a><span class="w">         </span><span class="c">!! PP81 interface viscosity (nz+1, ncells_total) [m^2/s]; index k</span>
+<a id="ln-188" name="ln-188" href="#ln-188"></a><span class="w">         </span><span class="c">!! = interface BELOW layer k (bed row 1 and surface row nz+1 = 0).</span>
+<a id="ln-189" name="ln-189" href="#ln-189"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">Hhat_cell</span><span class="p">(:)</span>
+<a id="ln-190" name="ln-190" href="#ln-190"></a><span class="w">         </span><span class="c">!! Effective column depth Hhat = -sum_k h_k R_k (ncells_total) [m].</span>
+<a id="ln-191" name="ln-191" href="#ln-191"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">Gbar_cell_x</span><span class="p">(:)</span>
+<a id="ln-192" name="ln-192" href="#ln-192"></a><span class="w">         </span><span class="c">!! Column-integrated predictor transport sum_k h_k G_k^u</span>
+<a id="ln-193" name="ln-193" href="#ln-193"></a><span class="w">         </span><span class="c">!! (ncells_total) [m^2/s].</span>
+<a id="ln-194" name="ln-194" href="#ln-194"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">Gbar_cell_y</span><span class="p">(:)</span>
+<a id="ln-195" name="ln-195" href="#ln-195"></a><span class="w">         </span><span class="c">!! Column-integrated y predictor transport (ncells_total) [m^2/s].</span>
+<a id="ln-196" name="ln-196" href="#ln-196"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">u_edge_layer</span><span class="p">(:,</span><span class="w"> </span><span class="p">:,</span><span class="w"> </span><span class="p">:)</span>
+<a id="ln-197" name="ln-197" href="#ln-197"></a><span class="w">         </span><span class="c">!! Recovered per-layer edge-normal transports</span>
+<a id="ln-198" name="ln-198" href="#ln-198"></a><span class="w">         </span><span class="c">!! (nz, EDGES_PER_TRI, ncells_total) [m^2/s] — double-visit, same</span>
+<a id="ln-199" name="ln-199" href="#ln-199"></a><span class="w">         </span><span class="c">!! outward-normal convention as `u_edge`.  Column sums telescope to</span>
+<a id="ln-200" name="ln-200" href="#ln-200"></a><span class="w">         </span><span class="c">!! the 2D back-substituted edge transport (mass consistency).</span>
+<a id="ln-201" name="ln-201" href="#ln-201"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">mass_flux_edge</span><span class="p">(:,</span><span class="w"> </span><span class="p">:)</span>
+<a id="ln-202" name="ln-202" href="#ln-202"></a><span class="w">         </span><span class="c">!! Blended column edge mass flux theta*sum_k u_edge_layer +</span>
+<a id="ln-203" name="ln-203" href="#ln-203"></a><span class="w">         </span><span class="c">!! (1-theta)*U^n_e (EDGES_PER_TRI, ncells_total) [m^2/s] — the</span>
+<a id="ln-204" name="ln-204" href="#ln-204"></a><span class="w">         </span><span class="c">!! EXACT flux the eta update used; drives the dsig tracer split.</span>
+<a id="ln-205" name="ln-205" href="#ln-205"></a>
+<a id="ln-206" name="ln-206" href="#ln-206"></a><span class="w">   </span><span class="k">contains</span>
+<a id="ln-207" name="ln-207" href="#ln-207"></a><span class="k">      procedure</span><span class="p">,</span><span class="w"> </span><span class="k">non_overridable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">init</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">si_unstr_state_init</span>
+<a id="ln-208" name="ln-208" href="#ln-208"></a><span class="w">      </span><span class="k">procedure</span><span class="p">,</span><span class="w"> </span><span class="k">non_overridable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">destroy</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">si_unstr_state_destroy</span>
+<a id="ln-209" name="ln-209" href="#ln-209"></a><span class="w">      </span><span class="k">procedure</span><span class="p">,</span><span class="w"> </span><span class="k">non_overridable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">enter_data</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">si_unstr_state_enter_data</span>
+<a id="ln-210" name="ln-210" href="#ln-210"></a><span class="w">      </span><span class="k">procedure</span><span class="p">,</span><span class="w"> </span><span class="k">non_overridable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">exit_data</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">si_unstr_state_exit_data</span>
+<a id="ln-211" name="ln-211" href="#ln-211"></a><span class="w">      </span><span class="k">procedure</span><span class="p">,</span><span class="w"> </span><span class="k">non_overridable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">build_mg</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">si_unstr_state_build_mg</span>
+<a id="ln-212" name="ln-212" href="#ln-212"></a><span class="w">   </span><span class="k">end type </span><span class="n">semi_implicit_state_unstr_t</span>
+<a id="ln-213" name="ln-213" href="#ln-213"></a>
+<a id="ln-214" name="ln-214" href="#ln-214"></a><span class="k">contains</span>
+<a id="ln-215" name="ln-215" href="#ln-215"></a>
+<a id="ln-216" name="ln-216" href="#ln-216"></a><span class="k">   subroutine </span><span class="n">si_unstr_state_init</span><span class="p">(</span><span class="n">this</span><span class="p">,</span><span class="w"> </span><span class="n">mesh</span><span class="p">,</span><span class="w"> </span><span class="n">nz</span><span class="p">,</span><span class="w"> </span><span class="n">wetdry</span><span class="p">,</span><span class="w"> </span><span class="n">n_sub</span><span class="p">)</span>
+<a id="ln-217" name="ln-217" href="#ln-217"></a><span class="w">      </span><span class="c">!! Allocate workspace arrays at the mesh size, zero-filled.  When `nz`</span>
+<a id="ln-218" name="ln-218" href="#ln-218"></a><span class="w">      </span><span class="c">!! is present and &gt; 1 the P3.2 (3D multilayer) column slots are also</span>
+<a id="ln-219" name="ln-219" href="#ln-219"></a><span class="w">      </span><span class="c">!! allocated; when `wetdry` is present and .true. the P3.3 Casulli</span>
+<a id="ln-220" name="ln-220" href="#ln-220"></a><span class="w">      </span><span class="c">!! wet/dry slots are (with `n_sub` sub-bottoms, default 1); otherwise</span>
+<a id="ln-221" name="ln-221" href="#ln-221"></a><span class="w">      </span><span class="c">!! only the 2D barotropic slots exist and the 2D path is unchanged.</span>
+<a id="ln-222" name="ln-222" href="#ln-222"></a><span class="w">      </span><span class="c">!! Plain host allocation (runs before `enter_data`, so a device loop</span>
+<a id="ln-223" name="ln-223" href="#ln-223"></a><span class="w">      </span><span class="c">!! would round-trip).</span>
+<a id="ln-224" name="ln-224" href="#ln-224"></a><span class="w">      </span><span class="k">class</span><span class="p">(</span><span class="n">semi_implicit_state_unstr_t</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">this</span>
+<a id="ln-225" name="ln-225" href="#ln-225"></a><span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="n">mesh_unstr_t</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">mesh</span>
+<a id="ln-226" name="ln-226" href="#ln-226"></a><span class="w">      </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">),</span><span class="w"> </span><span class="k">optional</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">nz</span>
+<a id="ln-227" name="ln-227" href="#ln-227"></a><span class="w">         </span><span class="c">!! Number of vertical layers.  Absent or &lt;= 1 selects the 2D path.</span>
+<a id="ln-228" name="ln-228" href="#ln-228"></a><span class="w">      </span><span class="kt">logical</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">),</span><span class="w"> </span><span class="k">optional</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">wetdry</span>
+<a id="ln-229" name="ln-229" href="#ln-229"></a><span class="w">         </span><span class="c">!! Casulli wetting/drying on.  Absent/.false. =&gt; slots unallocated.</span>
+<a id="ln-230" name="ln-230" href="#ln-230"></a><span class="w">      </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">),</span><span class="w"> </span><span class="k">optional</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">n_sub</span>
+<a id="ln-231" name="ln-231" href="#ln-231"></a><span class="w">         </span><span class="c">!! Subgrid sub-bottoms per cell (&gt;= 1).  Absent =&gt; 1 (flat bottom).</span>
+<a id="ln-232" name="ln-232" href="#ln-232"></a>
+<a id="ln-233" name="ln-233" href="#ln-233"></a><span class="w">      </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">nz_loc</span><span class="p">,</span><span class="w"> </span><span class="n">ns</span>
+<a id="ln-234" name="ln-234" href="#ln-234"></a><span class="w">      </span><span class="kt">logical</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">wd</span>
+<a id="ln-235" name="ln-235" href="#ln-235"></a>
+<a id="ln-236" name="ln-236" href="#ln-236"></a><span class="w">      </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mesh</span><span class="p">%</span><span class="n">ncells_total</span>
+<a id="ln-237" name="ln-237" href="#ln-237"></a><span class="w">      </span><span class="n">this</span><span class="p">%</span><span class="n">ncells_total</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">n</span>
+<a id="ln-238" name="ln-238" href="#ln-238"></a><span class="w">      </span><span class="n">nz_loc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+<a id="ln-239" name="ln-239" href="#ln-239"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">present</span><span class="p">(</span><span class="n">nz</span><span class="p">))</span><span class="w"> </span><span class="n">nz_loc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nz</span>
+<a id="ln-240" name="ln-240" href="#ln-240"></a><span class="w">      </span><span class="n">wd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">false</span><span class="p">.</span>
+<a id="ln-241" name="ln-241" href="#ln-241"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">present</span><span class="p">(</span><span class="n">wetdry</span><span class="p">))</span><span class="w"> </span><span class="n">wd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">wetdry</span>
+<a id="ln-242" name="ln-242" href="#ln-242"></a><span class="w">      </span><span class="n">ns</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span>
+<a id="ln-243" name="ln-243" href="#ln-243"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">present</span><span class="p">(</span><span class="n">n_sub</span><span class="p">))</span><span class="w"> </span><span class="n">ns</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">n_sub</span><span class="p">)</span>
+<a id="ln-244" name="ln-244" href="#ln-244"></a>
+<a id="ln-245" name="ln-245" href="#ln-245"></a><span class="w">      </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">eta</span><span class="p">(</span><span class="n">n</span><span class="p">),</span><span class="w"> </span><span class="n">source</span><span class="o">=</span><span class="mf">0.0_wp</span><span class="p">)</span>
+<a id="ln-246" name="ln-246" href="#ln-246"></a><span class="w">      </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">eta_r</span><span class="p">(</span><span class="n">n</span><span class="p">),</span><span class="w"> </span><span class="n">source</span><span class="o">=</span><span class="mf">0.0_wp</span><span class="p">)</span>
+<a id="ln-247" name="ln-247" href="#ln-247"></a><span class="w">      </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">eta_p</span><span class="p">(</span><span class="n">n</span><span class="p">),</span><span class="w"> </span><span class="n">source</span><span class="o">=</span><span class="mf">0.0_wp</span><span class="p">)</span>
+<a id="ln-248" name="ln-248" href="#ln-248"></a><span class="w">      </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">eta_Ap</span><span class="p">(</span><span class="n">n</span><span class="p">),</span><span class="w"> </span><span class="n">source</span><span class="o">=</span><span class="mf">0.0_wp</span><span class="p">)</span>
+<a id="ln-249" name="ln-249" href="#ln-249"></a><span class="w">      </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">eta_z</span><span class="p">(</span><span class="n">n</span><span class="p">),</span><span class="w"> </span><span class="n">source</span><span class="o">=</span><span class="mf">0.0_wp</span><span class="p">)</span>
+<a id="ln-250" name="ln-250" href="#ln-250"></a><span class="w">      </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">eta_diag</span><span class="p">(</span><span class="n">n</span><span class="p">),</span><span class="w"> </span><span class="n">source</span><span class="o">=</span><span class="mf">0.0_wp</span><span class="p">)</span>
+<a id="ln-251" name="ln-251" href="#ln-251"></a><span class="w">      </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">u_edge</span><span class="p">(</span><span class="n">EDGES_PER_TRI</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">),</span><span class="w"> </span><span class="n">source</span><span class="o">=</span><span class="mf">0.0_wp</span><span class="p">)</span>
+<a id="ln-252" name="ln-252" href="#ln-252"></a><span class="w">      </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">u_star</span><span class="p">(</span><span class="n">EDGES_PER_TRI</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">),</span><span class="w"> </span><span class="n">source</span><span class="o">=</span><span class="mf">0.0_wp</span><span class="p">)</span>
+<a id="ln-253" name="ln-253" href="#ln-253"></a><span class="w">      </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">Hf_edge</span><span class="p">(</span><span class="n">EDGES_PER_TRI</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">),</span><span class="w"> </span><span class="n">source</span><span class="o">=</span><span class="mf">0.0_wp</span><span class="p">)</span>
+<a id="ln-254" name="ln-254" href="#ln-254"></a><span class="w">      </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">eta_ghost_edge</span><span class="p">(</span><span class="n">EDGES_PER_TRI</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">),</span><span class="w"> </span><span class="n">source</span><span class="o">=</span><span class="mf">0.0_wp</span><span class="p">)</span>
+<a id="ln-255" name="ln-255" href="#ln-255"></a><span class="w">      </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">u_n_edge</span><span class="p">(</span><span class="n">EDGES_PER_TRI</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">),</span><span class="w"> </span><span class="n">source</span><span class="o">=</span><span class="mf">0.0_wp</span><span class="p">)</span>
+<a id="ln-256" name="ln-256" href="#ln-256"></a>
+<a id="ln-257" name="ln-257" href="#ln-257"></a><span class="w">      </span><span class="c">! --- P3.2 (3D multilayer) column slots (only when nz &gt; 1) ---</span>
+<a id="ln-258" name="ln-258" href="#ln-258"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">nz_loc</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<a id="ln-259" name="ln-259" href="#ln-259"></a><span class="k">         </span><span class="n">this</span><span class="p">%</span><span class="n">nz_si</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nz_loc</span>
+<a id="ln-260" name="ln-260" href="#ln-260"></a><span class="w">         </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">g_col_u</span><span class="p">(</span><span class="n">nz_loc</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">),</span><span class="w"> </span><span class="n">source</span><span class="o">=</span><span class="mf">0.0_wp</span><span class="p">)</span>
+<a id="ln-261" name="ln-261" href="#ln-261"></a><span class="w">         </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">g_col_v</span><span class="p">(</span><span class="n">nz_loc</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">),</span><span class="w"> </span><span class="n">source</span><span class="o">=</span><span class="mf">0.0_wp</span><span class="p">)</span>
+<a id="ln-262" name="ln-262" href="#ln-262"></a><span class="w">         </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">r_col</span><span class="p">(</span><span class="n">nz_loc</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">),</span><span class="w"> </span><span class="n">source</span><span class="o">=</span><span class="mf">0.0_wp</span><span class="p">)</span>
+<a id="ln-263" name="ln-263" href="#ln-263"></a><span class="w">         </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">nu_iface</span><span class="p">(</span><span class="n">nz_loc</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">),</span><span class="w"> </span><span class="n">source</span><span class="o">=</span><span class="mf">0.0_wp</span><span class="p">)</span>
+<a id="ln-264" name="ln-264" href="#ln-264"></a><span class="w">         </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">Hhat_cell</span><span class="p">(</span><span class="n">n</span><span class="p">),</span><span class="w"> </span><span class="n">source</span><span class="o">=</span><span class="mf">0.0_wp</span><span class="p">)</span>
+<a id="ln-265" name="ln-265" href="#ln-265"></a><span class="w">         </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">Gbar_cell_x</span><span class="p">(</span><span class="n">n</span><span class="p">),</span><span class="w"> </span><span class="n">source</span><span class="o">=</span><span class="mf">0.0_wp</span><span class="p">)</span>
+<a id="ln-266" name="ln-266" href="#ln-266"></a><span class="w">         </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">Gbar_cell_y</span><span class="p">(</span><span class="n">n</span><span class="p">),</span><span class="w"> </span><span class="n">source</span><span class="o">=</span><span class="mf">0.0_wp</span><span class="p">)</span>
+<a id="ln-267" name="ln-267" href="#ln-267"></a><span class="w">         </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">u_edge_layer</span><span class="p">(</span><span class="n">nz_loc</span><span class="p">,</span><span class="w"> </span><span class="n">EDGES_PER_TRI</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">),</span><span class="w"> </span><span class="n">source</span><span class="o">=</span><span class="mf">0.0_wp</span><span class="p">)</span>
+<a id="ln-268" name="ln-268" href="#ln-268"></a><span class="w">         </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">mass_flux_edge</span><span class="p">(</span><span class="n">EDGES_PER_TRI</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">),</span><span class="w"> </span><span class="n">source</span><span class="o">=</span><span class="mf">0.0_wp</span><span class="p">)</span>
+<a id="ln-269" name="ln-269" href="#ln-269"></a><span class="w">      </span><span class="k">end if</span>
+<a id="ln-270" name="ln-270" href="#ln-270"></a>
+<a id="ln-271" name="ln-271" href="#ln-271"></a><span class="w">      </span><span class="c">! --- P3.3 Casulli wet/dry slots (only when wetdry on) ---</span>
+<a id="ln-272" name="ln-272" href="#ln-272"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">wd</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<a id="ln-273" name="ln-273" href="#ln-273"></a><span class="k">         </span><span class="n">this</span><span class="p">%</span><span class="n">wetdry</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+<a id="ln-274" name="ln-274" href="#ln-274"></a><span class="w">         </span><span class="n">this</span><span class="p">%</span><span class="n">n_sub</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ns</span>
+<a id="ln-275" name="ln-275" href="#ln-275"></a><span class="w">         </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">b_sub</span><span class="p">(</span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">),</span><span class="w"> </span><span class="n">source</span><span class="o">=</span><span class="mf">0.0_wp</span><span class="p">)</span>
+<a id="ln-276" name="ln-276" href="#ln-276"></a><span class="w">         </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">b_min</span><span class="p">(</span><span class="n">n</span><span class="p">),</span><span class="w"> </span><span class="n">source</span><span class="o">=</span><span class="mf">0.0_wp</span><span class="p">)</span>
+<a id="ln-277" name="ln-277" href="#ln-277"></a><span class="w">         </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">a_wet</span><span class="p">(</span><span class="n">n</span><span class="p">),</span><span class="w"> </span><span class="n">source</span><span class="o">=</span><span class="mf">1.0_wp</span><span class="p">)</span>
+<a id="ln-278" name="ln-278" href="#ln-278"></a><span class="w">         </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">mass_diag</span><span class="p">(</span><span class="n">n</span><span class="p">),</span><span class="w"> </span><span class="n">source</span><span class="o">=</span><span class="mf">1.0_wp</span><span class="p">)</span>
+<a id="ln-279" name="ln-279" href="#ln-279"></a><span class="w">         </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">v_cell</span><span class="p">(</span><span class="n">n</span><span class="p">),</span><span class="w"> </span><span class="n">source</span><span class="o">=</span><span class="mf">0.0_wp</span><span class="p">)</span>
+<a id="ln-280" name="ln-280" href="#ln-280"></a><span class="w">         </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">rhs_d</span><span class="p">(</span><span class="n">n</span><span class="p">),</span><span class="w"> </span><span class="n">source</span><span class="o">=</span><span class="mf">0.0_wp</span><span class="p">)</span>
+<a id="ln-281" name="ln-281" href="#ln-281"></a><span class="w">         </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">newton_dz</span><span class="p">(</span><span class="n">n</span><span class="p">),</span><span class="w"> </span><span class="n">source</span><span class="o">=</span><span class="mf">0.0_wp</span><span class="p">)</span>
+<a id="ln-282" name="ln-282" href="#ln-282"></a><span class="w">         </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">newton_F</span><span class="p">(</span><span class="n">n</span><span class="p">),</span><span class="w"> </span><span class="n">source</span><span class="o">=</span><span class="mf">0.0_wp</span><span class="p">)</span>
+<a id="ln-283" name="ln-283" href="#ln-283"></a><span class="w">         </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">newton_Jeta</span><span class="p">(</span><span class="n">n</span><span class="p">),</span><span class="w"> </span><span class="n">source</span><span class="o">=</span><span class="mf">0.0_wp</span><span class="p">)</span>
+<a id="ln-284" name="ln-284" href="#ln-284"></a><span class="w">      </span><span class="k">end if</span>
+<a id="ln-285" name="ln-285" href="#ln-285"></a><span class="k">   end subroutine </span><span class="n">si_unstr_state_init</span>
+<a id="ln-286" name="ln-286" href="#ln-286"></a>
+<a id="ln-287" name="ln-287" href="#ln-287"></a><span class="w">   </span><span class="k">subroutine </span><span class="n">si_unstr_state_build_mg</span><span class="p">(</span><span class="n">this</span><span class="p">,</span><span class="w"> </span><span class="n">mesh</span><span class="p">)</span>
+<a id="ln-288" name="ln-288" href="#ln-288"></a><span class="w">      </span><span class="c">!! Build the aggregation-MG preconditioner hierarchy for this state.</span>
+<a id="ln-289" name="ln-289" href="#ln-289"></a><span class="w">      </span><span class="c">!! Host-only; call from `enable_si` (after `init`, before `enter_data`)</span>
+<a id="ln-290" name="ln-290" href="#ln-290"></a><span class="w">      </span><span class="c">!! when `precond == SI_PRECOND_MG`.  Structure only (geometric</span>
+<a id="ln-291" name="ln-291" href="#ln-291"></a><span class="w">      </span><span class="c">!! aggregation); the operator coefficients are filled by the first</span>
+<a id="ln-292" name="ln-292" href="#ln-292"></a><span class="w">      </span><span class="c">!! per-step `refresh`.</span>
+<a id="ln-293" name="ln-293" href="#ln-293"></a><span class="w">      </span><span class="k">class</span><span class="p">(</span><span class="n">semi_implicit_state_unstr_t</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">this</span>
+<a id="ln-294" name="ln-294" href="#ln-294"></a><span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="n">mesh_unstr_t</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">mesh</span>
+<a id="ln-295" name="ln-295" href="#ln-295"></a>
+<a id="ln-296" name="ln-296" href="#ln-296"></a><span class="w">      </span><span class="k">call </span><span class="n">agglom_hierarchy_unstr_build</span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">mg</span><span class="p">,</span><span class="w"> </span><span class="n">mesh</span><span class="p">,</span><span class="w"> </span><span class="n">mesh</span><span class="p">%</span><span class="n">ncells_owned</span><span class="p">)</span>
+<a id="ln-297" name="ln-297" href="#ln-297"></a><span class="w">      </span><span class="n">this</span><span class="p">%</span><span class="n">use_mg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+<a id="ln-298" name="ln-298" href="#ln-298"></a><span class="w">   </span><span class="k">end subroutine </span><span class="n">si_unstr_state_build_mg</span>
+<a id="ln-299" name="ln-299" href="#ln-299"></a>
+<a id="ln-300" name="ln-300" href="#ln-300"></a><span class="w">   </span><span class="k">subroutine </span><span class="n">si_unstr_state_destroy</span><span class="p">(</span><span class="n">this</span><span class="p">)</span>
+<a id="ln-301" name="ln-301" href="#ln-301"></a><span class="w">      </span><span class="c">!! Deallocate all workspace arrays.</span>
+<a id="ln-302" name="ln-302" href="#ln-302"></a><span class="w">      </span><span class="k">class</span><span class="p">(</span><span class="n">semi_implicit_state_unstr_t</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">this</span>
+<a id="ln-303" name="ln-303" href="#ln-303"></a>
+<a id="ln-304" name="ln-304" href="#ln-304"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">use_mg</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<a id="ln-305" name="ln-305" href="#ln-305"></a><span class="k">         call </span><span class="n">this</span><span class="p">%</span><span class="n">mg</span><span class="p">%</span><span class="n">destroy</span><span class="p">()</span>
+<a id="ln-306" name="ln-306" href="#ln-306"></a><span class="w">         </span><span class="n">this</span><span class="p">%</span><span class="n">use_mg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">false</span><span class="p">.</span>
+<a id="ln-307" name="ln-307" href="#ln-307"></a><span class="w">      </span><span class="k">end if</span>
+<a id="ln-308" name="ln-308" href="#ln-308"></a>
+<a id="ln-309" name="ln-309" href="#ln-309"></a><span class="k">      if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">eta</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">eta</span><span class="p">)</span>
+<a id="ln-310" name="ln-310" href="#ln-310"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">eta_r</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">eta_r</span><span class="p">)</span>
+<a id="ln-311" name="ln-311" href="#ln-311"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">eta_p</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">eta_p</span><span class="p">)</span>
+<a id="ln-312" name="ln-312" href="#ln-312"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">eta_Ap</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">eta_Ap</span><span class="p">)</span>
+<a id="ln-313" name="ln-313" href="#ln-313"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">eta_z</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">eta_z</span><span class="p">)</span>
+<a id="ln-314" name="ln-314" href="#ln-314"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">eta_diag</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">eta_diag</span><span class="p">)</span>
+<a id="ln-315" name="ln-315" href="#ln-315"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">u_edge</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">u_edge</span><span class="p">)</span>
+<a id="ln-316" name="ln-316" href="#ln-316"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">u_star</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">u_star</span><span class="p">)</span>
+<a id="ln-317" name="ln-317" href="#ln-317"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">Hf_edge</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">Hf_edge</span><span class="p">)</span>
+<a id="ln-318" name="ln-318" href="#ln-318"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">eta_ghost_edge</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">eta_ghost_edge</span><span class="p">)</span>
+<a id="ln-319" name="ln-319" href="#ln-319"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">u_n_edge</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">u_n_edge</span><span class="p">)</span>
+<a id="ln-320" name="ln-320" href="#ln-320"></a>
+<a id="ln-321" name="ln-321" href="#ln-321"></a><span class="w">      </span><span class="c">! P3.2 (3D multilayer) column slots.</span>
+<a id="ln-322" name="ln-322" href="#ln-322"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">g_col_u</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">g_col_u</span><span class="p">)</span>
+<a id="ln-323" name="ln-323" href="#ln-323"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">g_col_v</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">g_col_v</span><span class="p">)</span>
+<a id="ln-324" name="ln-324" href="#ln-324"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">r_col</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">r_col</span><span class="p">)</span>
+<a id="ln-325" name="ln-325" href="#ln-325"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">nu_iface</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">nu_iface</span><span class="p">)</span>
+<a id="ln-326" name="ln-326" href="#ln-326"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">Hhat_cell</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">Hhat_cell</span><span class="p">)</span>
+<a id="ln-327" name="ln-327" href="#ln-327"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">Gbar_cell_x</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">Gbar_cell_x</span><span class="p">)</span>
+<a id="ln-328" name="ln-328" href="#ln-328"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">Gbar_cell_y</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">Gbar_cell_y</span><span class="p">)</span>
+<a id="ln-329" name="ln-329" href="#ln-329"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">u_edge_layer</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">u_edge_layer</span><span class="p">)</span>
+<a id="ln-330" name="ln-330" href="#ln-330"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">mass_flux_edge</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">mass_flux_edge</span><span class="p">)</span>
+<a id="ln-331" name="ln-331" href="#ln-331"></a>
+<a id="ln-332" name="ln-332" href="#ln-332"></a><span class="w">      </span><span class="c">! P3.3 Casulli wet/dry slots.</span>
+<a id="ln-333" name="ln-333" href="#ln-333"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">b_sub</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">b_sub</span><span class="p">)</span>
+<a id="ln-334" name="ln-334" href="#ln-334"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">b_min</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">b_min</span><span class="p">)</span>
+<a id="ln-335" name="ln-335" href="#ln-335"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">a_wet</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">a_wet</span><span class="p">)</span>
+<a id="ln-336" name="ln-336" href="#ln-336"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">mass_diag</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">mass_diag</span><span class="p">)</span>
+<a id="ln-337" name="ln-337" href="#ln-337"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">v_cell</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">v_cell</span><span class="p">)</span>
+<a id="ln-338" name="ln-338" href="#ln-338"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">rhs_d</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">rhs_d</span><span class="p">)</span>
+<a id="ln-339" name="ln-339" href="#ln-339"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">newton_dz</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">newton_dz</span><span class="p">)</span>
+<a id="ln-340" name="ln-340" href="#ln-340"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">newton_F</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">newton_F</span><span class="p">)</span>
+<a id="ln-341" name="ln-341" href="#ln-341"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">newton_Jeta</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">newton_Jeta</span><span class="p">)</span>
+<a id="ln-342" name="ln-342" href="#ln-342"></a><span class="w">      </span><span class="n">this</span><span class="p">%</span><span class="n">wetdry</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">false</span><span class="p">.</span>
+<a id="ln-343" name="ln-343" href="#ln-343"></a><span class="w">      </span><span class="n">this</span><span class="p">%</span><span class="n">n_sub</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span>
+<a id="ln-344" name="ln-344" href="#ln-344"></a><span class="w">      </span><span class="n">this</span><span class="p">%</span><span class="n">bsub_fill</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+<a id="ln-345" name="ln-345" href="#ln-345"></a>
+<a id="ln-346" name="ln-346" href="#ln-346"></a><span class="w">      </span><span class="c">! Reset so a destroy -&gt; re-init-as-2D cycle doesn't leave nz_si &gt; 1</span>
+<a id="ln-347" name="ln-347" href="#ln-347"></a><span class="w">      </span><span class="c">! pointing enter_data at unallocated slots.</span>
+<a id="ln-348" name="ln-348" href="#ln-348"></a><span class="w">      </span><span class="n">this</span><span class="p">%</span><span class="n">nz_si</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+<a id="ln-349" name="ln-349" href="#ln-349"></a><span class="w">      </span><span class="n">this</span><span class="p">%</span><span class="n">ncells_total</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+<a id="ln-350" name="ln-350" href="#ln-350"></a><span class="w">   </span><span class="k">end subroutine </span><span class="n">si_unstr_state_destroy</span>
+<a id="ln-351" name="ln-351" href="#ln-351"></a>
+<a id="ln-352" name="ln-352" href="#ln-352"></a><span class="w">   </span><span class="k">subroutine </span><span class="n">si_unstr_state_enter_data</span><span class="p">(</span><span class="n">this</span><span class="p">)</span>
+<a id="ln-353" name="ln-353" href="#ln-353"></a><span class="w">      </span><span class="c">!! Attach the workspace arrays to the device.  Arrays-only — the parent</span>
+<a id="ln-354" name="ln-354" href="#ln-354"></a><span class="w">      </span><span class="c">!! `unstr_state_t` is mapped by `state_unstr_enter_data` before this</span>
+<a id="ln-355" name="ln-355" href="#ln-355"></a><span class="w">      </span><span class="c">!! runs.  TBP wraps a non-polymorphic `_impl` (the `class(...)` box</span>
+<a id="ln-356" name="ln-356" href="#ln-356"></a><span class="w">      </span><span class="c">!! maps to stack under AMD libomptarget; delegate to `type(...)`).</span>
+<a id="ln-357" name="ln-357" href="#ln-357"></a><span class="w">      </span><span class="k">class</span><span class="p">(</span><span class="n">semi_implicit_state_unstr_t</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">this</span>
+<a id="ln-358" name="ln-358" href="#ln-358"></a><span class="w">      </span><span class="k">select type</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">)</span>
+<a id="ln-359" name="ln-359" href="#ln-359"></a><span class="w">      </span><span class="k">type is</span><span class="w"> </span><span class="p">(</span><span class="n">semi_implicit_state_unstr_t</span><span class="p">)</span>
+<a id="ln-360" name="ln-360" href="#ln-360"></a><span class="w">         </span><span class="k">call </span><span class="n">si_unstr_state_enter_data_impl</span><span class="p">(</span><span class="n">this</span><span class="p">)</span>
+<a id="ln-361" name="ln-361" href="#ln-361"></a><span class="w">      </span><span class="k">end select</span>
+<a id="ln-362" name="ln-362" href="#ln-362"></a><span class="k">   end subroutine </span><span class="n">si_unstr_state_enter_data</span>
+<a id="ln-363" name="ln-363" href="#ln-363"></a>
+<a id="ln-364" name="ln-364" href="#ln-364"></a><span class="w">   </span><span class="k">subroutine </span><span class="n">si_unstr_state_enter_data_impl</span><span class="p">(</span><span class="n">this</span><span class="p">)</span>
+<a id="ln-365" name="ln-365" href="#ln-365"></a><span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="n">semi_implicit_state_unstr_t</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">this</span>
+<a id="ln-366" name="ln-366" href="#ln-366"></a>
+<a id="ln-367" name="ln-367" href="#ln-367"></a><span class="w">      </span><span class="c">!$acc enter data copyin(this%eta, this%eta_r, this%eta_p, this%eta_Ap, this%eta_z)</span>
+<a id="ln-368" name="ln-368" href="#ln-368"></a><span class="w">      </span><span class="c">!$acc enter data copyin(this%eta_diag, this%u_edge, this%u_star, this%Hf_edge)</span>
+<a id="ln-369" name="ln-369" href="#ln-369"></a><span class="w">      </span><span class="c">!$acc enter data copyin(this%eta_ghost_edge, this%u_n_edge)</span>
+<a id="ln-370" name="ln-370" href="#ln-370"></a>
+<a id="ln-371" name="ln-371" href="#ln-371"></a><span class="w">      </span><span class="c">! P3.2 (3D multilayer) column slots — only when allocated.</span>
+<a id="ln-372" name="ln-372" href="#ln-372"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">nz_si</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<a id="ln-373" name="ln-373" href="#ln-373"></a><span class="w">         </span><span class="c">!$acc enter data copyin(this%g_col_u, this%g_col_v, this%r_col)</span>
+<a id="ln-374" name="ln-374" href="#ln-374"></a><span class="w">         </span><span class="c">!$acc enter data copyin(this%nu_iface, this%Hhat_cell)</span>
+<a id="ln-375" name="ln-375" href="#ln-375"></a><span class="w">         </span><span class="c">!$acc enter data copyin(this%Gbar_cell_x, this%Gbar_cell_y)</span>
+<a id="ln-376" name="ln-376" href="#ln-376"></a><span class="w">         </span><span class="c">!$acc enter data copyin(this%u_edge_layer, this%mass_flux_edge)</span>
+<a id="ln-377" name="ln-377" href="#ln-377"></a><span class="w">      </span><span class="k">end if</span>
+<a id="ln-378" name="ln-378" href="#ln-378"></a>
+<a id="ln-379" name="ln-379" href="#ln-379"></a><span class="w">      </span><span class="c">! P3.3 Casulli wet/dry slots — only when allocated.</span>
+<a id="ln-380" name="ln-380" href="#ln-380"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">wetdry</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<a id="ln-381" name="ln-381" href="#ln-381"></a><span class="w">         </span><span class="c">!$acc enter data copyin(this%b_sub, this%b_min, this%a_wet)</span>
+<a id="ln-382" name="ln-382" href="#ln-382"></a><span class="w">         </span><span class="c">!$acc enter data copyin(this%mass_diag, this%v_cell, this%rhs_d)</span>
+<a id="ln-383" name="ln-383" href="#ln-383"></a><span class="w">         </span><span class="c">!$acc enter data copyin(this%newton_dz, this%newton_F, this%newton_Jeta)</span>
+<a id="ln-384" name="ln-384" href="#ln-384"></a><span class="w">      </span><span class="k">end if</span>
+<a id="ln-385" name="ln-385" href="#ln-385"></a>
+<a id="ln-386" name="ln-386" href="#ln-386"></a><span class="w">      </span><span class="c">! Aggregation-MG hierarchy — only when built (precond == MG).</span>
+<a id="ln-387" name="ln-387" href="#ln-387"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">use_mg</span><span class="p">)</span><span class="w"> </span><span class="k">call </span><span class="n">this</span><span class="p">%</span><span class="n">mg</span><span class="p">%</span><span class="n">enter_data</span><span class="p">()</span>
+<a id="ln-388" name="ln-388" href="#ln-388"></a><span class="w">   </span><span class="k">end subroutine </span><span class="n">si_unstr_state_enter_data_impl</span>
+<a id="ln-389" name="ln-389" href="#ln-389"></a>
+<a id="ln-390" name="ln-390" href="#ln-390"></a><span class="w">   </span><span class="k">subroutine </span><span class="n">si_unstr_state_exit_data</span><span class="p">(</span><span class="n">this</span><span class="p">)</span>
+<a id="ln-391" name="ln-391" href="#ln-391"></a><span class="w">      </span><span class="c">!! Detach the workspace arrays from the device.</span>
+<a id="ln-392" name="ln-392" href="#ln-392"></a><span class="w">      </span><span class="k">class</span><span class="p">(</span><span class="n">semi_implicit_state_unstr_t</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">this</span>
+<a id="ln-393" name="ln-393" href="#ln-393"></a><span class="w">      </span><span class="k">select type</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">)</span>
+<a id="ln-394" name="ln-394" href="#ln-394"></a><span class="w">      </span><span class="k">type is</span><span class="w"> </span><span class="p">(</span><span class="n">semi_implicit_state_unstr_t</span><span class="p">)</span>
+<a id="ln-395" name="ln-395" href="#ln-395"></a><span class="w">         </span><span class="k">call </span><span class="n">si_unstr_state_exit_data_impl</span><span class="p">(</span><span class="n">this</span><span class="p">)</span>
+<a id="ln-396" name="ln-396" href="#ln-396"></a><span class="w">      </span><span class="k">end select</span>
+<a id="ln-397" name="ln-397" href="#ln-397"></a><span class="k">   end subroutine </span><span class="n">si_unstr_state_exit_data</span>
+<a id="ln-398" name="ln-398" href="#ln-398"></a>
+<a id="ln-399" name="ln-399" href="#ln-399"></a><span class="w">   </span><span class="k">subroutine </span><span class="n">si_unstr_state_exit_data_impl</span><span class="p">(</span><span class="n">this</span><span class="p">)</span>
+<a id="ln-400" name="ln-400" href="#ln-400"></a><span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="n">semi_implicit_state_unstr_t</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">this</span>
+<a id="ln-401" name="ln-401" href="#ln-401"></a>
+<a id="ln-402" name="ln-402" href="#ln-402"></a><span class="w">      </span><span class="c">! Aggregation-MG hierarchy — only when built (precond == MG).</span>
+<a id="ln-403" name="ln-403" href="#ln-403"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">use_mg</span><span class="p">)</span><span class="w"> </span><span class="k">call </span><span class="n">this</span><span class="p">%</span><span class="n">mg</span><span class="p">%</span><span class="n">exit_data</span><span class="p">()</span>
+<a id="ln-404" name="ln-404" href="#ln-404"></a>
+<a id="ln-405" name="ln-405" href="#ln-405"></a><span class="w">      </span><span class="c">! P3.3 Casulli wet/dry slots — reverse order of enter.</span>
+<a id="ln-406" name="ln-406" href="#ln-406"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">wetdry</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<a id="ln-407" name="ln-407" href="#ln-407"></a><span class="w">         </span><span class="c">!$acc exit data delete(this%newton_dz, this%newton_F, this%newton_Jeta)</span>
+<a id="ln-408" name="ln-408" href="#ln-408"></a><span class="w">         </span><span class="c">!$acc exit data delete(this%mass_diag, this%v_cell, this%rhs_d)</span>
+<a id="ln-409" name="ln-409" href="#ln-409"></a><span class="w">         </span><span class="c">!$acc exit data delete(this%b_sub, this%b_min, this%a_wet)</span>
+<a id="ln-410" name="ln-410" href="#ln-410"></a><span class="w">      </span><span class="k">end if</span>
+<a id="ln-411" name="ln-411" href="#ln-411"></a>
+<a id="ln-412" name="ln-412" href="#ln-412"></a><span class="w">      </span><span class="c">! P3.2 (3D multilayer) column slots — reverse order of enter.</span>
+<a id="ln-413" name="ln-413" href="#ln-413"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">nz_si</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<a id="ln-414" name="ln-414" href="#ln-414"></a><span class="w">         </span><span class="c">!$acc exit data delete(this%u_edge_layer, this%mass_flux_edge)</span>
+<a id="ln-415" name="ln-415" href="#ln-415"></a><span class="w">         </span><span class="c">!$acc exit data delete(this%Gbar_cell_x, this%Gbar_cell_y)</span>
+<a id="ln-416" name="ln-416" href="#ln-416"></a><span class="w">         </span><span class="c">!$acc exit data delete(this%nu_iface, this%Hhat_cell)</span>
+<a id="ln-417" name="ln-417" href="#ln-417"></a><span class="w">         </span><span class="c">!$acc exit data delete(this%g_col_u, this%g_col_v, this%r_col)</span>
+<a id="ln-418" name="ln-418" href="#ln-418"></a><span class="w">      </span><span class="k">end if</span>
+<a id="ln-419" name="ln-419" href="#ln-419"></a>
+<a id="ln-420" name="ln-420" href="#ln-420"></a><span class="w">      </span><span class="c">!$acc exit data delete(this%eta_ghost_edge, this%u_n_edge)</span>
+<a id="ln-421" name="ln-421" href="#ln-421"></a><span class="w">      </span><span class="c">!$acc exit data delete(this%eta_diag, this%u_edge, this%u_star, this%Hf_edge)</span>
+<a id="ln-422" name="ln-422" href="#ln-422"></a><span class="w">      </span><span class="c">!$acc exit data delete(this%eta, this%eta_r, this%eta_p, this%eta_Ap, this%eta_z)</span>
+<a id="ln-423" name="ln-423" href="#ln-423"></a><span class="w">   </span><span class="k">end subroutine </span><span class="n">si_unstr_state_exit_data_impl</span>
+<a id="ln-424" name="ln-424" href="#ln-424"></a>
+<a id="ln-425" name="ln-425" href="#ln-425"></a><span class="w">   </span><span class="k">function </span><span class="n">parse_si_precond_unstr</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span><span class="w"> </span><span class="k">result</span><span class="p">(</span><span class="n">precond</span><span class="p">)</span>
+<a id="ln-426" name="ln-426" href="#ln-426"></a><span class="w">      </span><span class="c">!! Map the `&amp;si_nml precond` string to its `SI_PRECOND_*` enum on the</span>
+<a id="ln-427" name="ln-427" href="#ln-427"></a><span class="w">      </span><span class="c">!! unstructured path.  Fail-loud allowlist: an unknown tag aborts.  MG is</span>
+<a id="ln-428" name="ln-428" href="#ln-428"></a><span class="w">      </span><span class="c">!! aggregation (agglomeration) multigrid here (`rki_si_unstr_mg`) — the</span>
+<a id="ln-429" name="ln-429" href="#ln-429"></a><span class="w">      </span><span class="c">!! triangle plateau-breaker — NOT the structured geometric MG.</span>
+<a id="ln-430" name="ln-430" href="#ln-430"></a><span class="w">      </span><span class="kt">character</span><span class="p">(</span><span class="nb">len</span><span class="o">=*</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">tag</span>
+<a id="ln-431" name="ln-431" href="#ln-431"></a><span class="w">      </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">precond</span>
+<a id="ln-432" name="ln-432" href="#ln-432"></a>
+<a id="ln-433" name="ln-433" href="#ln-433"></a><span class="w">      </span><span class="k">select case</span><span class="w"> </span><span class="p">(</span><span class="nb">trim</span><span class="p">(</span><span class="nb">adjustl</span><span class="p">(</span><span class="n">tag</span><span class="p">)))</span>
+<a id="ln-434" name="ln-434" href="#ln-434"></a><span class="w">      </span><span class="k">case</span><span class="w"> </span><span class="p">(</span><span class="s2">"none"</span><span class="p">,</span><span class="w"> </span><span class="s2">"NONE"</span><span class="p">,</span><span class="w"> </span><span class="s2">""</span><span class="p">)</span>
+<a id="ln-435" name="ln-435" href="#ln-435"></a><span class="w">         </span><span class="n">precond</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SI_PRECOND_NONE</span>
+<a id="ln-436" name="ln-436" href="#ln-436"></a><span class="w">      </span><span class="k">case</span><span class="w"> </span><span class="p">(</span><span class="s2">"jacobi"</span><span class="p">,</span><span class="w"> </span><span class="s2">"JACOBI"</span><span class="p">)</span>
+<a id="ln-437" name="ln-437" href="#ln-437"></a><span class="w">         </span><span class="n">precond</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SI_PRECOND_JACOBI</span>
+<a id="ln-438" name="ln-438" href="#ln-438"></a><span class="w">      </span><span class="k">case</span><span class="w"> </span><span class="p">(</span><span class="s2">"mg"</span><span class="p">,</span><span class="w"> </span><span class="s2">"MG"</span><span class="p">)</span>
+<a id="ln-439" name="ln-439" href="#ln-439"></a><span class="w">         </span><span class="n">precond</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SI_PRECOND_MG</span>
+<a id="ln-440" name="ln-440" href="#ln-440"></a><span class="w">      </span><span class="k">case </span><span class="n">default</span>
+<a id="ln-441" name="ln-441" href="#ln-441"></a><span class="w">         </span><span class="k">call </span><span class="n">global_logger</span><span class="p">%</span><span class="n">error</span><span class="p">(</span><span class="s2">"si_precond (unstructured): unknown "</span><span class="o">//</span><span class="w"> </span><span class="p">&amp;</span>
+<a id="ln-442" name="ln-442" href="#ln-442"></a><span class="w">                                  </span><span class="s2">"preconditioner '"</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="nb">adjustl</span><span class="p">(</span><span class="n">tag</span><span class="p">))</span><span class="o">//</span><span class="w"> </span><span class="p">&amp;</span>
+<a id="ln-443" name="ln-443" href="#ln-443"></a><span class="w">                                  </span><span class="s2">"' (allowed: none, jacobi, mg)"</span><span class="p">)</span>
+<a id="ln-444" name="ln-444" href="#ln-444"></a><span class="w">         </span><span class="k">error stop</span><span class="w"> </span><span class="s2">"si_precond: unknown preconditioner"</span>
+<a id="ln-445" name="ln-445" href="#ln-445"></a><span class="w">      </span><span class="k">end select</span>
+<a id="ln-446" name="ln-446" href="#ln-446"></a><span class="k">   end function </span><span class="n">parse_si_precond_unstr</span>
+<a id="ln-447" name="ln-447" href="#ln-447"></a>
+<a id="ln-448" name="ln-448" href="#ln-448"></a><span class="k">end module </span><span class="n">rki_si_unstr_state</span>
+</pre></div>
+
+      </section>
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Rakali
+ was developed by Jorge Luis Galvez Vallejo<br>              &copy; 2026 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+ on 2026-10-08 12:55 +0000             </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>

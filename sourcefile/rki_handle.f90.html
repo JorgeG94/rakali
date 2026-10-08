@@ -1,0 +1,1615 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="GPU-native coastal solver — structured Cartesian and unstructured triangular grids, hydrostatic multilayer + non-hydrostatic, portable across NVHPC/gfortran/ifx.">
+    <meta name="author" content="Jorge Luis Galvez Vallejo" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>rki_handle.F90 &ndash; Rakali</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">Rakali </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/absint.html">Abstract Interfaces</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>rki_handle.F90
+      <small>Source File</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.4% of total for source files.">122 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/rki_handle.F90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+            <li class="breadcrumb-item active" aria-current="page">rki_handle.F90</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+        <div id="sidebar">
+      <h3>Contents</h3>
+  
+  
+  
+  
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#mods-0"
+         aria-expanded="false" aria-controls="mods-0">
+         <h4 class="card-header bg-primary text-white">Modules</h4>
+      </a>
+      <div id="mods-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../module/rki_handle.html">rki_handle</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../sourcefile/rki_handle.f90.html#src">rki_handle.F90</a>
+      </div>
+    </div>
+
+
+  </div>
+
+    </div>
+    <div class="col-md-9" id='text'>
+      <p>Opaque handle types for the C-compatible API.</p>
+<p>Replaces the module-level singletons in <code>rki_api</code> and <code>rki_api_unstr</code>
+with heap-allocated handles, so multiple simulations can coexist in one
+process (e.g. structured + unstructured at once, multi-grid coupling).</p>
+<p>Layout: each handle owns the data + state-machine flags that used to
+live as <code>save</code> variables at module scope. C/Python callers see only an
+opaque <code>c_ptr</code>; <code>handle_check_*</code> resolves it to a Fortran pointer and
+verifies the magic-number sentinel before any access.</p>
+<p>Phase 1 (this module): types + create/destroy/check helpers only.
+Phase 2/3: the existing API entrypoints stop touching module-static
+state and instead route through <code>h =&gt; handle_check_*(c_handle)</code>.</p>
+      <br>
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">This file depends on</h3>
+          </div>
+          <div class="card-body">
+            <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: sourcefile~~rki_handle.f90~~EfferentGraph Pages: 1 -->
+<svg id="sourcefilerki_handlef90EfferentGraph" width="641pt" height="575pt"
+ viewBox="0.00 0.00 641.00 574.96" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph" class="graph" transform="scale(0.44 0.44) rotate(0) translate(4 1310.06)">
+<title>sourcefile~~rki_handle.f90~~EfferentGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-1310.06 1461,-1310.06 1461,4 -4,4"/>
+<!-- sourcefile~rki_handle.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_node1" class="node">
+<title>sourcefile~rki_handle.f90</title>
+<polygon fill="none" stroke="black" points="1457,-657.32 1366,-657.32 1366,-633.32 1457,-633.32 1457,-657.32"/>
+<text text-anchor="middle" x="1411.5" y="-642.92" font-family="Helvetica,sans-Serif" font-size="10.50">rki_handle.F90</text>
+</g>
+<!-- sourcefile~rki_config.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_node2" class="node">
+<title>sourcefile~rki_config.f90</title>
+<g id="a_sourcefile~~rki_handle.f90~~EfferentGraph_node2"><a xlink:href="../sourcefile/rki_config.f90.html" xlink:title="rki_config.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="662.5,-785.32 575.5,-785.32 575.5,-761.32 662.5,-761.32 662.5,-785.32"/>
+<text text-anchor="middle" x="619" y="-770.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_config.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_handle.f90&#45;&gt;sourcefile~rki_config.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge1" class="edge">
+<title>sourcefile~rki_handle.f90&#45;&gt;sourcefile~rki_config.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M1409.29,-657.44C1401.53,-727.89 1352.29,-1081.92 1145.5,-1089.32"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M1143.5,-1089.32C1126.77,-1094.64 894.74,-924.1 879,-916.32 820.28,-887.29 789.62,-910.08 740,-867.32 714.1,-844.99 730.33,-821.14 704,-799.32 695,-791.86 683.87,-786.54 672.69,-782.74"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="673.48,-779.32 662.9,-779.78 671.46,-786.02 673.48,-779.32"/>
+</g>
+<!-- sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_node3" class="node">
+<title>sourcefile~rki_constants.f90</title>
+<g id="a_sourcefile~~rki_handle.f90~~EfferentGraph_node3"><a xlink:href="../sourcefile/rki_constants.f90.html" xlink:title="rki_constants.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="105,-743.32 0,-743.32 0,-719.32 105,-719.32 105,-743.32"/>
+<text text-anchor="middle" x="52.5" y="-728.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_constants.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_handle.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge2" class="edge">
+<title>sourcefile~rki_handle.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M976,-1285.32C908.48,-1314.5 882.32,-1269.42 810.5,-1285.32"/>
+</g>
+<!-- sourcefile~rki_gauges_unstr.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_node4" class="node">
+<title>sourcefile~rki_gauges_unstr.f90</title>
+<g id="a_sourcefile~~rki_handle.f90~~EfferentGraph_node4"><a xlink:href="../sourcefile/rki_gauges_unstr.f90.html" xlink:title="rki_gauges_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1039,-1141.32 915,-1141.32 915,-1117.32 1039,-1117.32 1039,-1141.32"/>
+<text text-anchor="middle" x="977" y="-1126.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_gauges_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_handle.f90&#45;&gt;sourcefile~rki_gauges_unstr.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge3" class="edge">
+<title>sourcefile~rki_handle.f90&#45;&gt;sourcefile~rki_gauges_unstr.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M1143.5,-1089.32C1100.8,-1090.79 1053.55,-1103.36 1020.51,-1114.01"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="1019.13,-1110.78 1010.73,-1117.25 1021.33,-1117.43 1019.13,-1110.78"/>
+</g>
+<!-- sourcefile~rki_mesh_unstr.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_node5" class="node">
+<title>sourcefile~rki_mesh_unstr.f90</title>
+<g id="a_sourcefile~~rki_handle.f90~~EfferentGraph_node5"><a xlink:href="../sourcefile/rki_mesh_unstr.f90.html" xlink:title="rki_mesh_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="273.5,-1078.32 159.5,-1078.32 159.5,-1054.32 273.5,-1054.32 273.5,-1078.32"/>
+<text text-anchor="middle" x="216.5" y="-1063.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_mesh_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_handle.f90&#45;&gt;sourcefile~rki_mesh_unstr.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge4" class="edge">
+<title>sourcefile~rki_handle.f90&#45;&gt;sourcefile~rki_mesh_unstr.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M1143.5,-1089.32C1035.54,-1125.97 1084.07,-1243.52 978,-1285.32"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M976,-1285.32C935.47,-1301.29 922.29,-1276.13 879,-1271.32 756.93,-1257.76 434.27,-1289.88 328,-1228.32 272.77,-1196.32 239.17,-1124.3 225.14,-1088.04"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="228.33,-1086.57 221.55,-1078.42 221.77,-1089.01 228.33,-1086.57"/>
+</g>
+<!-- sourcefile~rki_output_unstr.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_node6" class="node">
+<title>sourcefile~rki_output_unstr.f90</title>
+<g id="a_sourcefile~~rki_handle.f90~~EfferentGraph_node6"><a xlink:href="../sourcefile/rki_output_unstr.f90.html" xlink:title="rki_output_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1036.5,-1061.32 917.5,-1061.32 917.5,-1037.32 1036.5,-1037.32 1036.5,-1061.32"/>
+<text text-anchor="middle" x="977" y="-1046.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_output_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_handle.f90&#45;&gt;sourcefile~rki_output_unstr.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge5" class="edge">
+<title>sourcefile~rki_handle.f90&#45;&gt;sourcefile~rki_output_unstr.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M1143.5,-1089.32C1099.19,-1090.85 1049.99,-1076.86 1016.84,-1065"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="1017.69,-1061.58 1007.09,-1061.41 1015.27,-1068.15 1017.69,-1061.58"/>
+</g>
+<!-- sourcefile~rki_state.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_node7" class="node">
+<title>sourcefile~rki_state.f90</title>
+<g id="a_sourcefile~~rki_handle.f90~~EfferentGraph_node7"><a xlink:href="../sourcefile/rki_state.f90.html" xlink:title="rki_state.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1330,-519.32 1250,-519.32 1250,-495.32 1330,-495.32 1330,-519.32"/>
+<text text-anchor="middle" x="1290" y="-504.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_state.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_handle.f90&#45;&gt;sourcefile~rki_state.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge6" class="edge">
+<title>sourcefile~rki_handle.f90&#45;&gt;sourcefile~rki_state.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M1399.9,-633.07C1379.2,-609.18 1333.28,-556.14 1308.19,-527.17"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="1310.6,-524.61 1301.41,-519.34 1305.31,-529.19 1310.6,-524.61"/>
+</g>
+<!-- sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_node8" class="node">
+<title>sourcefile~rki_state_unstr.f90</title>
+<g id="a_sourcefile~~rki_handle.f90~~EfferentGraph_node8"><a xlink:href="../sourcefile/rki_state_unstr.f90.html" xlink:title="rki_state_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="865,-1101.32 754,-1101.32 754,-1077.32 865,-1077.32 865,-1101.32"/>
+<text text-anchor="middle" x="809.5" y="-1086.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_state_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_handle.f90&#45;&gt;sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge7" class="edge">
+<title>sourcefile~rki_handle.f90&#45;&gt;sourcefile~rki_state_unstr.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M1143.5,-1089.32C1050.21,-1092.54 942.13,-1091.7 875.03,-1090.64"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="875.08,-1087.14 865.03,-1090.47 874.97,-1094.14 875.08,-1087.14"/>
+</g>
+<!-- sourcefile~rki_config.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge8" class="edge">
+<title>sourcefile~rki_config.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M575.41,-772.73C534.14,-772.21 469.78,-771.49 414,-771.32"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M412,-771.32C323.75,-771.04 305.66,-727.18 217.5,-731.32"/>
+</g>
+<!-- sourcefile~rki_ml_common_unstr.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_node17" class="node">
+<title>sourcefile~rki_ml_common_unstr.f90</title>
+<g id="a_sourcefile~~rki_handle.f90~~EfferentGraph_node17"><a xlink:href="../sourcefile/rki_ml_common_unstr.f90.html" xlink:title="rki_ml_common_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="292,-825.32 141,-825.32 141,-801.32 292,-801.32 292,-825.32"/>
+<text text-anchor="middle" x="216.5" y="-810.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_common_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_config.f90&#45;&gt;sourcefile~rki_ml_common_unstr.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge9" class="edge">
+<title>sourcefile~rki_config.f90&#45;&gt;sourcefile~rki_ml_common_unstr.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M412,-771.32C385.31,-771.23 319.99,-786.55 272.39,-798.71"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="271.33,-795.37 262.52,-801.25 273.08,-802.14 271.33,-795.37"/>
+</g>
+<!-- sourcefile~rki_nml_schema.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_node21" class="node">
+<title>sourcefile~rki_nml_schema.f90</title>
+<g id="a_sourcefile~~rki_handle.f90~~EfferentGraph_node21"><a xlink:href="../sourcefile/rki_nml_schema.f90.html" xlink:title="rki_nml_schema.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="277,-783.32 156,-783.32 156,-759.32 277,-759.32 277,-783.32"/>
+<text text-anchor="middle" x="216.5" y="-768.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_nml_schema.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_config.f90&#45;&gt;sourcefile~rki_nml_schema.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge10" class="edge">
+<title>sourcefile~rki_config.f90&#45;&gt;sourcefile~rki_nml_schema.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M412,-771.32C370.64,-771.19 324.33,-771.18 287.28,-771.21"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="287.08,-767.71 277.09,-771.22 287.09,-774.71 287.08,-767.71"/>
+</g>
+<!-- sourcefile~rki_recon_weno.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_node23" class="node">
+<title>sourcefile~rki_recon_weno.f90</title>
+<g id="a_sourcefile~~rki_handle.f90~~EfferentGraph_node23"><a xlink:href="../sourcefile/rki_recon_weno.f90.html" xlink:title="rki_recon_weno.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="471.5,-477.32 354.5,-477.32 354.5,-453.32 471.5,-453.32 471.5,-477.32"/>
+<text text-anchor="middle" x="413" y="-462.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_recon_weno.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_config.f90&#45;&gt;sourcefile~rki_recon_weno.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge11" class="edge">
+<title>sourcefile~rki_config.f90&#45;&gt;sourcefile~rki_recon_weno.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M614.58,-761.2C603.29,-722.87 564.14,-602.24 498,-524.32 483.7,-507.47 463.54,-493.09 446.55,-482.75"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="447.89,-479.48 437.5,-477.43 444.35,-485.52 447.89,-479.48"/>
+</g>
+<!-- sourcefile~rki_gauges_unstr.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge12" class="edge">
+<title>sourcefile~rki_gauges_unstr.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#48ff00" stroke-dasharray="5,2" d="M969.46,-1141.36C950.39,-1174.79 891.07,-1267.48 810.5,-1285.32"/>
+<path fill="none" stroke="#48ff00" stroke-dasharray="5,2" d="M808.5,-1285.32C726.7,-1303.43 701.42,-1265.6 620,-1285.32"/>
+</g>
+<!-- sourcefile~rki_gauges_unstr.f90&#45;&gt;sourcefile~rki_mesh_unstr.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge14" class="edge">
+<title>sourcefile~rki_gauges_unstr.f90&#45;&gt;sourcefile~rki_mesh_unstr.f90</title>
+<path fill="none" stroke="#48ff00" stroke-dasharray="5,2" d="M914.86,-1127.74C843.92,-1126.27 723.43,-1124.91 620,-1129.32"/>
+</g>
+<!-- sourcefile~rki_gauges_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge15" class="edge">
+<title>sourcefile~rki_gauges_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90</title>
+<path fill="none" stroke="#48ff00" stroke-dasharray="5,2" d="M926.34,-1117.32C908.67,-1113.04 888.58,-1108.19 870.16,-1103.74"/>
+<polygon fill="#48ff00" stroke="#48ff00" points="870.95,-1100.33 860.41,-1101.38 869.3,-1107.13 870.95,-1100.33"/>
+</g>
+<!-- sourcefile~rki_io_netcdf.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_node15" class="node">
+<title>sourcefile~rki_io_netcdf.f90</title>
+<g id="a_sourcefile~~rki_handle.f90~~EfferentGraph_node15"><a xlink:href="../sourcefile/rki_io_netcdf.f90.html" xlink:title="rki_io_netcdf.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="860.5,-983.32 758.5,-983.32 758.5,-959.32 860.5,-959.32 860.5,-983.32"/>
+<text text-anchor="middle" x="809.5" y="-968.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_io_netcdf.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_gauges_unstr.f90&#45;&gt;sourcefile~rki_io_netcdf.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge13" class="edge">
+<title>sourcefile~rki_gauges_unstr.f90&#45;&gt;sourcefile~rki_io_netcdf.f90</title>
+<path fill="none" stroke="#48ff00" stroke-dasharray="5,2" d="M963.29,-1117.18C934.84,-1090.02 865.82,-1024.13 831.13,-991.01"/>
+<polygon fill="#48ff00" stroke="#48ff00" points="833.13,-988.09 823.48,-983.71 828.3,-993.15 833.13,-988.09"/>
+</g>
+<!-- sourcefile~rki_mesh_unstr.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge16" class="edge">
+<title>sourcefile~rki_mesh_unstr.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#00ff91" stroke-dasharray="5,2" d="M184.93,-1054.2C169.76,-1046.78 152.31,-1035.88 141,-1021.32 75.95,-937.54 59.09,-805.75 54.86,-753.62"/>
+<polygon fill="#00ff91" stroke="#00ff91" points="58.34,-753.19 54.12,-743.48 51.36,-753.7 58.34,-753.19"/>
+</g>
+<!-- sourcefile~rki_output_unstr.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge17" class="edge">
+<title>sourcefile~rki_output_unstr.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#0091ff" stroke-dasharray="5,2" d="M959.57,-1037.26C946.76,-1027.47 928.87,-1012.94 915,-998.32 896.65,-978.97 900.7,-965.82 879,-950.32 826.16,-912.58 789.12,-947.78 740,-905.32 712.63,-881.66 734.72,-851.42 704,-832.32 594.26,-764.08 543.23,-853.21 414,-853.32"/>
+<path fill="none" stroke="#0091ff" stroke-dasharray="5,2" d="M412,-853.32C291.26,-852.83 248.74,-888.81 141,-834.32 105.51,-816.37 78.66,-777.03 64.56,-752.5"/>
+<polygon fill="#0091ff" stroke="#0091ff" points="67.54,-750.65 59.63,-743.6 61.42,-754.04 67.54,-750.65"/>
+</g>
+<!-- sourcefile~rki_output_unstr.f90&#45;&gt;sourcefile~rki_mesh_unstr.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge19" class="edge">
+<title>sourcefile~rki_output_unstr.f90&#45;&gt;sourcefile~rki_mesh_unstr.f90</title>
+<path fill="none" stroke="#0091ff" stroke-dasharray="5,2" d="M917.43,-1050.63C778.55,-1053.74 430.01,-1061.55 283.75,-1064.83"/>
+<polygon fill="#0091ff" stroke="#0091ff" points="283.49,-1061.34 273.57,-1065.06 283.65,-1068.34 283.49,-1061.34"/>
+</g>
+<!-- sourcefile~rki_output_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge20" class="edge">
+<title>sourcefile~rki_output_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90</title>
+<path fill="none" stroke="#0091ff" stroke-dasharray="5,2" d="M926.34,-1061.32C908.67,-1065.59 888.58,-1070.45 870.16,-1074.9"/>
+<polygon fill="#0091ff" stroke="#0091ff" points="869.3,-1071.5 860.41,-1077.26 870.95,-1078.31 869.3,-1071.5"/>
+</g>
+<!-- sourcefile~rki_output_unstr.f90&#45;&gt;sourcefile~rki_io_netcdf.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge18" class="edge">
+<title>sourcefile~rki_output_unstr.f90&#45;&gt;sourcefile~rki_io_netcdf.f90</title>
+<path fill="none" stroke="#0091ff" stroke-dasharray="5,2" d="M955.2,-1037.15C935.83,-1026.07 905.95,-1009.59 879,-997.32 871.18,-993.75 862.72,-990.26 854.49,-987.05"/>
+<polygon fill="#0091ff" stroke="#0091ff" points="855.59,-983.72 845,-983.42 853.09,-990.26 855.59,-983.72"/>
+</g>
+<!-- sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_config.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge24" class="edge">
+<title>sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_config.f90</title>
+<path fill="none" stroke="#4800ff" stroke-dasharray="5,2" d="M1143.5,-775.32C1012.87,-853.04 962.49,-851.23 810.5,-853.32"/>
+<path fill="none" stroke="#4800ff" stroke-dasharray="5,2" d="M808.5,-853.32C756.32,-850.09 752.38,-819.12 704,-799.32 693.94,-795.2 682.98,-791.36 672.39,-787.96"/>
+<polygon fill="#4800ff" stroke="#4800ff" points="673.41,-784.61 662.82,-784.97 671.32,-791.3 673.41,-784.61"/>
+</g>
+<!-- sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge25" class="edge">
+<title>sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#4800ff" stroke-dasharray="5,2" d="M1289.22,-495.05C1289.24,-454.68 1283.66,-324.61 1214,-256.32 1191.44,-234.2 1171.47,-255.31 1145.5,-237.32"/>
+<path fill="none" stroke="#4800ff" stroke-dasharray="5,2" d="M1143.5,-237.32C1083.98,-196.08 1103.5,-145.23 1039,-112.32 872.72,-27.48 806.52,-90.77 620,-83.32"/>
+<path fill="none" stroke="#4800ff" stroke-dasharray="5,2" d="M618,-83.32C569.47,-82.65 461.48,-15.37 414,-5.32"/>
+<path fill="none" stroke="#4800ff" stroke-dasharray="5,2" d="M412,-5.32C320.88,13.97 289.22,-23.89 217.5,-83.32"/>
+<path fill="none" stroke="#4800ff" stroke-dasharray="5,2" d="M215.5,-83.32C182.55,-110.62 162.13,-107.1 141,-144.32 84.42,-243.98 60.1,-613.69 54.7,-708.86"/>
+<polygon fill="#4800ff" stroke="#4800ff" points="51.19,-708.89 54.13,-719.07 58.18,-709.28 51.19,-708.89"/>
+</g>
+<!-- sourcefile~rki_barotropic_state.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_node9" class="node">
+<title>sourcefile~rki_barotropic_state.f90</title>
+<g id="a_sourcefile~~rki_handle.f90~~EfferentGraph_node9"><a xlink:href="../sourcefile/rki_barotropic_state.f90.html" xlink:title="rki_barotropic_state.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="482.5,-217.32 343.5,-217.32 343.5,-193.32 482.5,-193.32 482.5,-217.32"/>
+<text text-anchor="middle" x="413" y="-202.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_barotropic_state.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_barotropic_state.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge21" class="edge">
+<title>sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_barotropic_state.f90</title>
+<path fill="none" stroke="#4800ff" stroke-dasharray="5,2" d="M1143.5,-237.32C1076.66,-191.01 1058.86,-167.95 978,-159.32"/>
+<path fill="none" stroke="#4800ff" stroke-dasharray="5,2" d="M976,-159.32C902.86,-151.51 883.94,-163.47 810.5,-159.32"/>
+<path fill="none" stroke="#4800ff" stroke-dasharray="5,2" d="M808.5,-159.32C690.89,-152.67 554.58,-175.38 476.89,-191.22"/>
+<polygon fill="#4800ff" stroke="#4800ff" points="475.87,-187.86 466.79,-193.31 477.29,-194.71 475.87,-187.86"/>
+</g>
+<!-- sourcefile~rki_bathymetry.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_node11" class="node">
+<title>sourcefile~rki_bathymetry.f90</title>
+<g id="a_sourcefile~~rki_handle.f90~~EfferentGraph_node11"><a xlink:href="../sourcefile/rki_bathymetry.f90.html" xlink:title="rki_bathymetry.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1034,-249.32 920,-249.32 920,-225.32 1034,-225.32 1034,-249.32"/>
+<text text-anchor="middle" x="977" y="-234.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_bathymetry.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_bathymetry.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge22" class="edge">
+<title>sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_bathymetry.f90</title>
+<path fill="none" stroke="#4800ff" stroke-dasharray="5,2" d="M1143.5,-237.32C1110.4,-214.38 1063.93,-216.56 1028.66,-223.23"/>
+<polygon fill="#4800ff" stroke="#4800ff" points="1027.65,-219.86 1018.56,-225.32 1029.06,-226.72 1027.65,-219.86"/>
+</g>
+<!-- sourcefile~rki_boundary_types.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_node12" class="node">
+<title>sourcefile~rki_boundary_types.f90</title>
+<g id="a_sourcefile~~rki_handle.f90~~EfferentGraph_node12"><a xlink:href="../sourcefile/rki_boundary_types.f90.html" xlink:title="rki_boundary_types.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="879,-709.32 740,-709.32 740,-685.32 879,-685.32 879,-709.32"/>
+<text text-anchor="middle" x="809.5" y="-694.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_boundary_types.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_boundary_types.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge23" class="edge">
+<title>sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_boundary_types.f90</title>
+<path fill="none" stroke="#4800ff" stroke-dasharray="5,2" d="M1286.99,-519.39C1278.91,-563.51 1244.38,-716.49 1145.5,-775.32"/>
+<path fill="none" stroke="#4800ff" stroke-dasharray="5,2" d="M1143.5,-775.32C1078.64,-813.91 1052.37,-750.16 978,-737.32"/>
+<path fill="none" stroke="#4800ff" stroke-dasharray="5,2" d="M976,-737.32C937.85,-730.73 895.43,-720.42 863.08,-711.91"/>
+<polygon fill="#4800ff" stroke="#4800ff" points="863.95,-708.52 853.38,-709.34 862.15,-715.28 863.95,-708.52"/>
+</g>
+<!-- sourcefile~rki_grid.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_node14" class="node">
+<title>sourcefile~rki_grid.f90</title>
+<g id="a_sourcefile~~rki_handle.f90~~EfferentGraph_node14"><a xlink:href="../sourcefile/rki_grid.f90.html" xlink:title="rki_grid.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="254,-337.32 179,-337.32 179,-313.32 254,-313.32 254,-337.32"/>
+<text text-anchor="middle" x="216.5" y="-322.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_grid.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_grid.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge26" class="edge">
+<title>sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_grid.f90</title>
+<path fill="none" stroke="#4800ff" stroke-dasharray="5,2" d="M976,-159.32C890.81,-150.22 705.63,-304.48 620,-307.32"/>
+<path fill="none" stroke="#4800ff" stroke-dasharray="5,2" d="M618,-307.32C527.06,-311.2 505.02,-325.76 414,-325.32"/>
+<path fill="none" stroke="#4800ff" stroke-dasharray="5,2" d="M412,-325.32C361.47,-325.07 303.57,-325.11 264.17,-325.19"/>
+<polygon fill="#4800ff" stroke="#4800ff" points="264.06,-321.69 254.06,-325.21 264.07,-328.69 264.06,-321.69"/>
+</g>
+<!-- sourcefile~rki_mem_report.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_node16" class="node">
+<title>sourcefile~rki_mem_report.f90</title>
+<g id="a_sourcefile~~rki_handle.f90~~EfferentGraph_node16"><a xlink:href="../sourcefile/rki_mem_report.f90.html" xlink:title="rki_mem_report.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="276,-177.32 157,-177.32 157,-153.32 276,-153.32 276,-177.32"/>
+<text text-anchor="middle" x="216.5" y="-162.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_mem_report.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_mem_report.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge27" class="edge">
+<title>sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_mem_report.f90</title>
+<path fill="none" stroke="#4800ff" stroke-dasharray="5,2" d="M618,-83.32C488.91,-77.38 447.73,-13.71 328,-62.32 307.32,-70.71 308.24,-82.02 292,-97.32 274.25,-114.03 253.78,-132.68 238.79,-146.21"/>
+<polygon fill="#4800ff" stroke="#4800ff" points="236.16,-143.87 231.08,-153.16 240.85,-149.07 236.16,-143.87"/>
+</g>
+<!-- sourcefile~rki_ml_eos.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_node18" class="node">
+<title>sourcefile~rki_ml_eos.f90</title>
+<g id="a_sourcefile~~rki_handle.f90~~EfferentGraph_node18"><a xlink:href="../sourcefile/rki_ml_eos.f90.html" xlink:title="rki_ml_eos.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="664.5,-359.32 573.5,-359.32 573.5,-335.32 664.5,-335.32 664.5,-359.32"/>
+<text text-anchor="middle" x="619" y="-344.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_eos.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_ml_eos.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge28" class="edge">
+<title>sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_ml_eos.f90</title>
+<path fill="none" stroke="#4800ff" stroke-dasharray="5,2" d="M1143.5,-237.32C1117.53,-219.32 1102.4,-240.59 1075,-256.32 1055.64,-267.42 1057.75,-279.22 1039,-291.32 1014.52,-307.11 1004.59,-303.41 978,-315.32"/>
+<path fill="none" stroke="#4800ff" stroke-dasharray="5,2" d="M976,-315.32C877.07,-359.6 747.42,-358.35 675.02,-353.09"/>
+<polygon fill="#4800ff" stroke="#4800ff" points="675.01,-349.58 664.76,-352.29 674.46,-356.56 675.01,-349.58"/>
+</g>
+<!-- sourcefile~rki_multilayer_state.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_node19" class="node">
+<title>sourcefile~rki_multilayer_state.f90</title>
+<g id="a_sourcefile~~rki_handle.f90~~EfferentGraph_node19"><a xlink:href="../sourcefile/rki_multilayer_state.f90.html" xlink:title="rki_multilayer_state.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1214,-289.32 1075,-289.32 1075,-265.32 1214,-265.32 1214,-289.32"/>
+<text text-anchor="middle" x="1144.5" y="-274.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_multilayer_state.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_multilayer_state.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge29" class="edge">
+<title>sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_multilayer_state.f90</title>
+<path fill="none" stroke="#4800ff" stroke-dasharray="5,2" d="M1281.49,-495.28C1258.34,-458.18 1187.92,-345.31 1158.57,-298.26"/>
+<polygon fill="#4800ff" stroke="#4800ff" points="1161.37,-296.15 1153.11,-289.52 1155.44,-299.85 1161.37,-296.15"/>
+</g>
+<!-- sourcefile~rki_nonhydrostatic_state.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_node22" class="node">
+<title>sourcefile~rki_nonhydrostatic_state.f90</title>
+<g id="a_sourcefile~~rki_handle.f90~~EfferentGraph_node22"><a xlink:href="../sourcefile/rki_nonhydrostatic_state.f90.html" xlink:title="rki_nonhydrostatic_state.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="495,-137.32 331,-137.32 331,-113.32 495,-113.32 495,-137.32"/>
+<text text-anchor="middle" x="413" y="-122.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_nonhydrostatic_state.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_nonhydrostatic_state.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge30" class="edge">
+<title>sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_nonhydrostatic_state.f90</title>
+<path fill="none" stroke="#4800ff" stroke-dasharray="5,2" d="M618,-83.32C603.85,-82.67 530.55,-98.56 475.84,-110.98"/>
+<polygon fill="#4800ff" stroke="#4800ff" points="474.83,-107.62 465.86,-113.25 476.38,-114.44 474.83,-107.62"/>
+</g>
+<!-- sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_recon_weno.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge31" class="edge">
+<title>sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_recon_weno.f90</title>
+<path fill="none" stroke="#4800ff" stroke-dasharray="5,2" d="M976,-315.32C949.44,-327.29 937.1,-320.33 915,-339.32 890.83,-360.08 905.46,-383.57 879,-401.32 846.65,-423.01 603.29,-448 482.12,-459.26"/>
+<polygon fill="#4800ff" stroke="#4800ff" points="481.48,-455.8 471.85,-460.21 482.13,-462.77 481.48,-455.8"/>
+</g>
+<!-- sourcefile~rki_surface_forcing.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_node26" class="node">
+<title>sourcefile~rki_surface_forcing.f90</title>
+<g id="a_sourcefile~~rki_handle.f90~~EfferentGraph_node26"><a xlink:href="../sourcefile/rki_surface_forcing.f90.html" xlink:title="rki_surface_forcing.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="481,-95.32 345,-95.32 345,-71.32 481,-71.32 481,-95.32"/>
+<text text-anchor="middle" x="413" y="-80.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_surface_forcing.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_surface_forcing.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge32" class="edge">
+<title>sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_surface_forcing.f90</title>
+<path fill="none" stroke="#4800ff" stroke-dasharray="5,2" d="M618,-83.32C576.1,-81.39 529.32,-81.24 491.13,-81.65"/>
+<polygon fill="#4800ff" stroke="#4800ff" points="491.07,-78.15 481.11,-81.77 491.15,-85.15 491.07,-78.15"/>
+</g>
+<!-- sourcefile~rki_timestepper.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_node28" class="node">
+<title>sourcefile~rki_timestepper.f90</title>
+<g id="a_sourcefile~~rki_handle.f90~~EfferentGraph_node28"><a xlink:href="../sourcefile/rki_timestepper.f90.html" xlink:title="rki_timestepper.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="677.5,-865.32 560.5,-865.32 560.5,-841.32 677.5,-841.32 677.5,-865.32"/>
+<text text-anchor="middle" x="619" y="-850.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_timestepper.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_timestepper.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge33" class="edge">
+<title>sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_timestepper.f90</title>
+<path fill="none" stroke="#4800ff" stroke-dasharray="5,2" d="M808.5,-853.32C768.66,-850.85 724,-850.74 688.15,-851.29"/>
+<polygon fill="#4800ff" stroke="#4800ff" points="687.74,-847.8 677.81,-851.47 687.87,-854.8 687.74,-847.8"/>
+</g>
+<!-- sourcefile~rki_tracer.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_node29" class="node">
+<title>sourcefile~rki_tracer.f90</title>
+<g id="a_sourcefile~~rki_handle.f90~~EfferentGraph_node29"><a xlink:href="../sourcefile/rki_tracer.f90.html" xlink:title="rki_tracer.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="455.5,-297.32 370.5,-297.32 370.5,-273.32 455.5,-273.32 455.5,-297.32"/>
+<text text-anchor="middle" x="413" y="-282.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_tracer.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_tracer.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge34" class="edge">
+<title>sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_tracer.f90</title>
+<path fill="none" stroke="#4800ff" stroke-dasharray="5,2" d="M1143.5,-237.32C1127.95,-226.54 996.9,-276.42 978,-277.32"/>
+<path fill="none" stroke="#4800ff" stroke-dasharray="5,2" d="M976,-277.32C788.19,-286.24 564.72,-286.26 465.67,-285.73"/>
+<polygon fill="#4800ff" stroke="#4800ff" points="465.65,-282.23 455.63,-285.67 465.61,-289.23 465.65,-282.23"/>
+</g>
+<!-- sourcefile~rki_vcoord.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_node30" class="node">
+<title>sourcefile~rki_vcoord.f90</title>
+<g id="a_sourcefile~~rki_handle.f90~~EfferentGraph_node30"><a xlink:href="../sourcefile/rki_vcoord.f90.html" xlink:title="rki_vcoord.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="458.5,-705.32 367.5,-705.32 367.5,-681.32 458.5,-681.32 458.5,-705.32"/>
+<text text-anchor="middle" x="413" y="-690.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_vcoord.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_vcoord.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge35" class="edge">
+<title>sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_vcoord.f90</title>
+<path fill="none" stroke="#4800ff" stroke-dasharray="5,2" d="M976,-737.32C903.52,-724.8 883.99,-734.31 810.5,-737.32"/>
+</g>
+<!-- sourcefile~rki_state_unstr.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge38" class="edge">
+<title>sourcefile~rki_state_unstr.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#ff00da" stroke-dasharray="5,2" d="M802.87,-1101.49C783.94,-1140.55 718.19,-1261.54 620,-1285.32"/>
+<path fill="none" stroke="#ff00da" stroke-dasharray="5,2" d="M618,-1285.32C529.88,-1306.65 503.81,-1272.91 414,-1285.32"/>
+</g>
+<!-- sourcefile~rki_state_unstr.f90&#45;&gt;sourcefile~rki_mesh_unstr.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge39" class="edge">
+<title>sourcefile~rki_state_unstr.f90&#45;&gt;sourcefile~rki_mesh_unstr.f90</title>
+<path fill="none" stroke="#ff00da" stroke-dasharray="5,2" d="M770.35,-1101.32C732.61,-1112.26 672.98,-1127.06 620,-1129.32"/>
+<path fill="none" stroke="#ff00da" stroke-dasharray="5,2" d="M618,-1129.32C527.4,-1133.18 502.81,-1143.67 414,-1125.32"/>
+<path fill="none" stroke="#ff00da" stroke-dasharray="5,2" d="M412,-1125.32C374.52,-1117.57 364.73,-1117.07 328,-1106.32 304.17,-1099.34 278.02,-1089.95 257.14,-1082.03"/>
+<polygon fill="#ff00da" stroke="#ff00da" points="258.24,-1078.7 247.65,-1078.39 255.73,-1085.24 258.24,-1078.7"/>
+</g>
+<!-- sourcefile~rki_barotropic_state_unstr.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_node10" class="node">
+<title>sourcefile~rki_barotropic_state_unstr.f90</title>
+<g id="a_sourcefile~~rki_handle.f90~~EfferentGraph_node10"><a xlink:href="../sourcefile/rki_barotropic_state_unstr.f90.html" xlink:title="rki_barotropic_state_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="498,-1219.32 328,-1219.32 328,-1195.32 498,-1195.32 498,-1219.32"/>
+<text text-anchor="middle" x="413" y="-1204.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_barotropic_state_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_state_unstr.f90&#45;&gt;sourcefile~rki_barotropic_state_unstr.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge36" class="edge">
+<title>sourcefile~rki_state_unstr.f90&#45;&gt;sourcefile~rki_barotropic_state_unstr.f90</title>
+<path fill="none" stroke="#ff00da" stroke-dasharray="5,2" d="M800.49,-1101.45C784.96,-1123.77 748.36,-1170.85 704,-1190.32 642.66,-1217.23 566.91,-1220.79 508.21,-1217.99"/>
+<polygon fill="#ff00da" stroke="#ff00da" points="508.38,-1214.49 498.2,-1217.44 508,-1221.48 508.38,-1214.49"/>
+</g>
+<!-- sourcefile~rki_boundary_unstr.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_node13" class="node">
+<title>sourcefile~rki_boundary_unstr.f90</title>
+<g id="a_sourcefile~~rki_handle.f90~~EfferentGraph_node13"><a xlink:href="../sourcefile/rki_boundary_unstr.f90.html" xlink:title="rki_boundary_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="284.5,-959.32 148.5,-959.32 148.5,-935.32 284.5,-935.32 284.5,-959.32"/>
+<text text-anchor="middle" x="216.5" y="-944.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_boundary_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_state_unstr.f90&#45;&gt;sourcefile~rki_boundary_unstr.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge37" class="edge">
+<title>sourcefile~rki_state_unstr.f90&#45;&gt;sourcefile~rki_boundary_unstr.f90</title>
+<path fill="none" stroke="#ff00da" stroke-dasharray="5,2" d="M800.31,-1077.29C778.15,-1044.91 717.76,-957.88 704,-950.32 590.7,-888.03 543.29,-928.26 414,-927.32"/>
+<path fill="none" stroke="#ff00da" stroke-dasharray="5,2" d="M412,-927.32C373.38,-926.99 330.67,-930.9 295.14,-935.35"/>
+<polygon fill="#ff00da" stroke="#ff00da" points="294.31,-931.93 284.84,-936.68 295.2,-938.87 294.31,-931.93"/>
+</g>
+<!-- sourcefile~rki_multilayer_state_unstr.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_node20" class="node">
+<title>sourcefile~rki_multilayer_state_unstr.f90</title>
+<g id="a_sourcefile~~rki_handle.f90~~EfferentGraph_node20"><a xlink:href="../sourcefile/rki_multilayer_state_unstr.f90.html" xlink:title="rki_multilayer_state_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="704,-983.32 534,-983.32 534,-959.32 704,-959.32 704,-983.32"/>
+<text text-anchor="middle" x="619" y="-968.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_multilayer_state_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_state_unstr.f90&#45;&gt;sourcefile~rki_multilayer_state_unstr.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge40" class="edge">
+<title>sourcefile~rki_state_unstr.f90&#45;&gt;sourcefile~rki_multilayer_state_unstr.f90</title>
+<path fill="none" stroke="#ff00da" stroke-dasharray="5,2" d="M789.04,-1077.13C755.51,-1056.15 686.74,-1013.1 648.05,-988.88"/>
+<polygon fill="#ff00da" stroke="#ff00da" points="649.69,-985.77 639.36,-983.43 645.98,-991.71 649.69,-985.77"/>
+</g>
+<!-- sourcefile~rki_si_common.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_node24" class="node">
+<title>sourcefile~rki_si_common.f90</title>
+<g id="a_sourcefile~~rki_handle.f90~~EfferentGraph_node24"><a xlink:href="../sourcefile/rki_si_common.f90.html" xlink:title="rki_si_common.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="676.5,-1101.32 561.5,-1101.32 561.5,-1077.32 676.5,-1077.32 676.5,-1101.32"/>
+<text text-anchor="middle" x="619" y="-1086.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_si_common.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_state_unstr.f90&#45;&gt;sourcefile~rki_si_common.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge41" class="edge">
+<title>sourcefile~rki_state_unstr.f90&#45;&gt;sourcefile~rki_si_common.f90</title>
+<path fill="none" stroke="#ff00da" stroke-dasharray="5,2" d="M753.98,-1089.32C733.05,-1089.32 708.91,-1089.32 686.95,-1089.32"/>
+<polygon fill="#ff00da" stroke="#ff00da" points="686.69,-1085.82 676.69,-1089.32 686.69,-1092.82 686.69,-1085.82"/>
+</g>
+<!-- sourcefile~rki_si_unstr_state.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_node25" class="node">
+<title>sourcefile~rki_si_unstr_state.f90</title>
+<g id="a_sourcefile~~rki_handle.f90~~EfferentGraph_node25"><a xlink:href="../sourcefile/rki_si_unstr_state.f90.html" xlink:title="rki_si_unstr_state.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="682,-1181.32 556,-1181.32 556,-1157.32 682,-1157.32 682,-1181.32"/>
+<text text-anchor="middle" x="619" y="-1166.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_si_unstr_state.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_state_unstr.f90&#45;&gt;sourcefile~rki_si_unstr_state.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge42" class="edge">
+<title>sourcefile~rki_state_unstr.f90&#45;&gt;sourcefile~rki_si_unstr_state.f90</title>
+<path fill="none" stroke="#ff00da" stroke-dasharray="5,2" d="M787.8,-1101.4C767.08,-1113.16 734.05,-1131.02 704,-1143.32 694.36,-1147.26 683.9,-1150.95 673.73,-1154.24"/>
+<polygon fill="#ff00da" stroke="#ff00da" points="672.6,-1150.92 664.11,-1157.26 674.7,-1157.6 672.6,-1150.92"/>
+</g>
+<!-- sourcefile~rki_surface_forcing_unstr.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_node27" class="node">
+<title>sourcefile~rki_surface_forcing_unstr.f90</title>
+<g id="a_sourcefile~~rki_handle.f90~~EfferentGraph_node27"><a xlink:href="../sourcefile/rki_surface_forcing_unstr.f90.html" xlink:title="rki_surface_forcing_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="496,-1097.32 330,-1097.32 330,-1073.32 496,-1073.32 496,-1097.32"/>
+<text text-anchor="middle" x="413" y="-1082.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_surface_forcing_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_state_unstr.f90&#45;&gt;sourcefile~rki_surface_forcing_unstr.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge43" class="edge">
+<title>sourcefile~rki_state_unstr.f90&#45;&gt;sourcefile~rki_surface_forcing_unstr.f90</title>
+<path fill="none" stroke="#ff00da" stroke-dasharray="5,2" d="M759.1,-1077.3C741.79,-1073.65 722.14,-1070.12 704,-1068.32 628.82,-1060.84 609.37,-1063 534,-1068.32 522.11,-1069.15 509.61,-1070.45 497.35,-1071.97"/>
+<polygon fill="#ff00da" stroke="#ff00da" points="496.59,-1068.54 487.12,-1073.29 497.49,-1075.48 496.59,-1068.54"/>
+</g>
+<!-- sourcefile~rki_state_unstr.f90&#45;&gt;sourcefile~rki_timestepper.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge44" class="edge">
+<title>sourcefile~rki_state_unstr.f90&#45;&gt;sourcefile~rki_timestepper.f90</title>
+<path fill="none" stroke="#ff00da" stroke-dasharray="5,2" d="M798.94,-1077.21C785.03,-1059.27 758.8,-1024.31 740,-992.32 721.27,-960.44 727.35,-945.98 704,-917.32 688.91,-898.8 667.42,-882.55 649.96,-871.06"/>
+<polygon fill="#ff00da" stroke="#ff00da" points="651.56,-867.93 641.25,-865.5 647.79,-873.83 651.56,-867.93"/>
+</g>
+<!-- sourcefile~rki_barotropic_state.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge45" class="edge">
+<title>sourcefile~rki_barotropic_state.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M343.49,-205.85C303.49,-209.27 253.91,-219.18 217.5,-245.32"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M215.5,-245.32C181.19,-269.95 163.13,-268.34 141,-304.32 57.41,-440.18 52.15,-641.83 52.9,-708.79"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="49.41,-709.09 53.08,-719.02 56.41,-708.97 49.41,-709.09"/>
+</g>
+<!-- sourcefile~rki_barotropic_state.f90&#45;&gt;sourcefile~rki_grid.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge46" class="edge">
+<title>sourcefile~rki_barotropic_state.f90&#45;&gt;sourcefile~rki_grid.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M392.28,-217.48C357.61,-238.88 285.62,-283.29 245.7,-307.92"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="243.66,-305.07 236.98,-313.3 247.33,-311.02 243.66,-305.07"/>
+</g>
+<!-- sourcefile~rki_barotropic_state.f90&#45;&gt;sourcefile~rki_mem_report.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge47" class="edge">
+<title>sourcefile~rki_barotropic_state.f90&#45;&gt;sourcefile~rki_mem_report.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M353.64,-193.32C332.39,-188.95 308.18,-183.96 286.12,-179.43"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="286.65,-175.97 276.15,-177.38 285.24,-182.82 286.65,-175.97"/>
+</g>
+<!-- sourcefile~rki_barotropic_state_unstr.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge48" class="edge">
+<title>sourcefile~rki_barotropic_state_unstr.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#ff4500" stroke-dasharray="5,2" d="M392.46,-1219.48C349.83,-1245.34 249.7,-1302.06 217.5,-1285.32"/>
+</g>
+<!-- sourcefile~rki_barotropic_state_unstr.f90&#45;&gt;sourcefile~rki_mesh_unstr.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge49" class="edge">
+<title>sourcefile~rki_barotropic_state_unstr.f90&#45;&gt;sourcefile~rki_mesh_unstr.f90</title>
+<path fill="none" stroke="#ff4500" stroke-dasharray="5,2" d="M347.16,-1195.23C340.47,-1192.79 333.95,-1189.85 328,-1186.32 285.3,-1160.97 249.26,-1114.05 230.78,-1087"/>
+<polygon fill="#ff4500" stroke="#ff4500" points="233.46,-1084.71 225,-1078.33 227.64,-1088.59 233.46,-1084.71"/>
+</g>
+<!-- sourcefile~rki_bathymetry.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge50" class="edge">
+<title>sourcefile~rki_bathymetry.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#ff8b00" stroke-dasharray="5,2" d="M919.9,-236.16C749.19,-232.86 245.9,-224.93 217.5,-245.32"/>
+</g>
+<!-- sourcefile~rki_bathymetry.f90&#45;&gt;sourcefile~rki_grid.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge51" class="edge">
+<title>sourcefile~rki_bathymetry.f90&#45;&gt;sourcefile~rki_grid.f90</title>
+<path fill="none" stroke="#ff8b00" stroke-dasharray="5,2" d="M960.14,-249.42C931.82,-269.83 869.94,-309.11 810.5,-311.32"/>
+<path fill="none" stroke="#ff8b00" stroke-dasharray="5,2" d="M808.5,-311.32C724.76,-314.43 703.75,-304.55 620,-307.32"/>
+</g>
+<!-- sourcefile~rki_bathymetry.f90&#45;&gt;sourcefile~rki_io_netcdf.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge52" class="edge">
+<title>sourcefile~rki_bathymetry.f90&#45;&gt;sourcefile~rki_io_netcdf.f90</title>
+<path fill="none" stroke="#ff8b00" stroke-dasharray="5,2" d="M959.18,-249.39C944.63,-260.9 924.48,-279.66 915,-301.32 864.48,-416.78 919,-747.8 879,-867.32 868.19,-899.61 844.75,-931.53 828.32,-951.32"/>
+<polygon fill="#ff8b00" stroke="#ff8b00" points="825.58,-949.14 821.76,-959.02 830.91,-953.67 825.58,-949.14"/>
+</g>
+<!-- sourcefile~rki_boundary_types.f90&#45;&gt;sourcefile~rki_config.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge53" class="edge">
+<title>sourcefile~rki_boundary_types.f90&#45;&gt;sourcefile~rki_config.f90</title>
+<path fill="none" stroke="#ffd000" stroke-dasharray="5,2" d="M778.63,-709.36C746.46,-722.33 695.13,-743.03 659.61,-757.35"/>
+<polygon fill="#ffd000" stroke="#ffd000" points="658.01,-754.22 650.04,-761.21 660.62,-760.71 658.01,-754.22"/>
+</g>
+<!-- sourcefile~rki_boundary_types.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge54" class="edge">
+<title>sourcefile~rki_boundary_types.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#ffd000" stroke-dasharray="5,2" d="M772.84,-685.31C735.28,-673.72 674.19,-657.84 620,-657.32"/>
+</g>
+<!-- sourcefile~rki_grid.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge55" class="edge">
+<title>sourcefile~rki_grid.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#a2ff00" stroke-dasharray="5,2" d="M207.11,-337.33C192.15,-359.16 160.62,-407.2 141,-451.32 99.92,-543.71 69.93,-661.2 58.54,-709.29"/>
+<polygon fill="#a2ff00" stroke="#a2ff00" points="55.08,-708.69 56.22,-719.22 61.9,-710.28 55.08,-708.69"/>
+</g>
+<!-- sourcefile~rki_io_netcdf.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge56" class="edge">
+<title>sourcefile~rki_io_netcdf.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#5cff00" stroke-dasharray="5,2" d="M770.69,-959.26C760.36,-955.22 749.43,-950.21 740,-944.32 721.6,-932.81 723.35,-921.14 704,-911.32 689.35,-903.88 430.43,-853.32 414,-853.32"/>
+</g>
+<!-- sourcefile~rki_mem_report.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge57" class="edge">
+<title>sourcefile~rki_mem_report.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#17ff00" stroke-dasharray="5,2" d="M195.63,-177.34C178.3,-188.92 153.98,-208.09 141,-231.32 93.79,-315.8 63.18,-623.37 55.44,-709.03"/>
+<polygon fill="#17ff00" stroke="#17ff00" points="51.93,-708.92 54.53,-719.19 58.91,-709.54 51.93,-708.92"/>
+</g>
+<!-- sourcefile~rki_ml_common_unstr.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge58" class="edge">
+<title>sourcefile~rki_ml_common_unstr.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#00ff2e" stroke-dasharray="5,2" d="M164.18,-801.3C156.25,-798.75 148.29,-795.76 141,-792.32 117.19,-781.06 92.83,-763.48 75.88,-750.09"/>
+<polygon fill="#00ff2e" stroke="#00ff2e" points="77.72,-747.07 67.74,-743.51 73.32,-752.52 77.72,-747.07"/>
+</g>
+<!-- sourcefile~rki_ml_eos.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge59" class="edge">
+<title>sourcefile~rki_ml_eos.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#00ff73" stroke-dasharray="5,2" d="M615.51,-335.19C606.4,-293.24 571.51,-152.01 498,-62.32 469.4,-27.42 458.14,-14.66 414,-5.32"/>
+</g>
+<!-- sourcefile~rki_ml_eos.f90&#45;&gt;sourcefile~rki_grid.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge61" class="edge">
+<title>sourcefile~rki_ml_eos.f90&#45;&gt;sourcefile~rki_grid.f90</title>
+<path fill="none" stroke="#00ff73" stroke-dasharray="5,2" d="M573.18,-339.81C531.94,-333.54 469.04,-325.58 414,-325.32"/>
+</g>
+<!-- sourcefile~rki_eos.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_node31" class="node">
+<title>sourcefile~rki_eos.f90</title>
+<g id="a_sourcefile~~rki_handle.f90~~EfferentGraph_node31"><a xlink:href="../sourcefile/rki_eos.f90.html" xlink:title="rki_eos.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="449.5,-557.32 376.5,-557.32 376.5,-533.32 449.5,-533.32 449.5,-557.32"/>
+<text text-anchor="middle" x="413" y="-542.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_eos.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_ml_eos.f90&#45;&gt;sourcefile~rki_eos.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge60" class="edge">
+<title>sourcefile~rki_ml_eos.f90&#45;&gt;sourcefile~rki_eos.f90</title>
+<path fill="none" stroke="#00ff73" stroke-dasharray="5,2" d="M606.47,-359.52C589.36,-378 556.82,-414.63 534,-449.32 514.77,-478.54 524.8,-496.83 498,-519.32 487.08,-528.47 472.96,-534.41 459.42,-538.26"/>
+<polygon fill="#00ff73" stroke="#00ff73" points="458.56,-534.87 449.72,-540.71 460.27,-541.65 458.56,-534.87"/>
+</g>
+<!-- sourcefile~rki_ml_common.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_node32" class="node">
+<title>sourcefile~rki_ml_common.f90</title>
+<g id="a_sourcefile~~rki_handle.f90~~EfferentGraph_node32"><a xlink:href="../sourcefile/rki_ml_common.f90.html" xlink:title="rki_ml_common.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="276.5,-557.32 156.5,-557.32 156.5,-533.32 276.5,-533.32 276.5,-557.32"/>
+<text text-anchor="middle" x="216.5" y="-542.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_common.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_ml_eos.f90&#45;&gt;sourcefile~rki_ml_common.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge62" class="edge">
+<title>sourcefile~rki_ml_eos.f90&#45;&gt;sourcefile~rki_ml_common.f90</title>
+<path fill="none" stroke="#00ff73" stroke-dasharray="5,2" d="M608.06,-359.72C581.9,-392.23 512.21,-477.93 498,-486.32 488.84,-491.72 366.85,-516.21 286.79,-531.89"/>
+<polygon fill="#00ff73" stroke="#00ff73" points="285.9,-528.5 276.76,-533.86 287.25,-535.37 285.9,-528.5"/>
+</g>
+<!-- sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge64" class="edge">
+<title>sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#00ffb9" stroke-dasharray="5,2" d="M1142.8,-289.56C1138.59,-357.83 1114.38,-690.75 1039,-751.32 935.41,-834.56 872.86,-753.86 740,-751.32 507.65,-746.87 449.69,-721.73 217.5,-731.32"/>
+</g>
+<!-- sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_barotropic_state.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge63" class="edge">
+<title>sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_barotropic_state.f90</title>
+<path fill="none" stroke="#00ffb9" stroke-dasharray="5,2" d="M1103.42,-265.24C1093.74,-261.49 1083.69,-256.85 1075,-251.32 1056.18,-239.33 1058.5,-227.17 1039,-216.32 993.27,-190.87 862.75,-162.27 810.5,-159.32"/>
+</g>
+<!-- sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_grid.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge66" class="edge">
+<title>sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_grid.f90</title>
+<path fill="none" stroke="#00ffb9" stroke-dasharray="5,2" d="M1121.7,-289.4C1090.67,-306.1 1031.59,-336.14 978,-353.32"/>
+<path fill="none" stroke="#00ffb9" stroke-dasharray="5,2" d="M976,-353.32C903.74,-376.48 886.33,-308.5 810.5,-311.32"/>
+</g>
+<!-- sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_mem_report.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge67" class="edge">
+<title>sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_mem_report.f90</title>
+<path fill="none" stroke="#00ffb9" stroke-dasharray="5,2" d="M1095.24,-265.26C1087.76,-261.73 1080.65,-257.17 1075,-251.32 1040.45,-215.52 1079.44,-174.29 1039,-145.32 947.78,-79.96 646.17,-141.78 534,-145.32 448.46,-148.02 350.12,-154.81 286.05,-159.73"/>
+<polygon fill="#00ffb9" stroke="#00ffb9" points="285.77,-156.24 276.07,-160.51 286.31,-163.22 285.77,-156.24"/>
+</g>
+<!-- sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_tracer.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge70" class="edge">
+<title>sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_tracer.f90</title>
+<path fill="none" stroke="#00ffb9" stroke-dasharray="5,2" d="M1074.62,-275.86C1044.88,-275.6 1009.71,-275.81 978,-277.32"/>
+</g>
+<!-- sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_vcoord.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge71" class="edge">
+<title>sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_vcoord.f90</title>
+<path fill="none" stroke="#00ffb9" stroke-dasharray="5,2" d="M1142.85,-289.33C1139.75,-336.54 1122.8,-512 1039,-620.32 1004.09,-665.44 867.47,-740.28 810.5,-737.32"/>
+<path fill="none" stroke="#00ffb9" stroke-dasharray="5,2" d="M808.5,-737.32C761.37,-737.33 750.73,-725.43 704,-719.32 622.44,-708.65 527.39,-701.04 468.95,-696.91"/>
+<polygon fill="#00ffb9" stroke="#00ffb9" points="469.06,-693.41 458.84,-696.2 468.57,-700.39 469.06,-693.41"/>
+</g>
+<!-- sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_eos.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge65" class="edge">
+<title>sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_eos.f90</title>
+<path fill="none" stroke="#00ffb9" stroke-dasharray="5,2" d="M976,-353.32C921.19,-371.06 930.24,-412.98 879,-439.32 805.13,-477.28 561.49,-520.84 459.51,-537.91"/>
+<polygon fill="#00ffb9" stroke="#00ffb9" points="458.81,-534.48 449.52,-539.57 459.96,-541.38 458.81,-534.48"/>
+</g>
+<!-- sourcefile~rki_ml_dynamics.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_node33" class="node">
+<title>sourcefile~rki_ml_dynamics.f90</title>
+<g id="a_sourcefile~~rki_handle.f90~~EfferentGraph_node33"><a xlink:href="../sourcefile/rki_ml_dynamics.f90.html" xlink:title="rki_ml_dynamics.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1039,-551.32 915,-551.32 915,-527.32 1039,-527.32 1039,-551.32"/>
+<text text-anchor="middle" x="977" y="-536.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_dynamics.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_ml_dynamics.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge68" class="edge">
+<title>sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_ml_dynamics.f90</title>
+<path fill="none" stroke="#00ffb9" stroke-dasharray="5,2" d="M1135.74,-289.6C1109.57,-331.03 1024.35,-465.94 991.29,-518.29"/>
+<polygon fill="#00ffb9" stroke="#00ffb9" points="988.13,-516.73 985.74,-527.06 994.04,-520.47 988.13,-516.73"/>
+</g>
+<!-- sourcefile~rki_ml_tracers.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_node34" class="node">
+<title>sourcefile~rki_ml_tracers.f90</title>
+<g id="a_sourcefile~~rki_handle.f90~~EfferentGraph_node34"><a xlink:href="../sourcefile/rki_ml_tracers.f90.html" xlink:title="rki_ml_tracers.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1032,-611.32 922,-611.32 922,-587.32 1032,-587.32 1032,-611.32"/>
+<text text-anchor="middle" x="977" y="-596.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_tracers.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_ml_tracers.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge69" class="edge">
+<title>sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_ml_tracers.f90</title>
+<path fill="none" stroke="#00ffb9" stroke-dasharray="5,2" d="M1141.84,-289.43C1135.57,-331.31 1109.94,-472.2 1039,-560.32 1032.07,-568.92 1022.71,-576.22 1013.4,-582.09"/>
+<polygon fill="#00ffb9" stroke="#00ffb9" points="1011.42,-579.19 1004.57,-587.27 1014.97,-585.22 1011.42,-579.19"/>
+</g>
+<!-- sourcefile~rki_multilayer_state_unstr.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge73" class="edge">
+<title>sourcefile~rki_multilayer_state_unstr.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M552.39,-983.36C512.43,-990.58 460.33,-999.79 414,-1007.32"/>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M412,-1007.32C326.67,-1021.18 291.22,-1052.46 217.5,-1007.32"/>
+</g>
+<!-- sourcefile~rki_multilayer_state_unstr.f90&#45;&gt;sourcefile~rki_mesh_unstr.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge75" class="edge">
+<title>sourcefile~rki_multilayer_state_unstr.f90&#45;&gt;sourcefile~rki_mesh_unstr.f90</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M412,-1007.32C357.25,-1016.21 296.41,-1036.42 257.6,-1050.7"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="256.37,-1047.43 248.22,-1054.2 258.81,-1053.99 256.37,-1047.43"/>
+</g>
+<!-- sourcefile~rki_multilayer_state_unstr.f90&#45;&gt;sourcefile~rki_boundary_unstr.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge72" class="edge">
+<title>sourcefile~rki_multilayer_state_unstr.f90&#45;&gt;sourcefile~rki_boundary_unstr.f90</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M572.59,-959.26C522.31,-946.31 444.34,-927.54 414,-927.32"/>
+</g>
+<!-- sourcefile~rki_multilayer_state_unstr.f90&#45;&gt;sourcefile~rki_vcoord.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge77" class="edge">
+<title>sourcefile~rki_multilayer_state_unstr.f90&#45;&gt;sourcefile~rki_vcoord.f90</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M604.4,-959.16C585.95,-941.97 553.11,-908.8 534,-874.32 507.63,-826.73 529.13,-801.94 498,-757.32 484.51,-737.98 463.38,-721.92 445.69,-710.73"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="447.17,-707.53 436.81,-705.33 443.53,-713.51 447.17,-707.53"/>
+</g>
+<!-- sourcefile~rki_multilayer_state_unstr.f90&#45;&gt;sourcefile~rki_eos.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge74" class="edge">
+<title>sourcefile~rki_multilayer_state_unstr.f90&#45;&gt;sourcefile~rki_eos.f90</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M602.82,-959.04C583.22,-942.21 549.75,-909.98 534,-874.32 479.2,-750.27 584.79,-675.52 498,-571.32 488.4,-559.78 473.78,-553.28 459.42,-549.63"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="460.09,-546.2 449.58,-547.54 458.63,-553.04 460.09,-546.2"/>
+</g>
+<!-- sourcefile~rki_tracer_unstr.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_node36" class="node">
+<title>sourcefile~rki_tracer_unstr.f90</title>
+<g id="a_sourcefile~~rki_handle.f90~~EfferentGraph_node36"><a xlink:href="../sourcefile/rki_tracer_unstr.f90.html" xlink:title="rki_tracer_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="471.5,-979.32 354.5,-979.32 354.5,-955.32 471.5,-955.32 471.5,-979.32"/>
+<text text-anchor="middle" x="413" y="-964.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_tracer_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_multilayer_state_unstr.f90&#45;&gt;sourcefile~rki_tracer_unstr.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge76" class="edge">
+<title>sourcefile~rki_multilayer_state_unstr.f90&#45;&gt;sourcefile~rki_tracer_unstr.f90</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M533.85,-969.67C516.49,-969.33 498.42,-968.97 481.73,-968.65"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="481.6,-965.14 471.54,-968.45 481.47,-972.14 481.6,-965.14"/>
+</g>
+<!-- sourcefile~rki_nml_schema.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge78" class="edge">
+<title>sourcefile~rki_nml_schema.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#00b9ff" stroke-dasharray="5,2" d="M166.89,-759.32C149.67,-755.06 130.11,-750.23 112.14,-745.8"/>
+<polygon fill="#00b9ff" stroke="#00b9ff" points="112.9,-742.38 102.35,-743.38 111.22,-749.17 112.9,-742.38"/>
+</g>
+<!-- sourcefile~rki_nonhydrostatic_state.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge79" class="edge">
+<title>sourcefile~rki_nonhydrostatic_state.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#0073ff" stroke-dasharray="5,2" d="M361.1,-113.31C304.42,-100.09 220.31,-80.99 217.5,-83.32"/>
+</g>
+<!-- sourcefile~rki_nonhydrostatic_state.f90&#45;&gt;sourcefile~rki_grid.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge80" class="edge">
+<title>sourcefile~rki_nonhydrostatic_state.f90&#45;&gt;sourcefile~rki_grid.f90</title>
+<path fill="none" stroke="#0073ff" stroke-dasharray="5,2" d="M388.49,-137.43C370.12,-147.84 344.94,-164.33 328,-184.32 304.1,-212.53 314.28,-229.81 292,-259.32 278.12,-277.7 258.49,-294.84 242.87,-307.04"/>
+<polygon fill="#0073ff" stroke="#0073ff" points="240.5,-304.44 234.66,-313.29 244.74,-310.01 240.5,-304.44"/>
+</g>
+<!-- sourcefile~rki_nonhydrostatic_state.f90&#45;&gt;sourcefile~rki_mem_report.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge81" class="edge">
+<title>sourcefile~rki_nonhydrostatic_state.f90&#45;&gt;sourcefile~rki_mem_report.f90</title>
+<path fill="none" stroke="#0073ff" stroke-dasharray="5,2" d="M353.64,-137.32C332.39,-141.69 308.18,-146.67 286.12,-151.21"/>
+<polygon fill="#0073ff" stroke="#0073ff" points="285.24,-147.81 276.15,-153.26 286.65,-154.67 285.24,-147.81"/>
+</g>
+<!-- sourcefile~rki_recon_weno.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge82" class="edge">
+<title>sourcefile~rki_recon_weno.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#002eff" stroke-dasharray="5,2" d="M365.62,-453.28C324.1,-445.18 262.95,-440.05 217.5,-465.32"/>
+</g>
+<!-- sourcefile~rki_recon_weno.f90&#45;&gt;sourcefile~rki_grid.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge83" class="edge">
+<title>sourcefile~rki_recon_weno.f90&#45;&gt;sourcefile~rki_grid.f90</title>
+<path fill="none" stroke="#002eff" stroke-dasharray="5,2" d="M358.71,-453.24C348.11,-449.64 337.37,-445.07 328,-439.32 287.45,-414.42 251.33,-371.26 232.12,-345.79"/>
+<polygon fill="#002eff" stroke="#002eff" points="234.81,-343.53 226.05,-337.57 229.18,-347.7 234.81,-343.53"/>
+</g>
+<!-- sourcefile~rki_recon_weno.f90&#45;&gt;sourcefile~rki_ml_common.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge84" class="edge">
+<title>sourcefile~rki_recon_weno.f90&#45;&gt;sourcefile~rki_ml_common.f90</title>
+<path fill="none" stroke="#002eff" stroke-dasharray="5,2" d="M368.39,-477.42C355.26,-481.43 340.91,-486.2 328,-491.32 300.68,-502.15 270.8,-516.94 249,-528.3"/>
+<polygon fill="#002eff" stroke="#002eff" points="247.11,-525.34 239.89,-533.1 250.37,-531.54 247.11,-525.34"/>
+</g>
+<!-- sourcefile~rki_si_unstr_state.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge85" class="edge">
+<title>sourcefile~rki_si_unstr_state.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#5c00ff" stroke-dasharray="5,2" d="M605.03,-1181.53C574.62,-1208.99 495.12,-1274.11 414,-1285.32"/>
+<path fill="none" stroke="#5c00ff" stroke-dasharray="5,2" d="M412,-1285.32C326.37,-1297.14 294.2,-1325.19 217.5,-1285.32"/>
+</g>
+<!-- sourcefile~rki_si_unstr_state.f90&#45;&gt;sourcefile~rki_mesh_unstr.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge86" class="edge">
+<title>sourcefile~rki_si_unstr_state.f90&#45;&gt;sourcefile~rki_mesh_unstr.f90</title>
+<path fill="none" stroke="#5c00ff" stroke-dasharray="5,2" d="M563.5,-1157.3C522.45,-1148.31 464.74,-1135.8 414,-1125.32"/>
+</g>
+<!-- sourcefile~rki_si_unstr_mg.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_node35" class="node">
+<title>sourcefile~rki_si_unstr_mg.f90</title>
+<g id="a_sourcefile~~rki_handle.f90~~EfferentGraph_node35"><a xlink:href="../sourcefile/rki_si_unstr_mg.f90.html" xlink:title="rki_si_unstr_mg.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="471.5,-1177.32 354.5,-1177.32 354.5,-1153.32 471.5,-1153.32 471.5,-1177.32"/>
+<text text-anchor="middle" x="413" y="-1162.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_si_unstr_mg.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_si_unstr_state.f90&#45;&gt;sourcefile~rki_si_unstr_mg.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge87" class="edge">
+<title>sourcefile~rki_si_unstr_state.f90&#45;&gt;sourcefile~rki_si_unstr_mg.f90</title>
+<path fill="none" stroke="#5c00ff" stroke-dasharray="5,2" d="M555.96,-1168.1C532.47,-1167.64 505.63,-1167.11 481.65,-1166.64"/>
+<polygon fill="#5c00ff" stroke="#5c00ff" points="481.63,-1163.14 471.57,-1166.45 481.49,-1170.14 481.63,-1163.14"/>
+</g>
+<!-- sourcefile~rki_surface_forcing.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge88" class="edge">
+<title>sourcefile~rki_surface_forcing.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#a200ff" stroke-dasharray="5,2" d="M376.99,-71.24C334.23,-58.92 262.09,-46.37 217.5,-83.32"/>
+</g>
+<!-- sourcefile~rki_surface_forcing.f90&#45;&gt;sourcefile~rki_grid.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge89" class="edge">
+<title>sourcefile~rki_surface_forcing.f90&#45;&gt;sourcefile~rki_grid.f90</title>
+<path fill="none" stroke="#a200ff" stroke-dasharray="5,2" d="M344.95,-92.57C338.67,-95.55 332.85,-99.39 328,-104.32 278.41,-154.74 328.18,-198.55 292,-259.32 280.51,-278.61 261.49,-295.32 245.55,-307.1"/>
+<polygon fill="#a200ff" stroke="#a200ff" points="243.2,-304.48 237.07,-313.12 247.25,-310.18 243.2,-304.48"/>
+</g>
+<!-- sourcefile~rki_surface_forcing.f90&#45;&gt;sourcefile~rki_mem_report.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge90" class="edge">
+<title>sourcefile~rki_surface_forcing.f90&#45;&gt;sourcefile~rki_mem_report.f90</title>
+<path fill="none" stroke="#a200ff" stroke-dasharray="5,2" d="M355.34,-95.34C346.07,-97.92 336.67,-100.91 328,-104.32 298.2,-116.04 266.42,-134.25 244.63,-147.73"/>
+<polygon fill="#a200ff" stroke="#a200ff" points="242.54,-144.9 235.93,-153.18 246.26,-150.83 242.54,-144.9"/>
+</g>
+<!-- sourcefile~rki_surface_forcing_unstr.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge91" class="edge">
+<title>sourcefile~rki_surface_forcing_unstr.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#e700ff" stroke-dasharray="5,2" d="M370.64,-1073.22C329.91,-1060.3 266.83,-1037.53 217.5,-1007.32"/>
+</g>
+<!-- sourcefile~rki_surface_forcing_unstr.f90&#45;&gt;sourcefile~rki_mesh_unstr.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge92" class="edge">
+<title>sourcefile~rki_surface_forcing_unstr.f90&#45;&gt;sourcefile~rki_mesh_unstr.f90</title>
+<path fill="none" stroke="#e700ff" stroke-dasharray="5,2" d="M329.8,-1077.29C314.38,-1075.78 298.45,-1074.22 283.6,-1072.77"/>
+<polygon fill="#e700ff" stroke="#e700ff" points="283.8,-1069.28 273.51,-1071.79 283.12,-1076.24 283.8,-1069.28"/>
+</g>
+<!-- sourcefile~rki_timestepper.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge93" class="edge">
+<title>sourcefile~rki_timestepper.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#ff00d0" stroke-dasharray="5,2" d="M560.4,-853.32C519.54,-853.32 463.41,-853.32 414,-853.32"/>
+</g>
+<!-- sourcefile~rki_tracer.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge94" class="edge">
+<title>sourcefile~rki_tracer.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#ff008b" stroke-dasharray="5,2" d="M370.5,-273.45C317.13,-258.69 229.82,-236.47 217.5,-245.32"/>
+</g>
+<!-- sourcefile~rki_tracer.f90&#45;&gt;sourcefile~rki_grid.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge95" class="edge">
+<title>sourcefile~rki_tracer.f90&#45;&gt;sourcefile~rki_grid.f90</title>
+<path fill="none" stroke="#ff008b" stroke-dasharray="5,2" d="M370.27,-293.9C339.15,-300.3 296.62,-309.05 264.33,-315.69"/>
+<polygon fill="#ff008b" stroke="#ff008b" points="263.33,-312.32 254.24,-317.76 264.74,-319.18 263.33,-312.32"/>
+</g>
+<!-- sourcefile~rki_tracer.f90&#45;&gt;sourcefile~rki_mem_report.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge96" class="edge">
+<title>sourcefile~rki_tracer.f90&#45;&gt;sourcefile~rki_mem_report.f90</title>
+<path fill="none" stroke="#ff008b" stroke-dasharray="5,2" d="M392.28,-273.15C357.61,-251.76 285.62,-207.34 245.7,-182.71"/>
+<polygon fill="#ff008b" stroke="#ff008b" points="247.33,-179.61 236.98,-177.34 243.66,-185.57 247.33,-179.61"/>
+</g>
+<!-- sourcefile~rki_vcoord.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge97" class="edge">
+<title>sourcefile~rki_vcoord.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#ff0045" stroke-dasharray="5,2" d="M369.56,-705.32C330.45,-715.5 270.6,-728.82 217.5,-731.32"/>
+</g>
+<!-- sourcefile~rki_eos.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge98" class="edge">
+<title>sourcefile~rki_eos.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M393.05,-533.16C350.68,-506.68 249.49,-447.53 217.5,-465.32"/>
+</g>
+<!-- sourcefile~rki_eos.f90&#45;&gt;sourcefile~rki_grid.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge99" class="edge">
+<title>sourcefile~rki_eos.f90&#45;&gt;sourcefile~rki_grid.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M390.39,-533.12C372.41,-522.31 346.8,-505.32 328,-486.32 284.57,-442.41 247,-379.48 228.94,-346.82"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="231.83,-344.82 223.97,-337.71 225.69,-348.17 231.83,-344.82"/>
+</g>
+<!-- sourcefile~rki_ml_common.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge100" class="edge">
+<title>sourcefile~rki_ml_common.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#ffff00" stroke-dasharray="5,2" d="M204.87,-557.52C177.52,-588.93 104.48,-672.78 70.87,-711.37"/>
+<polygon fill="#ffff00" stroke="#ffff00" points="67.89,-709.47 63.96,-719.31 73.16,-714.07 67.89,-709.47"/>
+</g>
+<!-- sourcefile~rki_ml_dynamics.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge102" class="edge">
+<title>sourcefile~rki_ml_dynamics.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#00ff00" stroke-dasharray="5,2" d="M808.5,-387.32C749.5,-357.2 275.39,-433.13 217.5,-465.32"/>
+<path fill="none" stroke="#00ff00" stroke-dasharray="5,2" d="M215.5,-465.32C178.01,-484.77 166.58,-490.7 141,-524.32 95.98,-583.48 69.51,-669.24 58.91,-709.23"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="55.49,-708.47 56.39,-719.03 62.27,-710.21 55.49,-708.47"/>
+</g>
+<!-- sourcefile~rki_ml_dynamics.f90&#45;&gt;sourcefile~rki_boundary_types.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge101" class="edge">
+<title>sourcefile~rki_ml_dynamics.f90&#45;&gt;sourcefile~rki_boundary_types.f90</title>
+<path fill="none" stroke="#00ff00" stroke-dasharray="5,2" d="M951.55,-551.48C939.57,-558.26 925.51,-567.5 915,-578.32 893.32,-600.62 899.04,-614.53 879,-638.32 866.19,-653.53 849.28,-668.13 835.47,-679.01"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="833.12,-676.4 827.33,-685.27 837.39,-681.94 833.12,-676.4"/>
+</g>
+<!-- sourcefile~rki_ml_dynamics.f90&#45;&gt;sourcefile~rki_grid.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge103" class="edge">
+<title>sourcefile~rki_ml_dynamics.f90&#45;&gt;sourcefile~rki_grid.f90</title>
+<path fill="none" stroke="#00ff00" stroke-dasharray="5,2" d="M966.73,-527.1C943.77,-497.8 881.04,-423.32 810.5,-387.32"/>
+<path fill="none" stroke="#00ff00" stroke-dasharray="5,2" d="M808.5,-387.32C727.44,-345.94 710.96,-304.31 620,-307.32"/>
+</g>
+<!-- sourcefile~rki_ml_dynamics.f90&#45;&gt;sourcefile~rki_vcoord.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge106" class="edge">
+<title>sourcefile~rki_ml_dynamics.f90&#45;&gt;sourcefile~rki_vcoord.f90</title>
+<path fill="none" stroke="#00ff00" stroke-dasharray="5,2" d="M618,-547.32C537.15,-566.33 463.54,-638.04 431.26,-673.38"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="428.38,-671.35 424.31,-681.13 433.59,-676.03 428.38,-671.35"/>
+</g>
+<!-- sourcefile~rki_ml_dynamics.f90&#45;&gt;sourcefile~rki_ml_common.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge104" class="edge">
+<title>sourcefile~rki_ml_dynamics.f90&#45;&gt;sourcefile~rki_ml_common.f90</title>
+<path fill="none" stroke="#00ff00" stroke-dasharray="5,2" d="M914.88,-533.1C843.19,-527.54 721.25,-523.5 620,-547.32"/>
+<path fill="none" stroke="#00ff00" stroke-dasharray="5,2" d="M618,-547.32C573.37,-558.93 460.04,-587.83 414,-585.32"/>
+<path fill="none" stroke="#00ff00" stroke-dasharray="5,2" d="M412,-585.32C362.55,-582.62 307.35,-570.36 268.42,-560.11"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="268.96,-556.63 258.39,-557.42 267.14,-563.39 268.96,-556.63"/>
+</g>
+<!-- sourcefile~rki_remap_column.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_node37" class="node">
+<title>sourcefile~rki_remap_column.f90</title>
+<g id="a_sourcefile~~rki_handle.f90~~EfferentGraph_node37"><a xlink:href="../sourcefile/rki_remap_column.f90.html" xlink:title="rki_remap_column.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="876,-629.32 743,-629.32 743,-605.32 876,-605.32 876,-629.32"/>
+<text text-anchor="middle" x="809.5" y="-614.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_remap_column.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_ml_dynamics.f90&#45;&gt;sourcefile~rki_remap_column.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge105" class="edge">
+<title>sourcefile~rki_ml_dynamics.f90&#45;&gt;sourcefile~rki_remap_column.f90</title>
+<path fill="none" stroke="#00ff00" stroke-dasharray="5,2" d="M950.5,-551.33C922.32,-564.62 876.75,-586.09 845.3,-600.92"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="843.58,-597.86 836.03,-605.29 846.56,-604.19 843.58,-597.86"/>
+</g>
+<!-- sourcefile~rki_ml_tracers.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge108" class="edge">
+<title>sourcefile~rki_ml_tracers.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M927.94,-611.35C923.51,-612.86 919.13,-614.52 915,-616.32 897.8,-623.79 896.85,-632.58 879,-638.32 769.11,-673.62 735.41,-655.92 620,-657.32"/>
+</g>
+<!-- sourcefile~rki_ml_tracers.f90&#45;&gt;sourcefile~rki_boundary_types.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge107" class="edge">
+<title>sourcefile~rki_ml_tracers.f90&#45;&gt;sourcefile~rki_boundary_types.f90</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M962.37,-611.35C944.32,-626.83 911.01,-653.8 879,-671.32 872.17,-675.05 864.7,-678.49 857.27,-681.55"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="855.97,-678.3 847.95,-685.23 858.54,-684.82 855.97,-678.3"/>
+</g>
+<!-- sourcefile~rki_ml_tracers.f90&#45;&gt;sourcefile~rki_grid.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge109" class="edge">
+<title>sourcefile~rki_ml_tracers.f90&#45;&gt;sourcefile~rki_grid.f90</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M942.43,-587.19C820.06,-542.98 397.93,-390.5 260.86,-340.98"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="261.71,-337.56 251.11,-337.46 259.33,-344.15 261.71,-337.56"/>
+</g>
+<!-- sourcefile~rki_ml_tracers.f90&#45;&gt;sourcefile~rki_ml_common.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge110" class="edge">
+<title>sourcefile~rki_ml_tracers.f90&#45;&gt;sourcefile~rki_ml_common.f90</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M921.88,-597.57C907.91,-597.14 892.89,-596.7 879,-596.32 672.35,-590.68 620.42,-596.56 414,-585.32"/>
+</g>
+<!-- sourcefile~rki_ml_tracers.f90&#45;&gt;sourcefile~rki_remap_column.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge111" class="edge">
+<title>sourcefile~rki_ml_tracers.f90&#45;&gt;sourcefile~rki_remap_column.f90</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M921.81,-605.21C910.39,-606.45 898.15,-607.78 886.11,-609.09"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="885.63,-605.62 876.07,-610.19 886.39,-612.58 885.63,-605.62"/>
+</g>
+<!-- sourcefile~rki_si_unstr_mg.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge112" class="edge">
+<title>sourcefile~rki_si_unstr_mg.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M354.13,-1175.83C345.11,-1178.58 336.1,-1182.02 328,-1186.32 269.75,-1217.22 276,-1315.74 217.5,-1285.32"/>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M215.5,-1285.32C116.29,-1233.74 66.94,-851.09 55.92,-753.78"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="59.37,-753.15 54.79,-743.6 52.41,-753.92 59.37,-753.15"/>
+</g>
+<!-- sourcefile~rki_si_unstr_mg.f90&#45;&gt;sourcefile~rki_mesh_unstr.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge113" class="edge">
+<title>sourcefile~rki_si_unstr_mg.f90&#45;&gt;sourcefile~rki_mesh_unstr.f90</title>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M364.89,-1153.31C352.62,-1149.49 339.59,-1144.8 328,-1139.32 296.03,-1124.19 262.59,-1100.89 240.99,-1084.7"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="242.84,-1081.71 232.76,-1078.45 238.61,-1087.29 242.84,-1081.71"/>
+</g>
+<!-- sourcefile~rki_tracer_unstr.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge115" class="edge">
+<title>sourcefile~rki_tracer_unstr.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#ff00ff" stroke-dasharray="5,2" d="M368.85,-979.41C315.55,-993.86 230.29,-1015.15 217.5,-1007.32"/>
+<path fill="none" stroke="#ff00ff" stroke-dasharray="5,2" d="M215.5,-1007.32C183.63,-987.8 165.67,-996.39 141,-968.32 84.15,-903.65 63.04,-798.79 56.28,-753.41"/>
+<polygon fill="#ff00ff" stroke="#ff00ff" points="59.74,-752.88 54.89,-743.46 52.81,-753.84 59.74,-752.88"/>
+</g>
+<!-- sourcefile~rki_tracer_unstr.f90&#45;&gt;sourcefile~rki_mesh_unstr.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge116" class="edge">
+<title>sourcefile~rki_tracer_unstr.f90&#45;&gt;sourcefile~rki_mesh_unstr.f90</title>
+<path fill="none" stroke="#ff00ff" stroke-dasharray="5,2" d="M362.4,-979.42C350.79,-983.13 338.69,-987.74 328,-993.32 310.03,-1002.69 308.7,-1009.83 292,-1021.32 277.94,-1030.98 261.78,-1040.88 248.12,-1048.92"/>
+<polygon fill="#ff00ff" stroke="#ff00ff" points="245.99,-1046.11 239.11,-1054.17 249.52,-1052.16 245.99,-1046.11"/>
+</g>
+<!-- sourcefile~rki_tracer_unstr.f90&#45;&gt;sourcefile~rki_boundary_unstr.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge114" class="edge">
+<title>sourcefile~rki_tracer_unstr.f90&#45;&gt;sourcefile~rki_boundary_unstr.f90</title>
+<path fill="none" stroke="#ff00ff" stroke-dasharray="5,2" d="M354.43,-961.4C335.65,-959.47 314.48,-957.29 294.51,-955.24"/>
+<polygon fill="#ff00ff" stroke="#ff00ff" points="294.81,-951.75 284.51,-954.21 294.1,-958.71 294.81,-951.75"/>
+</g>
+<!-- sourcefile~rki_remap_column.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_handle.f90~~EfferentGraph_edge117" class="edge">
+<title>sourcefile~rki_remap_column.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M773.88,-629.42C736.42,-641.38 674.7,-657.85 620,-657.32"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M618,-657.32C488.94,-656.06 452.35,-637.76 328,-672.32 274.36,-687.22 273.11,-728.7 217.5,-731.32"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M215.5,-731.32C182.57,-732.68 145.84,-732.79 115.69,-732.52"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="115.36,-729.01 105.32,-732.4 115.28,-736.01 115.36,-729.01"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var pansourcefilerki_handlef90EfferentGraph = svgPanZoom('#sourcefilerki_handlef90EfferentGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#EfferentGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="EfferentGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="202pt" height="32pt"
+ viewBox="0.00 0.00 201.50 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 197.5,-28 197.5,4 -4,4"/>
+<!-- Source File -->
+<g id="node1" class="node">
+<title>Source File</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Source File</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node2" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="193.5,-24 88.5,-24 88.5,0 193.5,0 193.5,-24"/>
+<text text-anchor="middle" x="141" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a file to a file which it depends on. A file
+is dependent upon another if the latter must be compiled before the former
+can be.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Files dependent on this one</h3>
+          </div>
+          <div class="card-body">
+            <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: sourcefile~~rki_handle.f90~~AfferentGraph Pages: 1 -->
+<svg id="sourcefilerki_handlef90AfferentGraph" width="236pt" height="74pt"
+ viewBox="0.00 0.00 236.00 74.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="sourcefile~~rki_handle.f90~~AfferentGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 70)">
+<title>sourcefile~~rki_handle.f90~~AfferentGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-70 232,-70 232,4 -4,4"/>
+<!-- sourcefile~rki_handle.f90 -->
+<g id="sourcefile~~rki_handle.f90~~AfferentGraph_node1" class="node">
+<title>sourcefile~rki_handle.f90</title>
+<polygon fill="none" stroke="black" points="91,-45 0,-45 0,-21 91,-21 91,-45"/>
+<text text-anchor="middle" x="45.5" y="-30.6" font-family="Helvetica,sans-Serif" font-size="10.50">rki_handle.F90</text>
+</g>
+<!-- sourcefile~rki_api.f90 -->
+<g id="sourcefile~~rki_handle.f90~~AfferentGraph_node2" class="node">
+<title>sourcefile~rki_api.f90</title>
+<g id="a_sourcefile~~rki_handle.f90~~AfferentGraph_node2"><a xlink:href="../sourcefile/rki_api.f90.html" xlink:title="rki_api.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="212.5,-66 142.5,-66 142.5,-42 212.5,-42 212.5,-66"/>
+<text text-anchor="middle" x="177.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_api.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_api.f90&#45;&gt;sourcefile~rki_handle.f90 -->
+<g id="sourcefile~~rki_handle.f90~~AfferentGraph_edge1" class="edge">
+<title>sourcefile~rki_api.f90&#45;&gt;sourcefile~rki_handle.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M142.34,-48.48C129.75,-46.45 115.15,-44.09 101.2,-41.84"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="101.62,-38.36 91.19,-40.22 100.51,-45.27 101.62,-38.36"/>
+</g>
+<!-- sourcefile~rki_api_unstr.f90 -->
+<g id="sourcefile~~rki_handle.f90~~AfferentGraph_node3" class="node">
+<title>sourcefile~rki_api_unstr.f90</title>
+<g id="a_sourcefile~~rki_handle.f90~~AfferentGraph_node3"><a xlink:href="../sourcefile/rki_api_unstr.f90.html" xlink:title="rki_api_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="228,-24 127,-24 127,0 228,0 228,-24"/>
+<text text-anchor="middle" x="177.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_api_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_api_unstr.f90&#45;&gt;sourcefile~rki_handle.f90 -->
+<g id="sourcefile~~rki_handle.f90~~AfferentGraph_edge2" class="edge">
+<title>sourcefile~rki_api_unstr.f90&#45;&gt;sourcefile~rki_handle.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M126.98,-20C118.52,-21.37 109.69,-22.79 101.11,-24.18"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="100.5,-20.73 91.19,-25.78 101.62,-27.64 100.5,-20.73"/>
+</g>
+</g>
+</svg>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#AfferentGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="AfferentGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="202pt" height="32pt"
+ viewBox="0.00 0.00 201.50 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 197.5,-28 197.5,4 -4,4"/>
+<!-- Source File -->
+<g id="node1" class="node">
+<title>Source File</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Source File</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node2" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="193.5,-24 88.5,-24 88.5,0 193.5,0 193.5,-24"/>
+<text text-anchor="middle" x="141" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a file to a file which it depends on. A file
+is dependent upon another if the latter must be compiled before the former
+can be.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+          </div>
+        </div>
+<br>
+      <section>
+        <h2><span class="anchor" id="src"></span>Source Code</h2>
+        <div class="hl codehilite"><pre><span></span><a id="ln-1" name="ln-1" href="#ln-1"></a><span class="c">!! Opaque handle types for the C-compatible API.</span>
+<a id="ln-2" name="ln-2" href="#ln-2"></a><span class="c">!!</span>
+<a id="ln-3" name="ln-3" href="#ln-3"></a><span class="c">!! Replaces the module-level singletons in `rki_api` and `rki_api_unstr`</span>
+<a id="ln-4" name="ln-4" href="#ln-4"></a><span class="c">!! with heap-allocated handles, so multiple simulations can coexist in one</span>
+<a id="ln-5" name="ln-5" href="#ln-5"></a><span class="c">!! process (e.g. structured + unstructured at once, multi-grid coupling).</span>
+<a id="ln-6" name="ln-6" href="#ln-6"></a><span class="c">!!</span>
+<a id="ln-7" name="ln-7" href="#ln-7"></a><span class="c">!! Layout: each handle owns the data + state-machine flags that used to</span>
+<a id="ln-8" name="ln-8" href="#ln-8"></a><span class="c">!! live as `save` variables at module scope. C/Python callers see only an</span>
+<a id="ln-9" name="ln-9" href="#ln-9"></a><span class="c">!! opaque `c_ptr`; `handle_check_*` resolves it to a Fortran pointer and</span>
+<a id="ln-10" name="ln-10" href="#ln-10"></a><span class="c">!! verifies the magic-number sentinel before any access.</span>
+<a id="ln-11" name="ln-11" href="#ln-11"></a><span class="c">!!</span>
+<a id="ln-12" name="ln-12" href="#ln-12"></a><span class="c">!! Phase 1 (this module): types + create/destroy/check helpers only.</span>
+<a id="ln-13" name="ln-13" href="#ln-13"></a><span class="c">!! Phase 2/3: the existing API entrypoints stop touching module-static</span>
+<a id="ln-14" name="ln-14" href="#ln-14"></a><span class="c">!! state and instead route through `h =&gt; handle_check_*(c_handle)`.</span>
+<a id="ln-15" name="ln-15" href="#ln-15"></a><span class="k">module </span><span class="n">rki_handle</span>
+<a id="ln-16" name="ln-16" href="#ln-16"></a><span class="w">   </span><span class="k">use</span><span class="p">,</span><span class="w"> </span><span class="k">intrinsic</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="nb">iso_c_binding</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="nb">c_associated</span><span class="p">,</span><span class="w"> </span><span class="nb">c_f_pointer</span><span class="p">,</span><span class="w"> </span><span class="nb">c_loc</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<a id="ln-17" name="ln-17" href="#ln-17"></a><span class="w">                                                                             </span><span class="nb">c_null_ptr</span><span class="p">,</span><span class="w"> </span><span class="kt">c_ptr</span>
+<a id="ln-18" name="ln-18" href="#ln-18"></a><span class="kt">   </span><span class="k">use </span><span class="n">rki_constants</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">wp</span>
+<a id="ln-19" name="ln-19" href="#ln-19"></a><span class="w">   </span><span class="k">use </span><span class="n">rki_config</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">config_t</span>
+<a id="ln-20" name="ln-20" href="#ln-20"></a><span class="w">   </span><span class="k">use </span><span class="n">rki_state</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">state_t</span>
+<a id="ln-21" name="ln-21" href="#ln-21"></a><span class="w">   </span><span class="k">use </span><span class="n">rki_mesh_unstr</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">mesh_unstr_t</span>
+<a id="ln-22" name="ln-22" href="#ln-22"></a><span class="w">   </span><span class="k">use </span><span class="n">rki_state_unstr</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">unstr_state_t</span>
+<a id="ln-23" name="ln-23" href="#ln-23"></a><span class="w">   </span><span class="k">use </span><span class="n">rki_output_unstr</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">output_unstr_state_t</span>
+<a id="ln-24" name="ln-24" href="#ln-24"></a><span class="w">   </span><span class="k">use </span><span class="n">rki_gauges_unstr</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">gauge_unstr_t</span>
+<a id="ln-25" name="ln-25" href="#ln-25"></a><span class="w">   </span><span class="k">implicit none</span>
+<a id="ln-26" name="ln-26" href="#ln-26"></a><span class="k">   private</span>
+<a id="ln-27" name="ln-27" href="#ln-27"></a>
+<a id="ln-28" name="ln-28" href="#ln-28"></a><span class="k">   public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">solver_handle_t</span><span class="p">,</span><span class="w"> </span><span class="n">solver_handle_unstr_t</span>
+<a id="ln-29" name="ln-29" href="#ln-29"></a><span class="w">   </span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">handle_create</span><span class="p">,</span><span class="w"> </span><span class="n">handle_destroy</span><span class="p">,</span><span class="w"> </span><span class="n">handle_check</span>
+<a id="ln-30" name="ln-30" href="#ln-30"></a><span class="w">   </span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">handle_create_unstr</span><span class="p">,</span><span class="w"> </span><span class="n">handle_destroy_unstr</span><span class="p">,</span><span class="w"> </span><span class="n">handle_check_unstr</span>
+<a id="ln-31" name="ln-31" href="#ln-31"></a><span class="w">   </span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">HANDLE_OK</span><span class="p">,</span><span class="w"> </span><span class="n">HANDLE_ERR_NULL</span><span class="p">,</span><span class="w"> </span><span class="n">HANDLE_ERR_INVALID</span>
+<a id="ln-32" name="ln-32" href="#ln-32"></a>
+<a id="ln-33" name="ln-33" href="#ln-33"></a><span class="w">   </span><span class="c">!! Magic-number sentinels. Distinct values per backend so a structured</span>
+<a id="ln-34" name="ln-34" href="#ln-34"></a><span class="w">   </span><span class="c">!! handle passed to an unstructured entrypoint (or vice versa) is rejected</span>
+<a id="ln-35" name="ln-35" href="#ln-35"></a><span class="w">   </span><span class="c">!! with the same code path as a fully bogus pointer. The values are</span>
+<a id="ln-36" name="ln-36" href="#ln-36"></a><span class="w">   </span><span class="c">!! arbitrary; they just need to be unlikely to occur in uninitialised</span>
+<a id="ln-37" name="ln-37" href="#ln-37"></a><span class="w">   </span><span class="c">!! memory and distinct from each other.</span>
+<a id="ln-38" name="ln-38" href="#ln-38"></a><span class="w">   </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">parameter</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">MAGIC_STRUCTURED</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">int</span><span class="p">(</span><span class="n">z</span><span class="s1">'72616B53'</span><span class="p">)</span><span class="w">   </span><span class="c">!! 'rakS'</span>
+<a id="ln-39" name="ln-39" href="#ln-39"></a><span class="w">   </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">parameter</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">MAGIC_UNSTRUCTURED</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">int</span><span class="p">(</span><span class="n">z</span><span class="s1">'72616B55'</span><span class="p">)</span><span class="w">   </span><span class="c">!! 'rakU'</span>
+<a id="ln-40" name="ln-40" href="#ln-40"></a><span class="w">   </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">parameter</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">MAGIC_DESTROYED</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">int</span><span class="p">(</span><span class="n">z</span><span class="s1">'DEADBEEF'</span><span class="p">)</span>
+<a id="ln-41" name="ln-41" href="#ln-41"></a>
+<a id="ln-42" name="ln-42" href="#ln-42"></a><span class="w">   </span><span class="c">!! handle_check return codes</span>
+<a id="ln-43" name="ln-43" href="#ln-43"></a><span class="w">   </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">parameter</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">HANDLE_OK</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+<a id="ln-44" name="ln-44" href="#ln-44"></a><span class="w">   </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">parameter</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">HANDLE_ERR_NULL</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span>
+<a id="ln-45" name="ln-45" href="#ln-45"></a><span class="w">   </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">parameter</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">HANDLE_ERR_INVALID</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span>
+<a id="ln-46" name="ln-46" href="#ln-46"></a>
+<a id="ln-47" name="ln-47" href="#ln-47"></a><span class="w">   </span><span class="k">type</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">solver_handle_t</span>
+<a id="ln-48" name="ln-48" href="#ln-48"></a><span class="w">      </span><span class="c">!! Structured-solver handle. Mirrors the module-static state in</span>
+<a id="ln-49" name="ln-49" href="#ln-49"></a><span class="w">      </span><span class="c">!! `rki_api` so the Phase 2 cutover is a mechanical rename of</span>
+<a id="ln-50" name="ln-50" href="#ln-50"></a><span class="w">      </span><span class="c">!! bare `state`/`cfg`/flags to `h%state`/`h%cfg`/etc.</span>
+<a id="ln-51" name="ln-51" href="#ln-51"></a><span class="w">      </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">magic</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+<a id="ln-52" name="ln-52" href="#ln-52"></a><span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="n">config_t</span><span class="p">)</span><span class="w">        </span><span class="kd">::</span><span class="w"> </span><span class="n">cfg</span>
+<a id="ln-53" name="ln-53" href="#ln-53"></a><span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="n">state_t</span><span class="p">),</span><span class="w"> </span><span class="k">pointer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">state</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nb">null</span><span class="p">()</span>
+<a id="ln-54" name="ln-54" href="#ln-54"></a><span class="w">         </span><span class="c">!! Pointer (not value) so `c_loc(h%state%barotropic%h)` keeps a stable</span>
+<a id="ln-55" name="ln-55" href="#ln-55"></a><span class="w">         </span><span class="c">!! address across handle moves. Allocated in handle_create.</span>
+<a id="ln-56" name="ln-56" href="#ln-56"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">t_current</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<a id="ln-57" name="ln-57" href="#ln-57"></a><span class="w">      </span><span class="kt">logical</span><span class="w">  </span><span class="kd">::</span><span class="w"> </span><span class="n">is_initialised</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">false</span><span class="p">.</span>
+<a id="ln-58" name="ln-58" href="#ln-58"></a><span class="w">      </span><span class="kt">logical</span><span class="w">  </span><span class="kd">::</span><span class="w"> </span><span class="n">is_finalised</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">false</span><span class="p">.</span>
+<a id="ln-59" name="ln-59" href="#ln-59"></a><span class="w">      </span><span class="kt">logical</span><span class="w">  </span><span class="kd">::</span><span class="w"> </span><span class="n">on_device</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">false</span><span class="p">.</span>
+<a id="ln-60" name="ln-60" href="#ln-60"></a><span class="w">      </span><span class="kt">logical</span><span class="w">  </span><span class="kd">::</span><span class="w"> </span><span class="n">host_is_current</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">false</span><span class="p">.</span>
+<a id="ln-61" name="ln-61" href="#ln-61"></a><span class="w">      </span><span class="kt">logical</span><span class="w">  </span><span class="kd">::</span><span class="w"> </span><span class="n">user_set_bathymetry</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">false</span><span class="p">.</span>
+<a id="ln-62" name="ln-62" href="#ln-62"></a><span class="w">      </span><span class="kt">logical</span><span class="w">  </span><span class="kd">::</span><span class="w"> </span><span class="n">user_set_h</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">false</span><span class="p">.</span>
+<a id="ln-63" name="ln-63" href="#ln-63"></a><span class="w">      </span><span class="kt">logical</span><span class="w">  </span><span class="kd">::</span><span class="w"> </span><span class="n">user_set_layers</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">false</span><span class="p">.</span>
+<a id="ln-64" name="ln-64" href="#ln-64"></a><span class="w">   </span><span class="k">end type </span><span class="n">solver_handle_t</span>
+<a id="ln-65" name="ln-65" href="#ln-65"></a>
+<a id="ln-66" name="ln-66" href="#ln-66"></a><span class="w">   </span><span class="k">type</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">solver_handle_unstr_t</span>
+<a id="ln-67" name="ln-67" href="#ln-67"></a><span class="w">      </span><span class="c">!! Unstructured-solver handle. Mirrors the module-static state in</span>
+<a id="ln-68" name="ln-68" href="#ln-68"></a><span class="w">      </span><span class="c">!! `rki_api_unstr`.</span>
+<a id="ln-69" name="ln-69" href="#ln-69"></a><span class="w">      </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">magic</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+<a id="ln-70" name="ln-70" href="#ln-70"></a><span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="n">mesh_unstr_t</span><span class="p">),</span><span class="w"> </span><span class="k">pointer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">mesh</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nb">null</span><span class="p">()</span>
+<a id="ln-71" name="ln-71" href="#ln-71"></a><span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="n">unstr_state_t</span><span class="p">),</span><span class="w"> </span><span class="k">pointer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">state</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nb">null</span><span class="p">()</span>
+<a id="ln-72" name="ln-72" href="#ln-72"></a><span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="n">output_unstr_state_t</span><span class="p">)</span><span class="w">         </span><span class="kd">::</span><span class="w"> </span><span class="n">ostate</span>
+<a id="ln-73" name="ln-73" href="#ln-73"></a><span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="n">gauge_unstr_t</span><span class="p">)</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">gauges</span>
+<a id="ln-74" name="ln-74" href="#ln-74"></a><span class="w">      </span><span class="kt">logical</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">is_initialised</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">false</span><span class="p">.</span>
+<a id="ln-75" name="ln-75" href="#ln-75"></a><span class="w">      </span><span class="kt">logical</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">is_finalised</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">false</span><span class="p">.</span>
+<a id="ln-76" name="ln-76" href="#ln-76"></a><span class="w">      </span><span class="kt">logical</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">on_device</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">false</span><span class="p">.</span>
+<a id="ln-77" name="ln-77" href="#ln-77"></a><span class="w">      </span><span class="kt">logical</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">output_open</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">false</span><span class="p">.</span>
+<a id="ln-78" name="ln-78" href="#ln-78"></a><span class="w">      </span><span class="kt">logical</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">gauges_open</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">false</span><span class="p">.</span>
+<a id="ln-79" name="ln-79" href="#ln-79"></a><span class="w">   </span><span class="k">end type </span><span class="n">solver_handle_unstr_t</span>
+<a id="ln-80" name="ln-80" href="#ln-80"></a>
+<a id="ln-81" name="ln-81" href="#ln-81"></a><span class="k">contains</span>
+<a id="ln-82" name="ln-82" href="#ln-82"></a>
+<a id="ln-83" name="ln-83" href="#ln-83"></a><span class="w">   </span><span class="c">! ================================================================</span>
+<a id="ln-84" name="ln-84" href="#ln-84"></a><span class="w">   </span><span class="c">! Structured handle lifecycle</span>
+<a id="ln-85" name="ln-85" href="#ln-85"></a><span class="w">   </span><span class="c">! ================================================================</span>
+<a id="ln-86" name="ln-86" href="#ln-86"></a>
+<a id="ln-87" name="ln-87" href="#ln-87"></a><span class="w">   </span><span class="k">function </span><span class="n">handle_create</span><span class="p">()</span><span class="w"> </span><span class="k">result</span><span class="p">(</span><span class="n">c_handle</span><span class="p">)</span>
+<a id="ln-88" name="ln-88" href="#ln-88"></a><span class="w">      </span><span class="c">!! Allocate a new structured handle and return its opaque C pointer.</span>
+<a id="ln-89" name="ln-89" href="#ln-89"></a><span class="w">      </span><span class="c">!! Caller (typically a `bind(C)` create entrypoint in `rki_api`) is</span>
+<a id="ln-90" name="ln-90" href="#ln-90"></a><span class="w">      </span><span class="c">!! responsible for eventually passing it to `handle_destroy`.</span>
+<a id="ln-91" name="ln-91" href="#ln-91"></a><span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="kt">c_ptr</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">c_handle</span>
+<a id="ln-92" name="ln-92" href="#ln-92"></a><span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="n">solver_handle_t</span><span class="p">),</span><span class="w"> </span><span class="k">pointer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">h</span>
+<a id="ln-93" name="ln-93" href="#ln-93"></a>
+<a id="ln-94" name="ln-94" href="#ln-94"></a><span class="w">      </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+<a id="ln-95" name="ln-95" href="#ln-95"></a><span class="w">      </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">h</span><span class="p">%</span><span class="n">state</span><span class="p">)</span>
+<a id="ln-96" name="ln-96" href="#ln-96"></a><span class="w">      </span><span class="n">h</span><span class="p">%</span><span class="n">magic</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MAGIC_STRUCTURED</span>
+<a id="ln-97" name="ln-97" href="#ln-97"></a><span class="w">      </span><span class="n">c_handle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">c_loc</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+<a id="ln-98" name="ln-98" href="#ln-98"></a><span class="w">   </span><span class="k">end function </span><span class="n">handle_create</span>
+<a id="ln-99" name="ln-99" href="#ln-99"></a>
+<a id="ln-100" name="ln-100" href="#ln-100"></a><span class="w">   </span><span class="k">subroutine </span><span class="n">handle_destroy</span><span class="p">(</span><span class="n">c_handle</span><span class="p">)</span>
+<a id="ln-101" name="ln-101" href="#ln-101"></a><span class="w">      </span><span class="c">!! Free a structured handle. Idempotent on null/already-destroyed</span>
+<a id="ln-102" name="ln-102" href="#ln-102"></a><span class="w">      </span><span class="c">!! handles — silently no-ops rather than aborting, so Python</span>
+<a id="ln-103" name="ln-103" href="#ln-103"></a><span class="w">      </span><span class="c">!! `__del__` can call this without first checking state.</span>
+<a id="ln-104" name="ln-104" href="#ln-104"></a><span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="kt">c_ptr</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">c_handle</span>
+<a id="ln-105" name="ln-105" href="#ln-105"></a><span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="n">solver_handle_t</span><span class="p">),</span><span class="w"> </span><span class="k">pointer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">h</span>
+<a id="ln-106" name="ln-106" href="#ln-106"></a>
+<a id="ln-107" name="ln-107" href="#ln-107"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="w"> </span><span class="nb">c_associated</span><span class="p">(</span><span class="n">c_handle</span><span class="p">))</span><span class="w"> </span><span class="k">return</span>
+<a id="ln-108" name="ln-108" href="#ln-108"></a><span class="k">      call </span><span class="nb">c_f_pointer</span><span class="p">(</span><span class="n">c_handle</span><span class="p">,</span><span class="w"> </span><span class="n">h</span><span class="p">)</span>
+<a id="ln-109" name="ln-109" href="#ln-109"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">h</span><span class="p">%</span><span class="n">magic</span><span class="w"> </span><span class="o">/=</span><span class="w"> </span><span class="n">MAGIC_STRUCTURED</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w">    </span><span class="c">!! garbage or already destroyed</span>
+<a id="ln-110" name="ln-110" href="#ln-110"></a><span class="w">      </span><span class="n">h</span><span class="p">%</span><span class="n">magic</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MAGIC_DESTROYED</span>
+<a id="ln-111" name="ln-111" href="#ln-111"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">associated</span><span class="p">(</span><span class="n">h</span><span class="p">%</span><span class="n">state</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="w"> </span><span class="p">(</span><span class="n">h</span><span class="p">%</span><span class="n">state</span><span class="p">)</span>
+<a id="ln-112" name="ln-112" href="#ln-112"></a><span class="w">      </span><span class="k">deallocate</span><span class="w"> </span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+<a id="ln-113" name="ln-113" href="#ln-113"></a><span class="w">      </span><span class="n">c_handle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">c_null_ptr</span>
+<a id="ln-114" name="ln-114" href="#ln-114"></a><span class="nb">   </span><span class="k">end subroutine </span><span class="n">handle_destroy</span>
+<a id="ln-115" name="ln-115" href="#ln-115"></a>
+<a id="ln-116" name="ln-116" href="#ln-116"></a><span class="w">   </span><span class="k">function </span><span class="n">handle_check</span><span class="p">(</span><span class="n">c_handle</span><span class="p">,</span><span class="w"> </span><span class="n">h</span><span class="p">)</span><span class="w"> </span><span class="k">result</span><span class="p">(</span><span class="n">status</span><span class="p">)</span>
+<a id="ln-117" name="ln-117" href="#ln-117"></a><span class="w">      </span><span class="c">!! Resolve an opaque `c_ptr` to a Fortran pointer and verify it.</span>
+<a id="ln-118" name="ln-118" href="#ln-118"></a><span class="w">      </span><span class="c">!!</span>
+<a id="ln-119" name="ln-119" href="#ln-119"></a><span class="w">      </span><span class="c">!! On success: `h` is associated and `status == HANDLE_OK`.</span>
+<a id="ln-120" name="ln-120" href="#ln-120"></a><span class="w">      </span><span class="c">!! On failure: `h` is null and `status` is one of HANDLE_ERR_*.</span>
+<a id="ln-121" name="ln-121" href="#ln-121"></a><span class="w">      </span><span class="c">!! Callers in `rki_api` should propagate the status to C as a</span>
+<a id="ln-122" name="ln-122" href="#ln-122"></a><span class="w">      </span><span class="c">!! non-zero return code (mirroring existing error-code conventions).</span>
+<a id="ln-123" name="ln-123" href="#ln-123"></a><span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="kt">c_ptr</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w">                  </span><span class="kd">::</span><span class="w"> </span><span class="n">c_handle</span>
+<a id="ln-124" name="ln-124" href="#ln-124"></a><span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="n">solver_handle_t</span><span class="p">),</span><span class="w"> </span><span class="k">pointer</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">h</span>
+<a id="ln-125" name="ln-125" href="#ln-125"></a><span class="w">      </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">status</span>
+<a id="ln-126" name="ln-126" href="#ln-126"></a>
+<a id="ln-127" name="ln-127" href="#ln-127"></a><span class="w">      </span><span class="n">h</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nb">null</span><span class="p">()</span>
+<a id="ln-128" name="ln-128" href="#ln-128"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="w"> </span><span class="nb">c_associated</span><span class="p">(</span><span class="n">c_handle</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+<a id="ln-129" name="ln-129" href="#ln-129"></a><span class="k">         </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">HANDLE_ERR_NULL</span>
+<a id="ln-130" name="ln-130" href="#ln-130"></a><span class="w">         </span><span class="k">return</span>
+<a id="ln-131" name="ln-131" href="#ln-131"></a><span class="k">      end if</span>
+<a id="ln-132" name="ln-132" href="#ln-132"></a><span class="k">      call </span><span class="nb">c_f_pointer</span><span class="p">(</span><span class="n">c_handle</span><span class="p">,</span><span class="w"> </span><span class="n">h</span><span class="p">)</span>
+<a id="ln-133" name="ln-133" href="#ln-133"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">h</span><span class="p">%</span><span class="n">magic</span><span class="w"> </span><span class="o">/=</span><span class="w"> </span><span class="n">MAGIC_STRUCTURED</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<a id="ln-134" name="ln-134" href="#ln-134"></a><span class="k">         </span><span class="n">h</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nb">null</span><span class="p">()</span>
+<a id="ln-135" name="ln-135" href="#ln-135"></a><span class="w">         </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">HANDLE_ERR_INVALID</span>
+<a id="ln-136" name="ln-136" href="#ln-136"></a><span class="w">         </span><span class="k">return</span>
+<a id="ln-137" name="ln-137" href="#ln-137"></a><span class="k">      end if</span>
+<a id="ln-138" name="ln-138" href="#ln-138"></a><span class="k">      </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">HANDLE_OK</span>
+<a id="ln-139" name="ln-139" href="#ln-139"></a><span class="w">   </span><span class="k">end function </span><span class="n">handle_check</span>
+<a id="ln-140" name="ln-140" href="#ln-140"></a>
+<a id="ln-141" name="ln-141" href="#ln-141"></a><span class="w">   </span><span class="c">! ================================================================</span>
+<a id="ln-142" name="ln-142" href="#ln-142"></a><span class="w">   </span><span class="c">! Unstructured handle lifecycle</span>
+<a id="ln-143" name="ln-143" href="#ln-143"></a><span class="w">   </span><span class="c">! ================================================================</span>
+<a id="ln-144" name="ln-144" href="#ln-144"></a>
+<a id="ln-145" name="ln-145" href="#ln-145"></a><span class="w">   </span><span class="k">function </span><span class="n">handle_create_unstr</span><span class="p">()</span><span class="w"> </span><span class="k">result</span><span class="p">(</span><span class="n">c_handle</span><span class="p">)</span>
+<a id="ln-146" name="ln-146" href="#ln-146"></a><span class="w">      </span><span class="c">!! Allocate a new unstructured handle.</span>
+<a id="ln-147" name="ln-147" href="#ln-147"></a><span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="kt">c_ptr</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">c_handle</span>
+<a id="ln-148" name="ln-148" href="#ln-148"></a><span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="n">solver_handle_unstr_t</span><span class="p">),</span><span class="w"> </span><span class="k">pointer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">h</span>
+<a id="ln-149" name="ln-149" href="#ln-149"></a>
+<a id="ln-150" name="ln-150" href="#ln-150"></a><span class="w">      </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+<a id="ln-151" name="ln-151" href="#ln-151"></a><span class="w">      </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">h</span><span class="p">%</span><span class="n">mesh</span><span class="p">)</span>
+<a id="ln-152" name="ln-152" href="#ln-152"></a><span class="w">      </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">h</span><span class="p">%</span><span class="n">state</span><span class="p">)</span>
+<a id="ln-153" name="ln-153" href="#ln-153"></a><span class="w">      </span><span class="n">h</span><span class="p">%</span><span class="n">magic</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MAGIC_UNSTRUCTURED</span>
+<a id="ln-154" name="ln-154" href="#ln-154"></a><span class="w">      </span><span class="n">c_handle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">c_loc</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+<a id="ln-155" name="ln-155" href="#ln-155"></a><span class="w">   </span><span class="k">end function </span><span class="n">handle_create_unstr</span>
+<a id="ln-156" name="ln-156" href="#ln-156"></a>
+<a id="ln-157" name="ln-157" href="#ln-157"></a><span class="w">   </span><span class="k">subroutine </span><span class="n">handle_destroy_unstr</span><span class="p">(</span><span class="n">c_handle</span><span class="p">)</span>
+<a id="ln-158" name="ln-158" href="#ln-158"></a><span class="w">      </span><span class="c">!! Free an unstructured handle. Idempotent on null/destroyed.</span>
+<a id="ln-159" name="ln-159" href="#ln-159"></a><span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="kt">c_ptr</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">c_handle</span>
+<a id="ln-160" name="ln-160" href="#ln-160"></a><span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="n">solver_handle_unstr_t</span><span class="p">),</span><span class="w"> </span><span class="k">pointer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">h</span>
+<a id="ln-161" name="ln-161" href="#ln-161"></a>
+<a id="ln-162" name="ln-162" href="#ln-162"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="w"> </span><span class="nb">c_associated</span><span class="p">(</span><span class="n">c_handle</span><span class="p">))</span><span class="w"> </span><span class="k">return</span>
+<a id="ln-163" name="ln-163" href="#ln-163"></a><span class="k">      call </span><span class="nb">c_f_pointer</span><span class="p">(</span><span class="n">c_handle</span><span class="p">,</span><span class="w"> </span><span class="n">h</span><span class="p">)</span>
+<a id="ln-164" name="ln-164" href="#ln-164"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">h</span><span class="p">%</span><span class="n">magic</span><span class="w"> </span><span class="o">/=</span><span class="w"> </span><span class="n">MAGIC_UNSTRUCTURED</span><span class="p">)</span><span class="w"> </span><span class="k">return</span>
+<a id="ln-165" name="ln-165" href="#ln-165"></a><span class="k">      </span><span class="n">h</span><span class="p">%</span><span class="n">magic</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MAGIC_DESTROYED</span>
+<a id="ln-166" name="ln-166" href="#ln-166"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">associated</span><span class="p">(</span><span class="n">h</span><span class="p">%</span><span class="n">state</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="w"> </span><span class="p">(</span><span class="n">h</span><span class="p">%</span><span class="n">state</span><span class="p">)</span>
+<a id="ln-167" name="ln-167" href="#ln-167"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">associated</span><span class="p">(</span><span class="n">h</span><span class="p">%</span><span class="n">mesh</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="w"> </span><span class="p">(</span><span class="n">h</span><span class="p">%</span><span class="n">mesh</span><span class="p">)</span>
+<a id="ln-168" name="ln-168" href="#ln-168"></a><span class="w">      </span><span class="k">deallocate</span><span class="w"> </span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+<a id="ln-169" name="ln-169" href="#ln-169"></a><span class="w">      </span><span class="n">c_handle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">c_null_ptr</span>
+<a id="ln-170" name="ln-170" href="#ln-170"></a><span class="nb">   </span><span class="k">end subroutine </span><span class="n">handle_destroy_unstr</span>
+<a id="ln-171" name="ln-171" href="#ln-171"></a>
+<a id="ln-172" name="ln-172" href="#ln-172"></a><span class="w">   </span><span class="k">function </span><span class="n">handle_check_unstr</span><span class="p">(</span><span class="n">c_handle</span><span class="p">,</span><span class="w"> </span><span class="n">h</span><span class="p">)</span><span class="w"> </span><span class="k">result</span><span class="p">(</span><span class="n">status</span><span class="p">)</span>
+<a id="ln-173" name="ln-173" href="#ln-173"></a><span class="w">      </span><span class="c">!! Resolve and verify an unstructured handle.</span>
+<a id="ln-174" name="ln-174" href="#ln-174"></a><span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="kt">c_ptr</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w">                        </span><span class="kd">::</span><span class="w"> </span><span class="n">c_handle</span>
+<a id="ln-175" name="ln-175" href="#ln-175"></a><span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="n">solver_handle_unstr_t</span><span class="p">),</span><span class="w"> </span><span class="k">pointer</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">h</span>
+<a id="ln-176" name="ln-176" href="#ln-176"></a><span class="w">      </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">status</span>
+<a id="ln-177" name="ln-177" href="#ln-177"></a>
+<a id="ln-178" name="ln-178" href="#ln-178"></a><span class="w">      </span><span class="n">h</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nb">null</span><span class="p">()</span>
+<a id="ln-179" name="ln-179" href="#ln-179"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="w"> </span><span class="nb">c_associated</span><span class="p">(</span><span class="n">c_handle</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+<a id="ln-180" name="ln-180" href="#ln-180"></a><span class="k">         </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">HANDLE_ERR_NULL</span>
+<a id="ln-181" name="ln-181" href="#ln-181"></a><span class="w">         </span><span class="k">return</span>
+<a id="ln-182" name="ln-182" href="#ln-182"></a><span class="k">      end if</span>
+<a id="ln-183" name="ln-183" href="#ln-183"></a><span class="k">      call </span><span class="nb">c_f_pointer</span><span class="p">(</span><span class="n">c_handle</span><span class="p">,</span><span class="w"> </span><span class="n">h</span><span class="p">)</span>
+<a id="ln-184" name="ln-184" href="#ln-184"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">h</span><span class="p">%</span><span class="n">magic</span><span class="w"> </span><span class="o">/=</span><span class="w"> </span><span class="n">MAGIC_UNSTRUCTURED</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<a id="ln-185" name="ln-185" href="#ln-185"></a><span class="k">         </span><span class="n">h</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nb">null</span><span class="p">()</span>
+<a id="ln-186" name="ln-186" href="#ln-186"></a><span class="w">         </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">HANDLE_ERR_INVALID</span>
+<a id="ln-187" name="ln-187" href="#ln-187"></a><span class="w">         </span><span class="k">return</span>
+<a id="ln-188" name="ln-188" href="#ln-188"></a><span class="k">      end if</span>
+<a id="ln-189" name="ln-189" href="#ln-189"></a><span class="k">      </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">HANDLE_OK</span>
+<a id="ln-190" name="ln-190" href="#ln-190"></a><span class="w">   </span><span class="k">end function </span><span class="n">handle_check_unstr</span>
+<a id="ln-191" name="ln-191" href="#ln-191"></a>
+<a id="ln-192" name="ln-192" href="#ln-192"></a><span class="k">end module </span><span class="n">rki_handle</span>
+</pre></div>
+
+      </section>
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Rakali
+ was developed by Jorge Luis Galvez Vallejo<br>              &copy; 2026 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+ on 2026-10-08 12:55 +0000             </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>

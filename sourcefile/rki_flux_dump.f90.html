@@ -1,0 +1,1160 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="GPU-native coastal solver — structured Cartesian and unstructured triangular grids, hydrostatic multilayer + non-hydrostatic, portable across NVHPC/gfortran/ifx.">
+    <meta name="author" content="Jorge Luis Galvez Vallejo" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>rki_flux_dump.F90 &ndash; Rakali</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">Rakali </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/absint.html">Abstract Interfaces</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>rki_flux_dump.F90
+      <small>Source File</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.4% of total for source files.">108 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/rki_flux_dump.F90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+            <li class="breadcrumb-item active" aria-current="page">rki_flux_dump.F90</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+        <div id="sidebar">
+      <h3>Contents</h3>
+  
+  
+  
+  
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#mods-0"
+         aria-expanded="false" aria-controls="mods-0">
+         <h4 class="card-header bg-primary text-white">Modules</h4>
+      </a>
+      <div id="mods-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../module/rki_flux_dump.html">rki_flux_dump</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../sourcefile/rki_flux_dump.f90.html#src">rki_flux_dump.F90</a>
+      </div>
+    </div>
+
+
+  </div>
+
+    </div>
+    <div class="col-md-9" id='text'>
+      <p>Optional NetCDF snapshot of the barotropic flux-kernel per-cell I/O</p>
+      <br>
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">This file depends on</h3>
+          </div>
+          <div class="card-body">
+            <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: sourcefile~~rki_flux_dump.f90~~EfferentGraph Pages: 1 -->
+<svg id="sourcefilerki_flux_dumpf90EfferentGraph" width="641pt" height="407pt"
+ viewBox="0.00 0.00 641.00 406.76" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph" class="graph" transform="scale(0.46 0.46) rotate(0) translate(4 883.13)">
+<title>sourcefile~~rki_flux_dump.f90~~EfferentGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-883.13 1394,-883.13 1394,4 -4,4"/>
+<!-- sourcefile~rki_flux_dump.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_node1" class="node">
+<title>sourcefile~rki_flux_dump.f90</title>
+<polygon fill="none" stroke="black" points="1390,-704.1 1281,-704.1 1281,-680.1 1390,-680.1 1390,-704.1"/>
+<text text-anchor="middle" x="1335.5" y="-689.7" font-family="Helvetica,sans-Serif" font-size="10.50">rki_flux_dump.F90</text>
+</g>
+<!-- sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_node2" class="node">
+<title>sourcefile~rki_constants.f90</title>
+<g id="a_sourcefile~~rki_flux_dump.f90~~EfferentGraph_node2"><a xlink:href="../sourcefile/rki_constants.f90.html" xlink:title="rki_constants.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="105,-445.1 0,-445.1 0,-421.1 105,-421.1 105,-445.1"/>
+<text text-anchor="middle" x="52.5" y="-430.7" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_constants.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_flux_dump.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge1" class="edge">
+<title>sourcefile~rki_flux_dump.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M723.5,-853.1C657.28,-853.17 640.28,-845.43 574.5,-853.1"/>
+</g>
+<!-- sourcefile~rki_io_netcdf.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_node3" class="node">
+<title>sourcefile~rki_io_netcdf.f90</title>
+<g id="a_sourcefile~~rki_flux_dump.f90~~EfferentGraph_node3"><a xlink:href="../sourcefile/rki_io_netcdf.f90.html" xlink:title="rki_io_netcdf.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="267.5,-787.1 165.5,-787.1 165.5,-763.1 267.5,-763.1 267.5,-787.1"/>
+<text text-anchor="middle" x="216.5" y="-772.7" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_io_netcdf.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_flux_dump.f90&#45;&gt;sourcefile~rki_io_netcdf.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge2" class="edge">
+<title>sourcefile~rki_flux_dump.f90&#45;&gt;sourcefile~rki_io_netcdf.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M1310.98,-704.16C1230.85,-743.96 960.44,-867.82 725.5,-853.1"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M723.5,-853.1C712.4,-852.8 338.95,-797.93 328,-796.1 311.65,-793.37 294,-790.14 277.7,-787.04"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="278.23,-783.58 267.75,-785.14 276.91,-790.46 278.23,-783.58"/>
+</g>
+<!-- sourcefile~rki_state.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_node4" class="node">
+<title>sourcefile~rki_state.f90</title>
+<g id="a_sourcefile~~rki_flux_dump.f90~~EfferentGraph_node4"><a xlink:href="../sourcefile/rki_state.f90.html" xlink:title="rki_state.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1245,-543.1 1165,-543.1 1165,-519.1 1245,-519.1 1245,-543.1"/>
+<text text-anchor="middle" x="1205" y="-528.7" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_state.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_flux_dump.f90&#45;&gt;sourcefile~rki_state.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge3" class="edge">
+<title>sourcefile~rki_flux_dump.f90&#45;&gt;sourcefile~rki_state.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M1324.84,-680C1302.89,-652.49 1249.05,-585.04 1222.03,-551.18"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="1224.74,-548.97 1215.77,-543.34 1219.27,-553.34 1224.74,-548.97"/>
+</g>
+<!-- sourcefile~rki_io_netcdf.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge4" class="edge">
+<title>sourcefile~rki_io_netcdf.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#00ff00" stroke-dasharray="5,2" d="M165.43,-765.11C156.34,-761.36 147.65,-756.2 141,-749.1 61.11,-663.79 53.08,-512.06 53.04,-455.32"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="56.54,-455.32 53.12,-445.29 49.54,-455.26 56.54,-455.32"/>
+</g>
+<!-- sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge9" class="edge">
+<title>sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M572.5,-695.1C535.69,-698.6 528.49,-710.13 492,-716.1 431.66,-725.97 272.3,-762.23 217.5,-735.1"/>
+</g>
+<!-- sourcefile~rki_barotropic_state.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_node5" class="node">
+<title>sourcefile~rki_barotropic_state.f90</title>
+<g id="a_sourcefile~~rki_flux_dump.f90~~EfferentGraph_node5"><a xlink:href="../sourcefile/rki_barotropic_state.f90.html" xlink:title="rki_barotropic_state.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="479.5,-505.1 340.5,-505.1 340.5,-481.1 479.5,-481.1 479.5,-505.1"/>
+<text text-anchor="middle" x="410" y="-490.7" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_barotropic_state.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_barotropic_state.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge5" class="edge">
+<title>sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_barotropic_state.f90</title>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M723.5,-531.1C655.68,-522.69 642.71,-497.37 574.5,-493.1"/>
+</g>
+<!-- sourcefile~rki_bathymetry.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_node6" class="node">
+<title>sourcefile~rki_bathymetry.f90</title>
+<g id="a_sourcefile~~rki_flux_dump.f90~~EfferentGraph_node6"><a xlink:href="../sourcefile/rki_bathymetry.f90.html" xlink:title="rki_bathymetry.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="467,-787.1 353,-787.1 353,-763.1 467,-763.1 467,-787.1"/>
+<text text-anchor="middle" x="410" y="-772.7" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_bathymetry.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_bathymetry.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge6" class="edge">
+<title>sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_bathymetry.f90</title>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M572.5,-695.1C529.61,-699.18 530.78,-730.33 492,-749.1 483.8,-753.07 474.85,-756.63 465.98,-759.76"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="464.79,-756.47 456.44,-762.98 467.03,-763.1 464.79,-756.47"/>
+</g>
+<!-- sourcefile~rki_boundary_types.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_node7" class="node">
+<title>sourcefile~rki_boundary_types.f90</title>
+<g id="a_sourcefile~~rki_flux_dump.f90~~EfferentGraph_node7"><a xlink:href="../sourcefile/rki_boundary_types.f90.html" xlink:title="rki_boundary_types.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="794,-115.1 655,-115.1 655,-91.1 794,-91.1 794,-115.1"/>
+<text text-anchor="middle" x="724.5" y="-100.7" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_boundary_types.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_boundary_types.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge7" class="edge">
+<title>sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_boundary_types.f90</title>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M1058.5,-142.1C983.98,-90.3 876.71,-87.13 804.22,-92.57"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="803.91,-89.08 794.23,-93.39 804.49,-96.06 803.91,-89.08"/>
+</g>
+<!-- sourcefile~rki_config.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_node8" class="node">
+<title>sourcefile~rki_config.f90</title>
+<g id="a_sourcefile~~rki_flux_dump.f90~~EfferentGraph_node8"><a xlink:href="../sourcefile/rki_config.f90.html" xlink:title="rki_config.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="617,-115.1 530,-115.1 530,-91.1 617,-91.1 617,-115.1"/>
+<text text-anchor="middle" x="573.5" y="-100.7" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_config.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_config.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge8" class="edge">
+<title>sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_config.f90</title>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M1203.83,-518.98C1202.36,-464.45 1188.47,-240.2 1060.5,-142.1"/>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M1058.5,-142.1C993.51,-92.27 971.6,-84.09 893,-61.1"/>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M891,-61.1C789.93,-31.53 754.55,-5.77 655,-40.1 630.14,-48.67 607.09,-68.42 592.08,-83.54"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="589.39,-81.3 585,-90.94 594.44,-86.14 589.39,-81.3"/>
+</g>
+<!-- sourcefile~rki_grid.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_node9" class="node">
+<title>sourcefile~rki_grid.f90</title>
+<g id="a_sourcefile~~rki_flux_dump.f90~~EfferentGraph_node9"><a xlink:href="../sourcefile/rki_grid.f90.html" xlink:title="rki_grid.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="254,-465.1 179,-465.1 179,-441.1 254,-441.1 254,-465.1"/>
+<text text-anchor="middle" x="216.5" y="-450.7" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_grid.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_grid.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge10" class="edge">
+<title>sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_grid.f90</title>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M1058.5,-531.1C910.69,-538.58 872.38,-549.29 725.5,-531.1"/>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M723.5,-531.1C691.59,-526.37 683.33,-522.54 655,-507.1 637.2,-497.4 635.98,-490.17 619,-479.1 600.18,-466.82 596.9,-453.38 574.5,-455.1"/>
+</g>
+<!-- sourcefile~rki_mem_report.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_node10" class="node">
+<title>sourcefile~rki_mem_report.f90</title>
+<g id="a_sourcefile~~rki_flux_dump.f90~~EfferentGraph_node10"><a xlink:href="../sourcefile/rki_mem_report.f90.html" xlink:title="rki_mem_report.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="276,-587.1 157,-587.1 157,-563.1 276,-563.1 276,-587.1"/>
+<text text-anchor="middle" x="216.5" y="-572.7" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_mem_report.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_mem_report.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge11" class="edge">
+<title>sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_mem_report.f90</title>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M572.5,-695.1C535.69,-698.6 527.9,-682.94 492,-674.1 419.35,-656.21 397.86,-662.88 328,-636.1 298.1,-624.64 266.33,-606.38 244.57,-592.83"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="246.21,-589.73 235.89,-587.34 242.47,-595.64 246.21,-589.73"/>
+</g>
+<!-- sourcefile~rki_ml_eos.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_node11" class="node">
+<title>sourcefile~rki_ml_eos.f90</title>
+<g id="a_sourcefile~~rki_flux_dump.f90~~EfferentGraph_node11"><a xlink:href="../sourcefile/rki_ml_eos.f90.html" xlink:title="rki_ml_eos.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="619,-427.1 528,-427.1 528,-403.1 619,-403.1 619,-427.1"/>
+<text text-anchor="middle" x="573.5" y="-412.7" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_eos.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_ml_eos.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge12" class="edge">
+<title>sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_ml_eos.f90</title>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M1164.71,-530.97C1135.88,-530.91 1095.75,-530.89 1060.5,-531.1"/>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M1058.5,-531.1C972.7,-531.61 728.75,-461.52 623.66,-430.06"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="624.51,-426.66 613.93,-427.14 622.5,-433.36 624.51,-426.66"/>
+</g>
+<!-- sourcefile~rki_multilayer_state.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_node12" class="node">
+<title>sourcefile~rki_multilayer_state.f90</title>
+<g id="a_sourcefile~~rki_flux_dump.f90~~EfferentGraph_node12"><a xlink:href="../sourcefile/rki_multilayer_state.f90.html" xlink:title="rki_multilayer_state.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1129,-387.1 990,-387.1 990,-363.1 1129,-363.1 1129,-387.1"/>
+<text text-anchor="middle" x="1059.5" y="-372.7" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_multilayer_state.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_multilayer_state.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge13" class="edge">
+<title>sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_multilayer_state.f90</title>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M1192.74,-518.86C1168.01,-491.97 1108.77,-427.57 1078.69,-394.87"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="1081.05,-392.27 1071.71,-387.28 1075.9,-397.01 1081.05,-392.27"/>
+</g>
+<!-- sourcefile~rki_nonhydrostatic_state.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_node13" class="node">
+<title>sourcefile~rki_nonhydrostatic_state.f90</title>
+<g id="a_sourcefile~~rki_flux_dump.f90~~EfferentGraph_node13"><a xlink:href="../sourcefile/rki_nonhydrostatic_state.f90.html" xlink:title="rki_nonhydrostatic_state.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="492,-707.1 328,-707.1 328,-683.1 492,-683.1 492,-707.1"/>
+<text text-anchor="middle" x="410" y="-692.7" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_nonhydrostatic_state.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_nonhydrostatic_state.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge14" class="edge">
+<title>sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_nonhydrostatic_state.f90</title>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M572.5,-695.1C549.77,-697.26 525.15,-698.05 502.15,-698.11"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="502.07,-694.61 492.06,-698.1 502.05,-701.61 502.07,-694.61"/>
+</g>
+<!-- sourcefile~rki_recon_weno.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_node14" class="node">
+<title>sourcefile~rki_recon_weno.f90</title>
+<g id="a_sourcefile~~rki_flux_dump.f90~~EfferentGraph_node14"><a xlink:href="../sourcefile/rki_recon_weno.f90.html" xlink:title="rki_recon_weno.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="468.5,-231.1 351.5,-231.1 351.5,-207.1 468.5,-207.1 468.5,-231.1"/>
+<text text-anchor="middle" x="410" y="-216.7" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_recon_weno.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_recon_weno.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge15" class="edge">
+<title>sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_recon_weno.f90</title>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M1058.5,-142.1C1015.82,-109.38 1005.7,-188.29 954,-203.1 788.6,-250.46 583.19,-238.45 478.79,-227.63"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="479.01,-224.13 468.7,-226.55 478.27,-231.09 479.01,-224.13"/>
+</g>
+<!-- sourcefile~rki_surface_forcing.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_node15" class="node">
+<title>sourcefile~rki_surface_forcing.f90</title>
+<g id="a_sourcefile~~rki_flux_dump.f90~~EfferentGraph_node15"><a xlink:href="../sourcefile/rki_surface_forcing.f90.html" xlink:title="rki_surface_forcing.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="478,-627.1 342,-627.1 342,-603.1 478,-603.1 478,-627.1"/>
+<text text-anchor="middle" x="410" y="-612.7" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_surface_forcing.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_surface_forcing.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge16" class="edge">
+<title>sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_surface_forcing.f90</title>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M1058.5,-531.1C1005.45,-533.83 1003.14,-568.92 954,-589.1 792,-655.6 748.09,-671.95 574.5,-695.1"/>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M572.5,-695.1C529.61,-699.18 530.78,-659.86 492,-641.1 483.8,-637.13 474.85,-633.56 465.98,-630.44"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="467.03,-627.1 456.44,-627.22 464.79,-633.73 467.03,-627.1"/>
+</g>
+<!-- sourcefile~rki_timestepper.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_node16" class="node">
+<title>sourcefile~rki_timestepper.f90</title>
+<g id="a_sourcefile~~rki_flux_dump.f90~~EfferentGraph_node16"><a xlink:href="../sourcefile/rki_timestepper.f90.html" xlink:title="rki_timestepper.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1118,-704.1 1001,-704.1 1001,-680.1 1118,-680.1 1118,-704.1"/>
+<text text-anchor="middle" x="1059.5" y="-689.7" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_timestepper.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_timestepper.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge17" class="edge">
+<title>sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_timestepper.f90</title>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M1193.21,-543.2C1168.7,-570.7 1108.58,-638.15 1078.4,-672.01"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="1075.45,-670.06 1071.41,-679.86 1080.68,-674.72 1075.45,-670.06"/>
+</g>
+<!-- sourcefile~rki_tracer.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_node17" class="node">
+<title>sourcefile~rki_tracer.f90</title>
+<g id="a_sourcefile~~rki_flux_dump.f90~~EfferentGraph_node17"><a xlink:href="../sourcefile/rki_tracer.f90.html" xlink:title="rki_tracer.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="452.5,-547.1 367.5,-547.1 367.5,-523.1 452.5,-523.1 452.5,-547.1"/>
+<text text-anchor="middle" x="410" y="-532.7" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_tracer.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_tracer.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge18" class="edge">
+<title>sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_tracer.f90</title>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M723.5,-531.1C657.78,-522.95 640.54,-526.15 574.5,-531.1"/>
+</g>
+<!-- sourcefile~rki_vcoord.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_node18" class="node">
+<title>sourcefile~rki_vcoord.f90</title>
+<g id="a_sourcefile~~rki_flux_dump.f90~~EfferentGraph_node18"><a xlink:href="../sourcefile/rki_vcoord.f90.html" xlink:title="rki_vcoord.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="770,-73.1 679,-73.1 679,-49.1 770,-49.1 770,-73.1"/>
+<text text-anchor="middle" x="724.5" y="-58.7" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_vcoord.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_vcoord.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge19" class="edge">
+<title>sourcefile~rki_state.f90&#45;&gt;sourcefile~rki_vcoord.f90</title>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M891,-61.1C855.17,-50.61 813.07,-50.77 780.3,-53.47"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="779.65,-50.02 770.01,-54.43 780.29,-56.99 779.65,-50.02"/>
+</g>
+<!-- sourcefile~rki_barotropic_state.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge20" class="edge">
+<title>sourcefile~rki_barotropic_state.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M369.29,-505.16C330.23,-515.23 269.12,-526.15 217.5,-514.1"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M215.5,-514.1C163.94,-502.06 110.12,-470.81 79.32,-450.84"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="81.17,-447.87 70.9,-445.28 77.32,-453.71 81.17,-447.87"/>
+</g>
+<!-- sourcefile~rki_barotropic_state.f90&#45;&gt;sourcefile~rki_grid.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge21" class="edge">
+<title>sourcefile~rki_barotropic_state.f90&#45;&gt;sourcefile~rki_grid.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M351.54,-481.1C323.63,-475.27 290.52,-468.35 264.19,-462.85"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="264.59,-459.36 254.09,-460.74 263.16,-466.21 264.59,-459.36"/>
+</g>
+<!-- sourcefile~rki_barotropic_state.f90&#45;&gt;sourcefile~rki_mem_report.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge22" class="edge">
+<title>sourcefile~rki_barotropic_state.f90&#45;&gt;sourcefile~rki_mem_report.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M354.8,-505.13C345.73,-507.72 336.5,-510.71 328,-514.1 298.25,-525.95 266.46,-544.14 244.65,-557.58"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="242.58,-554.75 235.95,-563.02 246.29,-560.69 242.58,-554.75"/>
+</g>
+<!-- sourcefile~rki_bathymetry.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge23" class="edge">
+<title>sourcefile~rki_bathymetry.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#ff6d00" stroke-dasharray="5,2" d="M352.57,-764.8C300.54,-755.07 229.6,-741.09 217.5,-735.1"/>
+</g>
+<!-- sourcefile~rki_bathymetry.f90&#45;&gt;sourcefile~rki_io_netcdf.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge25" class="edge">
+<title>sourcefile~rki_bathymetry.f90&#45;&gt;sourcefile~rki_io_netcdf.f90</title>
+<path fill="none" stroke="#ff6d00" stroke-dasharray="5,2" d="M352.84,-775.1C329.27,-775.1 301.83,-775.1 277.84,-775.1"/>
+<polygon fill="#ff6d00" stroke="#ff6d00" points="277.79,-771.6 267.79,-775.1 277.79,-778.6 277.79,-771.6"/>
+</g>
+<!-- sourcefile~rki_bathymetry.f90&#45;&gt;sourcefile~rki_grid.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge24" class="edge">
+<title>sourcefile~rki_bathymetry.f90&#45;&gt;sourcefile~rki_grid.f90</title>
+<path fill="none" stroke="#ff6d00" stroke-dasharray="5,2" d="M382.84,-762.92C364.48,-752.97 340.98,-737.12 328,-716.1 276.86,-633.29 345.87,-581.15 292,-500.1 283.47,-487.26 270.12,-477.25 257.06,-469.83"/>
+<polygon fill="#ff6d00" stroke="#ff6d00" points="258.6,-466.69 248.12,-465.1 255.32,-472.87 258.6,-466.69"/>
+</g>
+<!-- sourcefile~rki_boundary_types.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge27" class="edge">
+<title>sourcefile~rki_boundary_types.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#ffda00" stroke-dasharray="5,2" d="M691.4,-115.16C679.9,-119.52 666.86,-124.49 655,-129.1 619.11,-143.04 612.75,-156.71 574.5,-161.1"/>
+<path fill="none" stroke="#ffda00" stroke-dasharray="5,2" d="M572.5,-161.1C494.01,-170.1 286.88,-142.31 217.5,-180.1"/>
+</g>
+<!-- sourcefile~rki_boundary_types.f90&#45;&gt;sourcefile~rki_config.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge26" class="edge">
+<title>sourcefile~rki_boundary_types.f90&#45;&gt;sourcefile~rki_config.f90</title>
+<path fill="none" stroke="#ffda00" stroke-dasharray="5,2" d="M654.67,-103.1C645.46,-103.1 636.14,-103.1 627.27,-103.1"/>
+<polygon fill="#ffda00" stroke="#ffda00" points="627.09,-99.6 617.09,-103.1 627.09,-106.6 627.09,-99.6"/>
+</g>
+<!-- sourcefile~rki_config.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge28" class="edge">
+<title>sourcefile~rki_config.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#b6ff00" stroke-dasharray="5,2" d="M409,-141.1C387.42,-143.48 236.57,-169.71 217.5,-180.1"/>
+<path fill="none" stroke="#b6ff00" stroke-dasharray="5,2" d="M215.5,-180.1C122.71,-230.63 75.33,-359.63 59.59,-411.25"/>
+<polygon fill="#b6ff00" stroke="#b6ff00" points="56.18,-410.46 56.71,-421.04 62.9,-412.44 56.18,-410.46"/>
+</g>
+<!-- sourcefile~rki_config.f90&#45;&gt;sourcefile~rki_recon_weno.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge31" class="edge">
+<title>sourcefile~rki_config.f90&#45;&gt;sourcefile~rki_recon_weno.f90</title>
+<path fill="none" stroke="#b6ff00" stroke-dasharray="5,2" d="M555.52,-115.29C526.97,-135.8 469.23,-177.27 436.03,-201.12"/>
+<polygon fill="#b6ff00" stroke="#b6ff00" points="433.83,-198.39 427.75,-207.07 437.91,-204.07 433.83,-198.39"/>
+</g>
+<!-- sourcefile~rki_ml_common_unstr.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_node21" class="node">
+<title>sourcefile~rki_ml_common_unstr.f90</title>
+<g id="a_sourcefile~~rki_flux_dump.f90~~EfferentGraph_node21"><a xlink:href="../sourcefile/rki_ml_common_unstr.f90.html" xlink:title="rki_ml_common_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="292,-152.1 141,-152.1 141,-128.1 292,-128.1 292,-152.1"/>
+<text text-anchor="middle" x="216.5" y="-137.7" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_common_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_config.f90&#45;&gt;sourcefile~rki_ml_common_unstr.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge29" class="edge">
+<title>sourcefile~rki_config.f90&#45;&gt;sourcefile~rki_ml_common_unstr.f90</title>
+<path fill="none" stroke="#b6ff00" stroke-dasharray="5,2" d="M409,-141.1C374.26,-144.93 335.76,-145.45 302.44,-144.72"/>
+<polygon fill="#b6ff00" stroke="#b6ff00" points="302.37,-141.22 292.28,-144.46 302.19,-148.22 302.37,-141.22"/>
+</g>
+<!-- sourcefile~rki_nml_schema.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_node24" class="node">
+<title>sourcefile~rki_nml_schema.f90</title>
+<g id="a_sourcefile~~rki_flux_dump.f90~~EfferentGraph_node24"><a xlink:href="../sourcefile/rki_nml_schema.f90.html" xlink:title="rki_nml_schema.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="277,-110.1 156,-110.1 156,-86.1 277,-86.1 277,-110.1"/>
+<text text-anchor="middle" x="216.5" y="-95.7" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_nml_schema.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_config.f90&#45;&gt;sourcefile~rki_nml_schema.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge30" class="edge">
+<title>sourcefile~rki_config.f90&#45;&gt;sourcefile~rki_nml_schema.f90</title>
+<path fill="none" stroke="#b6ff00" stroke-dasharray="5,2" d="M533.15,-115.18C500.73,-124.45 453.37,-136.42 411,-141.1"/>
+<path fill="none" stroke="#b6ff00" stroke-dasharray="5,2" d="M409,-141.1C395.56,-142.58 325.13,-125.68 273.57,-112.64"/>
+<polygon fill="#b6ff00" stroke="#b6ff00" points="274.41,-109.24 263.86,-110.17 272.69,-116.02 274.41,-109.24"/>
+</g>
+<!-- sourcefile~rki_grid.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge32" class="edge">
+<title>sourcefile~rki_grid.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#48ff00" stroke-dasharray="5,2" d="M178.74,-448.56C159.96,-446.24 136.61,-443.36 115.17,-440.71"/>
+<polygon fill="#48ff00" stroke="#48ff00" points="115.51,-437.23 105.16,-439.47 114.66,-444.17 115.51,-437.23"/>
+</g>
+<!-- sourcefile~rki_mem_report.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge33" class="edge">
+<title>sourcefile~rki_mem_report.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#00ff24" stroke-dasharray="5,2" d="M192.94,-562.96C177.6,-554.21 157.21,-541.61 141,-528.1 113.26,-504.99 85.81,-473.37 69.25,-453.09"/>
+<polygon fill="#00ff24" stroke="#00ff24" points="71.85,-450.74 62.85,-445.15 66.4,-455.13 71.85,-450.74"/>
+</g>
+<!-- sourcefile~rki_ml_eos.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge34" class="edge">
+<title>sourcefile~rki_ml_eos.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#00ff91" stroke-dasharray="5,2" d="M527.94,-414.57C495.5,-414.32 450.52,-414.23 411,-415.1"/>
+<path fill="none" stroke="#00ff91" stroke-dasharray="5,2" d="M409,-415.1C323.4,-416.98 301.45,-377.27 217.5,-394.1"/>
+</g>
+<!-- sourcefile~rki_ml_eos.f90&#45;&gt;sourcefile~rki_grid.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge36" class="edge">
+<title>sourcefile~rki_ml_eos.f90&#45;&gt;sourcefile~rki_grid.f90</title>
+<path fill="none" stroke="#00ff91" stroke-dasharray="5,2" d="M409,-415.1C358.76,-416.2 302.49,-428.77 264.02,-439.15"/>
+<polygon fill="#00ff91" stroke="#00ff91" points="262.86,-435.84 254.15,-441.88 264.72,-442.59 262.86,-435.84"/>
+</g>
+<!-- sourcefile~rki_eos.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_node19" class="node">
+<title>sourcefile~rki_eos.f90</title>
+<g id="a_sourcefile~~rki_flux_dump.f90~~EfferentGraph_node19"><a xlink:href="../sourcefile/rki_eos.f90.html" xlink:title="rki_eos.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="446.5,-387.1 373.5,-387.1 373.5,-363.1 446.5,-363.1 446.5,-387.1"/>
+<text text-anchor="middle" x="410" y="-372.7" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_eos.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_ml_eos.f90&#45;&gt;sourcefile~rki_eos.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge35" class="edge">
+<title>sourcefile~rki_ml_eos.f90&#45;&gt;sourcefile~rki_eos.f90</title>
+<path fill="none" stroke="#00ff91" stroke-dasharray="5,2" d="M527.94,-404.06C505.76,-398.57 478.98,-391.93 456.65,-386.4"/>
+<polygon fill="#00ff91" stroke="#00ff91" points="457.28,-382.95 446.73,-383.95 455.6,-389.75 457.28,-382.95"/>
+</g>
+<!-- sourcefile~rki_ml_common.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_node20" class="node">
+<title>sourcefile~rki_ml_common.f90</title>
+<g id="a_sourcefile~~rki_flux_dump.f90~~EfferentGraph_node20"><a xlink:href="../sourcefile/rki_ml_common.f90.html" xlink:title="rki_ml_common.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="276.5,-309.1 156.5,-309.1 156.5,-285.1 276.5,-285.1 276.5,-309.1"/>
+<text text-anchor="middle" x="216.5" y="-294.7" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_common.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_ml_eos.f90&#45;&gt;sourcefile~rki_ml_common.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge37" class="edge">
+<title>sourcefile~rki_ml_eos.f90&#45;&gt;sourcefile~rki_ml_common.f90</title>
+<path fill="none" stroke="#00ff91" stroke-dasharray="5,2" d="M549.18,-402.89C542.14,-398.84 534.55,-394.08 528,-389.1 510.24,-375.59 511.71,-364.56 492,-354.1 427.62,-319.92 344.62,-306.22 286.83,-300.74"/>
+<polygon fill="#00ff91" stroke="#00ff91" points="286.97,-297.24 276.7,-299.84 286.35,-304.21 286.97,-297.24"/>
+</g>
+<!-- sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge39" class="edge">
+<title>sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M989.68,-380.13C895.56,-385.88 721.59,-392.4 574.5,-375.1"/>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M572.5,-375.1C527.31,-368.26 533.71,-329.79 492,-311.1 458.66,-296.15 447.23,-292.42 411,-297.1"/>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M409,-297.1C314.38,-309.31 311.05,-375.34 217.5,-394.1"/>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M215.5,-394.1C179.92,-401.23 140.32,-410.73 109.18,-418.57"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="108.21,-415.21 99.38,-421.06 109.93,-421.99 108.21,-415.21"/>
+</g>
+<!-- sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_barotropic_state.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge38" class="edge">
+<title>sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_barotropic_state.f90</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M723.5,-493.1C657.28,-493.1 640.59,-497.24 574.5,-493.1"/>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M572.5,-493.1C545.7,-491.42 516.34,-490.99 490.1,-491.12"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="489.79,-487.63 479.82,-491.2 489.85,-494.63 489.79,-487.63"/>
+</g>
+<!-- sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_grid.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge41" class="edge">
+<title>sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_grid.f90</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M1039.09,-387.28C989.13,-417.43 851.24,-493.1 725.5,-493.1"/>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M723.5,-493.1C655.6,-500.9 642.64,-449.86 574.5,-455.1"/>
+</g>
+<!-- sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_mem_report.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge42" class="edge">
+<title>sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_mem_report.f90</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M1048.12,-387.31C1009.99,-430.73 872.18,-575.1 725.5,-575.1 725.5,-575.1 725.5,-575.1 572.5,-575.1 473.08,-575.1 357.99,-575.1 286.46,-575.1"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="286.23,-571.6 276.23,-575.1 286.23,-578.6 286.23,-571.6"/>
+</g>
+<!-- sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_tracer.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge45" class="edge">
+<title>sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_tracer.f90</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M723.5,-493.1C655.16,-493.1 642.65,-525.99 574.5,-531.1"/>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M572.5,-531.1C535.94,-533.84 494.61,-534.82 462.91,-535.13"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="462.52,-531.63 452.55,-535.21 462.57,-538.63 462.52,-531.63"/>
+</g>
+<!-- sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_vcoord.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge46" class="edge">
+<title>sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_vcoord.f90</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M1055.59,-363.06C1046.48,-327.71 1015.41,-222.77 954,-161.1 906.02,-112.91 830.93,-86.21 780.04,-72.77"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="780.75,-69.34 770.2,-70.26 779.02,-76.12 780.75,-69.34"/>
+</g>
+<!-- sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_eos.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge40" class="edge">
+<title>sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_eos.f90</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M572.5,-375.1C533.68,-370.53 489.24,-370.94 456.82,-372.26"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="456.57,-368.76 446.74,-372.71 456.89,-375.76 456.57,-368.76"/>
+</g>
+<!-- sourcefile~rki_ml_dynamics.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_node22" class="node">
+<title>sourcefile~rki_ml_dynamics.f90</title>
+<g id="a_sourcefile~~rki_flux_dump.f90~~EfferentGraph_node22"><a xlink:href="../sourcefile/rki_ml_dynamics.f90.html" xlink:title="rki_ml_dynamics.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="954,-194.1 830,-194.1 830,-170.1 954,-170.1 954,-194.1"/>
+<text text-anchor="middle" x="892" y="-179.7" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_dynamics.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_ml_dynamics.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge43" class="edge">
+<title>sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_ml_dynamics.f90</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M1048.15,-363.02C1020.4,-330.67 944.16,-241.75 909.97,-201.89"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="912.52,-199.48 903.35,-194.17 907.2,-204.04 912.52,-199.48"/>
+</g>
+<!-- sourcefile~rki_ml_tracers.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_node23" class="node">
+<title>sourcefile~rki_ml_tracers.f90</title>
+<g id="a_sourcefile~~rki_flux_dump.f90~~EfferentGraph_node23"><a xlink:href="../sourcefile/rki_ml_tracers.f90.html" xlink:title="rki_ml_tracers.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="947,-310.1 837,-310.1 837,-286.1 947,-286.1 947,-310.1"/>
+<text text-anchor="middle" x="892" y="-295.7" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_tracers.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_ml_tracers.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge44" class="edge">
+<title>sourcefile~rki_multilayer_state.f90&#45;&gt;sourcefile~rki_ml_tracers.f90</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M1032.64,-363.07C1004.55,-349.99 959.49,-329.03 928.19,-314.47"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="929.49,-311.22 918.95,-310.17 926.54,-317.56 929.49,-311.22"/>
+</g>
+<!-- sourcefile~rki_nonhydrostatic_state.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge47" class="edge">
+<title>sourcefile~rki_nonhydrostatic_state.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#0091ff" stroke-dasharray="5,2" d="M365.36,-707.16C313.01,-721.17 230.63,-741.6 217.5,-735.1"/>
+</g>
+<!-- sourcefile~rki_nonhydrostatic_state.f90&#45;&gt;sourcefile~rki_grid.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge48" class="edge">
+<title>sourcefile~rki_nonhydrostatic_state.f90&#45;&gt;sourcefile~rki_grid.f90</title>
+<path fill="none" stroke="#0091ff" stroke-dasharray="5,2" d="M384.18,-682.97C366.01,-672.86 342.15,-656.77 328,-636.1 292.69,-584.49 329.01,-550.5 292,-500.1 282.73,-487.48 268.96,-477.44 255.78,-469.93"/>
+<polygon fill="#0091ff" stroke="#0091ff" points="257.27,-466.76 246.8,-465.13 253.97,-472.93 257.27,-466.76"/>
+</g>
+<!-- sourcefile~rki_nonhydrostatic_state.f90&#45;&gt;sourcefile~rki_mem_report.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge49" class="edge">
+<title>sourcefile~rki_nonhydrostatic_state.f90&#45;&gt;sourcefile~rki_mem_report.f90</title>
+<path fill="none" stroke="#0091ff" stroke-dasharray="5,2" d="M360.58,-682.99C349.52,-679.3 338.07,-674.7 328,-669.1 291.7,-648.9 256.31,-615.71 235.72,-594.65"/>
+<polygon fill="#0091ff" stroke="#0091ff" points="238.04,-592.01 228.59,-587.23 232.99,-596.86 238.04,-592.01"/>
+</g>
+<!-- sourcefile~rki_recon_weno.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge50" class="edge">
+<title>sourcefile~rki_recon_weno.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#0024ff" stroke-dasharray="5,2" d="M364.81,-207C312.35,-193.12 230.31,-173.12 217.5,-180.1"/>
+</g>
+<!-- sourcefile~rki_recon_weno.f90&#45;&gt;sourcefile~rki_grid.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge51" class="edge">
+<title>sourcefile~rki_recon_weno.f90&#45;&gt;sourcefile~rki_grid.f90</title>
+<path fill="none" stroke="#0024ff" stroke-dasharray="5,2" d="M401.7,-231.24C377.25,-271.85 299.39,-400.79 292,-408.1 280.74,-419.23 266.21,-428.8 252.98,-436.2"/>
+<polygon fill="#0024ff" stroke="#0024ff" points="251.24,-433.17 244.08,-440.98 254.55,-439.33 251.24,-433.17"/>
+</g>
+<!-- sourcefile~rki_recon_weno.f90&#45;&gt;sourcefile~rki_ml_common.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge52" class="edge">
+<title>sourcefile~rki_recon_weno.f90&#45;&gt;sourcefile~rki_ml_common.f90</title>
+<path fill="none" stroke="#0024ff" stroke-dasharray="5,2" d="M367.85,-231.17C354.96,-235.26 340.78,-240.06 328,-245.1 301.19,-255.66 271.71,-269.66 249.94,-280.47"/>
+<polygon fill="#0024ff" stroke="#0024ff" points="248.2,-277.43 240.82,-285.04 251.33,-283.69 248.2,-277.43"/>
+</g>
+<!-- sourcefile~rki_surface_forcing.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge53" class="edge">
+<title>sourcefile~rki_surface_forcing.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#4800ff" stroke-dasharray="5,2" d="M391.64,-627.1C346.19,-658.36 226.6,-739.6 217.5,-735.1"/>
+<path fill="none" stroke="#4800ff" stroke-dasharray="5,2" d="M215.5,-735.1C104.57,-680.17 66.95,-515.06 56.75,-455.13"/>
+<polygon fill="#4800ff" stroke="#4800ff" points="60.19,-454.53 55.15,-445.22 53.28,-455.65 60.19,-454.53"/>
+</g>
+<!-- sourcefile~rki_surface_forcing.f90&#45;&gt;sourcefile~rki_grid.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge54" class="edge">
+<title>sourcefile~rki_surface_forcing.f90&#45;&gt;sourcefile~rki_grid.f90</title>
+<path fill="none" stroke="#4800ff" stroke-dasharray="5,2" d="M388.05,-602.89C370.64,-592.07 345.91,-575.08 328,-556.1 307.7,-534.58 313.01,-520.93 292,-500.1 280.18,-488.37 264.93,-478.12 251.32,-470.21"/>
+<polygon fill="#4800ff" stroke="#4800ff" points="252.65,-466.94 242.22,-465.12 249.24,-473.05 252.65,-466.94"/>
+</g>
+<!-- sourcefile~rki_surface_forcing.f90&#45;&gt;sourcefile~rki_mem_report.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge55" class="edge">
+<title>sourcefile~rki_surface_forcing.f90&#45;&gt;sourcefile~rki_mem_report.f90</title>
+<path fill="none" stroke="#4800ff" stroke-dasharray="5,2" d="M351.54,-603.1C330.62,-598.73 306.78,-593.74 285.06,-589.21"/>
+<polygon fill="#4800ff" stroke="#4800ff" points="285.75,-585.78 275.25,-587.16 284.32,-592.63 285.75,-585.78"/>
+</g>
+<!-- sourcefile~rki_timestepper.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge56" class="edge">
+<title>sourcefile~rki_timestepper.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#b600ff" stroke-dasharray="5,2" d="M1028.82,-704.21C938.63,-740.67 668.18,-847.23 574.5,-853.1"/>
+<path fill="none" stroke="#b600ff" stroke-dasharray="5,2" d="M572.5,-853.1C379.45,-865.51 281.95,-928.59 141,-796.1 90.45,-748.58 63.26,-526.75 55.71,-455.32"/>
+<polygon fill="#b600ff" stroke="#b600ff" points="59.17,-454.78 54.66,-445.2 52.21,-455.5 59.17,-454.78"/>
+</g>
+<!-- sourcefile~rki_tracer.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge57" class="edge">
+<title>sourcefile~rki_tracer.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#ff00da" stroke-dasharray="5,2" d="M367.43,-533.42C328.31,-531.16 268.31,-525.96 217.5,-514.1"/>
+</g>
+<!-- sourcefile~rki_tracer.f90&#45;&gt;sourcefile~rki_grid.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge58" class="edge">
+<title>sourcefile~rki_tracer.f90&#45;&gt;sourcefile~rki_grid.f90</title>
+<path fill="none" stroke="#ff00da" stroke-dasharray="5,2" d="M367.15,-526.37C354.37,-523.15 340.42,-519.04 328,-514.1 298.25,-502.25 266.46,-484.05 244.65,-470.61"/>
+<polygon fill="#ff00da" stroke="#ff00da" points="246.29,-467.51 235.95,-465.18 242.58,-473.45 246.29,-467.51"/>
+</g>
+<!-- sourcefile~rki_tracer.f90&#45;&gt;sourcefile~rki_mem_report.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge59" class="edge">
+<title>sourcefile~rki_tracer.f90&#45;&gt;sourcefile~rki_mem_report.f90</title>
+<path fill="none" stroke="#ff00da" stroke-dasharray="5,2" d="M367.45,-543.78C343.35,-548.81 312.41,-555.27 284.91,-561.02"/>
+<polygon fill="#ff00da" stroke="#ff00da" points="284.03,-557.63 274.95,-563.1 285.46,-564.48 284.03,-557.63"/>
+</g>
+<!-- sourcefile~rki_vcoord.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge60" class="edge">
+<title>sourcefile~rki_vcoord.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#ff006d" stroke-dasharray="5,2" d="M688.45,-49.1C589.68,-17.7 305.59,55.63 141,-77.1 87.98,-119.85 62.45,-339.99 55.51,-410.99"/>
+<polygon fill="#ff006d" stroke="#ff006d" points="52.01,-410.77 54.55,-421.06 58.98,-411.44 52.01,-410.77"/>
+</g>
+<!-- sourcefile~rki_eos.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge61" class="edge">
+<title>sourcefile~rki_eos.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M373.39,-376.52C334.71,-378.56 271.22,-383.33 217.5,-394.1"/>
+</g>
+<!-- sourcefile~rki_eos.f90&#45;&gt;sourcefile~rki_grid.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge62" class="edge">
+<title>sourcefile~rki_eos.f90&#45;&gt;sourcefile~rki_grid.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M373.16,-385.51C358.96,-389.92 342.57,-395.36 328,-401.1 301.19,-411.66 271.71,-425.66 249.94,-436.47"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="248.2,-433.43 240.82,-441.04 251.33,-439.69 248.2,-433.43"/>
+</g>
+<!-- sourcefile~rki_ml_common.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge63" class="edge">
+<title>sourcefile~rki_ml_common.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#ffff00" stroke-dasharray="5,2" d="M201.12,-309.17C172.85,-332.9 109.85,-385.79 76.01,-414.2"/>
+<polygon fill="#ffff00" stroke="#ffff00" points="73.49,-411.75 68.08,-420.86 77.99,-417.11 73.49,-411.75"/>
+</g>
+<!-- sourcefile~rki_ml_common_unstr.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge64" class="edge">
+<title>sourcefile~rki_ml_common_unstr.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#00ff00" stroke-dasharray="5,2" d="M161.48,-152.16C153.91,-155.68 146.76,-160.23 141,-166.1 72.4,-236.02 57.58,-360.54 54.38,-410.97"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="50.88,-410.91 53.84,-421.09 57.87,-411.29 50.88,-410.91"/>
+</g>
+<!-- sourcefile~rki_ml_dynamics.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge66" class="edge">
+<title>sourcefile~rki_ml_dynamics.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M863.86,-170.02C831.38,-156.9 775.17,-138.39 725.5,-143.1"/>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M723.5,-143.1C657.09,-149.39 641.09,-157.14 574.5,-161.1"/>
+</g>
+<!-- sourcefile~rki_ml_dynamics.f90&#45;&gt;sourcefile~rki_boundary_types.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge65" class="edge">
+<title>sourcefile~rki_ml_dynamics.f90&#45;&gt;sourcefile~rki_boundary_types.f90</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M858.64,-170.01C849.18,-166.02 838.97,-161.27 830,-156.1 812.68,-146.1 811.52,-138.74 794,-129.1 787.18,-125.35 779.71,-121.9 772.29,-118.83"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="773.55,-115.57 762.97,-115.15 770.98,-122.08 773.55,-115.57"/>
+</g>
+<!-- sourcefile~rki_ml_dynamics.f90&#45;&gt;sourcefile~rki_grid.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge67" class="edge">
+<title>sourcefile~rki_ml_dynamics.f90&#45;&gt;sourcefile~rki_grid.f90</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M870.71,-194.12C826.81,-220.92 721.6,-289.52 655,-369.1 633.3,-395.02 643.95,-413.29 619,-436.1 603.13,-450.61 595.95,-453.62 574.5,-455.1"/>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M572.5,-455.1C462.28,-461.87 332.46,-458.18 264.46,-455.36"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="264.23,-451.85 254.08,-454.92 263.93,-458.84 264.23,-451.85"/>
+</g>
+<!-- sourcefile~rki_ml_dynamics.f90&#45;&gt;sourcefile~rki_vcoord.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge70" class="edge">
+<title>sourcefile~rki_ml_dynamics.f90&#45;&gt;sourcefile~rki_vcoord.f90</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M879.89,-169.99C856.65,-144.75 804.21,-88.35 794,-82.1 789.54,-79.37 784.69,-76.97 779.71,-74.86"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="780.62,-71.47 770.03,-71.17 778.13,-78.01 780.62,-71.47"/>
+</g>
+<!-- sourcefile~rki_ml_dynamics.f90&#45;&gt;sourcefile~rki_ml_common.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge68" class="edge">
+<title>sourcefile~rki_ml_dynamics.f90&#45;&gt;sourcefile~rki_ml_common.f90</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M723.5,-143.1C692.05,-146.08 681.52,-144.93 655,-162.1 607.97,-192.53 629.63,-249.12 574.5,-259.1"/>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M572.5,-259.1C465.06,-278.54 436.51,-270.9 328,-283.1 314.68,-284.59 300.47,-286.31 286.83,-288.01"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="286.01,-284.58 276.53,-289.31 286.89,-291.53 286.01,-284.58"/>
+</g>
+<!-- sourcefile~rki_remap_column.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_node25" class="node">
+<title>sourcefile~rki_remap_column.f90</title>
+<g id="a_sourcefile~~rki_flux_dump.f90~~EfferentGraph_node25"><a xlink:href="../sourcefile/rki_remap_column.f90.html" xlink:title="rki_remap_column.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="791,-195.1 658,-195.1 658,-171.1 791,-171.1 791,-195.1"/>
+<text text-anchor="middle" x="724.5" y="-180.7" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_remap_column.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_ml_dynamics.f90&#45;&gt;sourcefile~rki_remap_column.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge69" class="edge">
+<title>sourcefile~rki_ml_dynamics.f90&#45;&gt;sourcefile~rki_remap_column.f90</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M829.84,-182.47C820.58,-182.52 810.93,-182.58 801.4,-182.64"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="801.11,-179.14 791.13,-182.7 801.15,-186.14 801.11,-179.14"/>
+</g>
+<!-- sourcefile~rki_ml_tracers.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge72" class="edge">
+<title>sourcefile~rki_ml_tracers.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M836.78,-293.87C747.61,-287.83 564.56,-279.32 411,-297.1"/>
+</g>
+<!-- sourcefile~rki_ml_tracers.f90&#45;&gt;sourcefile~rki_boundary_types.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge71" class="edge">
+<title>sourcefile~rki_ml_tracers.f90&#45;&gt;sourcefile~rki_boundary_types.f90</title>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M882.63,-286.08C870.42,-268.33 847.28,-233.86 830,-203.1 812.09,-171.21 821,-153.77 794,-129.1 790.11,-125.54 785.68,-122.46 781,-119.78"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="782.24,-116.49 771.74,-115.13 779.1,-122.75 782.24,-116.49"/>
+</g>
+<!-- sourcefile~rki_ml_tracers.f90&#45;&gt;sourcefile~rki_grid.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge73" class="edge">
+<title>sourcefile~rki_ml_tracers.f90&#45;&gt;sourcefile~rki_grid.f90</title>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M877.08,-310.23C834.93,-345.73 703.69,-447.37 574.5,-455.1"/>
+</g>
+<!-- sourcefile~rki_ml_tracers.f90&#45;&gt;sourcefile~rki_ml_common.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge74" class="edge">
+<title>sourcefile~rki_ml_tracers.f90&#45;&gt;sourcefile~rki_ml_common.f90</title>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M852.78,-285.96C793.07,-268.65 674.17,-240.91 574.5,-259.1"/>
+</g>
+<!-- sourcefile~rki_ml_tracers.f90&#45;&gt;sourcefile~rki_remap_column.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge75" class="edge">
+<title>sourcefile~rki_ml_tracers.f90&#45;&gt;sourcefile~rki_remap_column.f90</title>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M873.6,-286.01C844.42,-265.73 785.48,-224.78 751.41,-201.1"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="753.12,-198.03 742.91,-195.2 749.13,-203.78 753.12,-198.03"/>
+</g>
+<!-- sourcefile~rki_nml_schema.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge76" class="edge">
+<title>sourcefile~rki_nml_schema.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#ff00ff" stroke-dasharray="5,2" d="M155.8,-108.65C150.34,-111.39 145.27,-114.81 141,-119.1 58.97,-201.38 52.23,-353.65 52.78,-410.72"/>
+<polygon fill="#ff00ff" stroke="#ff00ff" points="49.29,-410.88 52.97,-420.82 56.29,-410.75 49.29,-410.88"/>
+</g>
+<!-- sourcefile~rki_remap_column.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_flux_dump.f90~~EfferentGraph_edge77" class="edge">
+<title>sourcefile~rki_remap_column.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M681.85,-171.07C652.02,-163.9 610.87,-156.93 574.5,-161.1"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var pansourcefilerki_flux_dumpf90EfferentGraph = svgPanZoom('#sourcefilerki_flux_dumpf90EfferentGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#EfferentGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="EfferentGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="202pt" height="32pt"
+ viewBox="0.00 0.00 201.50 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 197.5,-28 197.5,4 -4,4"/>
+<!-- Source File -->
+<g id="node1" class="node">
+<title>Source File</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Source File</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node2" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="193.5,-24 88.5,-24 88.5,0 193.5,0 193.5,-24"/>
+<text text-anchor="middle" x="141" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a file to a file which it depends on. A file
+is dependent upon another if the latter must be compiled before the former
+can be.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+          </div>
+        </div>
+<br>
+      <section>
+        <h2><span class="anchor" id="src"></span>Source Code</h2>
+        <div class="hl codehilite"><pre><span></span><a id="ln-1" name="ln-1" href="#ln-1"></a><span class="c">!! Optional NetCDF snapshot of the barotropic flux-kernel per-cell I/O</span>
+<a id="ln-2" name="ln-2" href="#ln-2"></a><span class="k">module </span><span class="n">rki_flux_dump</span>
+<a id="ln-3" name="ln-3" href="#ln-3"></a><span class="w">   </span><span class="c">!! Diagnostic snapshot of the barotropic state arrays as they sit</span>
+<a id="ln-4" name="ln-4" href="#ln-4"></a><span class="w">   </span><span class="c">!! between the flux call and the update call inside an RK stage.</span>
+<a id="ln-5" name="ln-5" href="#ln-5"></a><span class="w">   </span><span class="c">!!</span>
+<a id="ln-6" name="ln-6" href="#ln-6"></a><span class="w">   </span><span class="c">!! Reads the existing `state%barotropic%{h, hu, hv, b, flux_*,</span>
+<a id="ln-7" name="ln-7" href="#ln-7"></a><span class="w">   </span><span class="c">!! mass_flux_*}` arrays that the solver has already populated on</span>
+<a id="ln-8" name="ln-8" href="#ln-8"></a><span class="w">   </span><span class="c">!! device — does **not** re-run the kernel.  The dump must be</span>
+<a id="ln-9" name="ln-9" href="#ln-9"></a><span class="w">   </span><span class="c">!! inserted between `solver_compute_barotropic_flux` and</span>
+<a id="ln-10" name="ln-10" href="#ln-10"></a><span class="w">   </span><span class="c">!! `compute_update` so that `(h, hu, hv, b)` are still the flux</span>
+<a id="ln-11" name="ln-11" href="#ln-11"></a><span class="w">   </span><span class="c">!! kernel's inputs and `flux_*` / `mass_flux_*` are the matching</span>
+<a id="ln-12" name="ln-12" href="#ln-12"></a><span class="w">   </span><span class="c">!! outputs.  After `compute_update`, `h/hu/hv` are overwritten.</span>
+<a id="ln-13" name="ln-13" href="#ln-13"></a><span class="w">   </span><span class="c">!!</span>
+<a id="ln-14" name="ln-14" href="#ln-14"></a><span class="w">   </span><span class="c">!! Input fields are written over the full ghost-padded array shape</span>
+<a id="ln-15" name="ln-15" href="#ln-15"></a><span class="w">   </span><span class="c">!! `(nx_total, ny_total)`; outputs are written over the interior</span>
+<a id="ln-16" name="ln-16" href="#ln-16"></a><span class="w">   </span><span class="c">!! `(nx_phys, ny_phys)`.  Combined with the `nghost` global</span>
+<a id="ln-17" name="ln-17" href="#ln-17"></a><span class="w">   </span><span class="c">!! attribute, that lets a reader reconstruct the 9-point cross</span>
+<a id="ln-18" name="ln-18" href="#ln-18"></a><span class="w">   </span><span class="c">!! stencil `(i-2..i+2, j) + (i, j-2..j+2)` that each interior cell</span>
+<a id="ln-19" name="ln-19" href="#ln-19"></a><span class="w">   </span><span class="c">!! consumes.</span>
+<a id="ln-20" name="ln-20" href="#ln-20"></a><span class="w">   </span><span class="k">use </span><span class="n">rki_constants</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">wp</span>
+<a id="ln-21" name="ln-21" href="#ln-21"></a><span class="w">   </span><span class="k">use </span><span class="n">rki_state</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">state_t</span>
+<a id="ln-22" name="ln-22" href="#ln-22"></a><span class="w">   </span><span class="k">use </span><span class="n">rki_io_netcdf</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">nc_create_file</span><span class="p">,</span><span class="w"> </span><span class="n">nc_close</span><span class="p">,</span><span class="w"> </span><span class="n">nc_def_dim</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<a id="ln-23" name="ln-23" href="#ln-23"></a><span class="w">                            </span><span class="n">nc_def_var_2d</span><span class="p">,</span><span class="w"> </span><span class="n">nc_put_att</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<a id="ln-24" name="ln-24" href="#ln-24"></a><span class="w">                            </span><span class="n">nc_put_att_global</span><span class="p">,</span><span class="w"> </span><span class="n">nc_put_att_global_int</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<a id="ln-25" name="ln-25" href="#ln-25"></a><span class="w">                            </span><span class="n">nc_enddef</span><span class="p">,</span><span class="w"> </span><span class="n">nc_put_var_2d</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<a id="ln-26" name="ln-26" href="#ln-26"></a><span class="w">                            </span><span class="n">rki_def_var_1d</span><span class="p">,</span><span class="w"> </span><span class="n">rki_put_var_1d</span>
+<a id="ln-27" name="ln-27" href="#ln-27"></a><span class="w">   </span><span class="k">use </span><span class="n">pic_logger</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">logger</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">global_logger</span>
+<a id="ln-28" name="ln-28" href="#ln-28"></a><span class="w">   </span><span class="k">implicit none</span>
+<a id="ln-29" name="ln-29" href="#ln-29"></a><span class="k">   private</span>
+<a id="ln-30" name="ln-30" href="#ln-30"></a>
+<a id="ln-31" name="ln-31" href="#ln-31"></a><span class="k">   public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">dump_flux_io</span>
+<a id="ln-32" name="ln-32" href="#ln-32"></a>
+<a id="ln-33" name="ln-33" href="#ln-33"></a><span class="k">contains</span>
+<a id="ln-34" name="ln-34" href="#ln-34"></a>
+<a id="ln-35" name="ln-35" href="#ln-35"></a><span class="k">   subroutine </span><span class="n">dump_flux_io</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span>
+<a id="ln-36" name="ln-36" href="#ln-36"></a><span class="w">      </span><span class="c">!! Public only for the unit-test suite (no production module imports it);</span>
+<a id="ln-37" name="ln-37" href="#ln-37"></a><span class="w">      </span><span class="c">!! ignore when developing production code in other modules.</span>
+<a id="ln-38" name="ln-38" href="#ln-38"></a><span class="w">      </span><span class="c">!! Snapshot the flux-kernel inputs and outputs from `state` to a</span>
+<a id="ln-39" name="ln-39" href="#ln-39"></a><span class="w">      </span><span class="c">!! NetCDF file at `filename`.</span>
+<a id="ln-40" name="ln-40" href="#ln-40"></a><span class="w">      </span><span class="kt">character</span><span class="p">(</span><span class="nb">len</span><span class="o">=*</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">filename</span>
+<a id="ln-41" name="ln-41" href="#ln-41"></a><span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="n">state_t</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">state</span>
+<a id="ln-42" name="ln-42" href="#ln-42"></a><span class="w">         </span><span class="c">!! Simulation state with the flux arrays already populated by</span>
+<a id="ln-43" name="ln-43" href="#ln-43"></a><span class="w">         </span><span class="c">!! `solver_compute_barotropic_flux`.</span>
+<a id="ln-44" name="ln-44" href="#ln-44"></a>
+<a id="ln-45" name="ln-45" href="#ln-45"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">x_total</span><span class="p">(:),</span><span class="w"> </span><span class="n">y_total</span><span class="p">(:)</span>
+<a id="ln-46" name="ln-46" href="#ln-46"></a><span class="w">      </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">ncid</span>
+<a id="ln-47" name="ln-47" href="#ln-47"></a><span class="w">      </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">x_tot_dimid</span><span class="p">,</span><span class="w"> </span><span class="n">y_tot_dimid</span><span class="p">,</span><span class="w"> </span><span class="n">x_int_dimid</span><span class="p">,</span><span class="w"> </span><span class="n">y_int_dimid</span>
+<a id="ln-48" name="ln-48" href="#ln-48"></a><span class="w">      </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">x_tot_varid</span><span class="p">,</span><span class="w"> </span><span class="n">y_tot_varid</span><span class="p">,</span><span class="w"> </span><span class="n">x_int_varid</span><span class="p">,</span><span class="w"> </span><span class="n">y_int_varid</span>
+<a id="ln-49" name="ln-49" href="#ln-49"></a><span class="w">      </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">h_varid</span><span class="p">,</span><span class="w"> </span><span class="n">hu_varid</span><span class="p">,</span><span class="w"> </span><span class="n">hv_varid</span><span class="p">,</span><span class="w"> </span><span class="n">b_varid</span>
+<a id="ln-50" name="ln-50" href="#ln-50"></a><span class="w">      </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">fh_varid</span><span class="p">,</span><span class="w"> </span><span class="n">fhu_varid</span><span class="p">,</span><span class="w"> </span><span class="n">fhv_varid</span><span class="p">,</span><span class="w"> </span><span class="n">mx_varid</span><span class="p">,</span><span class="w"> </span><span class="n">my_varid</span>
+<a id="ln-51" name="ln-51" href="#ln-51"></a><span class="w">      </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">,</span><span class="w"> </span><span class="n">lo_i</span><span class="p">,</span><span class="w"> </span><span class="n">hi_i</span><span class="p">,</span><span class="w"> </span><span class="n">lo_j</span><span class="p">,</span><span class="w"> </span><span class="n">hi_j</span>
+<a id="ln-52" name="ln-52" href="#ln-52"></a><span class="w">      </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">nx</span><span class="p">,</span><span class="w"> </span><span class="n">ny</span><span class="p">,</span><span class="w"> </span><span class="n">ng</span>
+<a id="ln-53" name="ln-53" href="#ln-53"></a>
+<a id="ln-54" name="ln-54" href="#ln-54"></a><span class="w">      </span><span class="n">nx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">grid</span><span class="p">%</span><span class="n">nx_total</span>
+<a id="ln-55" name="ln-55" href="#ln-55"></a><span class="w">      </span><span class="n">ny</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">grid</span><span class="p">%</span><span class="n">ny_total</span>
+<a id="ln-56" name="ln-56" href="#ln-56"></a><span class="w">      </span><span class="n">ng</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">grid</span><span class="p">%</span><span class="n">nghost</span>
+<a id="ln-57" name="ln-57" href="#ln-57"></a><span class="w">      </span><span class="n">lo_i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ng</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span>
+<a id="ln-58" name="ln-58" href="#ln-58"></a><span class="w">      </span><span class="n">hi_i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nx</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">ng</span>
+<a id="ln-59" name="ln-59" href="#ln-59"></a><span class="w">      </span><span class="n">lo_j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ng</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span>
+<a id="ln-60" name="ln-60" href="#ln-60"></a><span class="w">      </span><span class="n">hi_j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ny</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">ng</span>
+<a id="ln-61" name="ln-61" href="#ln-61"></a>
+<a id="ln-62" name="ln-62" href="#ln-62"></a><span class="w">      </span><span class="c">! Pull the slices we are about to write back from device.  No</span>
+<a id="ln-63" name="ln-63" href="#ln-63"></a><span class="w">      </span><span class="c">! data region is opened — the state arrays remain device-resident</span>
+<a id="ln-64" name="ln-64" href="#ln-64"></a><span class="w">      </span><span class="c">! after this call.  `if_present` makes the routine usable on a</span>
+<a id="ln-65" name="ln-65" href="#ln-65"></a><span class="w">      </span><span class="c">! host-only state too (e.g. in unit tests where the caller never</span>
+<a id="ln-66" name="ln-66" href="#ln-66"></a><span class="w">      </span><span class="c">! enters a data region).</span>
+<a id="ln-67" name="ln-67" href="#ln-67"></a><span class="w">      </span><span class="c">!$acc update self(state%barotropic%h, state%barotropic%hu, &amp;</span>
+<a id="ln-68" name="ln-68" href="#ln-68"></a><span class="w">      </span><span class="c">!$acc&amp;            state%barotropic%hv, state%barotropic%b) if_present</span>
+<a id="ln-69" name="ln-69" href="#ln-69"></a><span class="w">      </span><span class="c">!$acc update self(state%barotropic%flux_h(lo_i:hi_i, lo_j:hi_j), &amp;</span>
+<a id="ln-70" name="ln-70" href="#ln-70"></a><span class="w">      </span><span class="c">!$acc&amp;            state%barotropic%flux_hu(lo_i:hi_i, lo_j:hi_j), &amp;</span>
+<a id="ln-71" name="ln-71" href="#ln-71"></a><span class="w">      </span><span class="c">!$acc&amp;            state%barotropic%flux_hv(lo_i:hi_i, lo_j:hi_j), &amp;</span>
+<a id="ln-72" name="ln-72" href="#ln-72"></a><span class="w">      </span><span class="c">!$acc&amp;            state%barotropic%mass_flux_x(lo_i:hi_i, lo_j:hi_j), &amp;</span>
+<a id="ln-73" name="ln-73" href="#ln-73"></a><span class="w">      </span><span class="c">!$acc&amp;            state%barotropic%mass_flux_y(lo_i:hi_i, lo_j:hi_j)) if_present</span>
+<a id="ln-74" name="ln-74" href="#ln-74"></a>
+<a id="ln-75" name="ln-75" href="#ln-75"></a><span class="w">      </span><span class="c">! Cell-centre coordinates with the interior origin at x=y=0; ghost</span>
+<a id="ln-76" name="ln-76" href="#ln-76"></a><span class="w">      </span><span class="c">! cells land at negative indices.</span>
+<a id="ln-77" name="ln-77" href="#ln-77"></a><span class="w">      </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">x_total</span><span class="p">(</span><span class="n">nx</span><span class="p">),</span><span class="w"> </span><span class="n">y_total</span><span class="p">(</span><span class="n">ny</span><span class="p">))</span>
+<a id="ln-78" name="ln-78" href="#ln-78"></a><span class="w">      </span><span class="k">do </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">nx</span>
+<a id="ln-79" name="ln-79" href="#ln-79"></a><span class="w">         </span><span class="n">x_total</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">real</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">ng</span><span class="p">,</span><span class="w"> </span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mf">0.5_wp</span><span class="p">)</span><span class="o">*</span><span class="n">state</span><span class="p">%</span><span class="n">grid</span><span class="p">%</span><span class="n">dx</span>
+<a id="ln-80" name="ln-80" href="#ln-80"></a><span class="w">      </span><span class="k">end do</span>
+<a id="ln-81" name="ln-81" href="#ln-81"></a><span class="k">      do </span><span class="n">j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">ny</span>
+<a id="ln-82" name="ln-82" href="#ln-82"></a><span class="w">         </span><span class="n">y_total</span><span class="p">(</span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">real</span><span class="p">(</span><span class="n">j</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">ng</span><span class="p">,</span><span class="w"> </span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mf">0.5_wp</span><span class="p">)</span><span class="o">*</span><span class="n">state</span><span class="p">%</span><span class="n">grid</span><span class="p">%</span><span class="n">dy</span>
+<a id="ln-83" name="ln-83" href="#ln-83"></a><span class="w">      </span><span class="k">end do</span>
+<a id="ln-84" name="ln-84" href="#ln-84"></a>
+<a id="ln-85" name="ln-85" href="#ln-85"></a><span class="k">      call </span><span class="n">logger</span><span class="p">%</span><span class="n">info</span><span class="p">(</span><span class="s2">"Writing flux I/O dump: "</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+<a id="ln-86" name="ln-86" href="#ln-86"></a><span class="w">      </span><span class="k">call </span><span class="n">nc_create_file</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="w"> </span><span class="n">ncid</span><span class="p">)</span>
+<a id="ln-87" name="ln-87" href="#ln-87"></a>
+<a id="ln-88" name="ln-88" href="#ln-88"></a><span class="w">      </span><span class="k">call </span><span class="n">nc_def_dim</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">"x_total"</span><span class="p">,</span><span class="w"> </span><span class="n">nx</span><span class="p">,</span><span class="w"> </span><span class="n">x_tot_dimid</span><span class="p">)</span>
+<a id="ln-89" name="ln-89" href="#ln-89"></a><span class="w">      </span><span class="k">call </span><span class="n">nc_def_dim</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">"y_total"</span><span class="p">,</span><span class="w"> </span><span class="n">ny</span><span class="p">,</span><span class="w"> </span><span class="n">y_tot_dimid</span><span class="p">)</span>
+<a id="ln-90" name="ln-90" href="#ln-90"></a><span class="w">      </span><span class="k">call </span><span class="n">nc_def_dim</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">"x"</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">grid</span><span class="p">%</span><span class="n">nx_phys</span><span class="p">,</span><span class="w"> </span><span class="n">x_int_dimid</span><span class="p">)</span>
+<a id="ln-91" name="ln-91" href="#ln-91"></a><span class="w">      </span><span class="k">call </span><span class="n">nc_def_dim</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">"y"</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">grid</span><span class="p">%</span><span class="n">ny_phys</span><span class="p">,</span><span class="w"> </span><span class="n">y_int_dimid</span><span class="p">)</span>
+<a id="ln-92" name="ln-92" href="#ln-92"></a>
+<a id="ln-93" name="ln-93" href="#ln-93"></a><span class="w">      </span><span class="k">call </span><span class="n">rki_def_var_1d</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">"x_total"</span><span class="p">,</span><span class="w"> </span><span class="n">x_tot_dimid</span><span class="p">,</span><span class="w"> </span><span class="n">x_tot_varid</span><span class="p">)</span>
+<a id="ln-94" name="ln-94" href="#ln-94"></a><span class="w">      </span><span class="k">call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">x_tot_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"units"</span><span class="p">,</span><span class="w"> </span><span class="s2">"m"</span><span class="p">)</span>
+<a id="ln-95" name="ln-95" href="#ln-95"></a><span class="w">      </span><span class="k">call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">x_tot_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"long_name"</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<a id="ln-96" name="ln-96" href="#ln-96"></a><span class="w">                      </span><span class="s2">"cell-centre x including ghost layers"</span><span class="p">)</span>
+<a id="ln-97" name="ln-97" href="#ln-97"></a>
+<a id="ln-98" name="ln-98" href="#ln-98"></a><span class="w">      </span><span class="k">call </span><span class="n">rki_def_var_1d</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">"y_total"</span><span class="p">,</span><span class="w"> </span><span class="n">y_tot_dimid</span><span class="p">,</span><span class="w"> </span><span class="n">y_tot_varid</span><span class="p">)</span>
+<a id="ln-99" name="ln-99" href="#ln-99"></a><span class="w">      </span><span class="k">call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">y_tot_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"units"</span><span class="p">,</span><span class="w"> </span><span class="s2">"m"</span><span class="p">)</span>
+<a id="ln-100" name="ln-100" href="#ln-100"></a><span class="w">      </span><span class="k">call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">y_tot_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"long_name"</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<a id="ln-101" name="ln-101" href="#ln-101"></a><span class="w">                      </span><span class="s2">"cell-centre y including ghost layers"</span><span class="p">)</span>
+<a id="ln-102" name="ln-102" href="#ln-102"></a>
+<a id="ln-103" name="ln-103" href="#ln-103"></a><span class="w">      </span><span class="k">call </span><span class="n">rki_def_var_1d</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">"x"</span><span class="p">,</span><span class="w"> </span><span class="n">x_int_dimid</span><span class="p">,</span><span class="w"> </span><span class="n">x_int_varid</span><span class="p">)</span>
+<a id="ln-104" name="ln-104" href="#ln-104"></a><span class="w">      </span><span class="k">call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">x_int_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"units"</span><span class="p">,</span><span class="w"> </span><span class="s2">"m"</span><span class="p">)</span>
+<a id="ln-105" name="ln-105" href="#ln-105"></a><span class="w">      </span><span class="k">call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">x_int_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"long_name"</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<a id="ln-106" name="ln-106" href="#ln-106"></a><span class="w">                      </span><span class="s2">"cell-centre x of interior cells"</span><span class="p">)</span>
+<a id="ln-107" name="ln-107" href="#ln-107"></a><span class="w">      </span><span class="k">call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">x_int_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"axis"</span><span class="p">,</span><span class="w"> </span><span class="s2">"X"</span><span class="p">)</span>
+<a id="ln-108" name="ln-108" href="#ln-108"></a>
+<a id="ln-109" name="ln-109" href="#ln-109"></a><span class="w">      </span><span class="k">call </span><span class="n">rki_def_var_1d</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">"y"</span><span class="p">,</span><span class="w"> </span><span class="n">y_int_dimid</span><span class="p">,</span><span class="w"> </span><span class="n">y_int_varid</span><span class="p">)</span>
+<a id="ln-110" name="ln-110" href="#ln-110"></a><span class="w">      </span><span class="k">call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">y_int_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"units"</span><span class="p">,</span><span class="w"> </span><span class="s2">"m"</span><span class="p">)</span>
+<a id="ln-111" name="ln-111" href="#ln-111"></a><span class="w">      </span><span class="k">call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">y_int_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"long_name"</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<a id="ln-112" name="ln-112" href="#ln-112"></a><span class="w">                      </span><span class="s2">"cell-centre y of interior cells"</span><span class="p">)</span>
+<a id="ln-113" name="ln-113" href="#ln-113"></a><span class="w">      </span><span class="k">call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">y_int_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"axis"</span><span class="p">,</span><span class="w"> </span><span class="s2">"Y"</span><span class="p">)</span>
+<a id="ln-114" name="ln-114" href="#ln-114"></a>
+<a id="ln-115" name="ln-115" href="#ln-115"></a><span class="w">      </span><span class="c">! Inputs: full ghost-padded arrays. Each interior cell (i, j) reads</span>
+<a id="ln-116" name="ln-116" href="#ln-116"></a><span class="w">      </span><span class="c">! the 9-point cross stencil (i-2..i+2, j) and (i, j-2..j+2).</span>
+<a id="ln-117" name="ln-117" href="#ln-117"></a><span class="w">      </span><span class="k">call </span><span class="n">nc_def_var_2d</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">"h"</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">x_tot_dimid</span><span class="p">,</span><span class="w"> </span><span class="n">y_tot_dimid</span><span class="p">],</span><span class="w"> </span><span class="n">h_varid</span><span class="p">)</span>
+<a id="ln-118" name="ln-118" href="#ln-118"></a><span class="w">      </span><span class="k">call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">h_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"units"</span><span class="p">,</span><span class="w"> </span><span class="s2">"m"</span><span class="p">)</span>
+<a id="ln-119" name="ln-119" href="#ln-119"></a><span class="w">      </span><span class="k">call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">h_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"long_name"</span><span class="p">,</span><span class="w"> </span><span class="s2">"input water depth"</span><span class="p">)</span>
+<a id="ln-120" name="ln-120" href="#ln-120"></a>
+<a id="ln-121" name="ln-121" href="#ln-121"></a><span class="w">      </span><span class="k">call </span><span class="n">nc_def_var_2d</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">"hu"</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">x_tot_dimid</span><span class="p">,</span><span class="w"> </span><span class="n">y_tot_dimid</span><span class="p">],</span><span class="w"> </span><span class="n">hu_varid</span><span class="p">)</span>
+<a id="ln-122" name="ln-122" href="#ln-122"></a><span class="w">      </span><span class="k">call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">hu_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"units"</span><span class="p">,</span><span class="w"> </span><span class="s2">"m2 s-1"</span><span class="p">)</span>
+<a id="ln-123" name="ln-123" href="#ln-123"></a><span class="w">      </span><span class="k">call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">hu_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"long_name"</span><span class="p">,</span><span class="w"> </span><span class="s2">"input x-momentum (h*u)"</span><span class="p">)</span>
+<a id="ln-124" name="ln-124" href="#ln-124"></a>
+<a id="ln-125" name="ln-125" href="#ln-125"></a><span class="w">      </span><span class="k">call </span><span class="n">nc_def_var_2d</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">"hv"</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">x_tot_dimid</span><span class="p">,</span><span class="w"> </span><span class="n">y_tot_dimid</span><span class="p">],</span><span class="w"> </span><span class="n">hv_varid</span><span class="p">)</span>
+<a id="ln-126" name="ln-126" href="#ln-126"></a><span class="w">      </span><span class="k">call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">hv_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"units"</span><span class="p">,</span><span class="w"> </span><span class="s2">"m2 s-1"</span><span class="p">)</span>
+<a id="ln-127" name="ln-127" href="#ln-127"></a><span class="w">      </span><span class="k">call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">hv_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"long_name"</span><span class="p">,</span><span class="w"> </span><span class="s2">"input y-momentum (h*v)"</span><span class="p">)</span>
+<a id="ln-128" name="ln-128" href="#ln-128"></a>
+<a id="ln-129" name="ln-129" href="#ln-129"></a><span class="w">      </span><span class="k">call </span><span class="n">nc_def_var_2d</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">"b"</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">x_tot_dimid</span><span class="p">,</span><span class="w"> </span><span class="n">y_tot_dimid</span><span class="p">],</span><span class="w"> </span><span class="n">b_varid</span><span class="p">)</span>
+<a id="ln-130" name="ln-130" href="#ln-130"></a><span class="w">      </span><span class="k">call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">b_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"units"</span><span class="p">,</span><span class="w"> </span><span class="s2">"m"</span><span class="p">)</span>
+<a id="ln-131" name="ln-131" href="#ln-131"></a><span class="w">      </span><span class="k">call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">b_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"long_name"</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<a id="ln-132" name="ln-132" href="#ln-132"></a><span class="w">                      </span><span class="s2">"input bottom elevation (positive up)"</span><span class="p">)</span>
+<a id="ln-133" name="ln-133" href="#ln-133"></a>
+<a id="ln-134" name="ln-134" href="#ln-134"></a><span class="w">      </span><span class="c">! Outputs: interior only.</span>
+<a id="ln-135" name="ln-135" href="#ln-135"></a><span class="w">      </span><span class="k">call </span><span class="n">nc_def_var_2d</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">"flux_h"</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">x_int_dimid</span><span class="p">,</span><span class="w"> </span><span class="n">y_int_dimid</span><span class="p">],</span><span class="w"> </span><span class="n">fh_varid</span><span class="p">)</span>
+<a id="ln-136" name="ln-136" href="#ln-136"></a><span class="w">      </span><span class="k">call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">fh_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"units"</span><span class="p">,</span><span class="w"> </span><span class="s2">"m s-1"</span><span class="p">)</span>
+<a id="ln-137" name="ln-137" href="#ln-137"></a><span class="w">      </span><span class="k">call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">fh_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"long_name"</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<a id="ln-138" name="ln-138" href="#ln-138"></a><span class="w">                      </span><span class="s2">"net flux divergence of h"</span><span class="p">)</span>
+<a id="ln-139" name="ln-139" href="#ln-139"></a>
+<a id="ln-140" name="ln-140" href="#ln-140"></a><span class="w">      </span><span class="k">call </span><span class="n">nc_def_var_2d</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">"flux_hu"</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">x_int_dimid</span><span class="p">,</span><span class="w"> </span><span class="n">y_int_dimid</span><span class="p">],</span><span class="w"> </span><span class="n">fhu_varid</span><span class="p">)</span>
+<a id="ln-141" name="ln-141" href="#ln-141"></a><span class="w">      </span><span class="k">call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">fhu_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"units"</span><span class="p">,</span><span class="w"> </span><span class="s2">"m2 s-2"</span><span class="p">)</span>
+<a id="ln-142" name="ln-142" href="#ln-142"></a><span class="w">      </span><span class="k">call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">fhu_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"long_name"</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<a id="ln-143" name="ln-143" href="#ln-143"></a><span class="w">                      </span><span class="s2">"net flux divergence of hu (with well-balanced correction)"</span><span class="p">)</span>
+<a id="ln-144" name="ln-144" href="#ln-144"></a>
+<a id="ln-145" name="ln-145" href="#ln-145"></a><span class="w">      </span><span class="k">call </span><span class="n">nc_def_var_2d</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">"flux_hv"</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">x_int_dimid</span><span class="p">,</span><span class="w"> </span><span class="n">y_int_dimid</span><span class="p">],</span><span class="w"> </span><span class="n">fhv_varid</span><span class="p">)</span>
+<a id="ln-146" name="ln-146" href="#ln-146"></a><span class="w">      </span><span class="k">call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">fhv_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"units"</span><span class="p">,</span><span class="w"> </span><span class="s2">"m2 s-2"</span><span class="p">)</span>
+<a id="ln-147" name="ln-147" href="#ln-147"></a><span class="w">      </span><span class="k">call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">fhv_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"long_name"</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<a id="ln-148" name="ln-148" href="#ln-148"></a><span class="w">                      </span><span class="s2">"net flux divergence of hv (with well-balanced correction)"</span><span class="p">)</span>
+<a id="ln-149" name="ln-149" href="#ln-149"></a>
+<a id="ln-150" name="ln-150" href="#ln-150"></a><span class="w">      </span><span class="k">call </span><span class="n">nc_def_var_2d</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">"mass_flux_x"</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">x_int_dimid</span><span class="p">,</span><span class="w"> </span><span class="n">y_int_dimid</span><span class="p">],</span><span class="w"> </span><span class="n">mx_varid</span><span class="p">)</span>
+<a id="ln-151" name="ln-151" href="#ln-151"></a><span class="w">      </span><span class="k">call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">mx_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"units"</span><span class="p">,</span><span class="w"> </span><span class="s2">"m2 s-1"</span><span class="p">)</span>
+<a id="ln-152" name="ln-152" href="#ln-152"></a><span class="w">      </span><span class="k">call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">mx_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"long_name"</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<a id="ln-153" name="ln-153" href="#ln-153"></a><span class="w">                      </span><span class="s2">"HLL h-flux at right face (i+1/2)"</span><span class="p">)</span>
+<a id="ln-154" name="ln-154" href="#ln-154"></a>
+<a id="ln-155" name="ln-155" href="#ln-155"></a><span class="w">      </span><span class="k">call </span><span class="n">nc_def_var_2d</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">"mass_flux_y"</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">x_int_dimid</span><span class="p">,</span><span class="w"> </span><span class="n">y_int_dimid</span><span class="p">],</span><span class="w"> </span><span class="n">my_varid</span><span class="p">)</span>
+<a id="ln-156" name="ln-156" href="#ln-156"></a><span class="w">      </span><span class="k">call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">my_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"units"</span><span class="p">,</span><span class="w"> </span><span class="s2">"m2 s-1"</span><span class="p">)</span>
+<a id="ln-157" name="ln-157" href="#ln-157"></a><span class="w">      </span><span class="k">call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">my_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"long_name"</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<a id="ln-158" name="ln-158" href="#ln-158"></a><span class="w">                      </span><span class="s2">"HLL h-flux at top face (j+1/2)"</span><span class="p">)</span>
+<a id="ln-159" name="ln-159" href="#ln-159"></a>
+<a id="ln-160" name="ln-160" href="#ln-160"></a><span class="w">      </span><span class="k">call </span><span class="n">nc_put_att_global</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">"title"</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<a id="ln-161" name="ln-161" href="#ln-161"></a><span class="w">                             </span><span class="s2">"Per-interior-cell I/O snapshot for the barotropic flux kernel"</span><span class="p">)</span>
+<a id="ln-162" name="ln-162" href="#ln-162"></a><span class="w">      </span><span class="k">call </span><span class="n">nc_put_att_global</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">"source"</span><span class="p">,</span><span class="w"> </span><span class="s2">"Rakali rki_flux_dump"</span><span class="p">)</span>
+<a id="ln-163" name="ln-163" href="#ln-163"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">use_hllc</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<a id="ln-164" name="ln-164" href="#ln-164"></a><span class="k">         call </span><span class="n">nc_put_att_global</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">"solver"</span><span class="p">,</span><span class="w"> </span><span class="s2">"HLLC"</span><span class="p">)</span>
+<a id="ln-165" name="ln-165" href="#ln-165"></a><span class="w">      </span><span class="k">else</span>
+<a id="ln-166" name="ln-166" href="#ln-166"></a><span class="k">         call </span><span class="n">nc_put_att_global</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">"solver"</span><span class="p">,</span><span class="w"> </span><span class="s2">"HLL"</span><span class="p">)</span>
+<a id="ln-167" name="ln-167" href="#ln-167"></a><span class="w">      </span><span class="k">end if</span>
+<a id="ln-168" name="ln-168" href="#ln-168"></a><span class="k">      call </span><span class="n">nc_put_att_global_int</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">"nghost"</span><span class="p">,</span><span class="w"> </span><span class="n">ng</span><span class="p">)</span>
+<a id="ln-169" name="ln-169" href="#ln-169"></a><span class="w">      </span><span class="k">call </span><span class="n">nc_put_att_global_int</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">"nx_phys"</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">grid</span><span class="p">%</span><span class="n">nx_phys</span><span class="p">)</span>
+<a id="ln-170" name="ln-170" href="#ln-170"></a><span class="w">      </span><span class="k">call </span><span class="n">nc_put_att_global_int</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">"ny_phys"</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">grid</span><span class="p">%</span><span class="n">ny_phys</span><span class="p">)</span>
+<a id="ln-171" name="ln-171" href="#ln-171"></a>
+<a id="ln-172" name="ln-172" href="#ln-172"></a><span class="w">      </span><span class="k">call </span><span class="n">nc_enddef</span><span class="p">(</span><span class="n">ncid</span><span class="p">)</span>
+<a id="ln-173" name="ln-173" href="#ln-173"></a>
+<a id="ln-174" name="ln-174" href="#ln-174"></a><span class="w">      </span><span class="k">call </span><span class="n">rki_put_var_1d</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">x_tot_varid</span><span class="p">,</span><span class="w"> </span><span class="n">x_total</span><span class="p">)</span>
+<a id="ln-175" name="ln-175" href="#ln-175"></a><span class="w">      </span><span class="k">call </span><span class="n">rki_put_var_1d</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">y_tot_varid</span><span class="p">,</span><span class="w"> </span><span class="n">y_total</span><span class="p">)</span>
+<a id="ln-176" name="ln-176" href="#ln-176"></a><span class="w">      </span><span class="k">call </span><span class="n">rki_put_var_1d</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">x_int_varid</span><span class="p">,</span><span class="w"> </span><span class="n">x_total</span><span class="p">(</span><span class="n">lo_i</span><span class="p">:</span><span class="n">hi_i</span><span class="p">))</span>
+<a id="ln-177" name="ln-177" href="#ln-177"></a><span class="w">      </span><span class="k">call </span><span class="n">rki_put_var_1d</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">y_int_varid</span><span class="p">,</span><span class="w"> </span><span class="n">y_total</span><span class="p">(</span><span class="n">lo_j</span><span class="p">:</span><span class="n">hi_j</span><span class="p">))</span>
+<a id="ln-178" name="ln-178" href="#ln-178"></a>
+<a id="ln-179" name="ln-179" href="#ln-179"></a><span class="w">      </span><span class="k">call </span><span class="n">nc_put_var_2d</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">h_varid</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">h</span><span class="p">)</span>
+<a id="ln-180" name="ln-180" href="#ln-180"></a><span class="w">      </span><span class="k">call </span><span class="n">nc_put_var_2d</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">hu_varid</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hu</span><span class="p">)</span>
+<a id="ln-181" name="ln-181" href="#ln-181"></a><span class="w">      </span><span class="k">call </span><span class="n">nc_put_var_2d</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">hv_varid</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hv</span><span class="p">)</span>
+<a id="ln-182" name="ln-182" href="#ln-182"></a><span class="w">      </span><span class="k">call </span><span class="n">nc_put_var_2d</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">b_varid</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">b</span><span class="p">)</span>
+<a id="ln-183" name="ln-183" href="#ln-183"></a>
+<a id="ln-184" name="ln-184" href="#ln-184"></a><span class="w">      </span><span class="k">call </span><span class="n">nc_put_var_2d</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">fh_varid</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<a id="ln-185" name="ln-185" href="#ln-185"></a><span class="w">                         </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">flux_h</span><span class="p">(</span><span class="n">lo_i</span><span class="p">:</span><span class="n">hi_i</span><span class="p">,</span><span class="w"> </span><span class="n">lo_j</span><span class="p">:</span><span class="n">hi_j</span><span class="p">))</span>
+<a id="ln-186" name="ln-186" href="#ln-186"></a><span class="w">      </span><span class="k">call </span><span class="n">nc_put_var_2d</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">fhu_varid</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<a id="ln-187" name="ln-187" href="#ln-187"></a><span class="w">                         </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">flux_hu</span><span class="p">(</span><span class="n">lo_i</span><span class="p">:</span><span class="n">hi_i</span><span class="p">,</span><span class="w"> </span><span class="n">lo_j</span><span class="p">:</span><span class="n">hi_j</span><span class="p">))</span>
+<a id="ln-188" name="ln-188" href="#ln-188"></a><span class="w">      </span><span class="k">call </span><span class="n">nc_put_var_2d</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">fhv_varid</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<a id="ln-189" name="ln-189" href="#ln-189"></a><span class="w">                         </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">flux_hv</span><span class="p">(</span><span class="n">lo_i</span><span class="p">:</span><span class="n">hi_i</span><span class="p">,</span><span class="w"> </span><span class="n">lo_j</span><span class="p">:</span><span class="n">hi_j</span><span class="p">))</span>
+<a id="ln-190" name="ln-190" href="#ln-190"></a><span class="w">      </span><span class="k">call </span><span class="n">nc_put_var_2d</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">mx_varid</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<a id="ln-191" name="ln-191" href="#ln-191"></a><span class="w">                         </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">mass_flux_x</span><span class="p">(</span><span class="n">lo_i</span><span class="p">:</span><span class="n">hi_i</span><span class="p">,</span><span class="w"> </span><span class="n">lo_j</span><span class="p">:</span><span class="n">hi_j</span><span class="p">))</span>
+<a id="ln-192" name="ln-192" href="#ln-192"></a><span class="w">      </span><span class="k">call </span><span class="n">nc_put_var_2d</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">my_varid</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<a id="ln-193" name="ln-193" href="#ln-193"></a><span class="w">                         </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">mass_flux_y</span><span class="p">(</span><span class="n">lo_i</span><span class="p">:</span><span class="n">hi_i</span><span class="p">,</span><span class="w"> </span><span class="n">lo_j</span><span class="p">:</span><span class="n">hi_j</span><span class="p">))</span>
+<a id="ln-194" name="ln-194" href="#ln-194"></a>
+<a id="ln-195" name="ln-195" href="#ln-195"></a><span class="w">      </span><span class="k">call </span><span class="n">nc_close</span><span class="p">(</span><span class="n">ncid</span><span class="p">)</span>
+<a id="ln-196" name="ln-196" href="#ln-196"></a>
+<a id="ln-197" name="ln-197" href="#ln-197"></a><span class="w">   </span><span class="k">end subroutine </span><span class="n">dump_flux_io</span>
+<a id="ln-198" name="ln-198" href="#ln-198"></a>
+<a id="ln-199" name="ln-199" href="#ln-199"></a><span class="k">end module </span><span class="n">rki_flux_dump</span>
+</pre></div>
+
+      </section>
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Rakali
+ was developed by Jorge Luis Galvez Vallejo<br>              &copy; 2026 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+ on 2026-10-08 12:55 +0000             </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>

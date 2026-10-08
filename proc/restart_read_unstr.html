@@ -1,0 +1,987 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="GPU-native coastal solver — structured Cartesian and unstructured triangular grids, hydrostatic multilayer + non-hydrostatic, portable across NVHPC/gfortran/ifx.">
+    <meta name="author" content="Jorge Luis Galvez Vallejo" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>restart_read_unstr &ndash; Rakali</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">Rakali </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/absint.html">Abstract Interfaces</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>restart_read_unstr
+      <small>Subroutine</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.2% of total for procedures.">41 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/rki_restart_unstr.F90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/rki_restart_unstr.f90.html'>rki_restart_unstr.F90</a></li>
+                <li class="breadcrumb-item"><a href='../module/rki_restart_unstr.html'>rki_restart_unstr</a></li>
+            <li class="breadcrumb-item active" aria-current="page">restart_read_unstr</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+  
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#vars-0"
+         aria-expanded="false" aria-controls="vars-0">
+         <h4 class="card-header bg-primary text-white">Variables</h4>
+      </a>
+      <div id="vars-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../proc/restart_read_unstr.html#variable-att_stat">att_stat</a>
+            <a class="list-group-item" href="../proc/restart_read_unstr.html#variable-file_ncells">file_ncells</a>
+            <a class="list-group-item" href="../proc/restart_read_unstr.html#variable-n~32">n</a>
+            <a class="list-group-item" href="../proc/restart_read_unstr.html#variable-ncid~39">ncid</a>
+            <a class="list-group-item" href="../proc/restart_read_unstr.html#variable-sc~2">sc</a>
+            <a class="list-group-item" href="../proc/restart_read_unstr.html#variable-tmp~29">tmp</a>
+            <a class="list-group-item" href="../proc/restart_read_unstr.html#variable-varid~24">varid</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../proc/restart_read_unstr.html#src">restart_read_unstr</a>
+      </div>
+    </div>
+
+
+  </div>
+
+    </div>
+    
+    <div class="col-md-9" id='text'>
+    <h2>public  subroutine restart_read_unstr(filename, state, time, ierr)  
+</h2>
+    
+
+    <p>Read a checkpoint and populate state arrays.</p>
+<p>Must be called before finalize (arrays on host). Validates
+that the file&rsquo;s cell count matches <code>state%ncells_owned</code>.</p>
+
+
+    <h3>Arguments</h3>
+        <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-filename~17"></span>
+              character(len=*),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>filename</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-state~57"></span>
+              type(<a href='../type/unstr_state_t.html'>unstr_state_t</a>),
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>state</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-time~8"></span>
+              real(kind=wp),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>time</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ierr~102"></span>
+              integer,
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>ierr</strong></td>
+            <td>
+                <p>0 = success, 1 = cell count mismatch</p>
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <br>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Calls</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~restart_read_unstr~~CallsGraph Pages: 1 -->
+<svg id="procrestart_read_unstrCallsGraph" width="575pt" height="483pt"
+ viewBox="0.00 0.00 575.00 482.65" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~restart_read_unstr~~CallsGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 478.65)">
+<title>proc~~restart_read_unstr~~CallsGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-478.65 571,-478.65 571,4 -4,4"/>
+<!-- proc~restart_read_unstr -->
+<g id="proc~~restart_read_unstr~~CallsGraph_node1" class="node">
+<title>proc~restart_read_unstr</title>
+<polygon fill="none" stroke="black" points="109,-234 0,-234 0,-210 109,-210 109,-234"/>
+<text text-anchor="middle" x="54.5" y="-219.6" font-family="Helvetica,sans-Serif" font-size="10.50">restart_read_unstr</text>
+</g>
+<!-- error -->
+<g id="proc~~restart_read_unstr~~CallsGraph_node2" class="node">
+<title>error</title>
+<polygon fill="#777777" stroke="#777777" points="553.5,-418 499.5,-418 499.5,-394 553.5,-394 553.5,-418"/>
+<text text-anchor="middle" x="526.5" y="-403.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">error</text>
+</g>
+<!-- proc~restart_read_unstr&#45;&gt;error -->
+<g id="proc~~restart_read_unstr~~CallsGraph_edge1" class="edge">
+<title>proc~restart_read_unstr&#45;&gt;error</title>
+<path fill="none" stroke="#ff0000" d="M57.69,-234.13C64.35,-267.29 87.48,-360.1 145,-407 251.05,-493.47 317.72,-484.03 450,-449 468.54,-444.09 487.29,-433.45 501.46,-423.98"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="503.86,-426.58 510.07,-418 499.86,-420.83 503.86,-426.58"/>
+</g>
+<!-- info -->
+<g id="proc~~restart_read_unstr~~CallsGraph_node3" class="node">
+<title>info</title>
+<polygon fill="#777777" stroke="#777777" points="237,-192 183,-192 183,-168 237,-168 237,-192"/>
+<text text-anchor="middle" x="210" y="-177.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">info</text>
+</g>
+<!-- proc~restart_read_unstr&#45;&gt;info -->
+<g id="proc~~restart_read_unstr~~CallsGraph_edge2" class="edge">
+<title>proc~restart_read_unstr&#45;&gt;info</title>
+<path fill="none" stroke="#ff0000" d="M99.49,-209.96C122.74,-203.6 150.92,-195.89 172.88,-189.88"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="174.08,-193.18 182.8,-187.17 172.23,-186.43 174.08,-193.18"/>
+</g>
+<!-- nf90_get_att -->
+<g id="proc~~restart_read_unstr~~CallsGraph_node4" class="node">
+<title>nf90_get_att</title>
+<polygon fill="#777777" stroke="#777777" points="249.5,-150 170.5,-150 170.5,-126 249.5,-126 249.5,-150"/>
+<text text-anchor="middle" x="210" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nf90_get_att</text>
+</g>
+<!-- proc~restart_read_unstr&#45;&gt;nf90_get_att -->
+<g id="proc~~restart_read_unstr~~CallsGraph_edge3" class="edge">
+<title>proc~restart_read_unstr&#45;&gt;nf90_get_att</title>
+<path fill="none" stroke="#ff0000" d="M69.84,-209.86C86.84,-195.98 116.47,-173.32 145,-159 149.96,-156.51 155.29,-154.22 160.67,-152.14"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="162.14,-155.33 170.35,-148.63 159.76,-148.75 162.14,-155.33"/>
+</g>
+<!-- nf90_get_var -->
+<g id="proc~~restart_read_unstr~~CallsGraph_node5" class="node">
+<title>nf90_get_var</title>
+<polygon fill="#777777" stroke="#777777" points="251,-108 169,-108 169,-84 251,-84 251,-108"/>
+<text text-anchor="middle" x="210" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nf90_get_var</text>
+</g>
+<!-- proc~restart_read_unstr&#45;&gt;nf90_get_var -->
+<g id="proc~~restart_read_unstr~~CallsGraph_edge4" class="edge">
+<title>proc~restart_read_unstr&#45;&gt;nf90_get_var</title>
+<path fill="none" stroke="#ff0000" d="M62.74,-209.72C76.21,-187.91 107.21,-142.36 145,-117 149.38,-114.06 154.2,-111.51 159.17,-109.29"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="160.85,-112.39 168.85,-105.44 158.26,-105.89 160.85,-112.39"/>
+</g>
+<!-- nf90_inquire_attribute -->
+<g id="proc~~restart_read_unstr~~CallsGraph_node6" class="node">
+<title>nf90_inquire_attribute</title>
+<polygon fill="#777777" stroke="#777777" points="275,-66 145,-66 145,-42 275,-42 275,-66"/>
+<text text-anchor="middle" x="210" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nf90_inquire_attribute</text>
+</g>
+<!-- proc~restart_read_unstr&#45;&gt;nf90_inquire_attribute -->
+<g id="proc~~restart_read_unstr~~CallsGraph_edge5" class="edge">
+<title>proc~restart_read_unstr&#45;&gt;nf90_inquire_attribute</title>
+<path fill="none" stroke="#ff0000" d="M59.6,-209.73C69.61,-181.66 97.94,-112.32 145,-75 146.82,-73.55 148.75,-72.21 150.75,-70.95"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="152.8,-73.82 159.94,-66 149.48,-67.66 152.8,-73.82"/>
+</g>
+<!-- proc~nc_check -->
+<g id="proc~~restart_read_unstr~~CallsGraph_node7" class="node">
+<title>proc~nc_check</title>
+<g id="a_proc~~restart_read_unstr~~CallsGraph_node7"><a xlink:href="../proc/nc_check.html" xlink:title="nc_check">
+<polygon fill="#d9534f" stroke="#d9534f" points="411.5,-314 349.5,-314 349.5,-290 411.5,-290 411.5,-314"/>
+<text text-anchor="middle" x="380.5" y="-299.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nc_check</text>
+</a>
+</g>
+</g>
+<!-- proc~restart_read_unstr&#45;&gt;proc~nc_check -->
+<g id="proc~~restart_read_unstr~~CallsGraph_edge6" class="edge">
+<title>proc~restart_read_unstr&#45;&gt;proc~nc_check</title>
+<path fill="none" stroke="#ff0000" d="M67.86,-234.09C84.05,-249.06 114.04,-273.95 145,-285 209.87,-308.15 291.1,-308.17 338.95,-305.49"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="339.45,-308.97 349.21,-304.85 339.01,-301.98 339.45,-308.97"/>
+</g>
+<!-- proc~nc_close -->
+<g id="proc~~restart_read_unstr~~CallsGraph_node8" class="node">
+<title>proc~nc_close</title>
+<g id="a_proc~~restart_read_unstr~~CallsGraph_node8"><a xlink:href="../proc/nc_close.html" xlink:title="nc_close">
+<polygon fill="#d9534f" stroke="#d9534f" points="239,-398 181,-398 181,-374 239,-374 239,-398"/>
+<text text-anchor="middle" x="210" y="-383.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nc_close</text>
+</a>
+</g>
+</g>
+<!-- proc~restart_read_unstr&#45;&gt;proc~nc_close -->
+<g id="proc~~restart_read_unstr~~CallsGraph_edge7" class="edge">
+<title>proc~restart_read_unstr&#45;&gt;proc~nc_close</title>
+<path fill="none" stroke="#ff0000" d="M59.85,-234.35C70.2,-261.92 98.88,-328.89 145,-365 152.57,-370.93 161.89,-375.22 171.04,-378.31"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="170.24,-381.72 180.82,-381.21 172.23,-375.01 170.24,-381.72"/>
+</g>
+<!-- proc~nc_get_dim_len -->
+<g id="proc~~restart_read_unstr~~CallsGraph_node9" class="node">
+<title>proc~nc_get_dim_len</title>
+<g id="a_proc~~restart_read_unstr~~CallsGraph_node9"><a xlink:href="../proc/nc_get_dim_len.html" xlink:title="nc_get_dim_len">
+<polygon fill="#d9534f" stroke="#d9534f" points="257.5,-356 162.5,-356 162.5,-332 257.5,-332 257.5,-356"/>
+<text text-anchor="middle" x="210" y="-341.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nc_get_dim_len</text>
+</a>
+</g>
+</g>
+<!-- proc~restart_read_unstr&#45;&gt;proc~nc_get_dim_len -->
+<g id="proc~~restart_read_unstr~~CallsGraph_edge8" class="edge">
+<title>proc~restart_read_unstr&#45;&gt;proc~nc_get_dim_len</title>
+<path fill="none" stroke="#ff0000" d="M64.09,-234.22C78.67,-254.17 110.1,-293.96 145,-318 150.25,-321.62 156.08,-324.85 162.02,-327.71"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="160.82,-331.01 171.38,-331.89 163.68,-324.61 160.82,-331.01"/>
+</g>
+<!-- proc~nc_get_varid -->
+<g id="proc~~restart_read_unstr~~CallsGraph_node10" class="node">
+<title>proc~nc_get_varid</title>
+<g id="a_proc~~restart_read_unstr~~CallsGraph_node10"><a xlink:href="../proc/nc_get_varid.html" xlink:title="nc_get_varid">
+<polygon fill="#d9534f" stroke="#d9534f" points="250,-276 170,-276 170,-252 250,-252 250,-276"/>
+<text text-anchor="middle" x="210" y="-261.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nc_get_varid</text>
+</a>
+</g>
+</g>
+<!-- proc~restart_read_unstr&#45;&gt;proc~nc_get_varid -->
+<g id="proc~~restart_read_unstr~~CallsGraph_edge9" class="edge">
+<title>proc~restart_read_unstr&#45;&gt;proc~nc_get_varid</title>
+<path fill="none" stroke="#ff0000" d="M99.49,-234.04C118.42,-239.22 140.63,-245.29 160.09,-250.62"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="159.41,-254.06 169.97,-253.32 161.25,-247.31 159.41,-254.06"/>
+</g>
+<!-- proc~nc_open_read -->
+<g id="proc~~restart_read_unstr~~CallsGraph_node11" class="node">
+<title>proc~nc_open_read</title>
+<g id="a_proc~~restart_read_unstr~~CallsGraph_node11"><a xlink:href="../proc/nc_open_read.html" xlink:title="nc_open_read">
+<polygon fill="#d9534f" stroke="#d9534f" points="253.5,-234 166.5,-234 166.5,-210 253.5,-210 253.5,-234"/>
+<text text-anchor="middle" x="210" y="-219.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nc_open_read</text>
+</a>
+</g>
+</g>
+<!-- proc~restart_read_unstr&#45;&gt;proc~nc_open_read -->
+<g id="proc~~restart_read_unstr~~CallsGraph_edge10" class="edge">
+<title>proc~restart_read_unstr&#45;&gt;proc~nc_open_read</title>
+<path fill="none" stroke="#ff0000" d="M109.19,-222C124.36,-222 140.86,-222 155.99,-222"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="156.22,-225.5 166.22,-222 156.22,-218.5 156.22,-225.5"/>
+</g>
+<!-- to_string -->
+<g id="proc~~restart_read_unstr~~CallsGraph_node12" class="node">
+<title>to_string</title>
+<polygon fill="#777777" stroke="#777777" points="239,-24 181,-24 181,0 239,0 239,-24"/>
+<text text-anchor="middle" x="210" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">to_string</text>
+</g>
+<!-- proc~restart_read_unstr&#45;&gt;to_string -->
+<g id="proc~~restart_read_unstr~~CallsGraph_edge11" class="edge">
+<title>proc~restart_read_unstr&#45;&gt;to_string</title>
+<path fill="none" stroke="#ff0000" d="M57.79,-209.83C64.68,-176.5 88.37,-82.95 145,-33 152.42,-26.46 161.93,-21.94 171.33,-18.83"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="172.34,-22.18 181,-16.08 170.42,-15.45 172.34,-22.18"/>
+</g>
+<!-- proc~nc_check&#45;&gt;error -->
+<g id="proc~~restart_read_unstr~~CallsGraph_edge12" class="edge">
+<title>proc~nc_check&#45;&gt;error</title>
+<path fill="none" stroke="#00ffb9" d="M411.65,-307.55C424.17,-310.77 438.44,-315.67 450,-323 475.85,-339.39 498.41,-366.92 511.98,-385.75"/>
+<polygon fill="#00ffb9" stroke="#00ffb9" points="509.12,-387.78 517.73,-393.96 514.86,-383.76 509.12,-387.78"/>
+</g>
+<!-- nf90_strerror -->
+<g id="proc~~restart_read_unstr~~CallsGraph_node18" class="node">
+<title>nf90_strerror</title>
+<polygon fill="#777777" stroke="#777777" points="567,-314 486,-314 486,-290 567,-290 567,-314"/>
+<text text-anchor="middle" x="526.5" y="-299.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nf90_strerror</text>
+</g>
+<!-- proc~nc_check&#45;&gt;nf90_strerror -->
+<g id="proc~~restart_read_unstr~~CallsGraph_edge13" class="edge">
+<title>proc~nc_check&#45;&gt;nf90_strerror</title>
+<path fill="none" stroke="#00ffb9" d="M411.69,-302C430.19,-302 454.32,-302 475.6,-302"/>
+<polygon fill="#00ffb9" stroke="#00ffb9" points="475.78,-305.5 485.78,-302 475.78,-298.5 475.78,-305.5"/>
+</g>
+<!-- proc~nc_close&#45;&gt;proc~nc_check -->
+<g id="proc~~restart_read_unstr~~CallsGraph_edge15" class="edge">
+<title>proc~nc_close&#45;&gt;proc~nc_check</title>
+<path fill="none" stroke="#00b9ff" d="M239.27,-380.28C250.99,-377.04 264.31,-372.15 275,-365 295.43,-351.33 290.43,-336.47 311,-323 319.58,-317.38 329.75,-313.2 339.59,-310.12"/>
+<polygon fill="#00b9ff" stroke="#00b9ff" points="340.57,-313.47 349.24,-307.39 338.67,-306.74 340.57,-313.47"/>
+</g>
+<!-- nf90_close -->
+<g id="proc~~restart_read_unstr~~CallsGraph_node13" class="node">
+<title>nf90_close</title>
+<polygon fill="#777777" stroke="#777777" points="415.5,-440 345.5,-440 345.5,-416 415.5,-416 415.5,-440"/>
+<text text-anchor="middle" x="380.5" y="-425.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nf90_close</text>
+</g>
+<!-- proc~nc_close&#45;&gt;nf90_close -->
+<g id="proc~~restart_read_unstr~~CallsGraph_edge14" class="edge">
+<title>proc~nc_close&#45;&gt;nf90_close</title>
+<path fill="none" stroke="#00b9ff" d="M239.2,-393.03C265.46,-399.58 305.02,-409.44 335.45,-417.02"/>
+<polygon fill="#00b9ff" stroke="#00b9ff" points="334.83,-420.47 345.38,-419.5 336.53,-413.68 334.83,-420.47"/>
+</g>
+<!-- proc~nc_get_dim_len&#45;&gt;proc~nc_check -->
+<g id="proc~~restart_read_unstr~~CallsGraph_edge18" class="edge">
+<title>proc~nc_get_dim_len&#45;&gt;proc~nc_check</title>
+<path fill="none" stroke="#002eff" d="M257.94,-332.3C283.5,-325.93 314.8,-318.13 339.24,-312.03"/>
+<polygon fill="#002eff" stroke="#002eff" points="340.4,-315.35 349.26,-309.54 338.71,-308.56 340.4,-315.35"/>
+</g>
+<!-- nf90_inq_dimid -->
+<g id="proc~~restart_read_unstr~~CallsGraph_node14" class="node">
+<title>nf90_inq_dimid</title>
+<polygon fill="#777777" stroke="#777777" points="427.5,-356 333.5,-356 333.5,-332 427.5,-332 427.5,-356"/>
+<text text-anchor="middle" x="380.5" y="-341.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nf90_inq_dimid</text>
+</g>
+<!-- proc~nc_get_dim_len&#45;&gt;nf90_inq_dimid -->
+<g id="proc~~restart_read_unstr~~CallsGraph_edge16" class="edge">
+<title>proc~nc_get_dim_len&#45;&gt;nf90_inq_dimid</title>
+<path fill="none" stroke="#002eff" d="M257.94,-344C278.19,-344 302.04,-344 323.24,-344"/>
+<polygon fill="#002eff" stroke="#002eff" points="323.4,-347.5 333.4,-344 323.4,-340.5 323.4,-347.5"/>
+</g>
+<!-- nf90_inquire_dimension -->
+<g id="proc~~restart_read_unstr~~CallsGraph_node16" class="node">
+<title>nf90_inquire_dimension</title>
+<polygon fill="#777777" stroke="#777777" points="450,-398 311,-398 311,-374 450,-374 450,-398"/>
+<text text-anchor="middle" x="380.5" y="-383.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nf90_inquire_dimension</text>
+</g>
+<!-- proc~nc_get_dim_len&#45;&gt;nf90_inquire_dimension -->
+<g id="proc~~restart_read_unstr~~CallsGraph_edge17" class="edge">
+<title>proc~nc_get_dim_len&#45;&gt;nf90_inquire_dimension</title>
+<path fill="none" stroke="#002eff" d="M257.94,-355.7C277.6,-360.6 300.67,-366.35 321.39,-371.52"/>
+<polygon fill="#002eff" stroke="#002eff" points="320.8,-374.98 331.35,-374 322.49,-368.18 320.8,-374.98"/>
+</g>
+<!-- proc~nc_get_varid&#45;&gt;proc~nc_check -->
+<g id="proc~~restart_read_unstr~~CallsGraph_edge20" class="edge">
+<title>proc~nc_get_varid&#45;&gt;proc~nc_check</title>
+<path fill="none" stroke="#5c00ff" d="M250.08,-272.81C276.89,-278.86 312.37,-286.86 339.39,-292.96"/>
+<polygon fill="#5c00ff" stroke="#5c00ff" points="338.78,-296.4 349.3,-295.19 340.32,-289.58 338.78,-296.4"/>
+</g>
+<!-- nf90_inq_varid -->
+<g id="proc~~restart_read_unstr~~CallsGraph_node15" class="node">
+<title>nf90_inq_varid</title>
+<polygon fill="#777777" stroke="#777777" points="426,-272 335,-272 335,-248 426,-248 426,-272"/>
+<text text-anchor="middle" x="380.5" y="-257.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nf90_inq_varid</text>
+</g>
+<!-- proc~nc_get_varid&#45;&gt;nf90_inq_varid -->
+<g id="proc~~restart_read_unstr~~CallsGraph_edge19" class="edge">
+<title>proc~nc_get_varid&#45;&gt;nf90_inq_varid</title>
+<path fill="none" stroke="#5c00ff" d="M250.08,-263.07C272.28,-262.55 300.43,-261.88 324.8,-261.3"/>
+<polygon fill="#5c00ff" stroke="#5c00ff" points="325.07,-264.79 334.98,-261.06 324.9,-257.8 325.07,-264.79"/>
+</g>
+<!-- proc~nc_open_read&#45;&gt;proc~nc_check -->
+<g id="proc~~restart_read_unstr~~CallsGraph_edge22" class="edge">
+<title>proc~nc_open_read&#45;&gt;proc~nc_check</title>
+<path fill="none" stroke="#e700ff" d="M253.66,-232.71C261.07,-235.47 268.48,-238.87 275,-243 294.65,-255.45 291.23,-268.74 311,-281 319.72,-286.41 329.94,-290.51 339.78,-293.59"/>
+<polygon fill="#e700ff" stroke="#e700ff" points="338.84,-296.96 349.42,-296.33 340.76,-290.23 338.84,-296.96"/>
+</g>
+<!-- nf90_open -->
+<g id="proc~~restart_read_unstr~~CallsGraph_node17" class="node">
+<title>nf90_open</title>
+<polygon fill="#777777" stroke="#777777" points="415,-230 346,-230 346,-206 415,-206 415,-230"/>
+<text text-anchor="middle" x="380.5" y="-215.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nf90_open</text>
+</g>
+<!-- proc~nc_open_read&#45;&gt;nf90_open -->
+<g id="proc~~restart_read_unstr~~CallsGraph_edge21" class="edge">
+<title>proc~nc_open_read&#45;&gt;nf90_open</title>
+<path fill="none" stroke="#e700ff" d="M253.52,-220.99C278.63,-220.39 310.35,-219.64 335.68,-219.04"/>
+<polygon fill="#e700ff" stroke="#e700ff" points="335.84,-222.54 345.75,-218.8 335.67,-215.54 335.84,-222.54"/>
+</g>
+</g>
+</svg>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CallsGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CallsGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Called by</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~restart_read_unstr~~CalledByGraph Pages: 1 -->
+<svg id="procrestart_read_unstrCalledByGraph" width="280pt" height="32pt"
+ viewBox="0.00 0.00 280.00 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~restart_read_unstr~~CalledByGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<title>proc~~restart_read_unstr~~CalledByGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 276,-28 276,4 -4,4"/>
+<!-- proc~restart_read_unstr -->
+<g id="proc~~restart_read_unstr~~CalledByGraph_node1" class="node">
+<title>proc~restart_read_unstr</title>
+<polygon fill="none" stroke="black" points="272,-24 163,-24 163,0 272,0 272,-24"/>
+<text text-anchor="middle" x="217.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">restart_read_unstr</text>
+</g>
+<!-- proc~rki_unstr_load_restart -->
+<g id="proc~~restart_read_unstr~~CalledByGraph_node2" class="node">
+<title>proc~rki_unstr_load_restart</title>
+<g id="a_proc~~restart_read_unstr~~CalledByGraph_node2"><a xlink:href="../proc/rki_unstr_load_restart.html" xlink:title="rki_unstr_load_restart">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="127,-24 0,-24 0,0 127,0 127,-24"/>
+<text text-anchor="middle" x="63.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_unstr_load_restart</text>
+</a>
+</g>
+</g>
+<!-- proc~rki_unstr_load_restart&#45;&gt;proc~restart_read_unstr -->
+<g id="proc~~restart_read_unstr~~CalledByGraph_edge1" class="edge">
+<title>proc~rki_unstr_load_restart&#45;&gt;proc~restart_read_unstr</title>
+<path fill="none" stroke="#ff0000" d="M127.2,-12C135.57,-12 144.17,-12 152.56,-12"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="152.67,-15.5 162.67,-12 152.67,-8.5 152.67,-15.5"/>
+</g>
+</g>
+</svg>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CalledByGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CalledByGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+
+
+    <section>    
+      <h2>Variables</h2>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Visibility</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+<th></th><th scope="col">Initial</th>        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-att_stat"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>att_stat</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-file_ncells"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>file_ncells</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-n~32"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>n</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ncid~39"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>ncid</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-sc~2"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>sc</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-tmp~29"></span>
+              real(kind=wp),
+            </td>
+              <td>private,</td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>tmp</strong>(:)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-varid~24"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>varid</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    </section>
+    <br>
+    
+    
+
+    
+    
+
+
+
+    
+    <section>
+    <h2><span class="anchor" id="src"></span>Source Code</h2>
+    <div class="hl codehilite"><pre><span></span><span class="w">   </span><span class="k">subroutine </span><span class="n">restart_read_unstr</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">,</span><span class="w"> </span><span class="nb">time</span><span class="p">,</span><span class="w"> </span><span class="n">ierr</span><span class="p">)</span>
+<span class="w">      </span><span class="c">!! Read a checkpoint and populate state arrays.</span>
+<span class="w">      </span><span class="c">!!</span>
+<span class="w">      </span><span class="c">!! Must be called before finalize (arrays on host). Validates</span>
+<span class="w">      </span><span class="c">!! that the file's cell count matches `state%ncells_owned`.</span>
+<span class="w">      </span><span class="kt">character</span><span class="p">(</span><span class="nb">len</span><span class="o">=*</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">filename</span>
+<span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="n">unstr_state_t</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">state</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="nb">time</span>
+<span class="nb">      </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">ierr</span>
+<span class="w">         </span><span class="c">!! 0 = success, 1 = cell count mismatch</span>
+
+<span class="w">      </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">varid</span><span class="p">,</span><span class="w"> </span><span class="n">file_ncells</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">sc</span><span class="p">,</span><span class="w"> </span><span class="n">att_stat</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">tmp</span><span class="p">(:)</span>
+
+<span class="w">      </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">ncells_owned</span>
+
+<span class="w">      </span><span class="k">call </span><span class="n">nc_open_read</span><span class="p">(</span><span class="nb">trim</span><span class="p">(</span><span class="n">filename</span><span class="p">),</span><span class="w"> </span><span class="n">ncid</span><span class="p">)</span>
+
+<span class="w">      </span><span class="c">! Validate cell count</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_get_dim_len</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">"face"</span><span class="p">,</span><span class="w"> </span><span class="n">file_ncells</span><span class="p">)</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">file_ncells</span><span class="w"> </span><span class="o">/=</span><span class="w"> </span><span class="n">n</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">         call </span><span class="n">logger</span><span class="p">%</span><span class="n">error</span><span class="p">(</span><span class="s2">"Restart cell count mismatch: file has "</span><span class="o">//</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                           </span><span class="n">to_string</span><span class="p">(</span><span class="n">file_ncells</span><span class="p">)</span><span class="o">//</span><span class="s2">" but state expects "</span><span class="o">//</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                           </span><span class="n">to_string</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
+<span class="w">         </span><span class="k">call </span><span class="n">nc_close</span><span class="p">(</span><span class="n">ncid</span><span class="p">)</span>
+<span class="w">         </span><span class="n">ierr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">         </span><span class="k">return</span>
+<span class="k">      end if</span>
+
+<span class="w">      </span><span class="c">! Read time from global attribute</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_check</span><span class="p">(</span><span class="n">nf90_get_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">nf90_global</span><span class="p">,</span><span class="w"> </span><span class="s2">"time"</span><span class="p">,</span><span class="w"> </span><span class="nb">time</span><span class="p">),</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                    </span><span class="s2">"reading time attribute"</span><span class="p">)</span>
+
+<span class="w">      </span><span class="c">! Read step_count if present</span>
+<span class="w">      </span><span class="n">att_stat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nf90_inquire_attribute</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">nf90_global</span><span class="p">,</span><span class="w"> </span><span class="s2">"step_count"</span><span class="p">)</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">att_stat</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">nf90_noerr</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">         call </span><span class="n">nc_check</span><span class="p">(</span><span class="n">nf90_get_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">nf90_global</span><span class="p">,</span><span class="w"> </span><span class="s2">"step_count"</span><span class="p">,</span><span class="w"> </span><span class="n">sc</span><span class="p">),</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                       </span><span class="s2">"reading step_count"</span><span class="p">)</span>
+<span class="w">         </span><span class="n">state</span><span class="p">%</span><span class="n">step_count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sc</span>
+<span class="w">      </span><span class="k">end if</span>
+
+<span class="w">      </span><span class="c">! Read fields</span>
+<span class="w">      </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">tmp</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
+
+<span class="w">      </span><span class="k">call </span><span class="n">nc_get_varid</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">"stage"</span><span class="p">,</span><span class="w"> </span><span class="n">varid</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_check</span><span class="p">(</span><span class="n">nf90_get_var</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">varid</span><span class="p">,</span><span class="w"> </span><span class="n">tmp</span><span class="p">),</span><span class="w"> </span><span class="s2">"reading stage"</span><span class="p">)</span>
+<span class="w">      </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">stage_cv</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">n</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tmp</span>
+
+<span class="w">      </span><span class="k">call </span><span class="n">nc_get_varid</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">"xmom"</span><span class="p">,</span><span class="w"> </span><span class="n">varid</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_check</span><span class="p">(</span><span class="n">nf90_get_var</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">varid</span><span class="p">,</span><span class="w"> </span><span class="n">tmp</span><span class="p">),</span><span class="w"> </span><span class="s2">"reading xmom"</span><span class="p">)</span>
+<span class="w">      </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">xmom_cv</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">n</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tmp</span>
+
+<span class="w">      </span><span class="k">call </span><span class="n">nc_get_varid</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">"ymom"</span><span class="p">,</span><span class="w"> </span><span class="n">varid</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_check</span><span class="p">(</span><span class="n">nf90_get_var</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">varid</span><span class="p">,</span><span class="w"> </span><span class="n">tmp</span><span class="p">),</span><span class="w"> </span><span class="s2">"reading ymom"</span><span class="p">)</span>
+<span class="w">      </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">ymom_cv</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">n</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tmp</span>
+
+<span class="w">      </span><span class="k">call </span><span class="n">nc_get_varid</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">"bed"</span><span class="p">,</span><span class="w"> </span><span class="n">varid</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_check</span><span class="p">(</span><span class="n">nf90_get_var</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">varid</span><span class="p">,</span><span class="w"> </span><span class="n">tmp</span><span class="p">),</span><span class="w"> </span><span class="s2">"reading bed"</span><span class="p">)</span>
+<span class="w">      </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">bed_cv</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">n</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tmp</span>
+
+<span class="w">      </span><span class="k">deallocate</span><span class="w"> </span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_close</span><span class="p">(</span><span class="n">ncid</span><span class="p">)</span>
+
+<span class="w">      </span><span class="n">state</span><span class="p">%</span><span class="nb">time</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">time</span>
+<span class="nb">      </span><span class="n">ierr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+
+<span class="w">      </span><span class="k">call </span><span class="n">logger</span><span class="p">%</span><span class="n">info</span><span class="p">(</span><span class="s2">"Restart loaded: "</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">//</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                       </span><span class="s2">" (t = "</span><span class="o">//</span><span class="n">to_string</span><span class="p">(</span><span class="nb">time</span><span class="p">)</span><span class="o">//</span><span class="s2">" s, "</span><span class="o">//</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                       </span><span class="n">to_string</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="o">//</span><span class="s2">" cells)"</span><span class="p">)</span>
+
+<span class="w">   </span><span class="k">end subroutine </span><span class="n">restart_read_unstr</span>
+</pre></div>
+
+    </section>
+    <br>
+    
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Rakali
+ was developed by Jorge Luis Galvez Vallejo<br>              &copy; 2026 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+ on 2026-10-08 12:55 +0000             </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>

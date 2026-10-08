@@ -1,0 +1,1430 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="GPU-native coastal solver — structured Cartesian and unstructured triangular grids, hydrostatic multilayer + non-hydrostatic, portable across NVHPC/gfortran/ifx.">
+    <meta name="author" content="Jorge Luis Galvez Vallejo" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>restart_write &ndash; Rakali</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">Rakali </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/absint.html">Abstract Interfaces</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>restart_write
+      <small>Subroutine</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.3% of total for procedures.">66 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/rki_output.F90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/rki_output.f90.html'>rki_output.F90</a></li>
+                <li class="breadcrumb-item"><a href='../module/rki_output.html'>rki_output</a></li>
+            <li class="breadcrumb-item active" aria-current="page">restart_write</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+  
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#vars-0"
+         aria-expanded="false" aria-controls="vars-0">
+         <h4 class="card-header bg-primary text-white">Variables</h4>
+      </a>
+      <div id="vars-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../proc/restart_write.html#variable-b_varid~2">b_varid</a>
+            <a class="list-group-item" href="../proc/restart_write.html#variable-dimids_2d~2">dimids_2d</a>
+            <a class="list-group-item" href="../proc/restart_write.html#variable-dimids_3d~2">dimids_3d</a>
+            <a class="list-group-item" href="../proc/restart_write.html#variable-hs_layer_varid">hS_layer_varid</a>
+            <a class="list-group-item" href="../proc/restart_write.html#variable-ht_layer_varid">hT_layer_varid</a>
+            <a class="list-group-item" href="../proc/restart_write.html#variable-h_layer_varid">h_layer_varid</a>
+            <a class="list-group-item" href="../proc/restart_write.html#variable-h_varid~2">h_varid</a>
+            <a class="list-group-item" href="../proc/restart_write.html#variable-hu_layer_varid">hu_layer_varid</a>
+            <a class="list-group-item" href="../proc/restart_write.html#variable-hu_varid~2">hu_varid</a>
+            <a class="list-group-item" href="../proc/restart_write.html#variable-hv_layer_varid">hv_layer_varid</a>
+            <a class="list-group-item" href="../proc/restart_write.html#variable-hv_varid~2">hv_varid</a>
+            <a class="list-group-item" href="../proc/restart_write.html#variable-ncid~35">ncid</a>
+            <a class="list-group-item" href="../proc/restart_write.html#variable-ng~19">ng</a>
+            <a class="list-group-item" href="../proc/restart_write.html#variable-nx~32">nx</a>
+            <a class="list-group-item" href="../proc/restart_write.html#variable-ny~32">ny</a>
+            <a class="list-group-item" href="../proc/restart_write.html#variable-nz~45">nz</a>
+            <a class="list-group-item" href="../proc/restart_write.html#variable-time_varid~4">time_varid</a>
+            <a class="list-group-item" href="../proc/restart_write.html#variable-x_dimid~2">x_dimid</a>
+            <a class="list-group-item" href="../proc/restart_write.html#variable-y_dimid~2">y_dimid</a>
+            <a class="list-group-item" href="../proc/restart_write.html#variable-z_dimid~2">z_dimid</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../proc/restart_write.html#src">restart_write</a>
+      </div>
+    </div>
+
+
+  </div>
+
+    </div>
+    
+    <div class="col-md-9" id='text'>
+    <h2>public  subroutine restart_write(filename, state, time)  
+</h2>
+    
+
+    <p>Write a restart file containing full state for later continuation</p>
+<p>Saves the barotropic state (h, hu, hv, b) plus the multilayer
+arrays (h_layer, hu_layer, hv_layer, hS_layer) when
+state%use_multilayer is true.  The presence of the h_layer
+variable in the file is the marker for multilayer mode — old
+files written before this change simply lack it and round-trip
+as barotropic.</p>
+<p>NOTE: NH fields (u_layer, v_layer, w, q_nh) are NOT saved.
+A warm start from restart reverts to hydrostatic initial conditions
+for the NH solver state.</p>
+
+
+    <h3>Arguments</h3>
+        <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-filename~11"></span>
+              character(len=*),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>filename</strong></td>
+            <td>
+                <p>Path to restart file</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-state~32"></span>
+              type(<a href='../type/state_t.html'>state_t</a>),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>state</strong></td>
+            <td>
+                <p>Current simulation state</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-time~5"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>time</strong></td>
+            <td>
+                <p>Current simulation time (s)</p>
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <br>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Calls</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~restart_write~~CallsGraph Pages: 1 -->
+<svg id="procrestart_writeCallsGraph" width="506pt" height="566pt"
+ viewBox="0.00 0.00 506.00 566.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~restart_write~~CallsGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 562)">
+<title>proc~~restart_write~~CallsGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-562 502,-562 502,4 -4,4"/>
+<!-- proc~restart_write -->
+<g id="proc~~restart_write~~CallsGraph_node1" class="node">
+<title>proc~restart_write</title>
+<polygon fill="none" stroke="black" points="79,-292 0,-292 0,-268 79,-268 79,-292"/>
+<text text-anchor="middle" x="39.5" y="-277.6" font-family="Helvetica,sans-Serif" font-size="10.50">restart_write</text>
+</g>
+<!-- info -->
+<g id="proc~~restart_write~~CallsGraph_node2" class="node">
+<title>info</title>
+<polygon fill="#777777" stroke="#777777" points="195,-558 141,-558 141,-534 195,-534 195,-558"/>
+<text text-anchor="middle" x="168" y="-543.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">info</text>
+</g>
+<!-- proc~restart_write&#45;&gt;info -->
+<g id="proc~~restart_write~~CallsGraph_edge1" class="edge">
+<title>proc~restart_write&#45;&gt;info</title>
+<path fill="none" stroke="#ff0000" d="M41.01,-292.04C43.22,-330.06 54.85,-449.17 115,-520 119.57,-525.38 125.51,-529.75 131.75,-533.28"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="130.45,-536.54 140.96,-537.85 133.56,-530.27 130.45,-536.54"/>
+</g>
+<!-- nf90_def_var -->
+<g id="proc~~restart_write~~CallsGraph_node3" class="node">
+<title>nf90_def_var</title>
+<polygon fill="#777777" stroke="#777777" points="360,-478 278,-478 278,-454 360,-454 360,-478"/>
+<text text-anchor="middle" x="319" y="-463.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nf90_def_var</text>
+</g>
+<!-- proc~restart_write&#45;&gt;nf90_def_var -->
+<g id="proc~~restart_write~~CallsGraph_edge2" class="edge">
+<title>proc~restart_write&#45;&gt;nf90_def_var</title>
+<path fill="none" stroke="#ff0000" d="M40.48,-292.12C41.14,-329.04 48.76,-440.44 115,-487 165.39,-522.42 240.96,-500.05 284.27,-482.04"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="285.72,-485.23 293.52,-478.06 282.95,-478.8 285.72,-485.23"/>
+</g>
+<!-- nf90_put_var -->
+<g id="proc~~restart_write~~CallsGraph_node4" class="node">
+<title>nf90_put_var</title>
+<polygon fill="#777777" stroke="#777777" points="360,-84 278,-84 278,-60 360,-60 360,-84"/>
+<text text-anchor="middle" x="319" y="-69.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nf90_put_var</text>
+</g>
+<!-- proc~restart_write&#45;&gt;nf90_put_var -->
+<g id="proc~~restart_write~~CallsGraph_edge3" class="edge">
+<title>proc~restart_write&#45;&gt;nf90_put_var</title>
+<path fill="none" stroke="#ff0000" d="M40.43,-267.77C40.97,-230.51 48.26,-118.06 115,-71 160.29,-39.06 226.54,-46.74 270.9,-57.41"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="270.3,-60.87 280.85,-59.94 272.03,-54.09 270.3,-60.87"/>
+</g>
+<!-- proc~nc_check -->
+<g id="proc~~restart_write~~CallsGraph_node5" class="node">
+<title>proc~nc_check</title>
+<g id="a_proc~~restart_write~~CallsGraph_node5"><a xlink:href="../proc/nc_check.html" xlink:title="nc_check">
+<polygon fill="#d9534f" stroke="#d9534f" points="350,-310 288,-310 288,-286 350,-286 350,-310"/>
+<text text-anchor="middle" x="319" y="-295.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nc_check</text>
+</a>
+</g>
+</g>
+<!-- proc~restart_write&#45;&gt;proc~nc_check -->
+<g id="proc~~restart_write~~CallsGraph_edge4" class="edge">
+<title>proc~restart_write&#45;&gt;proc~nc_check</title>
+<path fill="none" stroke="#ff0000" d="M79.09,-282.5C131.44,-285.9 224.54,-291.94 277.75,-295.39"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="277.63,-298.89 287.83,-296.04 278.08,-291.9 277.63,-298.89"/>
+</g>
+<!-- proc~nc_close -->
+<g id="proc~~restart_write~~CallsGraph_node6" class="node">
+<title>proc~nc_close</title>
+<g id="a_proc~~restart_write~~CallsGraph_node6"><a xlink:href="../proc/nc_close.html" xlink:title="nc_close">
+<polygon fill="#d9534f" stroke="#d9534f" points="197,-394 139,-394 139,-370 197,-370 197,-394"/>
+<text text-anchor="middle" x="168" y="-379.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nc_close</text>
+</a>
+</g>
+</g>
+<!-- proc~restart_write&#45;&gt;proc~nc_close -->
+<g id="proc~~restart_write~~CallsGraph_edge5" class="edge">
+<title>proc~restart_write&#45;&gt;proc~nc_close</title>
+<path fill="none" stroke="#ff0000" d="M48.82,-292C61.38,-309.33 86.72,-341.43 115,-361 119.5,-364.12 124.54,-366.88 129.65,-369.29"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="128.28,-372.51 138.85,-373.25 131.05,-366.08 128.28,-372.51"/>
+</g>
+<!-- proc~nc_create_file -->
+<g id="proc~~restart_write~~CallsGraph_node7" class="node">
+<title>proc~nc_create_file</title>
+<g id="a_proc~~restart_write~~CallsGraph_node7"><a xlink:href="../proc/nc_create_file.html" xlink:title="nc_create_file">
+<polygon fill="#d9534f" stroke="#d9534f" points="211,-352 125,-352 125,-328 211,-328 211,-352"/>
+<text text-anchor="middle" x="168" y="-337.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nc_create_file</text>
+</a>
+</g>
+</g>
+<!-- proc~restart_write&#45;&gt;proc~nc_create_file -->
+<g id="proc~~restart_write~~CallsGraph_edge6" class="edge">
+<title>proc~restart_write&#45;&gt;proc~nc_create_file</title>
+<path fill="none" stroke="#ff0000" d="M66.1,-292.14C85.13,-301.17 111.31,-313.59 132.24,-323.51"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="130.9,-326.75 141.44,-327.88 133.9,-320.43 130.9,-326.75"/>
+</g>
+<!-- proc~nc_def_dim -->
+<g id="proc~~restart_write~~CallsGraph_node8" class="node">
+<title>proc~nc_def_dim</title>
+<g id="a_proc~~restart_write~~CallsGraph_node8"><a xlink:href="../proc/nc_def_dim.html" xlink:title="nc_def_dim">
+<polygon fill="#d9534f" stroke="#d9534f" points="204.5,-272 131.5,-272 131.5,-248 204.5,-248 204.5,-272"/>
+<text text-anchor="middle" x="168" y="-257.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nc_def_dim</text>
+</a>
+</g>
+</g>
+<!-- proc~restart_write&#45;&gt;proc~nc_def_dim -->
+<g id="proc~~restart_write~~CallsGraph_edge7" class="edge">
+<title>proc~restart_write&#45;&gt;proc~nc_def_dim</title>
+<path fill="none" stroke="#ff0000" d="M79.14,-273.89C92.34,-271.8 107.24,-269.45 120.96,-267.28"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="121.85,-270.68 131.18,-265.66 120.76,-263.77 121.85,-270.68"/>
+</g>
+<!-- proc~nc_def_var_2d -->
+<g id="proc~~restart_write~~CallsGraph_node9" class="node">
+<title>proc~nc_def_var_2d</title>
+<g id="a_proc~~restart_write~~CallsGraph_node9"><a xlink:href="../proc/nc_def_var_2d.html" xlink:title="nc_def_var_2d">
+<polygon fill="#d9534f" stroke="#d9534f" points="212.5,-478 123.5,-478 123.5,-454 212.5,-454 212.5,-478"/>
+<text text-anchor="middle" x="168" y="-463.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nc_def_var_2d</text>
+</a>
+</g>
+</g>
+<!-- proc~restart_write&#45;&gt;proc~nc_def_var_2d -->
+<g id="proc~~restart_write~~CallsGraph_edge8" class="edge">
+<title>proc~restart_write&#45;&gt;proc~nc_def_var_2d</title>
+<path fill="none" stroke="#ff0000" d="M42.75,-292.16C48.91,-322.18 68.76,-400.58 115,-445 116.26,-446.21 117.59,-447.35 118.98,-448.42"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="117.22,-451.45 127.52,-453.93 121.01,-445.57 117.22,-451.45"/>
+</g>
+<!-- proc~nc_def_var_3d -->
+<g id="proc~~restart_write~~CallsGraph_node10" class="node">
+<title>proc~nc_def_var_3d</title>
+<g id="a_proc~~restart_write~~CallsGraph_node10"><a xlink:href="../proc/nc_def_var_3d.html" xlink:title="nc_def_var_3d">
+<polygon fill="#d9534f" stroke="#d9534f" points="212.5,-436 123.5,-436 123.5,-412 212.5,-412 212.5,-436"/>
+<text text-anchor="middle" x="168" y="-421.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nc_def_var_3d</text>
+</a>
+</g>
+</g>
+<!-- proc~restart_write&#45;&gt;proc~nc_def_var_3d -->
+<g id="proc~~restart_write~~CallsGraph_edge9" class="edge">
+<title>proc~restart_write&#45;&gt;proc~nc_def_var_3d</title>
+<path fill="none" stroke="#ff0000" d="M44.86,-292.25C54.1,-316.6 77.92,-371.45 115,-403 116.53,-404.3 118.15,-405.53 119.84,-406.69"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="118.32,-409.85 128.71,-411.91 121.87,-403.82 118.32,-409.85"/>
+</g>
+<!-- proc~nc_enddef -->
+<g id="proc~~restart_write~~CallsGraph_node11" class="node">
+<title>proc~nc_enddef</title>
+<g id="a_proc~~restart_write~~CallsGraph_node11"><a xlink:href="../proc/nc_enddef.html" xlink:title="nc_enddef">
+<polygon fill="#d9534f" stroke="#d9534f" points="202,-230 134,-230 134,-206 202,-206 202,-230"/>
+<text text-anchor="middle" x="168" y="-215.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nc_enddef</text>
+</a>
+</g>
+</g>
+<!-- proc~restart_write&#45;&gt;proc~nc_enddef -->
+<g id="proc~~restart_write~~CallsGraph_edge10" class="edge">
+<title>proc~restart_write&#45;&gt;proc~nc_enddef</title>
+<path fill="none" stroke="#ff0000" d="M61.03,-267.84C75.8,-259.3 96.33,-247.87 115,-239 118.56,-237.31 122.29,-235.63 126.06,-234"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="127.53,-237.17 135.39,-230.06 124.82,-230.72 127.53,-237.17"/>
+</g>
+<!-- proc~nc_put_att -->
+<g id="proc~~restart_write~~CallsGraph_node12" class="node">
+<title>proc~nc_put_att</title>
+<g id="a_proc~~restart_write~~CallsGraph_node12"><a xlink:href="../proc/nc_put_att.html" xlink:title="nc_put_att">
+<polygon fill="#d9534f" stroke="#d9534f" points="201.5,-188 134.5,-188 134.5,-164 201.5,-164 201.5,-188"/>
+<text text-anchor="middle" x="168" y="-173.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nc_put_att</text>
+</a>
+</g>
+</g>
+<!-- proc~restart_write&#45;&gt;proc~nc_put_att -->
+<g id="proc~~restart_write~~CallsGraph_edge11" class="edge">
+<title>proc~restart_write&#45;&gt;proc~nc_put_att</title>
+<path fill="none" stroke="#ff0000" d="M48.55,-267.98C60.94,-250.28 86.31,-217.12 115,-197 118.23,-194.74 121.73,-192.67 125.35,-190.78"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="126.92,-193.91 134.47,-186.48 123.93,-187.58 126.92,-193.91"/>
+</g>
+<!-- proc~nc_put_att_global -->
+<g id="proc~~restart_write~~CallsGraph_node13" class="node">
+<title>proc~nc_put_att_global</title>
+<g id="a_proc~~restart_write~~CallsGraph_node13"><a xlink:href="../proc/nc_put_att_global.html" xlink:title="nc_put_att_global">
+<polygon fill="#d9534f" stroke="#d9534f" points="221,-146 115,-146 115,-122 221,-122 221,-146"/>
+<text text-anchor="middle" x="168" y="-131.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nc_put_att_global</text>
+</a>
+</g>
+</g>
+<!-- proc~restart_write&#45;&gt;proc~nc_put_att_global -->
+<g id="proc~~restart_write~~CallsGraph_edge12" class="edge">
+<title>proc~restart_write&#45;&gt;proc~nc_put_att_global</title>
+<path fill="none" stroke="#ff0000" d="M44.66,-267.93C53.71,-243.38 77.4,-187.22 115,-155 116.52,-153.69 118.14,-152.46 119.83,-151.3"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="121.86,-154.16 128.69,-146.06 118.3,-148.14 121.86,-154.16"/>
+</g>
+<!-- proc~nc_put_var_2d -->
+<g id="proc~~restart_write~~CallsGraph_node14" class="node">
+<title>proc~nc_put_var_2d</title>
+<g id="a_proc~~restart_write~~CallsGraph_node14"><a xlink:href="../proc/nc_put_var_2d.html" xlink:title="nc_put_var_2d">
+<polygon fill="#d9534f" stroke="#d9534f" points="212.5,-104 123.5,-104 123.5,-80 212.5,-80 212.5,-104"/>
+<text text-anchor="middle" x="168" y="-89.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nc_put_var_2d</text>
+</a>
+</g>
+</g>
+<!-- proc~restart_write&#45;&gt;proc~nc_put_var_2d -->
+<g id="proc~~restart_write~~CallsGraph_edge13" class="edge">
+<title>proc~restart_write&#45;&gt;proc~nc_put_var_2d</title>
+<path fill="none" stroke="#ff0000" d="M42.7,-267.69C48.76,-237.32 68.39,-157.97 115,-113 116.25,-111.79 117.58,-110.65 118.98,-109.57"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="121.01,-112.42 127.51,-104.06 117.21,-106.55 121.01,-112.42"/>
+</g>
+<!-- to_string -->
+<g id="proc~~restart_write~~CallsGraph_node15" class="node">
+<title>to_string</title>
+<polygon fill="#777777" stroke="#777777" points="197,-24 139,-24 139,0 197,0 197,-24"/>
+<text text-anchor="middle" x="168" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">to_string</text>
+</g>
+<!-- proc~restart_write&#45;&gt;to_string -->
+<g id="proc~~restart_write~~CallsGraph_edge14" class="edge">
+<title>proc~restart_write&#45;&gt;to_string</title>
+<path fill="none" stroke="#ff0000" d="M40.98,-267.86C43.09,-229.53 54.47,-109.44 115,-38 119.11,-33.15 124.35,-29.11 129.91,-25.78"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="131.57,-28.86 138.79,-21.11 128.31,-22.66 131.57,-28.86"/>
+</g>
+<!-- error -->
+<g id="proc~~restart_write~~CallsGraph_node16" class="node">
+<title>error</title>
+<polygon fill="#777777" stroke="#777777" points="484.5,-331 430.5,-331 430.5,-307 484.5,-307 484.5,-331"/>
+<text text-anchor="middle" x="457.5" y="-316.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">error</text>
+</g>
+<!-- proc~nc_check&#45;&gt;error -->
+<g id="proc~~restart_write~~CallsGraph_edge15" class="edge">
+<title>proc~nc_check&#45;&gt;error</title>
+<path fill="none" stroke="#b6ff00" d="M350.29,-302.66C371.04,-305.85 398.65,-310.1 420.52,-313.46"/>
+<polygon fill="#b6ff00" stroke="#b6ff00" points="420.01,-316.93 430.43,-314.99 421.08,-310.01 420.01,-316.93"/>
+</g>
+<!-- nf90_strerror -->
+<g id="proc~~restart_write~~CallsGraph_node23" class="node">
+<title>nf90_strerror</title>
+<polygon fill="#777777" stroke="#777777" points="498,-289 417,-289 417,-265 498,-265 498,-289"/>
+<text text-anchor="middle" x="457.5" y="-274.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nf90_strerror</text>
+</g>
+<!-- proc~nc_check&#45;&gt;nf90_strerror -->
+<g id="proc~~restart_write~~CallsGraph_edge16" class="edge">
+<title>proc~nc_check&#45;&gt;nf90_strerror</title>
+<path fill="none" stroke="#b6ff00" d="M350.29,-293.34C366.94,-290.78 388,-287.54 406.97,-284.62"/>
+<polygon fill="#b6ff00" stroke="#b6ff00" points="407.6,-288.06 416.96,-283.08 406.54,-281.15 407.6,-288.06"/>
+</g>
+<!-- proc~nc_close&#45;&gt;proc~nc_check -->
+<g id="proc~~restart_write~~CallsGraph_edge18" class="edge">
+<title>proc~nc_close&#45;&gt;proc~nc_check</title>
+<path fill="none" stroke="#48ff00" d="M197.26,-373.41C205.34,-370.23 213.88,-366.11 221,-361 240.97,-346.66 236.67,-332.82 257,-319 263.44,-314.62 270.88,-311.07 278.31,-308.23"/>
+<polygon fill="#48ff00" stroke="#48ff00" points="279.67,-311.46 287.97,-304.88 277.38,-304.85 279.67,-311.46"/>
+</g>
+<!-- nf90_close -->
+<g id="proc~~restart_write~~CallsGraph_node17" class="node">
+<title>nf90_close</title>
+<polygon fill="#777777" stroke="#777777" points="354,-394 284,-394 284,-370 354,-370 354,-394"/>
+<text text-anchor="middle" x="319" y="-379.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nf90_close</text>
+</g>
+<!-- proc~nc_close&#45;&gt;nf90_close -->
+<g id="proc~~restart_write~~CallsGraph_edge17" class="edge">
+<title>proc~nc_close&#45;&gt;nf90_close</title>
+<path fill="none" stroke="#48ff00" d="M197.03,-382C218.56,-382 248.73,-382 273.55,-382"/>
+<polygon fill="#48ff00" stroke="#48ff00" points="273.82,-385.5 283.82,-382 273.82,-378.5 273.82,-385.5"/>
+</g>
+<!-- proc~nc_create_file&#45;&gt;proc~nc_check -->
+<g id="proc~~restart_write~~CallsGraph_edge20" class="edge">
+<title>proc~nc_create_file&#45;&gt;proc~nc_check</title>
+<path fill="none" stroke="#00ff24" d="M211.3,-328.08C232.3,-322.16 257.52,-315.05 278.17,-309.23"/>
+<polygon fill="#00ff24" stroke="#00ff24" points="279.23,-312.57 287.9,-306.48 277.33,-305.83 279.23,-312.57"/>
+</g>
+<!-- nf90_create -->
+<g id="proc~~restart_write~~CallsGraph_node18" class="node">
+<title>nf90_create</title>
+<polygon fill="#777777" stroke="#777777" points="357,-352 281,-352 281,-328 357,-328 357,-352"/>
+<text text-anchor="middle" x="319" y="-337.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nf90_create</text>
+</g>
+<!-- proc~nc_create_file&#45;&gt;nf90_create -->
+<g id="proc~~restart_write~~CallsGraph_edge19" class="edge">
+<title>proc~nc_create_file&#45;&gt;nf90_create</title>
+<path fill="none" stroke="#00ff24" d="M211.3,-340C229.74,-340 251.44,-340 270.43,-340"/>
+<polygon fill="#00ff24" stroke="#00ff24" points="270.67,-343.5 280.67,-340 270.67,-336.5 270.67,-343.5"/>
+</g>
+<!-- proc~nc_def_dim&#45;&gt;proc~nc_check -->
+<g id="proc~~restart_write~~CallsGraph_edge22" class="edge">
+<title>proc~nc_def_dim&#45;&gt;proc~nc_check</title>
+<path fill="none" stroke="#00ff91" d="M204.69,-269.1C226.74,-274.73 255.08,-281.95 277.9,-287.77"/>
+<polygon fill="#00ff91" stroke="#00ff91" points="277.08,-291.18 287.63,-290.26 278.81,-284.39 277.08,-291.18"/>
+</g>
+<!-- nf90_def_dim -->
+<g id="proc~~restart_write~~CallsGraph_node19" class="node">
+<title>nf90_def_dim</title>
+<polygon fill="#777777" stroke="#777777" points="361.5,-268 276.5,-268 276.5,-244 361.5,-244 361.5,-268"/>
+<text text-anchor="middle" x="319" y="-253.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nf90_def_dim</text>
+</g>
+<!-- proc~nc_def_dim&#45;&gt;nf90_def_dim -->
+<g id="proc~~restart_write~~CallsGraph_edge21" class="edge">
+<title>proc~nc_def_dim&#45;&gt;nf90_def_dim</title>
+<path fill="none" stroke="#00ff91" d="M204.69,-259.04C223.1,-258.55 245.9,-257.94 266.21,-257.39"/>
+<polygon fill="#00ff91" stroke="#00ff91" points="266.36,-260.89 276.26,-257.12 266.17,-253.89 266.36,-260.89"/>
+</g>
+<!-- proc~nc_def_var_2d&#45;&gt;nf90_def_var -->
+<g id="proc~~restart_write~~CallsGraph_edge23" class="edge">
+<title>proc~nc_def_var_2d&#45;&gt;nf90_def_var</title>
+<path fill="none" stroke="#00ffff" d="M212.9,-466C230.12,-466 249.98,-466 267.77,-466"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="267.97,-469.5 277.97,-466 267.97,-462.5 267.97,-469.5"/>
+</g>
+<!-- proc~nc_def_var_2d&#45;&gt;proc~nc_check -->
+<g id="proc~~restart_write~~CallsGraph_edge25" class="edge">
+<title>proc~nc_def_var_2d&#45;&gt;proc~nc_check</title>
+<path fill="none" stroke="#00ffff" d="M209.76,-453.97C213.93,-451.5 217.81,-448.55 221,-445 259.95,-401.7 216.93,-361.26 257,-319 262.75,-312.93 270.34,-308.62 278.2,-305.55"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="279.4,-308.84 287.81,-302.39 277.22,-302.19 279.4,-308.84"/>
+</g>
+<!-- nf90_def_var_deflate -->
+<g id="proc~~restart_write~~CallsGraph_node20" class="node">
+<title>nf90_def_var_deflate</title>
+<polygon fill="#777777" stroke="#777777" points="381,-436 257,-436 257,-412 381,-412 381,-436"/>
+<text text-anchor="middle" x="319" y="-421.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nf90_def_var_deflate</text>
+</g>
+<!-- proc~nc_def_var_2d&#45;&gt;nf90_def_var_deflate -->
+<g id="proc~~restart_write~~CallsGraph_edge24" class="edge">
+<title>proc~nc_def_var_2d&#45;&gt;nf90_def_var_deflate</title>
+<path fill="none" stroke="#00ffff" d="M211.7,-453.96C228.37,-449.26 247.67,-443.82 265.21,-438.88"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="266.62,-442.12 275.3,-436.04 264.72,-435.38 266.62,-442.12"/>
+</g>
+<!-- proc~nc_def_var_3d&#45;&gt;nf90_def_var -->
+<g id="proc~~restart_write~~CallsGraph_edge26" class="edge">
+<title>proc~nc_def_var_3d&#45;&gt;nf90_def_var</title>
+<path fill="none" stroke="#0091ff" d="M211.7,-436.04C229.34,-441.01 249.91,-446.81 268.23,-451.97"/>
+<polygon fill="#0091ff" stroke="#0091ff" points="267.28,-455.34 277.85,-454.68 269.18,-448.6 267.28,-455.34"/>
+</g>
+<!-- proc~nc_def_var_3d&#45;&gt;proc~nc_check -->
+<g id="proc~~restart_write~~CallsGraph_edge28" class="edge">
+<title>proc~nc_def_var_3d&#45;&gt;proc~nc_check</title>
+<path fill="none" stroke="#0091ff" d="M208.54,-412C213.09,-409.51 217.38,-406.54 221,-403 250.02,-374.58 227.25,-346.65 257,-319 262.94,-313.48 270.4,-309.4 278.05,-306.39"/>
+<polygon fill="#0091ff" stroke="#0091ff" points="279.38,-309.64 287.73,-303.12 277.14,-303 279.38,-309.64"/>
+</g>
+<!-- proc~nc_def_var_3d&#45;&gt;nf90_def_var_deflate -->
+<g id="proc~~restart_write~~CallsGraph_edge27" class="edge">
+<title>proc~nc_def_var_3d&#45;&gt;nf90_def_var_deflate</title>
+<path fill="none" stroke="#0091ff" d="M212.9,-424C223.52,-424 235.15,-424 246.68,-424"/>
+<polygon fill="#0091ff" stroke="#0091ff" points="246.75,-427.5 256.75,-424 246.75,-420.5 246.75,-427.5"/>
+</g>
+<!-- proc~nc_enddef&#45;&gt;proc~nc_check -->
+<g id="proc~~restart_write~~CallsGraph_edge30" class="edge">
+<title>proc~nc_enddef&#45;&gt;proc~nc_check</title>
+<path fill="none" stroke="#0024ff" d="M202.27,-228.95C208.74,-231.76 215.29,-235.11 221,-239 240.23,-252.1 237.44,-264.41 257,-277 263.41,-281.13 270.72,-284.54 278.01,-287.34"/>
+<polygon fill="#0024ff" stroke="#0024ff" points="277.24,-290.77 287.83,-290.77 279.54,-284.17 277.24,-290.77"/>
+</g>
+<!-- nf90_enddef -->
+<g id="proc~~restart_write~~CallsGraph_node21" class="node">
+<title>nf90_enddef</title>
+<polygon fill="#777777" stroke="#777777" points="358.5,-226 279.5,-226 279.5,-202 358.5,-202 358.5,-226"/>
+<text text-anchor="middle" x="319" y="-211.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nf90_enddef</text>
+</g>
+<!-- proc~nc_enddef&#45;&gt;nf90_enddef -->
+<g id="proc~~restart_write~~CallsGraph_edge29" class="edge">
+<title>proc~nc_enddef&#45;&gt;nf90_enddef</title>
+<path fill="none" stroke="#0024ff" d="M202.07,-217.11C221.83,-216.58 247.29,-215.9 269.32,-215.31"/>
+<polygon fill="#0024ff" stroke="#0024ff" points="269.59,-218.8 279.49,-215.03 269.4,-211.8 269.59,-218.8"/>
+</g>
+<!-- proc~nc_put_att&#45;&gt;proc~nc_check -->
+<g id="proc~~restart_write~~CallsGraph_edge32" class="edge">
+<title>proc~nc_put_att&#45;&gt;proc~nc_check</title>
+<path fill="none" stroke="#4800ff" d="M201.52,-184.7C208.56,-187.73 215.53,-191.74 221,-197 249.1,-224.03 228.2,-250.72 257,-277 262.99,-282.47 270.47,-286.52 278.13,-289.53"/>
+<polygon fill="#4800ff" stroke="#4800ff" points="277.21,-292.91 287.81,-292.8 279.45,-286.28 277.21,-292.91"/>
+</g>
+<!-- nf90_put_att -->
+<g id="proc~~restart_write~~CallsGraph_node22" class="node">
+<title>nf90_put_att</title>
+<polygon fill="#777777" stroke="#777777" points="358.5,-165 279.5,-165 279.5,-141 358.5,-141 358.5,-165"/>
+<text text-anchor="middle" x="319" y="-150.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nf90_put_att</text>
+</g>
+<!-- proc~nc_put_att&#45;&gt;nf90_put_att -->
+<g id="proc~~restart_write~~CallsGraph_edge31" class="edge">
+<title>proc~nc_put_att&#45;&gt;nf90_put_att</title>
+<path fill="none" stroke="#4800ff" d="M201.7,-170.95C221.53,-167.89 247.21,-163.93 269.4,-160.5"/>
+<polygon fill="#4800ff" stroke="#4800ff" points="269.96,-163.96 279.31,-158.97 268.89,-157.04 269.96,-163.96"/>
+</g>
+<!-- proc~nc_put_att_global&#45;&gt;proc~nc_check -->
+<g id="proc~~restart_write~~CallsGraph_edge34" class="edge">
+<title>proc~nc_put_att_global&#45;&gt;proc~nc_check</title>
+<path fill="none" stroke="#b600ff" d="M209.73,-146.06C213.91,-148.52 217.79,-151.47 221,-155 258.99,-196.86 217.93,-236.14 257,-277 262.78,-283.04 270.37,-287.35 278.24,-290.41"/>
+<polygon fill="#b600ff" stroke="#b600ff" points="277.26,-293.78 287.85,-293.57 279.44,-287.13 277.26,-293.78"/>
+</g>
+<!-- proc~nc_put_att_global&#45;&gt;nf90_put_att -->
+<g id="proc~~restart_write~~CallsGraph_edge33" class="edge">
+<title>proc~nc_put_att_global&#45;&gt;nf90_put_att</title>
+<path fill="none" stroke="#b600ff" d="M221.11,-140.65C236.66,-142.63 253.64,-144.79 268.98,-146.75"/>
+<polygon fill="#b600ff" stroke="#b600ff" points="268.94,-150.27 279.3,-148.07 269.82,-143.33 268.94,-150.27"/>
+</g>
+<!-- proc~nc_put_var_2d&#45;&gt;nf90_put_var -->
+<g id="proc~~restart_write~~CallsGraph_edge35" class="edge">
+<title>proc~nc_put_var_2d&#45;&gt;nf90_put_var</title>
+<path fill="none" stroke="#ff00da" d="M212.9,-86.11C230.12,-83.8 249.98,-81.13 267.77,-78.74"/>
+<polygon fill="#ff00da" stroke="#ff00da" points="268.53,-82.17 277.97,-77.37 267.6,-75.23 268.53,-82.17"/>
+</g>
+<!-- proc~nc_put_var_2d&#45;&gt;proc~nc_check -->
+<g id="proc~~restart_write~~CallsGraph_edge36" class="edge">
+<title>proc~nc_put_var_2d&#45;&gt;proc~nc_check</title>
+<path fill="none" stroke="#ff00da" d="M210.48,-104.15C214.43,-106.58 218.05,-109.5 221,-113 269.16,-170 207.37,-221.28 257,-277 262.61,-283.3 270.21,-287.71 278.13,-290.8"/>
+<polygon fill="#ff00da" stroke="#ff00da" points="277.26,-294.2 287.85,-293.95 279.41,-287.54 277.26,-294.2"/>
+</g>
+</g>
+</svg>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CallsGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CallsGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Called by</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~restart_write~~CalledByGraph Pages: 1 -->
+<svg id="procrestart_writeCalledByGraph" width="469pt" height="74pt"
+ viewBox="0.00 0.00 469.00 74.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~restart_write~~CalledByGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 70)">
+<title>proc~~restart_write~~CalledByGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-70 465,-70 465,4 -4,4"/>
+<!-- proc~restart_write -->
+<g id="proc~~restart_write~~CalledByGraph_node1" class="node">
+<title>proc~restart_write</title>
+<polygon fill="none" stroke="black" points="461,-45 382,-45 382,-21 461,-21 461,-45"/>
+<text text-anchor="middle" x="421.5" y="-30.6" font-family="Helvetica,sans-Serif" font-size="10.50">restart_write</text>
+</g>
+<!-- proc~flush_restart -->
+<g id="proc~~restart_write~~CalledByGraph_node2" class="node">
+<title>proc~flush_restart</title>
+<g id="a_proc~~restart_write~~CalledByGraph_node2"><a xlink:href="../proc/flush_restart.html" xlink:title="flush_restart">
+<polygon fill="#d9534f" stroke="#d9534f" points="337,-66 259,-66 259,-42 337,-42 337,-66"/>
+<text text-anchor="middle" x="298" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">flush_restart</text>
+</a>
+</g>
+</g>
+<!-- proc~flush_restart&#45;&gt;proc~restart_write -->
+<g id="proc~~restart_write~~CalledByGraph_edge1" class="edge">
+<title>proc~flush_restart&#45;&gt;proc~restart_write</title>
+<path fill="none" stroke="#ff0000" d="M337.11,-47.41C348.09,-45.52 360.22,-43.42 371.75,-41.43"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="372.43,-44.86 381.69,-39.71 371.24,-37.96 372.43,-44.86"/>
+</g>
+<!-- proc~rki_save_restart -->
+<g id="proc~~restart_write~~CalledByGraph_node3" class="node">
+<title>proc~rki_save_restart</title>
+<g id="a_proc~~restart_write~~CalledByGraph_node3"><a xlink:href="../proc/rki_save_restart.html" xlink:title="rki_save_restart">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="346,-24 250,-24 250,0 346,0 346,-24"/>
+<text text-anchor="middle" x="298" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_save_restart</text>
+</a>
+</g>
+</g>
+<!-- proc~rki_save_restart&#45;&gt;proc~restart_write -->
+<g id="proc~~restart_write~~CalledByGraph_edge2" class="edge">
+<title>proc~rki_save_restart&#45;&gt;proc~restart_write</title>
+<path fill="none" stroke="#ff0000" d="M346.32,-20.18C354.66,-21.62 363.35,-23.12 371.73,-24.57"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="371.29,-28.05 381.74,-26.3 372.49,-21.15 371.29,-28.05"/>
+</g>
+<!-- proc~driver_run_coastal -->
+<g id="proc~~restart_write~~CalledByGraph_node4" class="node">
+<title>proc~driver_run_coastal</title>
+<g id="a_proc~~restart_write~~CalledByGraph_node4"><a xlink:href="../proc/driver_run_coastal.html" xlink:title="driver_run_coastal">
+<polygon fill="#d9534f" stroke="#d9534f" points="214,-66 103,-66 103,-42 214,-42 214,-66"/>
+<text text-anchor="middle" x="158.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">driver_run_coastal</text>
+</a>
+</g>
+</g>
+<!-- proc~driver_run_coastal&#45;&gt;proc~flush_restart -->
+<g id="proc~~restart_write~~CalledByGraph_edge3" class="edge">
+<title>proc~driver_run_coastal&#45;&gt;proc~flush_restart</title>
+<path fill="none" stroke="#ff0000" d="M214.24,-54C225.71,-54 237.72,-54 248.92,-54"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="248.94,-57.5 258.94,-54 248.94,-50.5 248.94,-57.5"/>
+</g>
+<!-- proc~driver_run -->
+<g id="proc~~restart_write~~CalledByGraph_node5" class="node">
+<title>proc~driver_run</title>
+<g id="a_proc~~restart_write~~CalledByGraph_node5"><a xlink:href="../proc/driver_run.html" xlink:title="driver_run">
+<polygon fill="#d9534f" stroke="#d9534f" points="67,-66 0,-66 0,-42 67,-42 67,-66"/>
+<text text-anchor="middle" x="33.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">driver_run</text>
+</a>
+</g>
+</g>
+<!-- proc~driver_run&#45;&gt;proc~driver_run_coastal -->
+<g id="proc~~restart_write~~CalledByGraph_edge4" class="edge">
+<title>proc~driver_run&#45;&gt;proc~driver_run_coastal</title>
+<path fill="none" stroke="#ff0000" d="M67.14,-54C75.1,-54 83.9,-54 92.79,-54"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="92.82,-57.5 102.82,-54 92.82,-50.5 92.82,-57.5"/>
+</g>
+</g>
+</svg>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CalledByGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CalledByGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+
+
+    <section>    
+      <h2>Variables</h2>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Visibility</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+<th></th><th scope="col">Initial</th>        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-b_varid~2"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>b_varid</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-dimids_2d~2"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>dimids_2d</strong>(2)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-dimids_3d~2"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>dimids_3d</strong>(3)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-hs_layer_varid"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>hS_layer_varid</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ht_layer_varid"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>hT_layer_varid</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-h_layer_varid"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>h_layer_varid</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-h_varid~2"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>h_varid</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-hu_layer_varid"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>hu_layer_varid</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-hu_varid~2"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>hu_varid</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-hv_layer_varid"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>hv_layer_varid</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-hv_varid~2"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>hv_varid</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ncid~35"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>ncid</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ng~19"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>ng</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nx~32"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nx</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ny~32"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>ny</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nz~45"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nz</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-time_varid~4"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>time_varid</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-x_dimid~2"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>x_dimid</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-y_dimid~2"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>y_dimid</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-z_dimid~2"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>z_dimid</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    </section>
+    <br>
+    
+    
+
+    
+    
+
+
+
+    
+    <section>
+    <h2><span class="anchor" id="src"></span>Source Code</h2>
+    <div class="hl codehilite"><pre><span></span><span class="w">   </span><span class="k">subroutine </span><span class="n">restart_write</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">,</span><span class="w"> </span><span class="nb">time</span><span class="p">)</span>
+<span class="w">      </span><span class="c">!! Write a restart file containing full state for later continuation</span>
+<span class="w">      </span><span class="c">!!</span>
+<span class="w">      </span><span class="c">!! Saves the barotropic state (h, hu, hv, b) plus the multilayer</span>
+<span class="w">      </span><span class="c">!! arrays (h_layer, hu_layer, hv_layer, hS_layer) when</span>
+<span class="w">      </span><span class="c">!! state%use_multilayer is true.  The presence of the h_layer</span>
+<span class="w">      </span><span class="c">!! variable in the file is the marker for multilayer mode — old</span>
+<span class="w">      </span><span class="c">!! files written before this change simply lack it and round-trip</span>
+<span class="w">      </span><span class="c">!! as barotropic.</span>
+<span class="w">      </span><span class="c">!!</span>
+<span class="w">      </span><span class="c">!! NOTE: NH fields (u_layer, v_layer, w, q_nh) are NOT saved.</span>
+<span class="w">      </span><span class="c">!! A warm start from restart reverts to hydrostatic initial conditions</span>
+<span class="w">      </span><span class="c">!! for the NH solver state.</span>
+<span class="w">      </span><span class="kt">character</span><span class="p">(</span><span class="nb">len</span><span class="o">=*</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">filename</span>
+<span class="w">         </span><span class="c">!! Path to restart file</span>
+<span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="n">state_t</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">state</span>
+<span class="w">         </span><span class="c">!! Current simulation state</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="nb">time</span>
+<span class="w">         </span><span class="c">!! Current simulation time (s)</span>
+
+<span class="w">      </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">x_dimid</span><span class="p">,</span><span class="w"> </span><span class="n">y_dimid</span><span class="p">,</span><span class="w"> </span><span class="n">z_dimid</span>
+<span class="w">      </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">h_varid</span><span class="p">,</span><span class="w"> </span><span class="n">hu_varid</span><span class="p">,</span><span class="w"> </span><span class="n">hv_varid</span><span class="p">,</span><span class="w"> </span><span class="n">b_varid</span><span class="p">,</span><span class="w"> </span><span class="n">time_varid</span>
+<span class="w">      </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">h_layer_varid</span><span class="p">,</span><span class="w"> </span><span class="n">hu_layer_varid</span><span class="p">,</span><span class="w"> </span><span class="n">hv_layer_varid</span><span class="p">,</span><span class="w"> </span><span class="n">hS_layer_varid</span><span class="p">,</span><span class="w"> </span><span class="n">hT_layer_varid</span>
+<span class="w">      </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">dimids_2d</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span><span class="w"> </span><span class="n">dimids_3d</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="w">      </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">ng</span><span class="p">,</span><span class="w"> </span><span class="n">nx</span><span class="p">,</span><span class="w"> </span><span class="n">ny</span><span class="p">,</span><span class="w"> </span><span class="n">nz</span>
+
+<span class="w">      </span><span class="k">call </span><span class="n">logger</span><span class="p">%</span><span class="n">info</span><span class="p">(</span><span class="s2">"Writing restart file: "</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+
+<span class="w">      </span><span class="n">ng</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">grid</span><span class="p">%</span><span class="n">nghost</span>
+<span class="w">      </span><span class="n">nx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">grid</span><span class="p">%</span><span class="n">nx_phys</span>
+<span class="w">      </span><span class="n">ny</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">grid</span><span class="p">%</span><span class="n">ny_phys</span>
+
+<span class="w">      </span><span class="k">call </span><span class="n">nc_create_file</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="w"> </span><span class="n">ncid</span><span class="p">)</span>
+
+<span class="w">      </span><span class="c">! Dimensions</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_def_dim</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">"x"</span><span class="p">,</span><span class="w"> </span><span class="n">nx</span><span class="p">,</span><span class="w"> </span><span class="n">x_dimid</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_def_dim</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">"y"</span><span class="p">,</span><span class="w"> </span><span class="n">ny</span><span class="p">,</span><span class="w"> </span><span class="n">y_dimid</span><span class="p">)</span>
+<span class="w">      </span><span class="n">dimids_2d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">x_dimid</span><span class="p">,</span><span class="w"> </span><span class="n">y_dimid</span><span class="p">]</span>
+
+<span class="w">      </span><span class="c">! Variables</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_def_var_2d</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">"h"</span><span class="p">,</span><span class="w"> </span><span class="n">dimids_2d</span><span class="p">,</span><span class="w"> </span><span class="n">h_varid</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_def_var_2d</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">"hu"</span><span class="p">,</span><span class="w"> </span><span class="n">dimids_2d</span><span class="p">,</span><span class="w"> </span><span class="n">hu_varid</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_def_var_2d</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">"hv"</span><span class="p">,</span><span class="w"> </span><span class="n">dimids_2d</span><span class="p">,</span><span class="w"> </span><span class="n">hv_varid</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_def_var_2d</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">"b"</span><span class="p">,</span><span class="w"> </span><span class="n">dimids_2d</span><span class="p">,</span><span class="w"> </span><span class="n">b_varid</span><span class="p">)</span>
+
+<span class="w">      </span><span class="c">! Multilayer arrays (only if active)</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">use_multilayer</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">         </span><span class="n">nz</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">nz_ml</span>
+<span class="w">         </span><span class="k">call </span><span class="n">nc_def_dim</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">"z"</span><span class="p">,</span><span class="w"> </span><span class="n">nz</span><span class="p">,</span><span class="w"> </span><span class="n">z_dimid</span><span class="p">)</span>
+<span class="w">         </span><span class="n">dimids_3d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">x_dimid</span><span class="p">,</span><span class="w"> </span><span class="n">y_dimid</span><span class="p">,</span><span class="w"> </span><span class="n">z_dimid</span><span class="p">]</span>
+<span class="w">         </span><span class="k">call </span><span class="n">nc_def_var_3d</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">"h_layer"</span><span class="p">,</span><span class="w"> </span><span class="n">dimids_3d</span><span class="p">,</span><span class="w"> </span><span class="n">h_layer_varid</span><span class="p">)</span>
+<span class="w">         </span><span class="k">call </span><span class="n">nc_def_var_3d</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">"hu_layer"</span><span class="p">,</span><span class="w"> </span><span class="n">dimids_3d</span><span class="p">,</span><span class="w"> </span><span class="n">hu_layer_varid</span><span class="p">)</span>
+<span class="w">         </span><span class="k">call </span><span class="n">nc_def_var_3d</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">"hv_layer"</span><span class="p">,</span><span class="w"> </span><span class="n">dimids_3d</span><span class="p">,</span><span class="w"> </span><span class="n">hv_layer_varid</span><span class="p">)</span>
+<span class="w">         </span><span class="k">call </span><span class="n">nc_def_var_3d</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">"hS_layer"</span><span class="p">,</span><span class="w"> </span><span class="n">dimids_3d</span><span class="p">,</span><span class="w"> </span><span class="n">hS_layer_varid</span><span class="p">)</span>
+<span class="w">         </span><span class="k">call </span><span class="n">nc_def_var_3d</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">"hT_layer"</span><span class="p">,</span><span class="w"> </span><span class="n">dimids_3d</span><span class="p">,</span><span class="w"> </span><span class="n">hT_layer_varid</span><span class="p">)</span>
+<span class="w">      </span><span class="k">end if</span>
+
+<span class="w">      </span><span class="c">! Scalar time</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_check</span><span class="p">(</span><span class="n">nf90_def_var</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">"time"</span><span class="p">,</span><span class="w"> </span><span class="n">nf90_double</span><span class="p">,</span><span class="w"> </span><span class="n">time_varid</span><span class="p">),</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                    </span><span class="s2">"defining restart time"</span><span class="p">)</span>
+
+<span class="w">      </span><span class="c">! Metadata attributes</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">h_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"units"</span><span class="p">,</span><span class="w"> </span><span class="s2">"m"</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">hu_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"units"</span><span class="p">,</span><span class="w"> </span><span class="s2">"m2 s-1"</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">hv_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"units"</span><span class="p">,</span><span class="w"> </span><span class="s2">"m2 s-1"</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">b_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"units"</span><span class="p">,</span><span class="w"> </span><span class="s2">"m"</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">time_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"units"</span><span class="p">,</span><span class="w"> </span><span class="s2">"seconds since simulation start"</span><span class="p">)</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">use_multilayer</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">         call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">h_layer_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"units"</span><span class="p">,</span><span class="w"> </span><span class="s2">"m"</span><span class="p">)</span>
+<span class="w">         </span><span class="k">call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">hu_layer_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"units"</span><span class="p">,</span><span class="w"> </span><span class="s2">"m2 s-1"</span><span class="p">)</span>
+<span class="w">         </span><span class="k">call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">hv_layer_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"units"</span><span class="p">,</span><span class="w"> </span><span class="s2">"m2 s-1"</span><span class="p">)</span>
+<span class="w">         </span><span class="k">call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">hS_layer_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"units"</span><span class="p">,</span><span class="w"> </span><span class="s2">"m PSU"</span><span class="p">)</span>
+<span class="w">         </span><span class="k">call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">hT_layer_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"units"</span><span class="p">,</span><span class="w"> </span><span class="s2">"m degC"</span><span class="p">)</span>
+<span class="w">      </span><span class="k">end if</span>
+<span class="k">      call </span><span class="n">nc_put_att_global</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">"Conventions"</span><span class="p">,</span><span class="w"> </span><span class="s2">"CF-1.11"</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_put_att_global</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">"title"</span><span class="p">,</span><span class="w"> </span><span class="s2">"Tidal restart file"</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_put_att_global</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">"source"</span><span class="p">,</span><span class="w"> </span><span class="s2">"Rakali v0.1.0"</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_put_att_global</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">"dx"</span><span class="p">,</span><span class="w"> </span><span class="n">to_string</span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">grid</span><span class="p">%</span><span class="n">dx</span><span class="p">))</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_put_att_global</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">"dy"</span><span class="p">,</span><span class="w"> </span><span class="n">to_string</span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">grid</span><span class="p">%</span><span class="n">dy</span><span class="p">))</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_put_att_global</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">"nghost"</span><span class="p">,</span><span class="w"> </span><span class="n">to_string</span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">grid</span><span class="p">%</span><span class="n">nghost</span><span class="p">))</span>
+
+<span class="w">      </span><span class="k">call </span><span class="n">nc_enddef</span><span class="p">(</span><span class="n">ncid</span><span class="p">)</span>
+
+<span class="w">      </span><span class="c">! Write data (interior only)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_put_var_2d</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">h_varid</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">h</span><span class="p">(</span><span class="n">ng</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="n">ng</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">nx</span><span class="p">,</span><span class="w"> </span><span class="n">ng</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="n">ng</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">ny</span><span class="p">))</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_put_var_2d</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">hu_varid</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hu</span><span class="p">(</span><span class="n">ng</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="n">ng</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">nx</span><span class="p">,</span><span class="w"> </span><span class="n">ng</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="n">ng</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">ny</span><span class="p">))</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_put_var_2d</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">hv_varid</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hv</span><span class="p">(</span><span class="n">ng</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="n">ng</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">nx</span><span class="p">,</span><span class="w"> </span><span class="n">ng</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="n">ng</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">ny</span><span class="p">))</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_put_var_2d</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">b_varid</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">b</span><span class="p">(</span><span class="n">ng</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="n">ng</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">nx</span><span class="p">,</span><span class="w"> </span><span class="n">ng</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="n">ng</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">ny</span><span class="p">))</span>
+
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">use_multilayer</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">         call </span><span class="n">nc_check</span><span class="p">(</span><span class="n">nf90_put_var</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">h_layer_varid</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                    </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">h_layer</span><span class="p">(</span><span class="n">ng</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="n">ng</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">nx</span><span class="p">,</span><span class="w"> </span><span class="n">ng</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="n">ng</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">ny</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="n">nz</span><span class="p">)),</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                       </span><span class="s2">"writing restart h_layer"</span><span class="p">)</span>
+<span class="w">         </span><span class="k">call </span><span class="n">nc_check</span><span class="p">(</span><span class="n">nf90_put_var</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">hu_layer_varid</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                    </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">hu_layer</span><span class="p">(</span><span class="n">ng</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="n">ng</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">nx</span><span class="p">,</span><span class="w"> </span><span class="n">ng</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="n">ng</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">ny</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="n">nz</span><span class="p">)),</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                       </span><span class="s2">"writing restart hu_layer"</span><span class="p">)</span>
+<span class="w">         </span><span class="k">call </span><span class="n">nc_check</span><span class="p">(</span><span class="n">nf90_put_var</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">hv_layer_varid</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                    </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">hv_layer</span><span class="p">(</span><span class="n">ng</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="n">ng</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">nx</span><span class="p">,</span><span class="w"> </span><span class="n">ng</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="n">ng</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">ny</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="n">nz</span><span class="p">)),</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                       </span><span class="s2">"writing restart hv_layer"</span><span class="p">)</span>
+<span class="w">         </span><span class="k">call </span><span class="n">nc_check</span><span class="p">(</span><span class="n">nf90_put_var</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">hS_layer_varid</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                               </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">tracers</span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">idx_salinity</span><span class="p">)%</span><span class="n">hTr</span><span class="p">(</span><span class="n">ng</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="n">ng</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">nx</span><span class="p">,</span><span class="w"> </span><span class="n">ng</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="n">ng</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">ny</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="n">nz</span><span class="p">)),</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                       </span><span class="s2">"writing restart hS_layer"</span><span class="p">)</span>
+<span class="w">         </span><span class="k">call </span><span class="n">nc_check</span><span class="p">(</span><span class="n">nf90_put_var</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">hT_layer_varid</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                            </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">tracers</span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">idx_temperature</span><span class="p">)%</span><span class="n">hTr</span><span class="p">(</span><span class="n">ng</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="n">ng</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">nx</span><span class="p">,</span><span class="w"> </span><span class="n">ng</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="n">ng</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">ny</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="n">nz</span><span class="p">)),</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                       </span><span class="s2">"writing restart hT_layer"</span><span class="p">)</span>
+<span class="w">      </span><span class="k">end if</span>
+
+<span class="k">      call </span><span class="n">nc_check</span><span class="p">(</span><span class="n">nf90_put_var</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">time_varid</span><span class="p">,</span><span class="w"> </span><span class="nb">time</span><span class="p">),</span><span class="w"> </span><span class="s2">"writing restart time"</span><span class="p">)</span>
+
+<span class="w">      </span><span class="k">call </span><span class="n">nc_close</span><span class="p">(</span><span class="n">ncid</span><span class="p">)</span>
+
+<span class="w">      </span><span class="k">call </span><span class="n">logger</span><span class="p">%</span><span class="n">info</span><span class="p">(</span><span class="s2">"Restart file written at t = "</span><span class="o">//</span><span class="n">to_string</span><span class="p">(</span><span class="nb">time</span><span class="p">)</span><span class="o">//</span><span class="s2">" s"</span><span class="p">)</span>
+
+<span class="w">   </span><span class="k">end subroutine </span><span class="n">restart_write</span>
+</pre></div>
+
+    </section>
+    <br>
+    
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Rakali
+ was developed by Jorge Luis Galvez Vallejo<br>              &copy; 2026 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+ on 2026-10-08 12:55 +0000             </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>

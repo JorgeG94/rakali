@@ -1,0 +1,563 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="GPU-native coastal solver — structured Cartesian and unstructured triangular grids, hydrostatic multilayer + non-hydrostatic, portable across NVHPC/gfortran/ifx.">
+    <meta name="author" content="Jorge Luis Galvez Vallejo" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>set_constant_edge_values_impl &ndash; Rakali</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">Rakali </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/absint.html">Abstract Interfaces</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>set_constant_edge_values_impl
+      <small>Subroutine</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.0% of total for procedures.">7 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/rki_kernel_extrapolate_unstr.F90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/rki_kernel_extrapolate_unstr.f90.html'>rki_kernel_extrapolate_unstr.F90</a></li>
+                <li class="breadcrumb-item"><a href='../module/rki_kernel_extrapolate_unstr.html'>rki_kernel_extrapolate_unstr</a></li>
+            <li class="breadcrumb-item active" aria-current="page">set_constant_edge_values_impl</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+  
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../proc/set_constant_edge_values_impl.html#src">set_constant_edge_values_impl</a>
+      </div>
+    </div>
+
+
+  </div>
+
+    </div>
+    
+    <div class="col-md-9" id='text'>
+    <h2>private pure subroutine set_constant_edge_values_impl(cv_k, edge_values)  
+</h2>
+    
+
+
+
+    <h3>Arguments</h3>
+        <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-cv_k~2"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>cv_k</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-edge_values~2"></span>
+              real(kind=wp),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>edge_values</strong>(3)</td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <br>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Called by</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~set_constant_edge_values_impl~~CalledByGraph Pages: 1 -->
+<svg id="procset_constant_edge_values_implCalledByGraph" width="641pt" height="41pt"
+ viewBox="0.00 0.00 641.00 41.47" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~set_constant_edge_values_impl~~CalledByGraph" class="graph" transform="scale(0.38 0.38) rotate(0) translate(4 104.76)">
+<title>proc~~set_constant_edge_values_impl~~CalledByGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-104.76 1677,-104.76 1677,4 -4,4"/>
+<!-- proc~set_constant_edge_values_impl -->
+<g id="proc~~set_constant_edge_values_impl~~CalledByGraph_node1" class="node">
+<title>proc~set_constant_edge_values_impl</title>
+<polygon fill="none" stroke="black" points="1673,-85 1493,-85 1493,-61 1673,-61 1673,-85"/>
+<text text-anchor="middle" x="1583" y="-70.6" font-family="Helvetica,sans-Serif" font-size="10.50">set_constant_edge_values_impl</text>
+</g>
+<!-- proc~extrapolate_one_cell -->
+<g id="proc~~set_constant_edge_values_impl~~CalledByGraph_node2" class="node">
+<title>proc~extrapolate_one_cell</title>
+<g id="a_proc~~set_constant_edge_values_impl~~CalledByGraph_node2"><a xlink:href="../proc/extrapolate_one_cell.html" xlink:title="extrapolate_one_cell">
+<polygon fill="#d9534f" stroke="#d9534f" points="1212,-85 1089,-85 1089,-61 1212,-61 1212,-85"/>
+<text text-anchor="middle" x="1150.5" y="-70.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">extrapolate_one_cell</text>
+</a>
+</g>
+</g>
+<!-- proc~extrapolate_one_cell&#45;&gt;proc~set_constant_edge_values_impl -->
+<g id="proc~~set_constant_edge_values_impl~~CalledByGraph_edge1" class="edge">
+<title>proc~extrapolate_one_cell&#45;&gt;proc~set_constant_edge_values_impl</title>
+<path fill="none" stroke="#ff0000" d="M1197.31,-85.07C1213.24,-88.7 1231.29,-92.2 1248,-94 1340.36,-103.93 1364.43,-101.72 1457,-94 1475.23,-92.48 1494.79,-89.73 1512.91,-86.72"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="1513.54,-90.16 1522.8,-85.02 1512.36,-83.26 1513.54,-90.16"/>
+</g>
+<!-- proc~extrapolate_one_neighbour_branch -->
+<g id="proc~~set_constant_edge_values_impl~~CalledByGraph_node3" class="node">
+<title>proc~extrapolate_one_neighbour_branch</title>
+<g id="a_proc~~set_constant_edge_values_impl~~CalledByGraph_node3"><a xlink:href="../proc/extrapolate_one_neighbour_branch.html" xlink:title="extrapolate_one_neighbour_branch">
+<polygon fill="#d9534f" stroke="#d9534f" points="1453.5,-85 1251.5,-85 1251.5,-61 1453.5,-61 1453.5,-85"/>
+<text text-anchor="middle" x="1352.5" y="-70.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">extrapolate_one_neighbour_branch</text>
+</a>
+</g>
+</g>
+<!-- proc~extrapolate_one_cell&#45;&gt;proc~extrapolate_one_neighbour_branch -->
+<g id="proc~~set_constant_edge_values_impl~~CalledByGraph_edge5" class="edge">
+<title>proc~extrapolate_one_cell&#45;&gt;proc~extrapolate_one_neighbour_branch</title>
+<path fill="none" stroke="#00ff00" d="M1212.05,-73C1221.36,-73 1231.22,-73 1241.21,-73"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="1241.24,-76.5 1251.24,-73 1241.24,-69.5 1241.24,-76.5"/>
+</g>
+<!-- proc~extrapolate_three_neighbour_branch -->
+<g id="proc~~set_constant_edge_values_impl~~CalledByGraph_node4" class="node">
+<title>proc~extrapolate_three_neighbour_branch</title>
+<g id="a_proc~~set_constant_edge_values_impl~~CalledByGraph_node4"><a xlink:href="../proc/extrapolate_three_neighbour_branch.html" xlink:title="extrapolate_three_neighbour_branch">
+<polygon fill="#d9534f" stroke="#d9534f" points="1457,-43 1248,-43 1248,-19 1457,-19 1457,-43"/>
+<text text-anchor="middle" x="1352.5" y="-28.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">extrapolate_three_neighbour_branch</text>
+</a>
+</g>
+</g>
+<!-- proc~extrapolate_one_cell&#45;&gt;proc~extrapolate_three_neighbour_branch -->
+<g id="proc~~set_constant_edge_values_impl~~CalledByGraph_edge6" class="edge">
+<title>proc~extrapolate_one_cell&#45;&gt;proc~extrapolate_three_neighbour_branch</title>
+<path fill="none" stroke="#0000ff" d="M1206.08,-60.98C1219.76,-58.01 1234.41,-54.86 1248,-52 1258.89,-49.71 1270.44,-47.32 1281.72,-45.02"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="1282.44,-48.44 1291.54,-43.02 1281.04,-41.58 1282.44,-48.44"/>
+</g>
+<!-- proc~extrapolate_one_neighbour_branch&#45;&gt;proc~set_constant_edge_values_impl -->
+<g id="proc~~set_constant_edge_values_impl~~CalledByGraph_edge2" class="edge">
+<title>proc~extrapolate_one_neighbour_branch&#45;&gt;proc~set_constant_edge_values_impl</title>
+<path fill="none" stroke="#ff0000" d="M1453.72,-73C1463.42,-73 1473.26,-73 1482.95,-73"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="1482.98,-76.5 1492.98,-73 1482.98,-69.5 1482.98,-76.5"/>
+</g>
+<!-- proc~extrapolate_three_neighbour_branch&#45;&gt;proc~set_constant_edge_values_impl -->
+<g id="proc~~set_constant_edge_values_impl~~CalledByGraph_edge3" class="edge">
+<title>proc~extrapolate_three_neighbour_branch&#45;&gt;proc~set_constant_edge_values_impl</title>
+<path fill="none" stroke="#ff0000" d="M1418.98,-43.04C1446.35,-48.07 1478.31,-53.94 1506.65,-59.15"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="1506.04,-62.6 1516.51,-60.96 1507.31,-55.71 1506.04,-62.6"/>
+</g>
+<!-- proc~per_cell_extrapolation -->
+<g id="proc~~set_constant_edge_values_impl~~CalledByGraph_node5" class="node">
+<title>proc~per_cell_extrapolation</title>
+<g id="a_proc~~set_constant_edge_values_impl~~CalledByGraph_node5"><a xlink:href="../proc/per_cell_extrapolation.html" xlink:title="per_cell_extrapolation">
+<polygon fill="#d9534f" stroke="#d9534f" points="1053,-85 923,-85 923,-61 1053,-61 1053,-85"/>
+<text text-anchor="middle" x="988" y="-70.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">per_cell_extrapolation</text>
+</a>
+</g>
+</g>
+<!-- proc~per_cell_extrapolation&#45;&gt;proc~extrapolate_one_cell -->
+<g id="proc~~set_constant_edge_values_impl~~CalledByGraph_edge4" class="edge">
+<title>proc~per_cell_extrapolation&#45;&gt;proc~extrapolate_one_cell</title>
+<path fill="none" stroke="#ff0000" d="M1053.36,-73C1061.66,-73 1070.21,-73 1078.62,-73"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="1078.78,-76.5 1088.78,-73 1078.78,-69.5 1078.78,-76.5"/>
+</g>
+<!-- proc~extrapolate_second_order_edge_unstr -->
+<g id="proc~~set_constant_edge_values_impl~~CalledByGraph_node6" class="node">
+<title>proc~extrapolate_second_order_edge_unstr</title>
+<g id="a_proc~~set_constant_edge_values_impl~~CalledByGraph_node6"><a xlink:href="../proc/extrapolate_second_order_edge_unstr.html" xlink:title="extrapolate_second_order_edge_unstr">
+<polygon fill="#d9534f" stroke="#d9534f" points="887,-85 671,-85 671,-61 887,-61 887,-85"/>
+<text text-anchor="middle" x="779" y="-70.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">extrapolate_second_order_edge_unstr</text>
+</a>
+</g>
+</g>
+<!-- proc~extrapolate_second_order_edge_unstr&#45;&gt;proc~per_cell_extrapolation -->
+<g id="proc~~set_constant_edge_values_impl~~CalledByGraph_edge7" class="edge">
+<title>proc~extrapolate_second_order_edge_unstr&#45;&gt;proc~per_cell_extrapolation</title>
+<path fill="none" stroke="#ff0000" d="M887.14,-73C895.83,-73 904.5,-73 912.88,-73"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="912.95,-76.5 922.95,-73 912.95,-69.5 912.95,-76.5"/>
+</g>
+<!-- proc~solver_unstr_advance -->
+<g id="proc~~set_constant_edge_values_impl~~CalledByGraph_node7" class="node">
+<title>proc~solver_unstr_advance</title>
+<g id="a_proc~~set_constant_edge_values_impl~~CalledByGraph_node7"><a xlink:href="../proc/solver_unstr_advance.html" xlink:title="solver_unstr_advance">
+<polygon fill="#d9534f" stroke="#d9534f" points="307,-45 179,-45 179,-21 307,-21 307,-45"/>
+<text text-anchor="middle" x="243" y="-30.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_unstr_advance</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_unstr_advance&#45;&gt;proc~extrapolate_second_order_edge_unstr -->
+<g id="proc~~set_constant_edge_values_impl~~CalledByGraph_edge8" class="edge">
+<title>proc~solver_unstr_advance&#45;&gt;proc~extrapolate_second_order_edge_unstr</title>
+<path fill="none" stroke="#ff0000" d="M307.12,-34.18C384.53,-36.06 519.67,-40.76 635,-52 654.76,-53.93 675.97,-56.67 695.84,-59.54"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="695.38,-63.01 705.79,-61 696.4,-56.08 695.38,-63.01"/>
+</g>
+<!-- proc~solver_unstr_step -->
+<g id="proc~~set_constant_edge_values_impl~~CalledByGraph_node8" class="node">
+<title>proc~solver_unstr_step</title>
+<g id="a_proc~~set_constant_edge_values_impl~~CalledByGraph_node8"><a xlink:href="../proc/solver_unstr_step.html" xlink:title="solver_unstr_step">
+<polygon fill="#d9534f" stroke="#d9534f" points="448,-86 343,-86 343,-62 448,-62 448,-86"/>
+<text text-anchor="middle" x="395.5" y="-71.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_unstr_step</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_unstr_advance&#45;&gt;proc~solver_unstr_step -->
+<g id="proc~~set_constant_edge_values_impl~~CalledByGraph_edge14" class="edge">
+<title>proc~solver_unstr_advance&#45;&gt;proc~solver_unstr_step</title>
+<path fill="none" stroke="#00ff00" d="M288.34,-45.08C304.65,-49.52 323.3,-54.6 340.38,-59.26"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="339.65,-62.68 350.22,-61.94 341.49,-55.93 339.65,-62.68"/>
+</g>
+<!-- proc~solver_unstr_step&#45;&gt;proc~extrapolate_second_order_edge_unstr -->
+<g id="proc~~set_constant_edge_values_impl~~CalledByGraph_edge9" class="edge">
+<title>proc~solver_unstr_step&#45;&gt;proc~extrapolate_second_order_edge_unstr</title>
+<path fill="none" stroke="#ff0000" d="M440.23,-86.02C454.11,-89.29 469.6,-92.38 484,-94 550.69,-101.52 568.07,-98.89 635,-94 656.18,-92.45 678.99,-89.63 700.04,-86.55"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="700.84,-89.97 710.21,-85.02 699.8,-83.05 700.84,-89.97"/>
+</g>
+<!-- proc~solver_unstr_step_generic -->
+<g id="proc~~set_constant_edge_values_impl~~CalledByGraph_node9" class="node">
+<title>proc~solver_unstr_step_generic</title>
+<g id="a_proc~~set_constant_edge_values_impl~~CalledByGraph_node9"><a xlink:href="../proc/solver_unstr_step_generic.html" xlink:title="solver_unstr_step_generic">
+<polygon fill="#d9534f" stroke="#d9534f" points="635,-85 484,-85 484,-61 635,-61 635,-85"/>
+<text text-anchor="middle" x="559.5" y="-70.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_unstr_step_generic</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_unstr_step&#45;&gt;proc~solver_unstr_step_generic -->
+<g id="proc~~set_constant_edge_values_impl~~CalledByGraph_edge15" class="edge">
+<title>proc~solver_unstr_step&#45;&gt;proc~solver_unstr_step_generic</title>
+<path fill="none" stroke="#0000ff" d="M448.2,-73.68C456.39,-73.63 465.04,-73.58 473.74,-73.52"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="473.99,-77.02 483.97,-73.46 473.94,-70.02 473.99,-77.02"/>
+</g>
+<!-- proc~solver_unstr_step_generic&#45;&gt;proc~extrapolate_second_order_edge_unstr -->
+<g id="proc~~set_constant_edge_values_impl~~CalledByGraph_edge10" class="edge">
+<title>proc~solver_unstr_step_generic&#45;&gt;proc~extrapolate_second_order_edge_unstr</title>
+<path fill="none" stroke="#ff0000" d="M635.05,-73C643.36,-73 651.96,-73 660.64,-73"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="660.85,-76.5 670.85,-73 660.85,-69.5 660.85,-76.5"/>
+</g>
+<!-- proc~driver_run_coastal_unstr -->
+<g id="proc~~set_constant_edge_values_impl~~CalledByGraph_node10" class="node">
+<title>proc~driver_run_coastal_unstr</title>
+<g id="a_proc~~set_constant_edge_values_impl~~CalledByGraph_node10"><a xlink:href="../proc/driver_run_coastal_unstr.html" xlink:title="driver_run_coastal_unstr">
+<polygon fill="#d9534f" stroke="#d9534f" points="143,-66 0,-66 0,-42 143,-42 143,-66"/>
+<text text-anchor="middle" x="71.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">driver_run_coastal_unstr</text>
+</a>
+</g>
+</g>
+<!-- proc~driver_run_coastal_unstr&#45;&gt;proc~solver_unstr_advance -->
+<g id="proc~~set_constant_edge_values_impl~~CalledByGraph_edge11" class="edge">
+<title>proc~driver_run_coastal_unstr&#45;&gt;proc~solver_unstr_advance</title>
+<path fill="none" stroke="#ff0000" d="M143.4,-45.22C151.79,-44.18 160.36,-43.12 168.77,-42.07"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="169.44,-45.52 178.94,-40.81 168.58,-38.57 169.44,-45.52"/>
+</g>
+<!-- proc~rki_unstr_advance -->
+<g id="proc~~set_constant_edge_values_impl~~CalledByGraph_node11" class="node">
+<title>proc~rki_unstr_advance</title>
+<g id="a_proc~~set_constant_edge_values_impl~~CalledByGraph_node11"><a xlink:href="../proc/rki_unstr_advance.html" xlink:title="rki_unstr_advance">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="126,-24 17,-24 17,0 126,0 126,-24"/>
+<text text-anchor="middle" x="71.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_unstr_advance</text>
+</a>
+</g>
+</g>
+<!-- proc~rki_unstr_advance&#45;&gt;proc~solver_unstr_advance -->
+<g id="proc~~set_constant_edge_values_impl~~CalledByGraph_edge12" class="edge">
+<title>proc~rki_unstr_advance&#45;&gt;proc~solver_unstr_advance</title>
+<path fill="none" stroke="#ff0000" d="M126.13,-18.64C139.63,-20.32 154.36,-22.14 168.64,-23.91"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="168.59,-27.43 178.94,-25.19 169.45,-20.48 168.59,-27.43"/>
+</g>
+<!-- proc~rki_unstr_step -->
+<g id="proc~~set_constant_edge_values_impl~~CalledByGraph_node12" class="node">
+<title>proc~rki_unstr_step</title>
+<g id="a_proc~~set_constant_edge_values_impl~~CalledByGraph_node12"><a xlink:href="../proc/rki_unstr_step.html" xlink:title="rki_unstr_step">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="286,-87 200,-87 200,-63 286,-63 286,-87"/>
+<text text-anchor="middle" x="243" y="-72.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_unstr_step</text>
+</a>
+</g>
+</g>
+<!-- proc~rki_unstr_step&#45;&gt;proc~solver_unstr_step -->
+<g id="proc~~set_constant_edge_values_impl~~CalledByGraph_edge13" class="edge">
+<title>proc~rki_unstr_step&#45;&gt;proc~solver_unstr_step</title>
+<path fill="none" stroke="#00ff00" d="M286.32,-74.72C300.73,-74.62 317.14,-74.51 332.75,-74.41"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="332.89,-77.91 342.87,-74.34 332.84,-70.91 332.89,-77.91"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var panprocset_constant_edge_values_implCalledByGraph = svgPanZoom('#procset_constant_edge_values_implCalledByGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CalledByGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CalledByGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+
+
+    
+    
+
+    
+    
+
+
+
+    
+    <section>
+    <h2><span class="anchor" id="src"></span>Source Code</h2>
+    <div class="hl codehilite"><pre><span></span><span class="w">   </span><span class="k">pure subroutine </span><span class="n">set_constant_edge_values_impl</span><span class="p">(</span><span class="n">cv_k</span><span class="p">,</span><span class="w"> </span><span class="n">edge_values</span><span class="p">)</span>
+<span class="w">      </span><span class="c">!$acc routine seq</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">cv_k</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">edge_values</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+
+<span class="w">      </span><span class="n">edge_values</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cv_k</span>
+<span class="w">      </span><span class="n">edge_values</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cv_k</span>
+<span class="w">      </span><span class="n">edge_values</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cv_k</span>
+<span class="w">   </span><span class="k">end subroutine </span><span class="n">set_constant_edge_values_impl</span>
+</pre></div>
+
+    </section>
+    <br>
+    
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Rakali
+ was developed by Jorge Luis Galvez Vallejo<br>              &copy; 2026 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+ on 2026-10-08 12:55 +0000             </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>

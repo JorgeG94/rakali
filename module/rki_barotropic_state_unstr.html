@@ -1,0 +1,1938 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="GPU-native coastal solver — structured Cartesian and unstructured triangular grids, hydrostatic multilayer + non-hydrostatic, portable across NVHPC/gfortran/ifx.">
+    <meta name="author" content="Jorge Luis Galvez Vallejo" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>rki_barotropic_state_unstr &ndash; Rakali</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">Rakali </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/absint.html">Abstract Interfaces</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>rki_barotropic_state_unstr
+      <small>Module</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.4% of total for modules and submodules.">105 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/rki_barotropic_state_unstr.F90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/rki_barotropic_state_unstr.f90.html'>rki_barotropic_state_unstr.F90</a></li>
+            <li class="breadcrumb-item active" aria-current="page">rki_barotropic_state_unstr</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+
+  <div class="row">
+    <div class="col-md-3">
+        <div id="sidebar">
+      <h3>Contents</h3>
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#vars-0"
+         aria-expanded="false" aria-controls="vars-0">
+         <h4 class="card-header bg-primary text-white">Variables</h4>
+      </a>
+      <div id="vars-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../module/rki_barotropic_state_unstr.html#variable-edges_per_tri">EDGES_PER_TRI</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#types-0"
+         aria-expanded="false" aria-controls="types-0">
+         <h4 class="card-header bg-primary text-white">Derived Types</h4>
+      </a>
+      <div id="types-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../module/rki_barotropic_state_unstr.html#type-unstr_barotropic_state_t">unstr_barotropic_state_t</a>
+        </div>
+      </div>
+    </div>
+
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#subs-0"
+         aria-expanded="false" aria-controls="subs-0">
+         <h4 class="card-header bg-primary text-white">Subroutines</h4>
+      </a>
+      <div id="subs-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../module/rki_barotropic_state_unstr.html#proc-unstr_barotropic_destroy">unstr_barotropic_destroy</a>
+            <a class="list-group-item" href="../module/rki_barotropic_state_unstr.html#proc-unstr_barotropic_enter_data">unstr_barotropic_enter_data</a>
+            <a class="list-group-item" href="../module/rki_barotropic_state_unstr.html#proc-unstr_barotropic_exit_data">unstr_barotropic_exit_data</a>
+            <a class="list-group-item" href="../module/rki_barotropic_state_unstr.html#proc-unstr_barotropic_init">unstr_barotropic_init</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+
+
+  </div>
+
+    </div>
+
+    <div class="col-md-9" id='text'>
+      <p>Container for the centroid conserved variables, the edge
+reconstruction scratch, the per-step accumulators, RK2 saves,
+Chapman persistent state, the per-edge mass flux consumed by
+tracer CWC, and the small set of barotropic physics scalars
+(Manning&rsquo;s <code>n</code>, uniform wind stress).</p>
+<p>Lives at <code>state%barotropic</code>.  Multilayer code reads <code>mass_flux_e</code>
+from here (CWC tracer advection); the layer-distribute kernels
+also read <code>stage_cv</code> / <code>xmom_cv</code> / <code>ymom_cv</code> / <code>bed_cv</code> to
+compute new layer states.  Mirrors structured <code>barotropic_state_t</code>.</p>
+<br>          <div class="card mb-4">
+      <h3 class="card-header card-title bg-light">Uses</h3>
+      <div class="card-body">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <ul class="list-inline">
+                  <li class="list-inline-item"><a href='rki_mesh_unstr.html'>rki_mesh_unstr</a></li>
+                  <li class="list-inline-item"><a href='rki_constants.html'>rki_constants</a></li>
+              </ul>
+            </li>
+            <li class="list-group-item">
+              <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: module~~rki_barotropic_state_unstr~~UsesGraph Pages: 1 -->
+<svg id="modulerki_barotropic_state_unstrUsesGraph" width="502pt" height="133pt"
+ viewBox="0.00 0.00 502.00 133.39" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="module~~rki_barotropic_state_unstr~~UsesGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 129.39)">
+<title>module~~rki_barotropic_state_unstr~~UsesGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-129.39 498,-129.39 498,4 -4,4"/>
+<!-- module~rki_barotropic_state_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsesGraph_node1" class="node">
+<title>module~rki_barotropic_state_unstr</title>
+<polygon fill="none" stroke="black" points="494,-103.39 345,-103.39 345,-79.39 494,-79.39 494,-103.39"/>
+<text text-anchor="middle" x="419.5" y="-88.99" font-family="Helvetica,sans-Serif" font-size="10.50">rki_barotropic_state_unstr</text>
+</g>
+<!-- module~rki_constants -->
+<g id="module~~rki_barotropic_state_unstr~~UsesGraph_node2" class="node">
+<title>module~rki_constants</title>
+<g id="a_module~~rki_barotropic_state_unstr~~UsesGraph_node2"><a xlink:href="../module/rki_constants.html" xlink:title="rki_constants">
+<polygon fill="#337ab7" stroke="#337ab7" points="180,-125.39 98,-125.39 98,-101.39 180,-101.39 180,-125.39"/>
+<text text-anchor="middle" x="139" y="-110.99" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_constants</text>
+</a>
+</g>
+</g>
+<!-- module~rki_barotropic_state_unstr&#45;&gt;module~rki_constants -->
+<g id="module~~rki_barotropic_state_unstr~~UsesGraph_edge1" class="edge">
+<title>module~rki_barotropic_state_unstr&#45;&gt;module~rki_constants</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M344.96,-97.2C296.18,-101.06 233.43,-106.01 190.28,-109.42"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="189.99,-105.93 180.3,-110.21 190.55,-112.91 189.99,-105.93"/>
+</g>
+<!-- module~rki_mesh_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsesGraph_node3" class="node">
+<title>module~rki_mesh_unstr</title>
+<g id="a_module~~rki_barotropic_state_unstr~~UsesGraph_node3"><a xlink:href="../module/rki_mesh_unstr.html" xlink:title="rki_mesh_unstr">
+<polygon fill="#337ab7" stroke="#337ab7" points="309,-83.39 216,-83.39 216,-59.39 309,-59.39 309,-83.39"/>
+<text text-anchor="middle" x="262.5" y="-68.99" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_mesh_unstr</text>
+</a>
+</g>
+</g>
+<!-- module~rki_barotropic_state_unstr&#45;&gt;module~rki_mesh_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsesGraph_edge2" class="edge">
+<title>module~rki_barotropic_state_unstr&#45;&gt;module~rki_mesh_unstr</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M344.63,-81.86C336.19,-80.77 327.69,-79.68 319.53,-78.62"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="319.78,-75.13 309.42,-77.32 318.89,-82.07 319.78,-75.13"/>
+</g>
+<!-- pic_types -->
+<g id="module~~rki_barotropic_state_unstr~~UsesGraph_node6" class="node">
+<title>pic_types</title>
+<polygon fill="#337ab7" stroke="#337ab7" points="62,-63.39 0,-63.39 0,-39.39 62,-39.39 62,-63.39"/>
+<text text-anchor="middle" x="31" y="-48.99" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">pic_types</text>
+</g>
+<!-- module~rki_constants&#45;&gt;pic_types -->
+<g id="module~~rki_barotropic_state_unstr~~UsesGraph_edge3" class="edge">
+<title>module~rki_constants&#45;&gt;pic_types</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M114.16,-101.24C108.8,-98.41 103.17,-95.35 98,-92.39 85.03,-84.98 70.93,-76.3 59.1,-68.85"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="60.88,-65.83 50.56,-63.42 57.13,-71.74 60.88,-65.83"/>
+</g>
+<!-- module~rki_mesh_unstr&#45;&gt;module~rki_constants -->
+<g id="module~~rki_barotropic_state_unstr~~UsesGraph_edge4" class="edge">
+<title>module~rki_mesh_unstr&#45;&gt;module~rki_constants</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M226.68,-83.43C213.59,-87.96 198.52,-93.16 184.66,-97.96"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="183.13,-94.78 174.82,-101.36 185.42,-101.4 183.13,-94.78"/>
+</g>
+<!-- pic_io -->
+<g id="module~~rki_barotropic_state_unstr~~UsesGraph_node4" class="node">
+<title>pic_io</title>
+<polygon fill="#337ab7" stroke="#337ab7" points="166,-83.39 112,-83.39 112,-59.39 166,-59.39 166,-83.39"/>
+<text text-anchor="middle" x="139" y="-68.99" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">pic_io</text>
+</g>
+<!-- module~rki_mesh_unstr&#45;&gt;pic_io -->
+<g id="module~~rki_barotropic_state_unstr~~UsesGraph_edge5" class="edge">
+<title>module~rki_mesh_unstr&#45;&gt;pic_io</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M215.91,-71.39C202.76,-71.39 188.6,-71.39 176.11,-71.39"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="176.07,-67.89 166.07,-71.39 176.07,-74.89 176.07,-67.89"/>
+</g>
+<!-- pic_logger -->
+<g id="module~~rki_barotropic_state_unstr~~UsesGraph_node5" class="node">
+<title>pic_logger</title>
+<polygon fill="#337ab7" stroke="#337ab7" points="173,-41.39 105,-41.39 105,-17.39 173,-17.39 173,-41.39"/>
+<text text-anchor="middle" x="139" y="-26.99" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">pic_logger</text>
+</g>
+<!-- module~rki_mesh_unstr&#45;&gt;pic_logger -->
+<g id="module~~rki_barotropic_state_unstr~~UsesGraph_edge6" class="edge">
+<title>module~rki_mesh_unstr&#45;&gt;pic_logger</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M226.68,-59.36C213.01,-54.63 197.18,-49.16 182.81,-44.19"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="183.74,-40.81 173.15,-40.85 181.46,-47.43 183.74,-40.81"/>
+</g>
+<!-- module~rki_mesh_unstr&#45;&gt;pic_types -->
+<g id="module~~rki_barotropic_state_unstr~~UsesGraph_edge7" class="edge">
+<title>module~rki_mesh_unstr&#45;&gt;pic_types</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M250.84,-59.24C236.52,-43.94 209.45,-18.45 180,-8.39 145.51,3.38 132.94,1.98 98,-8.39 81.75,-13.22 65.77,-23.45 53.6,-32.72"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="51.1,-30.24 45.47,-39.21 55.47,-35.71 51.1,-30.24"/>
+</g>
+</g>
+</svg>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#UsesGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="UsesGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="518pt" height="32pt"
+ viewBox="0.00 0.00 517.50 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 513.5,-28 513.5,4 -4,4"/>
+<!-- Module -->
+<g id="node1" class="node">
+<title>Module</title>
+<polygon fill="#337ab7" stroke="#337ab7" points="54,-24 0,-24 0,0 54,0 54,-24"/>
+<text text-anchor="middle" x="27" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Module</text>
+</g>
+<!-- Submodule -->
+<g id="node2" class="node">
+<title>Submodule</title>
+<polygon fill="#5bc0de" stroke="#5bc0de" points="145.5,-24 72.5,-24 72.5,0 145.5,0 145.5,-24"/>
+<text text-anchor="middle" x="109" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Submodule</text>
+</g>
+<!-- Subroutine -->
+<g id="node3" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="234,-24 164,-24 164,0 234,0 234,-24"/>
+<text text-anchor="middle" x="199" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node4" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="310,-24 252,-24 252,0 310,0 310,-24"/>
+<text text-anchor="middle" x="281" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Program -->
+<g id="node5" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="386,-24 328,-24 328,0 386,0 386,-24"/>
+<text text-anchor="middle" x="357" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node6" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="509.5,-24 404.5,-24 404.5,0 509.5,0 509.5,-24"/>
+<text text-anchor="middle" x="457" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a submodule to the (sub)module which it is
+descended from. Dashed arrows point from a module or program unit to 
+modules which it uses.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+            </li>
+        </ul>
+      </div>
+    </div>
+
+          <div class="card">
+      <h3 class="card-header card-title bg-light">Used by</h3>
+      <div class="card-body">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: module~~rki_barotropic_state_unstr~~UsedByGraph Pages: 1 -->
+<svg id="modulerki_barotropic_state_unstrUsedByGraph" width="641pt" height="486pt"
+ viewBox="0.00 0.00 641.00 486.14" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph" class="graph" transform="scale(0.55 0.55) rotate(0) translate(4 875.75)">
+<title>module~~rki_barotropic_state_unstr~~UsedByGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-875.75 1156,-875.75 1156,4 -4,4"/>
+<!-- module~rki_barotropic_state_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_node1" class="node">
+<title>module~rki_barotropic_state_unstr</title>
+<polygon fill="none" stroke="black" points="149,-633.55 0,-633.55 0,-609.55 149,-609.55 149,-633.55"/>
+<text text-anchor="middle" x="74.5" y="-619.15" font-family="Helvetica,sans-Serif" font-size="10.50">rki_barotropic_state_unstr</text>
+</g>
+<!-- module~rki_state_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_node2" class="node">
+<title>module~rki_state_unstr</title>
+<g id="a_module~~rki_barotropic_state_unstr~~UsedByGraph_node2"><a xlink:href="../module/rki_state_unstr.html" xlink:title="rki_state_unstr">
+<polygon fill="#337ab7" stroke="#337ab7" points="275,-633.55 185,-633.55 185,-609.55 275,-609.55 275,-633.55"/>
+<text text-anchor="middle" x="230" y="-619.15" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_state_unstr</text>
+</a>
+</g>
+</g>
+<!-- module~rki_state_unstr&#45;&gt;module~rki_barotropic_state_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge1" class="edge">
+<title>module~rki_state_unstr&#45;&gt;module~rki_barotropic_state_unstr</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M184.6,-621.55C176.58,-621.55 167.99,-621.55 159.27,-621.55"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="159.01,-618.05 149.01,-621.55 159.01,-625.05 159.01,-618.05"/>
+</g>
+<!-- module~rki_api_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_node3" class="node">
+<title>module~rki_api_unstr</title>
+<g id="a_module~~rki_barotropic_state_unstr~~UsedByGraph_node3"><a xlink:href="../module/rki_api_unstr.html" xlink:title="rki_api_unstr">
+<polygon fill="#337ab7" stroke="#337ab7" points="1152,-124.55 1072,-124.55 1072,-100.55 1152,-100.55 1152,-124.55"/>
+<text text-anchor="middle" x="1112" y="-110.15" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_api_unstr</text>
+</a>
+</g>
+</g>
+<!-- module~rki_api_unstr&#45;&gt;module~rki_state_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge2" class="edge">
+<title>module~rki_api_unstr&#45;&gt;module~rki_state_unstr</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M987,-112.55C941.22,-112.79 945.67,-154.59 904,-173.55 868.76,-189.57 857.45,-188.08 819,-192.55"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M817,-192.55C722.96,-203.46 695.63,-168.75 604,-192.55"/>
+</g>
+<!-- module~rki_gauges_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_node5" class="node">
+<title>module~rki_gauges_unstr</title>
+<g id="a_module~~rki_barotropic_state_unstr~~UsedByGraph_node5"><a xlink:href="../module/rki_gauges_unstr.html" xlink:title="rki_gauges_unstr">
+<polygon fill="#337ab7" stroke="#337ab7" points="869.5,-84.55 766.5,-84.55 766.5,-60.55 869.5,-60.55 869.5,-84.55"/>
+<text text-anchor="middle" x="818" y="-70.15" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_gauges_unstr</text>
+</a>
+</g>
+</g>
+<!-- module~rki_api_unstr&#45;&gt;module~rki_gauges_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge29" class="edge">
+<title>module~rki_api_unstr&#45;&gt;module~rki_gauges_unstr</title>
+<path fill="none" stroke="#ff7100" stroke-dasharray="5,2" d="M987,-112.55C964.5,-112.52 910.61,-98.77 869.89,-87.4"/>
+<polygon fill="#ff7100" stroke="#ff7100" points="870.69,-83.99 860.11,-84.64 868.79,-90.72 870.69,-83.99"/>
+</g>
+<!-- module~rki_handle -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_node6" class="node">
+<title>module~rki_handle</title>
+<g id="a_module~~rki_barotropic_state_unstr~~UsedByGraph_node6"><a xlink:href="../module/rki_handle.html" xlink:title="rki_handle">
+<polygon fill="#337ab7" stroke="#337ab7" points="1022,-62.55 954,-62.55 954,-38.55 1022,-38.55 1022,-62.55"/>
+<text text-anchor="middle" x="988" y="-48.15" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_handle</text>
+</a>
+</g>
+</g>
+<!-- module~rki_api_unstr&#45;&gt;module~rki_handle -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge32" class="edge">
+<title>module~rki_api_unstr&#45;&gt;module~rki_handle</title>
+<path fill="none" stroke="#ffaa00" stroke-dasharray="5,2" d="M1087.19,-100.44C1068.55,-90.97 1042.41,-77.69 1021.79,-67.21"/>
+<polygon fill="#ffaa00" stroke="#ffaa00" points="1023.25,-64.03 1012.75,-62.62 1020.08,-70.27 1023.25,-64.03"/>
+</g>
+<!-- module~rki_kernel_timestep_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_node13" class="node">
+<title>module~rki_kernel_timestep_unstr</title>
+<g id="a_module~~rki_barotropic_state_unstr~~UsedByGraph_node13"><a xlink:href="../module/rki_kernel_timestep_unstr.html" xlink:title="rki_kernel_timestep_unstr">
+<polygon fill="#337ab7" stroke="#337ab7" points="892.5,-164.55 743.5,-164.55 743.5,-140.55 892.5,-140.55 892.5,-164.55"/>
+<text text-anchor="middle" x="818" y="-150.15" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_kernel_timestep_unstr</text>
+</a>
+</g>
+</g>
+<!-- module~rki_api_unstr&#45;&gt;module~rki_kernel_timestep_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge39" class="edge">
+<title>module~rki_api_unstr&#45;&gt;module~rki_kernel_timestep_unstr</title>
+<path fill="none" stroke="#00ff38" stroke-dasharray="5,2" d="M987,-112.55C964.43,-112.52 910.28,-126.36 869.52,-137.77"/>
+<polygon fill="#00ff38" stroke="#00ff38" points="868.4,-134.45 859.73,-140.53 870.31,-141.18 868.4,-134.45"/>
+</g>
+<!-- module~rki_output_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_node25" class="node">
+<title>module~rki_output_unstr</title>
+<g id="a_module~~rki_barotropic_state_unstr~~UsedByGraph_node25"><a xlink:href="../module/rki_output_unstr.html" xlink:title="rki_output_unstr">
+<polygon fill="#337ab7" stroke="#337ab7" points="867,-42.55 769,-42.55 769,-18.55 867,-18.55 867,-42.55"/>
+<text text-anchor="middle" x="818" y="-28.15" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_output_unstr</text>
+</a>
+</g>
+</g>
+<!-- module~rki_api_unstr&#45;&gt;module~rki_output_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge61" class="edge">
+<title>module~rki_api_unstr&#45;&gt;module~rki_output_unstr</title>
+<path fill="none" stroke="#e200ff" stroke-dasharray="5,2" d="M1071.99,-112.57C1048.04,-112.58 1016.75,-112.58 989,-112.55"/>
+<path fill="none" stroke="#e200ff" stroke-dasharray="5,2" d="M987,-112.55C941.22,-112.49 945.46,-70.96 904,-51.55 895.61,-47.62 886.4,-44.37 877.23,-41.7"/>
+<polygon fill="#e200ff" stroke="#e200ff" points="877.9,-38.25 867.34,-39.02 876.08,-45.01 877.9,-38.25"/>
+</g>
+<!-- module~rki_restart_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_node26" class="node">
+<title>module~rki_restart_unstr</title>
+<g id="a_module~~rki_barotropic_state_unstr~~UsedByGraph_node26"><a xlink:href="../module/rki_restart_unstr.html" xlink:title="rki_restart_unstr">
+<polygon fill="#337ab7" stroke="#337ab7" points="441.5,-206.55 343.5,-206.55 343.5,-182.55 441.5,-182.55 441.5,-206.55"/>
+<text text-anchor="middle" x="392.5" y="-192.15" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_restart_unstr</text>
+</a>
+</g>
+</g>
+<!-- module~rki_api_unstr&#45;&gt;module~rki_restart_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge63" class="edge">
+<title>module~rki_api_unstr&#45;&gt;module~rki_restart_unstr</title>
+<path fill="none" stroke="#ff00e2" stroke-dasharray="5,2" d="M987,-112.55C788.99,-112.31 557.3,-157.77 451.5,-181.09"/>
+<polygon fill="#ff00e2" stroke="#ff00e2" points="450.66,-177.69 441.66,-183.28 452.18,-184.52 450.66,-177.69"/>
+</g>
+<!-- module~rki_solver_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_node29" class="node">
+<title>module~rki_solver_unstr</title>
+<g id="a_module~~rki_barotropic_state_unstr~~UsedByGraph_node29"><a xlink:href="../module/rki_solver_unstr.html" xlink:title="rki_solver_unstr">
+<polygon fill="#337ab7" stroke="#337ab7" points="1036,-204.55 940,-204.55 940,-180.55 1036,-180.55 1036,-204.55"/>
+<text text-anchor="middle" x="988" y="-190.15" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_solver_unstr</text>
+</a>
+</g>
+</g>
+<!-- module~rki_api_unstr&#45;&gt;module~rki_solver_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge67" class="edge">
+<title>module~rki_api_unstr&#45;&gt;module~rki_solver_unstr</title>
+<path fill="none" stroke="#ff0038" stroke-dasharray="5,2" d="M1092.47,-124.7C1072.02,-138.11 1038.92,-159.81 1015.68,-175.05"/>
+<polygon fill="#ff0038" stroke="#ff0038" points="1013.75,-172.13 1007.3,-180.54 1017.59,-177.99 1013.75,-172.13"/>
+</g>
+<!-- module~rki_driver -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_node4" class="node">
+<title>module~rki_driver</title>
+<g id="a_module~~rki_barotropic_state_unstr~~UsedByGraph_node4"><a xlink:href="../module/rki_driver.html" xlink:title="rki_driver">
+<polygon fill="#337ab7" stroke="#337ab7" points="1143.5,-533.55 1080.5,-533.55 1080.5,-509.55 1143.5,-509.55 1143.5,-533.55"/>
+<text text-anchor="middle" x="1112" y="-519.15" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_driver</text>
+</a>
+</g>
+</g>
+<!-- module~rki_driver&#45;&gt;module~rki_state_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge3" class="edge">
+<title>module~rki_driver&#45;&gt;module~rki_state_unstr</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M1107.15,-533.64C1087.45,-593 991.98,-850.55 819,-850.55 819,-850.55 819,-850.55 602,-850.55 472.39,-850.55 415.27,-908.53 311,-831.55 249.79,-786.35 235.41,-688.14 232.04,-643.92"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="235.51,-643.43 231.38,-633.67 228.53,-643.87 235.51,-643.43"/>
+</g>
+<!-- module~rki_driver&#45;&gt;module~rki_solver_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge68" class="edge">
+<title>module~rki_driver&#45;&gt;module~rki_solver_unstr</title>
+<path fill="none" stroke="#ff0038" stroke-dasharray="5,2" d="M1106.51,-509.45C1088.39,-460.58 1020.45,-277.37 997.01,-214.15"/>
+<polygon fill="#ff0038" stroke="#ff0038" points="1000.29,-212.91 993.53,-204.75 993.72,-215.35 1000.29,-212.91"/>
+</g>
+<!-- module~rki_gauges_unstr&#45;&gt;module~rki_state_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge4" class="edge">
+<title>module~rki_gauges_unstr&#45;&gt;module~rki_state_unstr</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M767.66,-60.53C715.07,-48.13 635.19,-30.59 604,-30.55"/>
+</g>
+<!-- module~rki_handle&#45;&gt;module~rki_state_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge5" class="edge">
+<title>module~rki_handle&#45;&gt;module~rki_state_unstr</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M968.81,-38.49C952.59,-28.51 927.79,-15.1 904,-9.55 829.56,7.84 808.19,-3.34 732,-9.55 674.54,-14.23 661.65,-30.63 604,-30.55"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M602,-30.55C457.91,-28.65 397.68,-58.42 311,-173.55 259.26,-242.27 237.66,-518.23 232.36,-599.14"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="228.86,-599.02 231.72,-609.22 235.84,-599.46 228.86,-599.02"/>
+</g>
+<!-- module~rki_handle&#45;&gt;module~rki_gauges_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge30" class="edge">
+<title>module~rki_handle&#45;&gt;module~rki_gauges_unstr</title>
+<path fill="none" stroke="#ff7100" stroke-dasharray="5,2" d="M953.81,-54.89C932.71,-57.65 904.77,-61.31 879.8,-64.58"/>
+<polygon fill="#ff7100" stroke="#ff7100" points="879.13,-61.14 869.67,-65.91 880.04,-68.08 879.13,-61.14"/>
+</g>
+<!-- module~rki_handle&#45;&gt;module~rki_output_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge62" class="edge">
+<title>module~rki_handle&#45;&gt;module~rki_output_unstr</title>
+<path fill="none" stroke="#e200ff" stroke-dasharray="5,2" d="M953.81,-46.59C931.94,-43.99 902.72,-40.51 877.08,-37.46"/>
+<polygon fill="#e200ff" stroke="#e200ff" points="877.42,-33.98 867.08,-36.27 876.59,-40.93 877.42,-33.98"/>
+</g>
+<!-- module~rki_kernel_extrapolate_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_node7" class="node">
+<title>module~rki_kernel_extrapolate_unstr</title>
+<g id="a_module~~rki_barotropic_state_unstr~~UsedByGraph_node7"><a xlink:href="../module/rki_kernel_extrapolate_unstr.html" xlink:title="rki_kernel_extrapolate_unstr">
+<polygon fill="#337ab7" stroke="#337ab7" points="474,-822.55 311,-822.55 311,-798.55 474,-798.55 474,-822.55"/>
+<text text-anchor="middle" x="392.5" y="-808.15" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_kernel_extrapolate_unstr</text>
+</a>
+</g>
+</g>
+<!-- module~rki_kernel_extrapolate_unstr&#45;&gt;module~rki_state_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge6" class="edge">
+<title>module~rki_kernel_extrapolate_unstr&#45;&gt;module~rki_state_unstr</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M325,-798.4C319.98,-795.96 315.23,-793.04 311,-789.55 264.74,-751.31 243.49,-680.09 235.31,-643.9"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="238.68,-642.92 233.18,-633.87 231.84,-644.38 238.68,-642.92"/>
+</g>
+<!-- module~rki_kernel_flux_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_node8" class="node">
+<title>module~rki_kernel_flux_unstr</title>
+<g id="a_module~~rki_barotropic_state_unstr~~UsedByGraph_node8"><a xlink:href="../module/rki_kernel_flux_unstr.html" xlink:title="rki_kernel_flux_unstr">
+<polygon fill="#337ab7" stroke="#337ab7" points="453.5,-780.55 331.5,-780.55 331.5,-756.55 453.5,-756.55 453.5,-780.55"/>
+<text text-anchor="middle" x="392.5" y="-766.15" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_kernel_flux_unstr</text>
+</a>
+</g>
+</g>
+<!-- module~rki_kernel_flux_unstr&#45;&gt;module~rki_state_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge7" class="edge">
+<title>module~rki_kernel_flux_unstr&#45;&gt;module~rki_state_unstr</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M331.17,-758.22C323.99,-755.47 317.07,-751.97 311,-747.55 274.27,-720.76 250.31,-671.5 238.87,-643.16"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="242.09,-641.8 235.22,-633.75 235.57,-644.33 242.09,-641.8"/>
+</g>
+<!-- module~rki_kernel_friction_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_node9" class="node">
+<title>module~rki_kernel_friction_unstr</title>
+<g id="a_module~~rki_barotropic_state_unstr~~UsedByGraph_node9"><a xlink:href="../module/rki_kernel_friction_unstr.html" xlink:title="rki_kernel_friction_unstr">
+<polygon fill="#337ab7" stroke="#337ab7" points="462.5,-738.55 322.5,-738.55 322.5,-714.55 462.5,-714.55 462.5,-738.55"/>
+<text text-anchor="middle" x="392.5" y="-724.15" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_kernel_friction_unstr</text>
+</a>
+</g>
+</g>
+<!-- module~rki_kernel_friction_unstr&#45;&gt;module~rki_state_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge8" class="edge">
+<title>module~rki_kernel_friction_unstr&#45;&gt;module~rki_state_unstr</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M330.26,-714.45C323.54,-712 316.97,-709.07 311,-705.55 283.47,-689.32 259.33,-660.93 244.95,-641.7"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="247.77,-639.61 239.06,-633.58 242.1,-643.73 247.77,-639.61"/>
+</g>
+<!-- module~rki_kernel_fused_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_node10" class="node">
+<title>module~rki_kernel_fused_unstr</title>
+<g id="a_module~~rki_barotropic_state_unstr~~UsedByGraph_node10"><a xlink:href="../module/rki_kernel_fused_unstr.html" xlink:title="rki_kernel_fused_unstr">
+<polygon fill="#337ab7" stroke="#337ab7" points="458.5,-696.55 326.5,-696.55 326.5,-672.55 458.5,-672.55 458.5,-696.55"/>
+<text text-anchor="middle" x="392.5" y="-682.15" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_kernel_fused_unstr</text>
+</a>
+</g>
+</g>
+<!-- module~rki_kernel_fused_unstr&#45;&gt;module~rki_state_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge9" class="edge">
+<title>module~rki_kernel_fused_unstr&#45;&gt;module~rki_state_unstr</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M338.13,-672.46C328.96,-669.86 319.62,-666.88 311,-663.55 293.31,-656.7 274.49,-646.95 259.55,-638.57"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="261.21,-635.49 250.79,-633.57 257.73,-641.57 261.21,-635.49"/>
+</g>
+<!-- module~rki_kernel_protect_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_node11" class="node">
+<title>module~rki_kernel_protect_unstr</title>
+<g id="a_module~~rki_barotropic_state_unstr~~UsedByGraph_node11"><a xlink:href="../module/rki_kernel_protect_unstr.html" xlink:title="rki_kernel_protect_unstr">
+<polygon fill="#337ab7" stroke="#337ab7" points="462.5,-654.55 322.5,-654.55 322.5,-630.55 462.5,-630.55 462.5,-654.55"/>
+<text text-anchor="middle" x="392.5" y="-640.15" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_kernel_protect_unstr</text>
+</a>
+</g>
+</g>
+<!-- module~rki_kernel_protect_unstr&#45;&gt;module~rki_state_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge10" class="edge">
+<title>module~rki_kernel_protect_unstr&#45;&gt;module~rki_state_unstr</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M322.04,-633.46C309.72,-631.84 297.05,-630.19 285.23,-628.64"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="285.46,-625.14 275.09,-627.31 284.55,-632.08 285.46,-625.14"/>
+</g>
+<!-- module~rki_kernel_sponge_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_node12" class="node">
+<title>module~rki_kernel_sponge_unstr</title>
+<g id="a_module~~rki_barotropic_state_unstr~~UsedByGraph_node12"><a xlink:href="../module/rki_kernel_sponge_unstr.html" xlink:title="rki_kernel_sponge_unstr">
+<polygon fill="#337ab7" stroke="#337ab7" points="463.5,-612.55 321.5,-612.55 321.5,-588.55 463.5,-588.55 463.5,-612.55"/>
+<text text-anchor="middle" x="392.5" y="-598.15" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_kernel_sponge_unstr</text>
+</a>
+</g>
+</g>
+<!-- module~rki_kernel_sponge_unstr&#45;&gt;module~rki_state_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge11" class="edge">
+<title>module~rki_kernel_sponge_unstr&#45;&gt;module~rki_state_unstr</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M321.1,-609.76C308.99,-611.34 296.56,-612.97 284.97,-614.48"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="284.48,-611.02 275.01,-615.79 285.38,-617.96 284.48,-611.02"/>
+</g>
+<!-- module~rki_kernel_timestep_unstr&#45;&gt;module~rki_state_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge12" class="edge">
+<title>module~rki_kernel_timestep_unstr&#45;&gt;module~rki_state_unstr</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M743.01,-163.88C701.79,-170.83 649.7,-180.68 604,-192.55"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M602,-192.55C561.59,-203.04 546.35,-191.01 510,-211.55 443.59,-249.05 457.49,-296.05 393.5,-337.55"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M391.5,-337.55C294.16,-400.66 249.83,-544.61 236,-599.62"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="232.59,-598.84 233.64,-609.38 239.4,-600.49 232.59,-598.84"/>
+</g>
+<!-- module~rki_kernel_update_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_node14" class="node">
+<title>module~rki_kernel_update_unstr</title>
+<g id="a_module~~rki_barotropic_state_unstr~~UsedByGraph_node14"><a xlink:href="../module/rki_kernel_update_unstr.html" xlink:title="rki_kernel_update_unstr">
+<polygon fill="#337ab7" stroke="#337ab7" points="888,-612.55 748,-612.55 748,-588.55 888,-588.55 888,-612.55"/>
+<text text-anchor="middle" x="818" y="-598.15" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_kernel_update_unstr</text>
+</a>
+</g>
+</g>
+<!-- module~rki_kernel_update_unstr&#45;&gt;module~rki_state_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge13" class="edge">
+<title>module~rki_kernel_update_unstr&#45;&gt;module~rki_state_unstr</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M765.49,-612.55C744.12,-616.95 718.99,-621.38 696,-623.55 613.7,-631.3 584.7,-658.95 510,-623.55 487.17,-612.73 495.43,-592.93 474,-579.55 442.82,-560.07 429.95,-555.74 393.5,-560.55"/>
+</g>
+<!-- module~rki_ml_dynamics_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_node15" class="node">
+<title>module~rki_ml_dynamics_unstr</title>
+<g id="a_module~~rki_barotropic_state_unstr~~UsedByGraph_node15"><a xlink:href="../module/rki_ml_dynamics_unstr.html" xlink:title="rki_ml_dynamics_unstr">
+<polygon fill="#337ab7" stroke="#337ab7" points="669.5,-572.55 536.5,-572.55 536.5,-548.55 669.5,-548.55 669.5,-572.55"/>
+<text text-anchor="middle" x="603" y="-558.15" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_dynamics_unstr</text>
+</a>
+</g>
+</g>
+<!-- module~rki_ml_dynamics_unstr&#45;&gt;module~rki_state_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge14" class="edge">
+<title>module~rki_ml_dynamics_unstr&#45;&gt;module~rki_state_unstr</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M536.45,-556.17C495.23,-554.5 441.05,-554.28 393.5,-560.55"/>
+</g>
+<!-- module~rki_ml_eos_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_node16" class="node">
+<title>module~rki_ml_eos_unstr</title>
+<g id="a_module~~rki_barotropic_state_unstr~~UsedByGraph_node16"><a xlink:href="../module/rki_ml_eos_unstr.html" xlink:title="rki_ml_eos_unstr">
+<polygon fill="#337ab7" stroke="#337ab7" points="443,-490.55 342,-490.55 342,-466.55 443,-466.55 443,-490.55"/>
+<text text-anchor="middle" x="392.5" y="-476.15" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_eos_unstr</text>
+</a>
+</g>
+</g>
+<!-- module~rki_ml_eos_unstr&#45;&gt;module~rki_state_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge15" class="edge">
+<title>module~rki_ml_eos_unstr&#45;&gt;module~rki_state_unstr</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M376.76,-490.61C360.47,-504.03 333.55,-526.48 311,-546.55 290.1,-565.15 266.83,-587.11 250.8,-602.44"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="248.35,-599.94 243.56,-609.39 253.2,-604.99 248.35,-599.94"/>
+</g>
+<!-- module~rki_ml_friction_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_node17" class="node">
+<title>module~rki_ml_friction_unstr</title>
+<g id="a_module~~rki_barotropic_state_unstr~~UsedByGraph_node17"><a xlink:href="../module/rki_ml_friction_unstr.html" xlink:title="rki_ml_friction_unstr">
+<polygon fill="#337ab7" stroke="#337ab7" points="663,-412.55 543,-412.55 543,-388.55 663,-388.55 663,-412.55"/>
+<text text-anchor="middle" x="603" y="-398.15" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_friction_unstr</text>
+</a>
+</g>
+</g>
+<!-- module~rki_ml_friction_unstr&#45;&gt;module~rki_state_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge16" class="edge">
+<title>module~rki_ml_friction_unstr&#45;&gt;module~rki_state_unstr</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M544.3,-388.51C532.87,-385.8 521,-382.77 510,-379.55 457.18,-364.06 439.68,-307.6 393.5,-337.55"/>
+</g>
+<!-- module~rki_ml_horizontal_viscosity_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_node18" class="node">
+<title>module~rki_ml_horizontal_viscosity_unstr</title>
+<g id="a_module~~rki_barotropic_state_unstr~~UsedByGraph_node18"><a xlink:href="../module/rki_ml_horizontal_viscosity_unstr.html" xlink:title="rki_ml_horizontal_viscosity_unstr">
+<polygon fill="#337ab7" stroke="#337ab7" points="696,-370.55 510,-370.55 510,-346.55 696,-346.55 696,-370.55"/>
+<text text-anchor="middle" x="603" y="-356.15" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_horizontal_viscosity_unstr</text>
+</a>
+</g>
+</g>
+<!-- module~rki_ml_horizontal_viscosity_unstr&#45;&gt;module~rki_state_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge17" class="edge">
+<title>module~rki_ml_horizontal_viscosity_unstr&#45;&gt;module~rki_state_unstr</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M552.2,-346.49C498.98,-334.82 418.84,-321.12 393.5,-337.55"/>
+</g>
+<!-- module~rki_ml_keps_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_node19" class="node">
+<title>module~rki_ml_keps_unstr</title>
+<g id="a_module~~rki_barotropic_state_unstr~~UsedByGraph_node19"><a xlink:href="../module/rki_ml_keps_unstr.html" xlink:title="rki_ml_keps_unstr">
+<polygon fill="#337ab7" stroke="#337ab7" points="656.5,-328.55 549.5,-328.55 549.5,-304.55 656.5,-304.55 656.5,-328.55"/>
+<text text-anchor="middle" x="603" y="-314.15" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_keps_unstr</text>
+</a>
+</g>
+</g>
+<!-- module~rki_ml_keps_unstr&#45;&gt;module~rki_state_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge18" class="edge">
+<title>module~rki_ml_keps_unstr&#45;&gt;module~rki_state_unstr</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M549.25,-309.2C504.28,-305.71 439.75,-307.56 393.5,-337.55"/>
+</g>
+<!-- module~rki_ml_kpp_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_node20" class="node">
+<title>module~rki_ml_kpp_unstr</title>
+<g id="a_module~~rki_barotropic_state_unstr~~UsedByGraph_node20"><a xlink:href="../module/rki_ml_kpp_unstr.html" xlink:title="rki_ml_kpp_unstr">
+<polygon fill="#337ab7" stroke="#337ab7" points="654,-286.55 552,-286.55 552,-262.55 654,-262.55 654,-286.55"/>
+<text text-anchor="middle" x="603" y="-272.15" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_kpp_unstr</text>
+</a>
+</g>
+</g>
+<!-- module~rki_ml_kpp_unstr&#45;&gt;module~rki_state_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge19" class="edge">
+<title>module~rki_ml_kpp_unstr&#45;&gt;module~rki_state_unstr</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M551.91,-281.57C507.46,-289.61 442.2,-305.97 393.5,-337.55"/>
+</g>
+<!-- module~rki_ml_pressure_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_node21" class="node">
+<title>module~rki_ml_pressure_unstr</title>
+<g id="a_module~~rki_barotropic_state_unstr~~UsedByGraph_node21"><a xlink:href="../module/rki_ml_pressure_unstr.html" xlink:title="rki_ml_pressure_unstr">
+<polygon fill="#337ab7" stroke="#337ab7" points="666.5,-530.55 539.5,-530.55 539.5,-506.55 666.5,-506.55 666.5,-530.55"/>
+<text text-anchor="middle" x="603" y="-516.15" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_pressure_unstr</text>
+</a>
+</g>
+</g>
+<!-- module~rki_ml_pressure_unstr&#45;&gt;module~rki_state_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge20" class="edge">
+<title>module~rki_ml_pressure_unstr&#45;&gt;module~rki_state_unstr</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M546.44,-530.62C495.06,-541.63 422.42,-556.73 393.5,-560.55"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M391.5,-560.55C355.05,-565.35 345.44,-566.68 311,-579.55 293.23,-586.18 274.4,-595.92 259.48,-604.35"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="257.65,-601.36 250.74,-609.39 261.15,-607.43 257.65,-601.36"/>
+</g>
+<!-- module~rki_ml_pressure_unstr&#45;&gt;module~rki_ml_eos_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge44" class="edge">
+<title>module~rki_ml_pressure_unstr&#45;&gt;module~rki_ml_eos_unstr</title>
+<path fill="none" stroke="#00ffe2" stroke-dasharray="5,2" d="M539.44,-506.54C512.11,-501.3 480.19,-495.18 453.19,-490"/>
+<polygon fill="#00ffe2" stroke="#00ffe2" points="453.58,-486.51 443.1,-488.06 452.27,-493.38 453.58,-486.51"/>
+</g>
+<!-- module~rki_ml_tracers_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_node22" class="node">
+<title>module~rki_ml_tracers_unstr</title>
+<g id="a_module~~rki_barotropic_state_unstr~~UsedByGraph_node22"><a xlink:href="../module/rki_ml_tracers_unstr.html" xlink:title="rki_ml_tracers_unstr">
+<polygon fill="#337ab7" stroke="#337ab7" points="663,-244.55 543,-244.55 543,-220.55 663,-220.55 663,-244.55"/>
+<text text-anchor="middle" x="603" y="-230.15" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_tracers_unstr</text>
+</a>
+</g>
+</g>
+<!-- module~rki_ml_tracers_unstr&#45;&gt;module~rki_state_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge21" class="edge">
+<title>module~rki_ml_tracers_unstr&#45;&gt;module~rki_state_unstr</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M542.94,-242.34C531.73,-245.22 520.3,-248.89 510,-253.55 451.83,-279.84 447.06,-302.82 393.5,-337.55"/>
+</g>
+<!-- module~rki_ml_truncate_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_node23" class="node">
+<title>module~rki_ml_truncate_unstr</title>
+<g id="a_module~~rki_barotropic_state_unstr~~UsedByGraph_node23"><a xlink:href="../module/rki_ml_truncate_unstr.html" xlink:title="rki_ml_truncate_unstr">
+<polygon fill="#337ab7" stroke="#337ab7" points="881.5,-286.55 754.5,-286.55 754.5,-262.55 881.5,-262.55 881.5,-286.55"/>
+<text text-anchor="middle" x="818" y="-272.15" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_truncate_unstr</text>
+</a>
+</g>
+</g>
+<!-- module~rki_ml_truncate_unstr&#45;&gt;module~rki_state_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge22" class="edge">
+<title>module~rki_ml_truncate_unstr&#45;&gt;module~rki_state_unstr</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M754.36,-263.84C746.52,-261.15 738.86,-257.77 732,-253.55 711.07,-240.65 717.18,-224.04 696,-211.55 660.04,-190.33 644.41,-182.05 604,-192.55"/>
+</g>
+<!-- module~rki_ml_vertical_viscosity_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_node24" class="node">
+<title>module~rki_ml_vertical_viscosity_unstr</title>
+<g id="a_module~~rki_barotropic_state_unstr~~UsedByGraph_node24"><a xlink:href="../module/rki_ml_vertical_viscosity_unstr.html" xlink:title="rki_ml_vertical_viscosity_unstr">
+<polygon fill="#337ab7" stroke="#337ab7" points="904,-244.55 732,-244.55 732,-220.55 904,-220.55 904,-244.55"/>
+<text text-anchor="middle" x="818" y="-230.15" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_vertical_viscosity_unstr</text>
+</a>
+</g>
+</g>
+<!-- module~rki_ml_vertical_viscosity_unstr&#45;&gt;module~rki_state_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge23" class="edge">
+<title>module~rki_ml_vertical_viscosity_unstr&#45;&gt;module~rki_state_unstr</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M775.64,-220.46C723.2,-205.88 635.77,-184.29 604,-192.55"/>
+</g>
+<!-- module~rki_output_unstr&#45;&gt;module~rki_state_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge24" class="edge">
+<title>module~rki_output_unstr&#45;&gt;module~rki_state_unstr</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M768.78,-30.59C725.61,-30.62 660.58,-30.63 604,-30.55"/>
+</g>
+<!-- module~rki_restart_unstr&#45;&gt;module~rki_state_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge25" class="edge">
+<title>module~rki_restart_unstr&#45;&gt;module~rki_state_unstr</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M382.19,-206.67C365.65,-228.77 331,-277.55 311,-323.55 268.21,-421.97 243.4,-548.86 234.63,-599.37"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="231.14,-599.03 232.92,-609.48 238.04,-600.21 231.14,-599.03"/>
+</g>
+<!-- module~rki_si_unstr_step -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_node27" class="node">
+<title>module~rki_si_unstr_step</title>
+<g id="a_module~~rki_barotropic_state_unstr~~UsedByGraph_node27"><a xlink:href="../module/rki_si_unstr_step.html" xlink:title="rki_si_unstr_step">
+<polygon fill="#337ab7" stroke="#337ab7" points="653,-614.55 553,-614.55 553,-590.55 653,-590.55 653,-614.55"/>
+<text text-anchor="middle" x="603" y="-600.15" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_si_unstr_step</text>
+</a>
+</g>
+</g>
+<!-- module~rki_si_unstr_step&#45;&gt;module~rki_state_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge26" class="edge">
+<title>module~rki_si_unstr_step&#45;&gt;module~rki_state_unstr</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M552.96,-591.83C493.85,-579.05 401.42,-559.5 393.5,-560.55"/>
+</g>
+<!-- module~rki_si_unstr_step_ml -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_node28" class="node">
+<title>module~rki_si_unstr_step_ml</title>
+<g id="a_module~~rki_barotropic_state_unstr~~UsedByGraph_node28"><a xlink:href="../module/rki_si_unstr_step_ml.html" xlink:title="rki_si_unstr_step_ml">
+<polygon fill="#337ab7" stroke="#337ab7" points="877,-391.55 759,-391.55 759,-367.55 877,-367.55 877,-391.55"/>
+<text text-anchor="middle" x="818" y="-377.15" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_si_unstr_step_ml</text>
+</a>
+</g>
+</g>
+<!-- module~rki_si_unstr_step_ml&#45;&gt;module~rki_state_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge27" class="edge">
+<title>module~rki_si_unstr_step_ml&#45;&gt;module~rki_state_unstr</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M789.43,-391.63C749.48,-408.17 672.72,-436.3 604,-440.55"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M602,-440.55C560.33,-443.12 548.22,-438.35 510,-421.55 451.56,-395.86 447.06,-302.82 393.5,-337.55"/>
+</g>
+<!-- module~rki_si_unstr_step_ml&#45;&gt;module~rki_ml_dynamics_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge42" class="edge">
+<title>module~rki_si_unstr_step_ml&#45;&gt;module~rki_ml_dynamics_unstr</title>
+<path fill="none" stroke="#00ffa9" stroke-dasharray="5,2" d="M809.35,-391.75C787.87,-425.65 726.56,-519.79 696,-539.55 690.76,-542.93 685.05,-545.77 679.12,-548.16"/>
+<polygon fill="#00ffa9" stroke="#00ffa9" points="677.89,-544.88 669.65,-551.55 680.25,-551.47 677.89,-544.88"/>
+</g>
+<!-- module~rki_si_unstr_step_ml&#45;&gt;module~rki_ml_eos_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge45" class="edge">
+<title>module~rki_si_unstr_step_ml&#45;&gt;module~rki_ml_eos_unstr</title>
+<path fill="none" stroke="#00ffe2" stroke-dasharray="5,2" d="M602,-440.55C550.43,-443.73 492.7,-454.85 451.09,-464.25"/>
+<polygon fill="#00ffe2" stroke="#00ffe2" points="450.1,-460.88 441.14,-466.53 451.66,-467.71 450.1,-460.88"/>
+</g>
+<!-- module~rki_si_unstr_step_ml&#45;&gt;module~rki_ml_friction_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge47" class="edge">
+<title>module~rki_si_unstr_step_ml&#45;&gt;module~rki_ml_friction_unstr</title>
+<path fill="none" stroke="#00e2ff" stroke-dasharray="5,2" d="M758.8,-385.28C732.36,-387.89 700.88,-390.99 673.24,-393.72"/>
+<polygon fill="#00e2ff" stroke="#00e2ff" points="672.85,-390.24 663.24,-394.7 673.54,-397.21 672.85,-390.24"/>
+</g>
+<!-- module~rki_si_unstr_step_ml&#45;&gt;module~rki_ml_horizontal_viscosity_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge49" class="edge">
+<title>module~rki_si_unstr_step_ml&#45;&gt;module~rki_ml_horizontal_viscosity_unstr</title>
+<path fill="none" stroke="#00a9ff" stroke-dasharray="5,2" d="M758.8,-373.81C742.48,-372.2 724.24,-370.4 706.17,-368.62"/>
+<polygon fill="#00a9ff" stroke="#00a9ff" points="706.46,-365.13 696.17,-367.63 705.78,-372.1 706.46,-365.13"/>
+</g>
+<!-- module~rki_si_unstr_step_ml&#45;&gt;module~rki_ml_keps_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge51" class="edge">
+<title>module~rki_si_unstr_step_ml&#45;&gt;module~rki_ml_keps_unstr</title>
+<path fill="none" stroke="#0071ff" stroke-dasharray="5,2" d="M785.46,-367.53C761.22,-358.56 726.78,-346.37 696,-337.55 686.55,-334.84 676.48,-332.24 666.59,-329.86"/>
+<polygon fill="#0071ff" stroke="#0071ff" points="667.33,-326.44 656.8,-327.55 665.73,-333.25 667.33,-326.44"/>
+</g>
+<!-- module~rki_si_unstr_step_ml&#45;&gt;module~rki_ml_kpp_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge53" class="edge">
+<title>module~rki_si_unstr_step_ml&#45;&gt;module~rki_ml_kpp_unstr</title>
+<path fill="none" stroke="#0038ff" stroke-dasharray="5,2" d="M792.55,-367.53C775,-358.42 751.16,-345.03 732,-330.55 714.2,-317.09 715.61,-306.2 696,-295.55 686.19,-290.21 675.09,-286.23 664.07,-283.26"/>
+<polygon fill="#0038ff" stroke="#0038ff" points="664.56,-279.78 654.02,-280.81 662.9,-286.58 664.56,-279.78"/>
+</g>
+<!-- module~rki_si_unstr_step_ml&#45;&gt;module~rki_ml_pressure_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge55" class="edge">
+<title>module~rki_si_unstr_step_ml&#45;&gt;module~rki_ml_pressure_unstr</title>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M798.47,-391.64C760.78,-416.23 675.06,-472.17 631.1,-500.86"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="629.1,-497.99 622.64,-506.38 632.93,-503.85 629.1,-497.99"/>
+</g>
+<!-- module~rki_si_unstr_step_ml&#45;&gt;module~rki_ml_tracers_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge57" class="edge">
+<title>module~rki_si_unstr_step_ml&#45;&gt;module~rki_ml_tracers_unstr</title>
+<path fill="none" stroke="#3800ff" stroke-dasharray="5,2" d="M786.38,-367.48C768.66,-359.24 746.97,-346.86 732,-330.55 706.45,-302.71 725.4,-277.27 696,-253.55 689.14,-248.01 681.11,-243.88 672.7,-240.8"/>
+<polygon fill="#3800ff" stroke="#3800ff" points="673.67,-237.44 663.08,-237.75 671.55,-244.11 673.67,-237.44"/>
+</g>
+<!-- module~rki_si_unstr_step_ml&#45;&gt;module~rki_si_unstr_step -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge64" class="edge">
+<title>module~rki_si_unstr_step_ml&#45;&gt;module~rki_si_unstr_step</title>
+<path fill="none" stroke="#ff00aa" stroke-dasharray="5,2" d="M807.62,-391.89C791.17,-413.85 756.53,-461.43 732,-504.55 713.32,-537.38 725.4,-557.82 696,-581.55 686.54,-589.18 674.83,-594.15 662.97,-597.37"/>
+<polygon fill="#ff00aa" stroke="#ff00aa" points="661.97,-594.01 653.02,-599.67 663.55,-600.82 661.97,-594.01"/>
+</g>
+<!-- module~rki_solver_unstr&#45;&gt;module~rki_state_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge28" class="edge">
+<title>module~rki_solver_unstr&#45;&gt;module~rki_state_unstr</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M939.76,-189.65C906,-188.28 859.56,-187.84 819,-192.55"/>
+</g>
+<!-- module~rki_solver_unstr&#45;&gt;module~rki_kernel_extrapolate_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge33" class="edge">
+<title>module~rki_solver_unstr&#45;&gt;module~rki_kernel_extrapolate_unstr</title>
+<path fill="none" stroke="#ffe200" stroke-dasharray="5,2" d="M602,-726.55C538.76,-731.19 533.42,-767.43 474,-789.55 468.14,-791.73 461.95,-793.77 455.73,-795.66"/>
+<polygon fill="#ffe200" stroke="#ffe200" points="454.57,-792.36 445.94,-798.51 456.52,-799.08 454.57,-792.36"/>
+</g>
+<!-- module~rki_solver_unstr&#45;&gt;module~rki_kernel_flux_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge34" class="edge">
+<title>module~rki_solver_unstr&#45;&gt;module~rki_kernel_flux_unstr</title>
+<path fill="none" stroke="#e2ff00" stroke-dasharray="5,2" d="M602,-726.55C574.12,-728.59 506.29,-742.91 455.51,-754.27"/>
+<polygon fill="#e2ff00" stroke="#e2ff00" points="454.59,-750.89 445.6,-756.49 456.13,-757.72 454.59,-750.89"/>
+</g>
+<!-- module~rki_solver_unstr&#45;&gt;module~rki_kernel_friction_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge35" class="edge">
+<title>module~rki_solver_unstr&#45;&gt;module~rki_kernel_friction_unstr</title>
+<path fill="none" stroke="#aaff00" stroke-dasharray="5,2" d="M602,-726.55C559.42,-729.67 511.81,-729.92 472.85,-729.27"/>
+<polygon fill="#aaff00" stroke="#aaff00" points="472.68,-725.77 462.62,-729.08 472.55,-732.77 472.68,-725.77"/>
+</g>
+<!-- module~rki_solver_unstr&#45;&gt;module~rki_kernel_fused_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge36" class="edge">
+<title>module~rki_solver_unstr&#45;&gt;module~rki_kernel_fused_unstr</title>
+<path fill="none" stroke="#71ff00" stroke-dasharray="5,2" d="M602,-726.55C572.83,-728.69 499.9,-712.09 448.55,-699.13"/>
+<polygon fill="#71ff00" stroke="#71ff00" points="449.15,-695.67 438.59,-696.59 447.42,-702.45 449.15,-695.67"/>
+</g>
+<!-- module~rki_solver_unstr&#45;&gt;module~rki_kernel_protect_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge37" class="edge">
+<title>module~rki_solver_unstr&#45;&gt;module~rki_kernel_protect_unstr</title>
+<path fill="none" stroke="#38ff00" stroke-dasharray="5,2" d="M602,-726.55C538.76,-731.19 533.42,-685.66 474,-663.55 468.14,-661.36 461.95,-659.32 455.73,-657.43"/>
+<polygon fill="#38ff00" stroke="#38ff00" points="456.52,-654.01 445.94,-654.58 454.57,-660.74 456.52,-654.01"/>
+</g>
+<!-- module~rki_solver_unstr&#45;&gt;module~rki_kernel_sponge_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge38" class="edge">
+<title>module~rki_solver_unstr&#45;&gt;module~rki_kernel_sponge_unstr</title>
+<path fill="none" stroke="#00ff00" stroke-dasharray="5,2" d="M986.24,-204.88C982.11,-268.21 960.42,-556.25 904,-621.55 811.64,-728.43 745.09,-733.57 604,-726.55"/>
+<path fill="none" stroke="#00ff00" stroke-dasharray="5,2" d="M602,-726.55C528.62,-731.94 539.57,-654.94 474,-621.55 470.06,-619.54 465.9,-617.71 461.65,-616.05"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="462.8,-612.74 452.21,-612.66 460.44,-619.33 462.8,-612.74"/>
+</g>
+<!-- module~rki_solver_unstr&#45;&gt;module~rki_kernel_timestep_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge40" class="edge">
+<title>module~rki_solver_unstr&#45;&gt;module~rki_kernel_timestep_unstr</title>
+<path fill="none" stroke="#00ff38" stroke-dasharray="5,2" d="M939.76,-181.3C920.99,-176.83 899.18,-171.64 879.3,-166.9"/>
+<polygon fill="#00ff38" stroke="#00ff38" points="879.95,-163.46 869.41,-164.55 878.33,-170.27 879.95,-163.46"/>
+</g>
+<!-- module~rki_solver_unstr&#45;&gt;module~rki_kernel_update_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge41" class="edge">
+<title>module~rki_solver_unstr&#45;&gt;module~rki_kernel_update_unstr</title>
+<path fill="none" stroke="#00ff71" stroke-dasharray="5,2" d="M986.78,-204.77C985.43,-251.29 975.55,-420.35 904,-532.55 890.55,-553.63 868.29,-571.09 849.92,-583.04"/>
+<polygon fill="#00ff71" stroke="#00ff71" points="847.9,-580.18 841.28,-588.45 851.61,-586.11 847.9,-580.18"/>
+</g>
+<!-- module~rki_solver_unstr&#45;&gt;module~rki_ml_dynamics_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge43" class="edge">
+<title>module~rki_solver_unstr&#45;&gt;module~rki_ml_dynamics_unstr</title>
+<path fill="none" stroke="#00ffa9" stroke-dasharray="5,2" d="M817,-518.55C776.83,-545.73 723.22,-556.19 679.84,-559.88"/>
+<polygon fill="#00ffa9" stroke="#00ffa9" points="679.33,-556.41 669.62,-560.64 679.85,-563.39 679.33,-556.41"/>
+</g>
+<!-- module~rki_solver_unstr&#45;&gt;module~rki_ml_eos_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge46" class="edge">
+<title>module~rki_solver_unstr&#45;&gt;module~rki_ml_eos_unstr</title>
+<path fill="none" stroke="#00ffe2" stroke-dasharray="5,2" d="M984.97,-204.74C976.07,-254.03 935.54,-439.69 819,-518.55"/>
+<path fill="none" stroke="#00ffe2" stroke-dasharray="5,2" d="M817,-518.55C771.8,-549.13 750.21,-503.93 696,-497.55 612.14,-487.66 514.56,-482.71 453.4,-480.38"/>
+<polygon fill="#00ffe2" stroke="#00ffe2" points="453.29,-476.87 443.17,-480 453.03,-483.87 453.29,-476.87"/>
+</g>
+<!-- module~rki_solver_unstr&#45;&gt;module~rki_ml_friction_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge48" class="edge">
+<title>module~rki_solver_unstr&#45;&gt;module~rki_ml_friction_unstr</title>
+<path fill="none" stroke="#00e2ff" stroke-dasharray="5,2" d="M817,-316.55C776.94,-329.6 769.11,-338.58 732,-358.55 715.69,-367.32 713.23,-372.74 696,-379.55 688.71,-382.42 680.94,-384.96 673.12,-387.18"/>
+<polygon fill="#00e2ff" stroke="#00e2ff" points="671.97,-383.86 663.21,-389.83 673.78,-390.63 671.97,-383.86"/>
+</g>
+<!-- module~rki_solver_unstr&#45;&gt;module~rki_ml_horizontal_viscosity_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge50" class="edge">
+<title>module~rki_solver_unstr&#45;&gt;module~rki_ml_horizontal_viscosity_unstr</title>
+<path fill="none" stroke="#00a9ff" stroke-dasharray="5,2" d="M817,-316.55C779.41,-328.8 736.87,-338.06 699.74,-344.73"/>
+<polygon fill="#00a9ff" stroke="#00a9ff" points="698.67,-341.36 689.42,-346.54 699.88,-348.26 698.67,-341.36"/>
+</g>
+<!-- module~rki_solver_unstr&#45;&gt;module~rki_ml_keps_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge52" class="edge">
+<title>module~rki_solver_unstr&#45;&gt;module~rki_ml_keps_unstr</title>
+<path fill="none" stroke="#0071ff" stroke-dasharray="5,2" d="M817,-316.55C768.34,-332.41 710.04,-331.12 666.74,-326.59"/>
+<polygon fill="#0071ff" stroke="#0071ff" points="666.96,-323.09 656.63,-325.44 666.17,-330.04 666.96,-323.09"/>
+</g>
+<!-- module~rki_solver_unstr&#45;&gt;module~rki_ml_kpp_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge54" class="edge">
+<title>module~rki_solver_unstr&#45;&gt;module~rki_ml_kpp_unstr</title>
+<path fill="none" stroke="#0038ff" stroke-dasharray="5,2" d="M817,-316.55C809.66,-318.94 724.43,-301.06 664.04,-287.88"/>
+<polygon fill="#0038ff" stroke="#0038ff" points="664.73,-284.44 654.21,-285.72 663.23,-291.28 664.73,-284.44"/>
+</g>
+<!-- module~rki_solver_unstr&#45;&gt;module~rki_ml_pressure_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge56" class="edge">
+<title>module~rki_solver_unstr&#45;&gt;module~rki_ml_pressure_unstr</title>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M817,-518.55C794.77,-533.59 729.28,-531.57 676.73,-527.01"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="677.02,-523.52 666.74,-526.1 676.38,-530.49 677.02,-523.52"/>
+</g>
+<!-- module~rki_solver_unstr&#45;&gt;module~rki_ml_tracers_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge58" class="edge">
+<title>module~rki_solver_unstr&#45;&gt;module~rki_ml_tracers_unstr</title>
+<path fill="none" stroke="#3800ff" stroke-dasharray="5,2" d="M980.63,-204.88C968.69,-226.72 940.8,-272.1 904,-295.55 871.18,-316.46 856,-304.49 819,-316.55"/>
+<path fill="none" stroke="#3800ff" stroke-dasharray="5,2" d="M817,-316.55C780,-328.61 765.13,-315.96 732,-295.55 711.07,-282.65 717.05,-266.26 696,-253.55 688.84,-249.22 680.88,-245.79 672.73,-243.06"/>
+<polygon fill="#3800ff" stroke="#3800ff" points="673.68,-239.69 663.1,-240.17 671.67,-246.4 673.68,-239.69"/>
+</g>
+<!-- module~rki_solver_unstr&#45;&gt;module~rki_ml_truncate_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge59" class="edge">
+<title>module~rki_solver_unstr&#45;&gt;module~rki_ml_truncate_unstr</title>
+<path fill="none" stroke="#7100ff" stroke-dasharray="5,2" d="M973.96,-204.7C958.45,-218.51 931.21,-240.8 904,-253.55 899.59,-255.61 894.94,-257.49 890.2,-259.2"/>
+<polygon fill="#7100ff" stroke="#7100ff" points="888.76,-255.99 880.36,-262.46 890.96,-262.63 888.76,-255.99"/>
+</g>
+<!-- module~rki_solver_unstr&#45;&gt;module~rki_ml_vertical_viscosity_unstr -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge60" class="edge">
+<title>module~rki_solver_unstr&#45;&gt;module~rki_ml_vertical_viscosity_unstr</title>
+<path fill="none" stroke="#aa00ff" stroke-dasharray="5,2" d="M939.76,-203.79C920.99,-208.26 899.18,-213.45 879.3,-218.19"/>
+<polygon fill="#aa00ff" stroke="#aa00ff" points="878.33,-214.82 869.41,-220.54 879.95,-221.63 878.33,-214.82"/>
+</g>
+<!-- module~rki_solver_unstr&#45;&gt;module~rki_si_unstr_step -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge65" class="edge">
+<title>module~rki_solver_unstr&#45;&gt;module~rki_si_unstr_step</title>
+<path fill="none" stroke="#ff00aa" stroke-dasharray="5,2" d="M817,-518.55C766.79,-552.52 752.91,-560.63 696,-581.55 685.64,-585.35 674.36,-588.61 663.36,-591.35"/>
+<polygon fill="#ff00aa" stroke="#ff00aa" points="662.3,-588 653.38,-593.71 663.91,-594.81 662.3,-588"/>
+</g>
+<!-- module~rki_solver_unstr&#45;&gt;module~rki_si_unstr_step_ml -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge66" class="edge">
+<title>module~rki_solver_unstr&#45;&gt;module~rki_si_unstr_step_ml</title>
+<path fill="none" stroke="#ff0071" stroke-dasharray="5,2" d="M982.23,-204.62C971.55,-230.42 943.5,-291.77 904,-330.55 890.49,-343.81 872.68,-354.8 856.85,-362.98"/>
+<polygon fill="#ff0071" stroke="#ff0071" points="855.21,-359.89 847.81,-367.47 858.33,-366.16 855.21,-359.89"/>
+</g>
+<!-- module~rki_api -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_node30" class="node">
+<title>module~rki_api</title>
+<g id="a_module~~rki_barotropic_state_unstr~~UsedByGraph_node30"><a xlink:href="../module/rki_api.html" xlink:title="rki_api">
+<polygon fill="#337ab7" stroke="#337ab7" points="1139,-62.55 1085,-62.55 1085,-38.55 1139,-38.55 1139,-62.55"/>
+<text text-anchor="middle" x="1112" y="-48.15" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_api</text>
+</a>
+</g>
+</g>
+<!-- module~rki_api&#45;&gt;module~rki_handle -->
+<g id="module~~rki_barotropic_state_unstr~~UsedByGraph_edge31" class="edge">
+<title>module~rki_api&#45;&gt;module~rki_handle</title>
+<path fill="none" stroke="#ffaa00" stroke-dasharray="5,2" d="M1084.83,-50.55C1069.49,-50.55 1049.74,-50.55 1032.16,-50.55"/>
+<polygon fill="#ffaa00" stroke="#ffaa00" points="1032.11,-47.05 1022.11,-50.55 1032.11,-54.05 1032.11,-47.05"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var panmodulerki_barotropic_state_unstrUsedByGraph = svgPanZoom('#modulerki_barotropic_state_unstrUsedByGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#UsedByGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="UsedByGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="518pt" height="32pt"
+ viewBox="0.00 0.00 517.50 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 513.5,-28 513.5,4 -4,4"/>
+<!-- Module -->
+<g id="node1" class="node">
+<title>Module</title>
+<polygon fill="#337ab7" stroke="#337ab7" points="54,-24 0,-24 0,0 54,0 54,-24"/>
+<text text-anchor="middle" x="27" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Module</text>
+</g>
+<!-- Submodule -->
+<g id="node2" class="node">
+<title>Submodule</title>
+<polygon fill="#5bc0de" stroke="#5bc0de" points="145.5,-24 72.5,-24 72.5,0 145.5,0 145.5,-24"/>
+<text text-anchor="middle" x="109" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Submodule</text>
+</g>
+<!-- Subroutine -->
+<g id="node3" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="234,-24 164,-24 164,0 234,0 234,-24"/>
+<text text-anchor="middle" x="199" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node4" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="310,-24 252,-24 252,0 310,0 310,-24"/>
+<text text-anchor="middle" x="281" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Program -->
+<g id="node5" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="386,-24 328,-24 328,0 386,0 386,-24"/>
+<text text-anchor="middle" x="357" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node6" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="509.5,-24 404.5,-24 404.5,0 509.5,0 509.5,-24"/>
+<text text-anchor="middle" x="457" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a submodule to the (sub)module which it is
+descended from. Dashed arrows point from a module or program unit to 
+modules which it uses.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+            </li>
+        </ul>
+      </div>
+    </div>
+
+      <br>
+
+
+        <section>
+          <h2>Variables</h2>
+            <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Visibility</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+<th></th><th scope="col">Initial</th>        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-edges_per_tri"></span>
+              integer,
+            </td>
+              <td>private,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>EDGES_PER_TRI</strong></td>
+<td> =</td>
+                <td>3</td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+        </section>
+        <br>
+
+
+
+
+        <section>
+          <h2>Derived Types</h2>
+              <div class="card">
+    <div class="card-header codesum">
+      <span class="anchor" id="type-unstr_barotropic_state_t"></span>
+      <h3>
+        type, public&nbsp;::&nbsp;
+        <a href='../type/unstr_barotropic_state_t.html'>unstr_barotropic_state_t</a>
+        
+      </h3>
+    </div>
+    <div class="card-body">
+      <p>Centroid + edge conserved variables and the per-step workspace.</p>
+
+        <h4>Components</h4>
+          <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Visibility</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+<th></th><th scope="col">Initial</th>        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-bed_cv"></span>
+              real(kind=wp),
+            </td>
+              <td>public,</td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>bed_cv</strong>(:)</td>
+                <td></td>
+                <td></td>
+            <td>
+<p>Bed elevation at the centroid (m). Static after init.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-bed_ev"></span>
+              real(kind=wp),
+            </td>
+              <td>public,</td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>bed_ev</strong>(:,:)</td>
+                <td></td>
+                <td></td>
+            <td>
+<p>Bed at edge midpoints (= stage_ev - height_ev for well-balancing).</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-chapman_eta_old"></span>
+              real(kind=wp),
+            </td>
+              <td>public,</td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>chapman_eta_old</strong>(:,:)</td>
+                <td></td>
+                <td></td>
+            <td>
+<p>Persistent previous-step eta for <code>BC_CHAPMAN</code>. Shape
+<code>(EDGES_PER_TRI, ncells_total)</code>. Allocated unconditionally
+so the array is GPU-mappable regardless of whether Chapman
+is active on a given mesh.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-coriolis_f"></span>
+              real(kind=wp),
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>coriolis_f</strong></td>
+<td> =</td>
+                <td>0.0_wp</td>
+            <td>
+<p>Coriolis parameter f (1/s), typically 2<em>Omega</em>sin(lat). Uniform.
+Consumed per-layer by <code>ml_apply_coriolis_unstr</code> (multilayer path).</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-height_cv"></span>
+              real(kind=wp),
+            </td>
+              <td>public,</td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>height_cv</strong>(:)</td>
+                <td></td>
+                <td></td>
+            <td>
+<p>Water depth h = max(stage - bed, 0) (m). Recomputed each step.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-height_ev"></span>
+              real(kind=wp),
+            </td>
+              <td>public,</td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>height_ev</strong>(:,:)</td>
+                <td></td>
+                <td></td>
+            <td>
+<p>Water depth at edge midpoints.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-manning_n~2"></span>
+              real(kind=wp),
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>manning_n</strong></td>
+<td> =</td>
+                <td>0.0_wp</td>
+            <td>
+<p>Manning roughness coefficient (s/m^{1/3}). Uniform.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mass_flux_e"></span>
+              real(kind=wp),
+            </td>
+              <td>public,</td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>mass_flux_e</strong>(:,:)</td>
+                <td></td>
+                <td></td>
+            <td>
+<p>Net mass inflow to this cell across edge i, written by the
+central-upwind flux kernel and reused by
+<code>ml_advect_tracer_unstr</code> for CWC-consistent advection.
+Shape <code>(3, ncells_total)</code>, units m^3/s, positive INTO the cell.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-max_speed"></span>
+              real(kind=wp),
+            </td>
+              <td>public,</td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>max_speed</strong>(:)</td>
+                <td></td>
+                <td></td>
+            <td>
+<p>Maximum wave speed seen on any edge of this cell during the
+last flux pass.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-stage_backup"></span>
+              real(kind=wp),
+            </td>
+              <td>public,</td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>stage_backup</strong>(:)</td>
+                <td></td>
+                <td></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-stage_cv"></span>
+              real(kind=wp),
+            </td>
+              <td>public,</td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>stage_cv</strong>(:)</td>
+                <td></td>
+                <td></td>
+            <td>
+<p>Stage w = h + b at the centroid (m).</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-stage_eu"></span>
+              real(kind=wp),
+            </td>
+              <td>public,</td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>stage_eu</strong>(:)</td>
+                <td></td>
+                <td></td>
+            <td>
+<p>d(stage)/dt accumulator (cell-centric, no scatter).</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-stage_ev"></span>
+              real(kind=wp),
+            </td>
+              <td>public,</td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>stage_ev</strong>(:,:)</td>
+                <td></td>
+                <td></td>
+            <td>
+<p>Stage at edge midpoints, after second-order extrapolation.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-wind_tau_x"></span>
+              real(kind=wp),
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>wind_tau_x</strong></td>
+<td> =</td>
+                <td>0.0_wp</td>
+            <td>
+<p>Spatially-uniform wind stress in x (Pa).</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-wind_tau_y"></span>
+              real(kind=wp),
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>wind_tau_y</strong></td>
+<td> =</td>
+                <td>0.0_wp</td>
+            <td>
+<p>Spatially-uniform wind stress in y (Pa).</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-x_centroid_work"></span>
+              real(kind=wp),
+            </td>
+              <td>public,</td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>x_centroid_work</strong>(:)</td>
+                <td></td>
+                <td></td>
+            <td>
+<p>Stash for original xmom during velocity-form reconstruction.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-xmom_backup"></span>
+              real(kind=wp),
+            </td>
+              <td>public,</td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>xmom_backup</strong>(:)</td>
+                <td></td>
+                <td></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-xmom_cv"></span>
+              real(kind=wp),
+            </td>
+              <td>public,</td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>xmom_cv</strong>(:)</td>
+                <td></td>
+                <td></td>
+            <td>
+<p>x-momentum h*u at the centroid (m^2/s).</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-xmom_eu"></span>
+              real(kind=wp),
+            </td>
+              <td>public,</td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>xmom_eu</strong>(:)</td>
+                <td></td>
+                <td></td>
+            <td>
+<p>d(xmom)/dt accumulator.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-xmom_ev"></span>
+              real(kind=wp),
+            </td>
+              <td>public,</td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>xmom_ev</strong>(:,:)</td>
+                <td></td>
+                <td></td>
+            <td>
+<p>x-momentum at edge midpoints.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-xmom_siu"></span>
+              real(kind=wp),
+            </td>
+              <td>public,</td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>xmom_siu</strong>(:)</td>
+                <td></td>
+                <td></td>
+            <td>
+<p>Semi-implicit increment for x-momentum (Manning friction).</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-y_centroid_work"></span>
+              real(kind=wp),
+            </td>
+              <td>public,</td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>y_centroid_work</strong>(:)</td>
+                <td></td>
+                <td></td>
+            <td>
+<p>Stash for original ymom during velocity-form reconstruction.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ymom_backup"></span>
+              real(kind=wp),
+            </td>
+              <td>public,</td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>ymom_backup</strong>(:)</td>
+                <td></td>
+                <td></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ymom_cv"></span>
+              real(kind=wp),
+            </td>
+              <td>public,</td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>ymom_cv</strong>(:)</td>
+                <td></td>
+                <td></td>
+            <td>
+<p>y-momentum h*v at the centroid (m^2/s).</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ymom_eu"></span>
+              real(kind=wp),
+            </td>
+              <td>public,</td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>ymom_eu</strong>(:)</td>
+                <td></td>
+                <td></td>
+            <td>
+<p>d(ymom)/dt accumulator.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ymom_ev"></span>
+              real(kind=wp),
+            </td>
+              <td>public,</td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>ymom_ev</strong>(:,:)</td>
+                <td></td>
+                <td></td>
+            <td>
+<p>y-momentum at edge midpoints.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ymom_siu"></span>
+              real(kind=wp),
+            </td>
+              <td>public,</td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>ymom_siu</strong>(:)</td>
+                <td></td>
+                <td></td>
+            <td>
+<p>Semi-implicit increment for y-momentum.</p>
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+
+
+        <h4>Type-Bound Procedures</h4>
+        <table class="table table-striped varlist">
+          <tbody>
+              <tr>
+                <td>  procedure, public, non_overridable ::
+  <strong><a href='../type/unstr_barotropic_state_t.html#boundprocedure-destroy'>destroy</a></strong> => <a href='/home/runner/work/rakali/rakali/docs/fpm-ford/proc/unstr_barotropic_destroy.html'>unstr_barotropic_destroy</a></td>
+                  <td></td>
+              </tr>
+              <tr>
+                <td>  procedure, public, non_overridable ::
+  <strong><a href='../type/unstr_barotropic_state_t.html#boundprocedure-enter_data'>enter_data</a></strong> => <a href='/home/runner/work/rakali/rakali/docs/fpm-ford/proc/unstr_barotropic_enter_data.html'>unstr_barotropic_enter_data</a></td>
+                  <td></td>
+              </tr>
+              <tr>
+                <td>  procedure, public, non_overridable ::
+  <strong><a href='../type/unstr_barotropic_state_t.html#boundprocedure-exit_data'>exit_data</a></strong> => <a href='/home/runner/work/rakali/rakali/docs/fpm-ford/proc/unstr_barotropic_exit_data.html'>unstr_barotropic_exit_data</a></td>
+                  <td></td>
+              </tr>
+              <tr>
+                <td>  procedure, public, non_overridable ::
+  <strong><a href='../type/unstr_barotropic_state_t.html#boundprocedure-init~2'>init</a></strong> => <a href='/home/runner/work/rakali/rakali/docs/fpm-ford/proc/unstr_barotropic_init.html'>unstr_barotropic_init</a></td>
+                  <td></td>
+              </tr>
+          </tbody>
+        </table>
+    </div>
+  </div>
+
+        </section>
+        <br>
+
+
+        <section>
+          <h2>Subroutines</h2>
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-unstr_barotropic_destroy"></span> <h3>private  subroutine <a href='../proc/unstr_barotropic_destroy.html'>unstr_barotropic_destroy</a>(this)  
+</h3></div>
+    <div class="card-body">
+          
+  
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-this~3"></span>
+              class(<a href='../type/unstr_barotropic_state_t.html'>unstr_barotropic_state_t</a>),
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>this</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+    </div>
+  </div>
+
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-unstr_barotropic_enter_data"></span> <h3>private  subroutine <a href='../proc/unstr_barotropic_enter_data.html'>unstr_barotropic_enter_data</a>(this)  
+</h3></div>
+    <div class="card-body">
+          
+  <p>Map the barotropic allocatables onto the device (the parent
+value-type member rides over with <code>copyin(state)</code>; only the inner
+arrays need explicit attaches).  Read+write fields use <code>copyin</code>,
+pure-workspace fields use <code>create</code>.</p>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-this~4"></span>
+              class(<a href='../type/unstr_barotropic_state_t.html'>unstr_barotropic_state_t</a>),
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>this</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+    </div>
+  </div>
+
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-unstr_barotropic_exit_data"></span> <h3>private  subroutine <a href='../proc/unstr_barotropic_exit_data.html'>unstr_barotropic_exit_data</a>(this)  
+</h3></div>
+    <div class="card-body">
+          
+  <p>Reverse of <code>enter_data</code> — copy out host-visible fields, drop
+pure scratch.  Components first, parent last (handled by the
+caller <code>state_unstr_exit_data</code>).</p>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-this~5"></span>
+              class(<a href='../type/unstr_barotropic_state_t.html'>unstr_barotropic_state_t</a>),
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>this</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+    </div>
+  </div>
+
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-unstr_barotropic_init"></span> <h3>private  subroutine <a href='../proc/unstr_barotropic_init.html'>unstr_barotropic_init</a>(this, mesh)  
+</h3></div>
+    <div class="card-body">
+          
+  <p>Allocate every array at the cell counts in <code>mesh</code>. All arrays
+are zero-initialised.  Calling on an already-initialised
+sub-object is safe &ndash; it destroys first.</p>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-this~2"></span>
+              class(<a href='../type/unstr_barotropic_state_t.html'>unstr_barotropic_state_t</a>),
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>this</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mesh~5"></span>
+              type(<a href='../type/mesh_unstr_t.html'>mesh_unstr_t</a>),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>mesh</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+    </div>
+  </div>
+
+        </section>
+        <br>
+
+
+
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Rakali
+ was developed by Jorge Luis Galvez Vallejo<br>              &copy; 2026 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+ on 2026-10-08 12:55 +0000             </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>

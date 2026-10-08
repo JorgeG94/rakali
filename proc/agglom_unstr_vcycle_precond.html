@@ -1,0 +1,896 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="GPU-native coastal solver — structured Cartesian and unstructured triangular grids, hydrostatic multilayer + non-hydrostatic, portable across NVHPC/gfortran/ifx.">
+    <meta name="author" content="Jorge Luis Galvez Vallejo" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>agglom_unstr_vcycle_precond &ndash; Rakali</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">Rakali </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/absint.html">Abstract Interfaces</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>agglom_unstr_vcycle_precond
+      <small>Subroutine</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.1% of total for procedures.">13 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/rki_si_unstr_mg.F90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/rki_si_unstr_mg.f90.html'>rki_si_unstr_mg.F90</a></li>
+                <li class="breadcrumb-item"><a href='../module/rki_si_unstr_mg.html'>rki_si_unstr_mg</a></li>
+            <li class="breadcrumb-item active" aria-current="page">agglom_unstr_vcycle_precond</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+  
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../proc/agglom_unstr_vcycle_precond.html#src">agglom_unstr_vcycle_precond</a>
+      </div>
+    </div>
+
+
+  </div>
+
+    </div>
+    
+    <div class="col-md-9" id='text'>
+    <h2>public  subroutine agglom_unstr_vcycle_precond(this, r, z, area, nct, nco)  
+</h2>
+    
+
+    <p>z = M^{-1} r for the AREA-WEIGHTED outer PCG: form rhs_hat = area*r,
+run ONE V(2,2) cycle of the symmetric Ahat from zero, copy the
+correction into z (owned cells).  <code>r</code>/<code>z</code>/<code>area</code> are the fine
+(ncell_total-shaped) device arrays; only the first <code>nco</code> owned entries
+are touched (ghost band left as the caller set it — pre-zeroed).</p>
+
+
+    <h3>Arguments</h3>
+        <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-this~14"></span>
+              class(<a href='../type/agglom_hierarchy_unstr_t.html'>agglom_hierarchy_unstr_t</a>),
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>this</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-r~10"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>r</strong>(nct)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-z"></span>
+              real(kind=wp),
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>z</strong>(nct)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-area~4"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>area</strong>(nct)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nct"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nct</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nco~5"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nco</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <br>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Calls</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~agglom_unstr_vcycle_precond~~CallsGraph Pages: 1 -->
+<svg id="procagglom_unstr_vcycle_precondCallsGraph" width="641pt" height="176pt"
+ viewBox="0.00 0.00 641.00 176.03" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~agglom_unstr_vcycle_precond~~CallsGraph" class="graph" transform="scale(0.83 0.83) rotate(0) translate(4 208)">
+<title>proc~~agglom_unstr_vcycle_precond~~CallsGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-208 768,-208 768,4 -4,4"/>
+<!-- proc~agglom_unstr_vcycle_precond -->
+<g id="proc~~agglom_unstr_vcycle_precond~~CallsGraph_node1" class="node">
+<title>proc~agglom_unstr_vcycle_precond</title>
+<polygon fill="none" stroke="black" points="173,-162 0,-162 0,-138 173,-138 173,-162"/>
+<text text-anchor="middle" x="86.5" y="-147.6" font-family="Helvetica,sans-Serif" font-size="10.50">agglom_unstr_vcycle_precond</text>
+</g>
+<!-- proc~agglom_copy_out -->
+<g id="proc~~agglom_unstr_vcycle_precond~~CallsGraph_node2" class="node">
+<title>proc~agglom_copy_out</title>
+<g id="a_proc~~agglom_unstr_vcycle_precond~~CallsGraph_node2"><a xlink:href="../proc/agglom_copy_out.html" xlink:title="agglom_copy_out">
+<polygon fill="#d9534f" stroke="#d9534f" points="333,-204 227,-204 227,-180 333,-180 333,-204"/>
+<text text-anchor="middle" x="280" y="-189.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">agglom_copy_out</text>
+</a>
+</g>
+</g>
+<!-- proc~agglom_unstr_vcycle_precond&#45;&gt;proc~agglom_copy_out -->
+<g id="proc~~agglom_unstr_vcycle_precond~~CallsGraph_edge1" class="edge">
+<title>proc~agglom_unstr_vcycle_precond&#45;&gt;proc~agglom_copy_out</title>
+<path fill="none" stroke="#ff0000" d="M142.38,-162.04C165.59,-167.13 192.74,-173.08 216.7,-178.34"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="216.23,-181.82 226.75,-180.54 217.73,-174.98 216.23,-181.82"/>
+</g>
+<!-- proc~agglom_scale_into_shim -->
+<g id="proc~~agglom_unstr_vcycle_precond~~CallsGraph_node3" class="node">
+<title>proc~agglom_scale_into_shim</title>
+<g id="a_proc~~agglom_unstr_vcycle_precond~~CallsGraph_node3"><a xlink:href="../proc/agglom_scale_into_shim.html" xlink:title="agglom_scale_into_shim">
+<polygon fill="#d9534f" stroke="#d9534f" points="351,-162 209,-162 209,-138 351,-138 351,-162"/>
+<text text-anchor="middle" x="280" y="-147.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">agglom_scale_into_shim</text>
+</a>
+</g>
+</g>
+<!-- proc~agglom_unstr_vcycle_precond&#45;&gt;proc~agglom_scale_into_shim -->
+<g id="proc~~agglom_unstr_vcycle_precond~~CallsGraph_edge2" class="edge">
+<title>proc~agglom_unstr_vcycle_precond&#45;&gt;proc~agglom_scale_into_shim</title>
+<path fill="none" stroke="#ff0000" d="M173.17,-150C181.66,-150 190.27,-150 198.71,-150"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="198.9,-153.5 208.9,-150 198.9,-146.5 198.9,-153.5"/>
+</g>
+<!-- proc~agglom_vcycle -->
+<g id="proc~~agglom_unstr_vcycle_precond~~CallsGraph_node4" class="node">
+<title>proc~agglom_vcycle</title>
+<g id="a_proc~~agglom_unstr_vcycle_precond~~CallsGraph_node4"><a xlink:href="../proc/agglom_vcycle.html" xlink:title="agglom_vcycle">
+<polygon fill="#d9534f" stroke="#d9534f" points="326,-102 234,-102 234,-78 326,-78 326,-102"/>
+<text text-anchor="middle" x="280" y="-87.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">agglom_vcycle</text>
+</a>
+</g>
+</g>
+<!-- proc~agglom_unstr_vcycle_precond&#45;&gt;proc~agglom_vcycle -->
+<g id="proc~~agglom_unstr_vcycle_precond~~CallsGraph_edge3" class="edge">
+<title>proc~agglom_unstr_vcycle_precond&#45;&gt;proc~agglom_vcycle</title>
+<path fill="none" stroke="#ff0000" d="M126.25,-137.86C156.46,-128.39 198.57,-115.2 230.93,-105.06"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="232.14,-108.35 240.63,-102.02 230.04,-101.67 232.14,-108.35"/>
+</g>
+<!-- proc~agglom_vcycle&#45;&gt;proc~agglom_vcycle -->
+<g id="proc~~agglom_unstr_vcycle_precond~~CallsGraph_edge8" class="edge">
+<title>proc~agglom_vcycle&#45;&gt;proc~agglom_vcycle</title>
+<path fill="none" stroke="#0000ff" d="M251.23,-102.01C241.18,-110.97 250.77,-120 280,-120 298.27,-120 308.86,-116.47 311.79,-111.64"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="315.1,-110.51 308.77,-102.01 308.42,-112.6 315.1,-110.51"/>
+</g>
+<!-- proc~agglom_jacobi_sweeps -->
+<g id="proc~~agglom_unstr_vcycle_precond~~CallsGraph_node5" class="node">
+<title>proc~agglom_jacobi_sweeps</title>
+<g id="a_proc~~agglom_unstr_vcycle_precond~~CallsGraph_node5"><a xlink:href="../proc/agglom_jacobi_sweeps.html" xlink:title="agglom_jacobi_sweeps">
+<polygon fill="#d9534f" stroke="#d9534f" points="522,-184 387,-184 387,-160 522,-160 522,-184"/>
+<text text-anchor="middle" x="454.5" y="-169.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">agglom_jacobi_sweeps</text>
+</a>
+</g>
+</g>
+<!-- proc~agglom_vcycle&#45;&gt;proc~agglom_jacobi_sweeps -->
+<g id="proc~~agglom_unstr_vcycle_precond~~CallsGraph_edge4" class="edge">
+<title>proc~agglom_vcycle&#45;&gt;proc~agglom_jacobi_sweeps</title>
+<path fill="none" stroke="#0000ff" d="M303.2,-102.07C317.03,-109.66 335.14,-119.74 351,-129 367.19,-138.45 369.93,-143.23 387,-151 391.32,-152.97 395.87,-154.82 400.49,-156.56"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="399.4,-159.88 410,-159.94 401.75,-153.29 399.4,-159.88"/>
+</g>
+<!-- proc~agglom_prolong_add -->
+<g id="proc~~agglom_unstr_vcycle_precond~~CallsGraph_node6" class="node">
+<title>proc~agglom_prolong_add</title>
+<g id="a_proc~~agglom_unstr_vcycle_precond~~CallsGraph_node6"><a xlink:href="../proc/agglom_prolong_add.html" xlink:title="agglom_prolong_add">
+<polygon fill="#d9534f" stroke="#d9534f" points="516.5,-142 392.5,-142 392.5,-118 516.5,-118 516.5,-142"/>
+<text text-anchor="middle" x="454.5" y="-127.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">agglom_prolong_add</text>
+</a>
+</g>
+</g>
+<!-- proc~agglom_vcycle&#45;&gt;proc~agglom_prolong_add -->
+<g id="proc~~agglom_unstr_vcycle_precond~~CallsGraph_edge5" class="edge">
+<title>proc~agglom_vcycle&#45;&gt;proc~agglom_prolong_add</title>
+<path fill="none" stroke="#0000ff" d="M326.32,-100.51C346.23,-105.13 369.92,-110.62 391.43,-115.61"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="390.93,-119.08 401.46,-117.93 392.51,-112.26 390.93,-119.08"/>
+</g>
+<!-- proc~agglom_residual -->
+<g id="proc~~agglom_unstr_vcycle_precond~~CallsGraph_node7" class="node">
+<title>proc~agglom_residual</title>
+<g id="a_proc~~agglom_unstr_vcycle_precond~~CallsGraph_node7"><a xlink:href="../proc/agglom_residual.html" xlink:title="agglom_residual">
+<polygon fill="#d9534f" stroke="#d9534f" points="666,-104 566,-104 566,-80 666,-80 666,-104"/>
+<text text-anchor="middle" x="616" y="-89.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">agglom_residual</text>
+</a>
+</g>
+</g>
+<!-- proc~agglom_vcycle&#45;&gt;proc~agglom_residual -->
+<g id="proc~~agglom_unstr_vcycle_precond~~CallsGraph_edge6" class="edge">
+<title>proc~agglom_vcycle&#45;&gt;proc~agglom_residual</title>
+<path fill="none" stroke="#0000ff" d="M326.04,-90.27C385.37,-90.62 489.85,-91.25 555.59,-91.64"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="555.77,-95.15 565.79,-91.71 555.81,-88.15 555.77,-95.15"/>
+</g>
+<!-- proc~agglom_restrict -->
+<g id="proc~~agglom_unstr_vcycle_precond~~CallsGraph_node8" class="node">
+<title>proc~agglom_restrict</title>
+<g id="a_proc~~agglom_unstr_vcycle_precond~~CallsGraph_node8"><a xlink:href="../proc/agglom_restrict.html" xlink:title="agglom_restrict">
+<polygon fill="#d9534f" stroke="#d9534f" points="663.5,-62 568.5,-62 568.5,-38 663.5,-38 663.5,-62"/>
+<text text-anchor="middle" x="616" y="-47.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">agglom_restrict</text>
+</a>
+</g>
+</g>
+<!-- proc~agglom_vcycle&#45;&gt;proc~agglom_restrict -->
+<g id="proc~~agglom_unstr_vcycle_precond~~CallsGraph_edge7" class="edge">
+<title>proc~agglom_vcycle&#45;&gt;proc~agglom_restrict</title>
+<path fill="none" stroke="#0000ff" d="M326.04,-84.61C386.13,-77.41 492.53,-64.67 558.1,-56.81"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="558.74,-60.26 568.26,-55.6 557.91,-53.31 558.74,-60.26"/>
+</g>
+<!-- proc~agglom_zero -->
+<g id="proc~~agglom_unstr_vcycle_precond~~CallsGraph_node9" class="node">
+<title>proc~agglom_zero</title>
+<g id="a_proc~~agglom_unstr_vcycle_precond~~CallsGraph_node9"><a xlink:href="../proc/agglom_zero.html" xlink:title="agglom_zero">
+<polygon fill="#d9534f" stroke="#d9534f" points="495,-24 414,-24 414,0 495,0 495,-24"/>
+<text text-anchor="middle" x="454.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">agglom_zero</text>
+</a>
+</g>
+</g>
+<!-- proc~agglom_vcycle&#45;&gt;proc~agglom_zero -->
+<g id="proc~~agglom_unstr_vcycle_precond~~CallsGraph_edge9" class="edge">
+<title>proc~agglom_vcycle&#45;&gt;proc~agglom_zero</title>
+<path fill="none" stroke="#0000ff" d="M304.31,-77.87C325.62,-66.95 358.1,-50.71 387,-38 394.91,-34.52 403.45,-31.01 411.68,-27.74"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="413.11,-30.93 421.14,-24.03 410.56,-24.42 413.11,-30.93"/>
+</g>
+<!-- proc~agglom_copy -->
+<g id="proc~~agglom_unstr_vcycle_precond~~CallsGraph_node11" class="node">
+<title>proc~agglom_copy</title>
+<g id="a_proc~~agglom_unstr_vcycle_precond~~CallsGraph_node11"><a xlink:href="../proc/agglom_copy.html" xlink:title="agglom_copy">
+<polygon fill="#d9534f" stroke="#d9534f" points="658,-188 574,-188 574,-164 658,-164 658,-188"/>
+<text text-anchor="middle" x="616" y="-173.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">agglom_copy</text>
+</a>
+</g>
+</g>
+<!-- proc~agglom_jacobi_sweeps&#45;&gt;proc~agglom_copy -->
+<g id="proc~~agglom_unstr_vcycle_precond~~CallsGraph_edge10" class="edge">
+<title>proc~agglom_jacobi_sweeps&#45;&gt;proc~agglom_copy</title>
+<path fill="none" stroke="#ff0000" d="M522.22,-173.67C535.96,-174.02 550.23,-174.38 563.34,-174.7"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="563.49,-178.21 573.57,-174.96 563.67,-171.21 563.49,-178.21"/>
+</g>
+<!-- proc~agglom_jacobi_one -->
+<g id="proc~~agglom_unstr_vcycle_precond~~CallsGraph_node12" class="node">
+<title>proc~agglom_jacobi_one</title>
+<g id="a_proc~~agglom_unstr_vcycle_precond~~CallsGraph_node12"><a xlink:href="../proc/agglom_jacobi_one.html" xlink:title="agglom_jacobi_one">
+<polygon fill="#d9534f" stroke="#d9534f" points="674,-146 558,-146 558,-122 674,-122 674,-146"/>
+<text text-anchor="middle" x="616" y="-131.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">agglom_jacobi_one</text>
+</a>
+</g>
+</g>
+<!-- proc~agglom_jacobi_sweeps&#45;&gt;proc~agglom_jacobi_one -->
+<g id="proc~~agglom_unstr_vcycle_precond~~CallsGraph_edge11" class="edge">
+<title>proc~agglom_jacobi_sweeps&#45;&gt;proc~agglom_jacobi_one</title>
+<path fill="none" stroke="#ff0000" d="M505.97,-159.98C521.46,-156.29 538.67,-152.19 554.75,-148.35"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="555.67,-151.73 564.59,-146.01 554.05,-144.92 555.67,-151.73"/>
+</g>
+<!-- local -->
+<g id="proc~~agglom_unstr_vcycle_precond~~CallsGraph_node10" class="node">
+<title>local</title>
+<polygon fill="#777777" stroke="#777777" points="764,-104 710,-104 710,-80 764,-80 764,-104"/>
+<text text-anchor="middle" x="737" y="-89.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">local</text>
+</g>
+<!-- proc~agglom_residual&#45;&gt;local -->
+<g id="proc~~agglom_unstr_vcycle_precond~~CallsGraph_edge12" class="edge">
+<title>proc~agglom_residual&#45;&gt;local</title>
+<path fill="none" stroke="#00ff66" d="M666.09,-92C677.32,-92 689.07,-92 699.66,-92"/>
+<polygon fill="#00ff66" stroke="#00ff66" points="699.8,-95.5 709.8,-92 699.8,-88.5 699.8,-95.5"/>
+</g>
+<!-- proc~agglom_restrict&#45;&gt;local -->
+<g id="proc~~agglom_unstr_vcycle_precond~~CallsGraph_edge13" class="edge">
+<title>proc~agglom_restrict&#45;&gt;local</title>
+<path fill="none" stroke="#0066ff" d="M651.1,-62.04C666.42,-67.44 684.52,-73.83 700.05,-79.31"/>
+<polygon fill="#0066ff" stroke="#0066ff" points="699.24,-82.74 709.84,-82.77 701.57,-76.14 699.24,-82.74"/>
+</g>
+<!-- proc~agglom_jacobi_one&#45;&gt;local -->
+<g id="proc~~agglom_unstr_vcycle_precond~~CallsGraph_edge14" class="edge">
+<title>proc~agglom_jacobi_one&#45;&gt;local</title>
+<path fill="none" stroke="#0000ff" d="M651.1,-121.96C666.42,-116.56 684.52,-110.17 700.05,-104.69"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="701.57,-107.86 709.84,-101.23 699.24,-101.26 701.57,-107.86"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var panprocagglom_unstr_vcycle_precondCallsGraph = svgPanZoom('#procagglom_unstr_vcycle_precondCallsGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CallsGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CallsGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Called by</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~agglom_unstr_vcycle_precond~~CalledByGraph Pages: 1 -->
+<svg id="procagglom_unstr_vcycle_precondCalledByGraph" width="641pt" height="73pt"
+ viewBox="0.00 0.00 641.00 73.45" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~agglom_unstr_vcycle_precond~~CalledByGraph" class="graph" transform="scale(0.55 0.55) rotate(0) translate(4 129.72)">
+<title>proc~~agglom_unstr_vcycle_precond~~CalledByGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-129.72 1163,-129.72 1163,4 -4,4"/>
+<!-- proc~agglom_unstr_vcycle_precond -->
+<g id="proc~~agglom_unstr_vcycle_precond~~CalledByGraph_node1" class="node">
+<title>proc~agglom_unstr_vcycle_precond</title>
+<polygon fill="none" stroke="black" points="1159,-87 986,-87 986,-63 1159,-63 1159,-87"/>
+<text text-anchor="middle" x="1072.5" y="-72.6" font-family="Helvetica,sans-Serif" font-size="10.50">agglom_unstr_vcycle_precond</text>
+</g>
+<!-- proc~si_unstr_precond_apply -->
+<g id="proc~~agglom_unstr_vcycle_precond~~CalledByGraph_node2" class="node">
+<title>proc~si_unstr_precond_apply</title>
+<g id="a_proc~~agglom_unstr_vcycle_precond~~CalledByGraph_node2"><a xlink:href="../proc/si_unstr_precond_apply.html" xlink:title="si_unstr_precond_apply">
+<polygon fill="#d9534f" stroke="#d9534f" points="950,-87 814,-87 814,-63 950,-63 950,-87"/>
+<text text-anchor="middle" x="882" y="-72.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">si_unstr_precond_apply</text>
+</a>
+</g>
+</g>
+<!-- proc~si_unstr_precond_apply&#45;&gt;proc~agglom_unstr_vcycle_precond -->
+<g id="proc~~agglom_unstr_vcycle_precond~~CalledByGraph_edge1" class="edge">
+<title>proc~si_unstr_precond_apply&#45;&gt;proc~agglom_unstr_vcycle_precond</title>
+<path fill="none" stroke="#ff0000" d="M950.25,-75C958.54,-75 967.13,-75 975.73,-75"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="975.82,-78.5 985.82,-75 975.82,-71.5 975.82,-78.5"/>
+</g>
+<!-- proc~si_unstr_cg_solve -->
+<g id="proc~~agglom_unstr_vcycle_precond~~CalledByGraph_node3" class="node">
+<title>proc~si_unstr_cg_solve</title>
+<g id="a_proc~~agglom_unstr_vcycle_precond~~CalledByGraph_node3"><a xlink:href="../proc/si_unstr_cg_solve.html" xlink:title="si_unstr_cg_solve">
+<polygon fill="#d9534f" stroke="#d9534f" points="778,-87 674,-87 674,-63 778,-63 778,-87"/>
+<text text-anchor="middle" x="726" y="-72.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">si_unstr_cg_solve</text>
+</a>
+</g>
+</g>
+<!-- proc~si_unstr_cg_solve&#45;&gt;proc~si_unstr_precond_apply -->
+<g id="proc~~agglom_unstr_vcycle_precond~~CalledByGraph_edge2" class="edge">
+<title>proc~si_unstr_cg_solve&#45;&gt;proc~si_unstr_precond_apply</title>
+<path fill="none" stroke="#ff0000" d="M778.28,-75C786.46,-75 795.07,-75 803.69,-75"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="803.78,-78.5 813.78,-75 803.78,-71.5 803.78,-78.5"/>
+</g>
+<!-- proc~si_ml_wetdry_newton -->
+<g id="proc~~agglom_unstr_vcycle_precond~~CalledByGraph_node4" class="node">
+<title>proc~si_ml_wetdry_newton</title>
+<g id="a_proc~~agglom_unstr_vcycle_precond~~CalledByGraph_node4"><a xlink:href="../proc/si_ml_wetdry_newton.html" xlink:title="si_ml_wetdry_newton">
+<polygon fill="#d9534f" stroke="#d9534f" points="628,-108 503,-108 503,-84 628,-84 628,-108"/>
+<text text-anchor="middle" x="565.5" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">si_ml_wetdry_newton</text>
+</a>
+</g>
+</g>
+<!-- proc~si_ml_wetdry_newton&#45;&gt;proc~si_unstr_cg_solve -->
+<g id="proc~~agglom_unstr_vcycle_precond~~CalledByGraph_edge3" class="edge">
+<title>proc~si_ml_wetdry_newton&#45;&gt;proc~si_unstr_cg_solve</title>
+<path fill="none" stroke="#ff0000" d="M628.23,-87.82C639.93,-86.27 652.17,-84.65 663.85,-83.1"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="664.49,-86.55 673.94,-81.77 663.57,-79.61 664.49,-86.55"/>
+</g>
+<!-- proc~si_unstr_advance -->
+<g id="proc~~agglom_unstr_vcycle_precond~~CalledByGraph_node5" class="node">
+<title>proc~si_unstr_advance</title>
+<g id="a_proc~~agglom_unstr_vcycle_precond~~CalledByGraph_node5"><a xlink:href="../proc/si_unstr_advance.html" xlink:title="si_unstr_advance">
+<polygon fill="#d9534f" stroke="#d9534f" points="617.5,-66 513.5,-66 513.5,-42 617.5,-42 617.5,-66"/>
+<text text-anchor="middle" x="565.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">si_unstr_advance</text>
+</a>
+</g>
+</g>
+<!-- proc~si_unstr_advance&#45;&gt;proc~si_unstr_cg_solve -->
+<g id="proc~~agglom_unstr_vcycle_precond~~CalledByGraph_edge4" class="edge">
+<title>proc~si_unstr_advance&#45;&gt;proc~si_unstr_cg_solve</title>
+<path fill="none" stroke="#ff0000" d="M617.52,-60.76C632.16,-62.7 648.26,-64.83 663.46,-66.85"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="663.43,-70.37 673.8,-68.22 664.35,-63.43 663.43,-70.37"/>
+</g>
+<!-- proc~si_unstr_advance_wetdry -->
+<g id="proc~~agglom_unstr_vcycle_precond~~CalledByGraph_node6" class="node">
+<title>proc~si_unstr_advance_wetdry</title>
+<g id="a_proc~~agglom_unstr_vcycle_precond~~CalledByGraph_node6"><a xlink:href="../proc/si_unstr_advance_wetdry.html" xlink:title="si_unstr_advance_wetdry">
+<polygon fill="#d9534f" stroke="#d9534f" points="638,-24 493,-24 493,0 638,0 638,-24"/>
+<text text-anchor="middle" x="565.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">si_unstr_advance_wetdry</text>
+</a>
+</g>
+</g>
+<!-- proc~si_unstr_advance_wetdry&#45;&gt;proc~si_unstr_cg_solve -->
+<g id="proc~~agglom_unstr_vcycle_precond~~CalledByGraph_edge5" class="edge">
+<title>proc~si_unstr_advance_wetdry&#45;&gt;proc~si_unstr_cg_solve</title>
+<path fill="none" stroke="#ff0000" d="M611.88,-24.11C620.64,-26.79 629.67,-29.79 638,-33 656.84,-40.26 677.2,-49.98 693.48,-58.24"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="692.06,-61.44 702.56,-62.9 695.26,-55.22 692.06,-61.44"/>
+</g>
+<!-- proc~si_unstr_step_ml -->
+<g id="proc~~agglom_unstr_vcycle_precond~~CalledByGraph_node7" class="node">
+<title>proc~si_unstr_step_ml</title>
+<g id="a_proc~~agglom_unstr_vcycle_precond~~CalledByGraph_node7"><a xlink:href="../proc/si_unstr_step_ml.html" xlink:title="si_unstr_step_ml">
+<polygon fill="#d9534f" stroke="#d9534f" points="457,-108 357,-108 357,-84 457,-84 457,-108"/>
+<text text-anchor="middle" x="407" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">si_unstr_step_ml</text>
+</a>
+</g>
+</g>
+<!-- proc~si_unstr_step_ml&#45;&gt;proc~si_unstr_cg_solve -->
+<g id="proc~~agglom_unstr_vcycle_precond~~CalledByGraph_edge6" class="edge">
+<title>proc~si_unstr_step_ml&#45;&gt;proc~si_unstr_cg_solve</title>
+<path fill="none" stroke="#ff0000" d="M448.27,-108.07C462.29,-111.7 478.21,-115.2 493,-117 556.97,-124.79 575.18,-131.37 638,-117 658.91,-112.22 680.64,-101.73 697.16,-92.43"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="699.35,-95.2 706.23,-87.15 695.83,-89.16 699.35,-95.2"/>
+</g>
+<!-- proc~si_unstr_step_ml&#45;&gt;proc~si_ml_wetdry_newton -->
+<g id="proc~~agglom_unstr_vcycle_precond~~CalledByGraph_edge7" class="edge">
+<title>proc~si_unstr_step_ml&#45;&gt;proc~si_ml_wetdry_newton</title>
+<path fill="none" stroke="#ff0000" d="M457.09,-96C468.43,-96 480.73,-96 492.82,-96"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="492.9,-99.5 502.9,-96 492.9,-92.5 492.9,-99.5"/>
+</g>
+<!-- proc~si_unstr_step -->
+<g id="proc~~agglom_unstr_vcycle_precond~~CalledByGraph_node8" class="node">
+<title>proc~si_unstr_step</title>
+<g id="a_proc~~agglom_unstr_vcycle_precond~~CalledByGraph_node8"><a xlink:href="../proc/si_unstr_step.html" xlink:title="si_unstr_step">
+<polygon fill="#d9534f" stroke="#d9534f" points="447.5,-66 366.5,-66 366.5,-42 447.5,-42 447.5,-66"/>
+<text text-anchor="middle" x="407" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">si_unstr_step</text>
+</a>
+</g>
+</g>
+<!-- proc~si_unstr_step&#45;&gt;proc~si_unstr_advance -->
+<g id="proc~~agglom_unstr_vcycle_precond~~CalledByGraph_edge8" class="edge">
+<title>proc~si_unstr_step&#45;&gt;proc~si_unstr_advance</title>
+<path fill="none" stroke="#7fff00" d="M447.9,-54C464.71,-54 484.65,-54 503.26,-54"/>
+<polygon fill="#7fff00" stroke="#7fff00" points="503.42,-57.5 513.42,-54 503.42,-50.5 503.42,-57.5"/>
+</g>
+<!-- proc~si_unstr_step&#45;&gt;proc~si_unstr_advance_wetdry -->
+<g id="proc~~agglom_unstr_vcycle_precond~~CalledByGraph_edge9" class="edge">
+<title>proc~si_unstr_step&#45;&gt;proc~si_unstr_advance_wetdry</title>
+<path fill="none" stroke="#00ffff" d="M447.9,-43.29C466.73,-38.24 489.5,-32.13 509.91,-26.65"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="510.95,-29.99 519.7,-24.02 509.14,-23.23 510.95,-29.99"/>
+</g>
+<!-- proc~solver_unstr_step_semi_implicit -->
+<g id="proc~~agglom_unstr_vcycle_precond~~CalledByGraph_node9" class="node">
+<title>proc~solver_unstr_step_semi_implicit</title>
+<g id="a_proc~~agglom_unstr_vcycle_precond~~CalledByGraph_node9"><a xlink:href="../proc/solver_unstr_step_semi_implicit.html" xlink:title="solver_unstr_step_semi_implicit">
+<polygon fill="#d9534f" stroke="#d9534f" points="321,-87 141,-87 141,-63 321,-63 321,-87"/>
+<text text-anchor="middle" x="231" y="-72.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_unstr_step_semi_implicit</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_unstr_step_semi_implicit&#45;&gt;proc~si_unstr_step_ml -->
+<g id="proc~~agglom_unstr_vcycle_precond~~CalledByGraph_edge10" class="edge">
+<title>proc~solver_unstr_step_semi_implicit&#45;&gt;proc~si_unstr_step_ml</title>
+<path fill="none" stroke="#7f00ff" d="M321.04,-85.75C329.84,-86.81 338.61,-87.87 346.99,-88.88"/>
+<polygon fill="#7f00ff" stroke="#7f00ff" points="346.65,-92.36 357,-90.09 347.49,-85.41 346.65,-92.36"/>
+</g>
+<!-- proc~solver_unstr_step_semi_implicit&#45;&gt;proc~si_unstr_step -->
+<g id="proc~~agglom_unstr_vcycle_precond~~CalledByGraph_edge11" class="edge">
+<title>proc~solver_unstr_step_semi_implicit&#45;&gt;proc~si_unstr_step</title>
+<path fill="none" stroke="#ff0000" d="M321.04,-64.25C333.08,-62.8 345.06,-61.35 356.08,-60.03"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="356.8,-63.46 366.31,-58.79 355.96,-56.51 356.8,-63.46"/>
+</g>
+<!-- proc~solver_unstr_step -->
+<g id="proc~~agglom_unstr_vcycle_precond~~CalledByGraph_node10" class="node">
+<title>proc~solver_unstr_step</title>
+<g id="a_proc~~agglom_unstr_vcycle_precond~~CalledByGraph_node10"><a xlink:href="../proc/solver_unstr_step.html" xlink:title="solver_unstr_step">
+<polygon fill="#d9534f" stroke="#d9534f" points="105,-87 0,-87 0,-63 105,-63 105,-87"/>
+<text text-anchor="middle" x="52.5" y="-72.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_unstr_step</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_unstr_step&#45;&gt;proc~solver_unstr_step_semi_implicit -->
+<g id="proc~~agglom_unstr_vcycle_precond~~CalledByGraph_edge12" class="edge">
+<title>proc~solver_unstr_step&#45;&gt;proc~solver_unstr_step_semi_implicit</title>
+<path fill="none" stroke="#00ffff" d="M105.03,-75C113.23,-75 121.95,-75 130.82,-75"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="130.88,-78.5 140.88,-75 130.88,-71.5 130.88,-78.5"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var panprocagglom_unstr_vcycle_precondCalledByGraph = svgPanZoom('#procagglom_unstr_vcycle_precondCalledByGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CalledByGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CalledByGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+
+
+    
+    
+
+    
+    
+
+
+
+    
+    <section>
+    <h2><span class="anchor" id="src"></span>Source Code</h2>
+    <div class="hl codehilite"><pre><span></span><span class="w">   </span><span class="k">subroutine </span><span class="n">agglom_unstr_vcycle_precond</span><span class="p">(</span><span class="n">this</span><span class="p">,</span><span class="w"> </span><span class="n">r</span><span class="p">,</span><span class="w"> </span><span class="n">z</span><span class="p">,</span><span class="w"> </span><span class="n">area</span><span class="p">,</span><span class="w"> </span><span class="n">nct</span><span class="p">,</span><span class="w"> </span><span class="n">nco</span><span class="p">)</span>
+<span class="w">      </span><span class="c">!! z = M^{-1} r for the AREA-WEIGHTED outer PCG: form rhs_hat = area*r,</span>
+<span class="w">      </span><span class="c">!! run ONE V(2,2) cycle of the symmetric Ahat from zero, copy the</span>
+<span class="w">      </span><span class="c">!! correction into z (owned cells).  `r`/`z`/`area` are the fine</span>
+<span class="w">      </span><span class="c">!! (ncell_total-shaped) device arrays; only the first `nco` owned entries</span>
+<span class="w">      </span><span class="c">!! are touched (ghost band left as the caller set it — pre-zeroed).</span>
+<span class="w">      </span><span class="k">class</span><span class="p">(</span><span class="n">agglom_hierarchy_unstr_t</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">this</span>
+<span class="w">      </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">nct</span><span class="p">,</span><span class="w"> </span><span class="n">nco</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">r</span><span class="p">(</span><span class="n">nct</span><span class="p">)</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">z</span><span class="p">(</span><span class="n">nct</span><span class="p">)</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">area</span><span class="p">(</span><span class="n">nct</span><span class="p">)</span>
+
+<span class="w">      </span><span class="c">! Direct-API belt: enable_si always builds; a caller that sets</span>
+<span class="w">      </span><span class="c">! precond=mg without build_mg would deref unallocated levels.</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">n_levels</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">         error stop</span><span class="w"> </span><span class="s2">"agglom_unstr_vcycle_precond: hierarchy not built "</span><span class="o">//</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">            </span><span class="s2">"(state_unstr_enable_si builds it; direct callers must too)"</span>
+<span class="w">      </span><span class="k">end if</span>
+
+<span class="w">      </span><span class="c">! rhs_hat = area * r  -&gt;  lev(1)%r  (symmetric-space RHS)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">agglom_scale_into_shim</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="w"> </span><span class="n">area</span><span class="p">,</span><span class="w"> </span><span class="n">this</span><span class="p">%</span><span class="n">lev</span><span class="p">(</span><span class="mi">1</span><span class="p">)%</span><span class="n">r</span><span class="p">,</span><span class="w"> </span><span class="n">nct</span><span class="p">,</span><span class="w"> </span><span class="n">nco</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">agglom_vcycle</span><span class="p">(</span><span class="n">this</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">agglom_copy_out</span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">lev</span><span class="p">(</span><span class="mi">1</span><span class="p">)%</span><span class="n">e</span><span class="p">,</span><span class="w"> </span><span class="n">z</span><span class="p">,</span><span class="w"> </span><span class="n">nct</span><span class="p">,</span><span class="w"> </span><span class="n">nco</span><span class="p">)</span>
+<span class="w">   </span><span class="k">end subroutine </span><span class="n">agglom_unstr_vcycle_precond</span>
+</pre></div>
+
+    </section>
+    <br>
+    
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Rakali
+ was developed by Jorge Luis Galvez Vallejo<br>              &copy; 2026 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+ on 2026-10-08 12:55 +0000             </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>

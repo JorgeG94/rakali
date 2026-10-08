@@ -1,0 +1,1866 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="GPU-native coastal solver — structured Cartesian and unstructured triangular grids, hydrostatic multilayer + non-hydrostatic, portable across NVHPC/gfortran/ifx.">
+    <meta name="author" content="Jorge Luis Galvez Vallejo" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>solver_step_impl &ndash; Rakali</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">Rakali </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/absint.html">Abstract Interfaces</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>solver_step_impl
+      <small>Subroutine</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.3% of total for procedures.">75 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/rki_solver.F90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/rki_solver.f90.html'>rki_solver.F90</a></li>
+                <li class="breadcrumb-item"><a href='../module/rki_solver.html'>rki_solver</a></li>
+            <li class="breadcrumb-item active" aria-current="page">solver_step_impl</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+  
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#vars-0"
+         aria-expanded="false" aria-controls="vars-0">
+         <h4 class="card-header bg-primary text-white">Variables</h4>
+      </a>
+      <div id="vars-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../proc/solver_step_impl.html#variable-nz~34">nz</a>
+            <a class="list-group-item" href="../proc/solver_step_impl.html#variable-ts~2">ts</a>
+            <a class="list-group-item" href="../proc/solver_step_impl.html#variable-use_nh">use_nh</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../proc/solver_step_impl.html#src">solver_step_impl</a>
+      </div>
+    </div>
+
+
+  </div>
+
+    </div>
+    
+    <div class="col-md-9" id='text'>
+    <h2>private  subroutine solver_step_impl(state, dt_max)  
+</h2>
+    
+
+    <p>SSP-RK2 step for unsplit (2D or NH without mode splitting)</p>
+
+
+    <h3>Arguments</h3>
+        <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-state~13"></span>
+              type(<a href='../type/state_t.html'>state_t</a>),
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>state</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-dt_max~2"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>dt_max</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <br>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Calls</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~solver_step_impl~~CallsGraph Pages: 1 -->
+<svg id="procsolver_step_implCallsGraph" width="641pt" height="821pt"
+ viewBox="0.00 0.00 641.00 820.67" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~solver_step_impl~~CallsGraph" class="graph" transform="scale(0.63 0.63) rotate(0) translate(4 1291.66)">
+<title>proc~~solver_step_impl~~CallsGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-1291.66 1008,-1291.66 1008,4 -4,4"/>
+<!-- proc~solver_step_impl -->
+<g id="proc~~solver_step_impl~~CallsGraph_node1" class="node">
+<title>proc~solver_step_impl</title>
+<polygon fill="none" stroke="black" points="101,-825 0,-825 0,-801 101,-801 101,-825"/>
+<text text-anchor="middle" x="50.5" y="-810.6" font-family="Helvetica,sans-Serif" font-size="10.50">solver_step_impl</text>
+</g>
+<!-- proc~accumulate_boundary_mass_out -->
+<g id="proc~~solver_step_impl~~CallsGraph_node2" class="node">
+<title>proc~accumulate_boundary_mass_out</title>
+<g id="a_proc~~solver_step_impl~~CallsGraph_node2"><a xlink:href="../proc/accumulate_boundary_mass_out.html" xlink:title="accumulate_boundary_mass_out">
+<polygon fill="#d9534f" stroke="#d9534f" points="340.5,-1183 153.5,-1183 153.5,-1159 340.5,-1159 340.5,-1183"/>
+<text text-anchor="middle" x="247" y="-1168.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">accumulate_boundary_mass_out</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_step_impl&#45;&gt;proc~accumulate_boundary_mass_out -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge1" class="edge">
+<title>proc~solver_step_impl&#45;&gt;proc~accumulate_boundary_mass_out</title>
+<path fill="none" stroke="#ff0000" d="M52.93,-825.12C59.57,-879.38 89.12,-1099.35 137,-1146 139.97,-1148.89 143.19,-1151.47 146.62,-1153.78"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="145.11,-1156.95 155.51,-1158.95 148.63,-1150.9 145.11,-1156.95"/>
+</g>
+<!-- proc~accumulate_mass_src -->
+<g id="proc~~solver_step_impl~~CallsGraph_node3" class="node">
+<title>proc~accumulate_mass_src</title>
+<g id="a_proc~~solver_step_impl~~CallsGraph_node3"><a xlink:href="../proc/accumulate_mass_src.html" xlink:title="accumulate_mass_src">
+<polygon fill="#d9534f" stroke="#d9534f" points="311.5,-1227 182.5,-1227 182.5,-1203 311.5,-1203 311.5,-1227"/>
+<text text-anchor="middle" x="247" y="-1212.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">accumulate_mass_src</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_step_impl&#45;&gt;proc~accumulate_mass_src -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge2" class="edge">
+<title>proc~solver_step_impl&#45;&gt;proc~accumulate_mass_src</title>
+<path fill="none" stroke="#ff0000" d="M52.51,-825.19C57.65,-884.08 82.73,-1138.48 137,-1192 146.75,-1201.62 159.45,-1207.67 172.71,-1211.4"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="171.9,-1214.81 182.44,-1213.72 173.53,-1208 171.9,-1214.81"/>
+</g>
+<!-- proc~accumulate_sponge_mass_src -->
+<g id="proc~~solver_step_impl~~CallsGraph_node4" class="node">
+<title>proc~accumulate_sponge_mass_src</title>
+<g id="a_proc~~solver_step_impl~~CallsGraph_node4"><a xlink:href="../proc/accumulate_sponge_mass_src.html" xlink:title="accumulate_sponge_mass_src">
+<polygon fill="#d9534f" stroke="#d9534f" points="333.5,-949 160.5,-949 160.5,-925 333.5,-925 333.5,-949"/>
+<text text-anchor="middle" x="247" y="-934.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">accumulate_sponge_mass_src</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_step_impl&#45;&gt;proc~accumulate_sponge_mass_src -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge3" class="edge">
+<title>proc~solver_step_impl&#45;&gt;proc~accumulate_sponge_mass_src</title>
+<path fill="none" stroke="#ff0000" d="M57.85,-825.18C70,-847.19 98.79,-893.4 137,-916 141.4,-918.6 146.05,-920.89 150.86,-922.9"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="149.69,-926.2 160.29,-926.44 152.15,-919.64 149.69,-926.2"/>
+</g>
+<!-- proc~apply_boundary_conditions -->
+<g id="proc~~solver_step_impl~~CallsGraph_node5" class="node">
+<title>proc~apply_boundary_conditions</title>
+<g id="a_proc~~solver_step_impl~~CallsGraph_node5"><a xlink:href="../proc/apply_boundary_conditions.html" xlink:title="apply_boundary_conditions">
+<polygon fill="#d9534f" stroke="#d9534f" points="562.5,-634 404.5,-634 404.5,-610 562.5,-610 562.5,-634"/>
+<text text-anchor="middle" x="483.5" y="-619.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">apply_boundary_conditions</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_step_impl&#45;&gt;proc~apply_boundary_conditions -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge4" class="edge">
+<title>proc~solver_step_impl&#45;&gt;proc~apply_boundary_conditions</title>
+<path fill="none" stroke="#ff0000" d="M90.4,-800.97C104.93,-796.78 121.62,-792.3 137,-789 185.34,-778.63 319.29,-787.96 357,-756 396.57,-722.47 355.21,-680.52 393,-645 395.19,-642.94 397.54,-641.06 400.02,-639.34"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="402.04,-642.21 408.86,-634.11 398.47,-636.19 402.04,-642.21"/>
+</g>
+<!-- proc~apply_nh_boundary_conditions -->
+<g id="proc~~solver_step_impl~~CallsGraph_node6" class="node">
+<title>proc~apply_nh_boundary_conditions</title>
+<g id="a_proc~~solver_step_impl~~CallsGraph_node6"><a xlink:href="../proc/apply_nh_boundary_conditions.html" xlink:title="apply_nh_boundary_conditions">
+<polygon fill="#d9534f" stroke="#d9534f" points="572,-937 395,-937 395,-913 572,-913 572,-937"/>
+<text text-anchor="middle" x="483.5" y="-922.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">apply_nh_boundary_conditions</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_step_impl&#45;&gt;proc~apply_nh_boundary_conditions -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge5" class="edge">
+<title>proc~solver_step_impl&#45;&gt;proc~apply_nh_boundary_conditions</title>
+<path fill="none" stroke="#ff0000" d="M101.16,-801.99C165.82,-790.59 279.67,-780.82 357,-832 386.84,-851.75 364.93,-881.82 393,-904 394.78,-905.41 396.64,-906.72 398.56,-907.95"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="396.91,-911.04 407.36,-912.81 400.3,-904.91 396.91,-911.04"/>
+</g>
+<!-- proc~compute_depth_averaged_momentum -->
+<g id="proc~~solver_step_impl~~CallsGraph_node7" class="node">
+<title>proc~compute_depth_averaged_momentum</title>
+<g id="a_proc~~solver_step_impl~~CallsGraph_node7"><a xlink:href="../proc/compute_depth_averaged_momentum.html" xlink:title="compute_depth_averaged_momentum">
+<polygon fill="#d9534f" stroke="#d9534f" points="357,-1137 137,-1137 137,-1113 357,-1113 357,-1137"/>
+<text text-anchor="middle" x="247" y="-1122.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_depth_averaged_momentum</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_step_impl&#45;&gt;proc~compute_depth_averaged_momentum -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge6" class="edge">
+<title>proc~solver_step_impl&#45;&gt;proc~compute_depth_averaged_momentum</title>
+<path fill="none" stroke="#ff0000" d="M51.31,-825.25C51.34,-868.77 57.49,-1017.52 137,-1095 142.63,-1100.49 149.17,-1105 156.2,-1108.69"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="154.79,-1111.9 165.33,-1112.95 157.75,-1105.55 154.79,-1111.9"/>
+</g>
+<!-- proc~compute_rk2_average -->
+<g id="proc~~solver_step_impl~~CallsGraph_node8" class="node">
+<title>proc~compute_rk2_average</title>
+<g id="a_proc~~solver_step_impl~~CallsGraph_node8"><a xlink:href="../proc/compute_rk2_average.html" xlink:title="compute_rk2_average">
+<polygon fill="#d9534f" stroke="#d9534f" points="313,-1086 181,-1086 181,-1062 313,-1062 313,-1086"/>
+<text text-anchor="middle" x="247" y="-1071.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_rk2_average</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_step_impl&#45;&gt;proc~compute_rk2_average -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge7" class="edge">
+<title>proc~solver_step_impl&#45;&gt;proc~compute_rk2_average</title>
+<path fill="none" stroke="#ff0000" d="M52.69,-825.26C56.91,-862.26 74.5,-973.98 137,-1035 147.46,-1045.21 160.77,-1052.77 174.47,-1058.35"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="173.39,-1061.69 183.99,-1061.91 175.85,-1055.13 173.39,-1061.69"/>
+</g>
+<!-- proc~compute_rk2_average_layers -->
+<g id="proc~~solver_step_impl~~CallsGraph_node9" class="node">
+<title>proc~compute_rk2_average_layers</title>
+<g id="a_proc~~solver_step_impl~~CallsGraph_node9"><a xlink:href="../proc/compute_rk2_average_layers.html" xlink:title="compute_rk2_average_layers">
+<polygon fill="#d9534f" stroke="#d9534f" points="331.5,-907 162.5,-907 162.5,-883 331.5,-883 331.5,-907"/>
+<text text-anchor="middle" x="247" y="-892.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_rk2_average_layers</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_step_impl&#45;&gt;proc~compute_rk2_average_layers -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge8" class="edge">
+<title>proc~solver_step_impl&#45;&gt;proc~compute_rk2_average_layers</title>
+<path fill="none" stroke="#ff0000" d="M64.6,-825.14C80.49,-839.16 108.68,-861.86 137,-874 142.15,-876.21 147.53,-878.18 153.03,-879.95"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="152.45,-883.43 163.03,-882.92 154.44,-876.72 152.45,-883.43"/>
+</g>
+<!-- proc~compute_timestep -->
+<g id="proc~~solver_step_impl~~CallsGraph_node10" class="node">
+<title>proc~compute_timestep</title>
+<g id="a_proc~~solver_step_impl~~CallsGraph_node10"><a xlink:href="../proc/compute_timestep.html" xlink:title="compute_timestep">
+<polygon fill="#d9534f" stroke="#d9534f" points="539.5,-1270 427.5,-1270 427.5,-1246 539.5,-1246 539.5,-1270"/>
+<text text-anchor="middle" x="483.5" y="-1255.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_timestep</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_step_impl&#45;&gt;proc~compute_timestep -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge9" class="edge">
+<title>proc~solver_step_impl&#45;&gt;proc~compute_timestep</title>
+<path fill="none" stroke="#ff0000" d="M52.04,-825.06C55.1,-888.19 72.64,-1179.84 137,-1236 218.1,-1306.77 354.8,-1289.29 429.63,-1272.4"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="430.83,-1275.72 439.77,-1270.03 429.23,-1268.9 430.83,-1275.72"/>
+</g>
+<!-- proc~fused_update_stage1 -->
+<g id="proc~~solver_step_impl~~CallsGraph_node11" class="node">
+<title>proc~fused_update_stage1</title>
+<g id="a_proc~~solver_step_impl~~CallsGraph_node11"><a xlink:href="../proc/fused_update_stage1.html" xlink:title="fused_update_stage1">
+<polygon fill="#d9534f" stroke="#d9534f" points="310,-1026 184,-1026 184,-1002 310,-1002 310,-1026"/>
+<text text-anchor="middle" x="247" y="-1011.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">fused_update_stage1</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_step_impl&#45;&gt;proc~fused_update_stage1 -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge10" class="edge">
+<title>proc~solver_step_impl&#45;&gt;proc~fused_update_stage1</title>
+<path fill="none" stroke="#ff0000" d="M55.88,-825.02C66.22,-851.95 94.49,-917.89 137,-958 155.38,-975.35 180.18,-988.65 201.48,-997.93"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="200.41,-1001.28 210.98,-1001.91 203.11,-994.82 200.41,-1001.28"/>
+</g>
+<!-- proc~fused_update_stage2 -->
+<g id="proc~~solver_step_impl~~CallsGraph_node12" class="node">
+<title>proc~fused_update_stage2</title>
+<g id="a_proc~~solver_step_impl~~CallsGraph_node12"><a xlink:href="../proc/fused_update_stage2.html" xlink:title="fused_update_stage2">
+<polygon fill="#d9534f" stroke="#d9534f" points="310,-865 184,-865 184,-841 310,-841 310,-865"/>
+<text text-anchor="middle" x="247" y="-850.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">fused_update_stage2</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_step_impl&#45;&gt;proc~fused_update_stage2 -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge11" class="edge">
+<title>proc~solver_step_impl&#45;&gt;proc~fused_update_stage2</title>
+<path fill="none" stroke="#ff0000" d="M101.08,-823.2C124.33,-827.98 152.41,-833.75 177.64,-838.94"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="177.02,-842.39 187.52,-840.97 178.43,-835.53 177.02,-842.39"/>
+</g>
+<!-- proc~make_timestepper -->
+<g id="proc~~solver_step_impl~~CallsGraph_node13" class="node">
+<title>proc~make_timestepper</title>
+<g id="a_proc~~solver_step_impl~~CallsGraph_node13"><a xlink:href="../proc/make_timestepper.html" xlink:title="make_timestepper">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="303,-747 191,-747 191,-723 303,-723 303,-747"/>
+<text text-anchor="middle" x="247" y="-732.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">make_timestepper</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_step_impl&#45;&gt;proc~make_timestepper -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge12" class="edge">
+<title>proc~solver_step_impl&#45;&gt;proc~make_timestepper</title>
+<path fill="none" stroke="#ff0000" d="M68.02,-800.79C84.66,-789.02 111.45,-771.51 137,-761 150.81,-755.32 166.15,-750.7 180.84,-747.03"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="181.98,-750.36 190.89,-744.64 180.35,-743.55 181.98,-750.36"/>
+</g>
+<!-- proc~profiler_start -->
+<g id="proc~~solver_step_impl~~CallsGraph_node14" class="node">
+<title>proc~profiler_start</title>
+<g id="a_proc~~solver_step_impl~~CallsGraph_node14"><a xlink:href="../proc/profiler_start.html" xlink:title="profiler_start">
+<polygon fill="#d9534f" stroke="#d9534f" points="523.5,-256 443.5,-256 443.5,-232 523.5,-232 523.5,-256"/>
+<text text-anchor="middle" x="483.5" y="-241.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">profiler_start</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_step_impl&#45;&gt;proc~profiler_start -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge13" class="edge">
+<title>proc~solver_step_impl&#45;&gt;proc~profiler_start</title>
+<path fill="none" stroke="#ff0000" d="M51.62,-800.69C52.57,-728.89 61.15,-364.82 137,-291 157.89,-270.67 342.86,-254.33 433.24,-247.48"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="433.54,-250.97 443.25,-246.73 433.02,-243.99 433.54,-250.97"/>
+</g>
+<!-- proc~profiler_stop -->
+<g id="proc~~solver_step_impl~~CallsGraph_node15" class="node">
+<title>proc~profiler_stop</title>
+<g id="a_proc~~solver_step_impl~~CallsGraph_node15"><a xlink:href="../proc/profiler_stop.html" xlink:title="profiler_stop">
+<polygon fill="#d9534f" stroke="#d9534f" points="523,-298 444,-298 444,-274 523,-274 523,-298"/>
+<text text-anchor="middle" x="483.5" y="-283.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">profiler_stop</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_step_impl&#45;&gt;proc~profiler_stop -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge14" class="edge">
+<title>proc~solver_step_impl&#45;&gt;proc~profiler_stop</title>
+<path fill="none" stroke="#ff0000" d="M51.76,-800.63C53.5,-731.57 65.57,-394.54 137,-327 158.16,-306.99 343.53,-293.86 433.68,-288.6"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="434.14,-292.08 443.93,-288.01 433.74,-285.09 434.14,-292.08"/>
+</g>
+<!-- proc~solver_advance_2d_generic -->
+<g id="proc~~solver_step_impl~~CallsGraph_node16" class="node">
+<title>proc~solver_advance_2d_generic</title>
+<g id="a_proc~~solver_step_impl~~CallsGraph_node16"><a xlink:href="../proc/solver_advance_2d_generic.html" xlink:title="solver_advance_2d_generic">
+<polygon fill="#d9534f" stroke="#d9534f" points="327,-403 167,-403 167,-379 327,-379 327,-403"/>
+<text text-anchor="middle" x="247" y="-388.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_advance_2d_generic</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_step_impl&#45;&gt;proc~solver_advance_2d_generic -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge15" class="edge">
+<title>proc~solver_step_impl&#45;&gt;proc~solver_advance_2d_generic</title>
+<path fill="none" stroke="#ff0000" d="M55.93,-800.88C67.96,-768.18 102.67,-675.64 137,-601 169.46,-530.43 213.44,-449.53 234.21,-412.07"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="237.39,-413.55 239.2,-403.11 231.28,-410.14 237.39,-413.55"/>
+</g>
+<!-- proc~solver_compute_barotropic_flux -->
+<g id="proc~~solver_step_impl~~CallsGraph_node17" class="node">
+<title>proc~solver_compute_barotropic_flux</title>
+<g id="a_proc~~solver_step_impl~~CallsGraph_node17"><a xlink:href="../proc/solver_compute_barotropic_flux.html" xlink:title="solver_compute_barotropic_flux">
+<polygon fill="#d9534f" stroke="#d9534f" points="574,-340 393,-340 393,-316 574,-316 574,-340"/>
+<text text-anchor="middle" x="483.5" y="-325.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_compute_barotropic_flux</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_step_impl&#45;&gt;proc~solver_compute_barotropic_flux -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge16" class="edge">
+<title>proc~solver_step_impl&#45;&gt;proc~solver_compute_barotropic_flux</title>
+<path fill="none" stroke="#ff0000" d="M51.98,-800.88C54.82,-736.05 71.55,-431.04 137,-370 171.62,-337.71 293.33,-329.21 382.52,-327.48"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="382.74,-330.98 392.68,-327.31 382.63,-323.98 382.74,-330.98"/>
+</g>
+<!-- proc~solver_nh_rk_stage -->
+<g id="proc~~solver_step_impl~~CallsGraph_node18" class="node">
+<title>proc~solver_nh_rk_stage</title>
+<g id="a_proc~~solver_step_impl~~CallsGraph_node18"><a xlink:href="../proc/solver_nh_rk_stage.html" xlink:title="solver_nh_rk_stage">
+<polygon fill="#d9534f" stroke="#d9534f" points="304,-634 190,-634 190,-610 304,-610 304,-634"/>
+<text text-anchor="middle" x="247" y="-619.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_nh_rk_stage</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_step_impl&#45;&gt;proc~solver_nh_rk_stage -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge17" class="edge">
+<title>proc~solver_step_impl&#45;&gt;proc~solver_nh_rk_stage</title>
+<path fill="none" stroke="#ff0000" d="M60.93,-800.88C76.12,-781.67 107.29,-743.38 137,-714 164.64,-686.67 199.36,-658.27 222.09,-640.39"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="224.45,-642.99 230.17,-634.07 220.14,-637.47 224.45,-642.99"/>
+</g>
+<!-- proc~solver_save_state -->
+<g id="proc~~solver_step_impl~~CallsGraph_node19" class="node">
+<title>proc~solver_save_state</title>
+<g id="a_proc~~solver_step_impl~~CallsGraph_node19"><a xlink:href="../proc/solver_save_state.html" xlink:title="solver_save_state">
+<polygon fill="#d9534f" stroke="#d9534f" points="536.5,-214 430.5,-214 430.5,-190 536.5,-190 536.5,-214"/>
+<text text-anchor="middle" x="483.5" y="-199.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_save_state</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_step_impl&#45;&gt;proc~solver_save_state -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge18" class="edge">
+<title>proc~solver_step_impl&#45;&gt;proc~solver_save_state</title>
+<path fill="none" stroke="#ff0000" d="M51.47,-800.75C51.54,-725.96 55.82,-331.37 137,-251 142,-246.05 321.97,-222.44 420.13,-209.89"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="420.75,-213.34 430.23,-208.6 419.87,-206.4 420.75,-213.34"/>
+</g>
+<!-- proc~solver_save_state_layers -->
+<g id="proc~~solver_step_impl~~CallsGraph_node20" class="node">
+<title>proc~solver_save_state_layers</title>
+<g id="a_proc~~solver_step_impl~~CallsGraph_node20"><a xlink:href="../proc/solver_save_state_layers.html" xlink:title="solver_save_state_layers">
+<polygon fill="#d9534f" stroke="#d9534f" points="319,-209 175,-209 175,-185 319,-185 319,-209"/>
+<text text-anchor="middle" x="247" y="-194.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_save_state_layers</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_step_impl&#45;&gt;proc~solver_save_state_layers -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge19" class="edge">
+<title>proc~solver_step_impl&#45;&gt;proc~solver_save_state_layers</title>
+<path fill="none" stroke="#ff0000" d="M51.48,-800.75C51.6,-724.18 56.02,-311.64 137,-223 144.71,-214.56 154.63,-208.62 165.33,-204.49"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="166.53,-207.78 174.91,-201.3 164.31,-201.14 166.53,-207.78"/>
+</g>
+<!-- reduce -->
+<g id="proc~~solver_step_impl~~CallsGraph_node45" class="node">
+<title>reduce</title>
+<polygon fill="#777777" stroke="#777777" points="722,-1194 668,-1194 668,-1170 722,-1170 722,-1194"/>
+<text text-anchor="middle" x="695" y="-1179.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">reduce</text>
+</g>
+<!-- proc~accumulate_boundary_mass_out&#45;&gt;reduce -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge20" class="edge">
+<title>proc~accumulate_boundary_mass_out&#45;&gt;reduce</title>
+<path fill="none" stroke="#ff0000" d="M340.68,-1173.29C438.8,-1175.71 588.76,-1179.4 657.4,-1181.1"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="657.62,-1184.6 667.7,-1181.35 657.79,-1177.61 657.62,-1184.6"/>
+</g>
+<!-- proc~accumulate_mass_src&#45;&gt;reduce -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge21" class="edge">
+<title>proc~accumulate_mass_src&#45;&gt;reduce</title>
+<path fill="none" stroke="#ff5000" d="M311.9,-1210.27C406.91,-1203.24 582.31,-1190.26 657.85,-1184.67"/>
+<polygon fill="#ff5000" stroke="#ff5000" points="658.11,-1188.17 667.82,-1183.94 657.59,-1181.18 658.11,-1188.17"/>
+</g>
+<!-- proc~apply_sponge -->
+<g id="proc~~solver_step_impl~~CallsGraph_node25" class="node">
+<title>proc~apply_sponge</title>
+<g id="a_proc~~solver_step_impl~~CallsGraph_node25"><a xlink:href="../proc/apply_sponge.html" xlink:title="apply_sponge">
+<polygon fill="#d9534f" stroke="#d9534f" points="526.5,-592 440.5,-592 440.5,-568 526.5,-568 526.5,-592"/>
+<text text-anchor="middle" x="483.5" y="-577.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">apply_sponge</text>
+</a>
+</g>
+</g>
+<!-- proc~accumulate_sponge_mass_src&#45;&gt;proc~apply_sponge -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge22" class="edge">
+<title>proc~accumulate_sponge_mass_src&#45;&gt;proc~apply_sponge</title>
+<path fill="none" stroke="#ffa100" d="M333.7,-931.71C342.47,-928.08 350.52,-923 357,-916 452.75,-812.62 299.34,-706.28 393,-601 402.48,-590.35 416.23,-584.57 430.13,-581.57"/>
+<polygon fill="#ffa100" stroke="#ffa100" points="430.96,-584.98 440.22,-579.84 429.77,-578.08 430.96,-584.98"/>
+</g>
+<!-- proc~accumulate_sponge_mass_src&#45;&gt;reduce -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge23" class="edge">
+<title>proc~accumulate_sponge_mass_src&#45;&gt;reduce</title>
+<path fill="none" stroke="#ffa100" d="M272.38,-949.2C294.55,-960.38 328.14,-977.5 357,-993 471.43,-1054.46 605.57,-1131.08 664.12,-1164.76"/>
+<polygon fill="#ffa100" stroke="#ffa100" points="662.44,-1167.83 672.86,-1169.79 665.94,-1161.77 662.44,-1167.83"/>
+</g>
+<!-- proc~bc_chapman_edge -->
+<g id="proc~~solver_step_impl~~CallsGraph_node26" class="node">
+<title>proc~bc_chapman_edge</title>
+<g id="a_proc~~solver_step_impl~~CallsGraph_node26"><a xlink:href="../proc/bc_chapman_edge.html" xlink:title="bc_chapman_edge">
+<polygon fill="#d9534f" stroke="#d9534f" points="751.5,-466 638.5,-466 638.5,-442 751.5,-442 751.5,-466"/>
+<text text-anchor="middle" x="695" y="-451.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">bc_chapman_edge</text>
+</a>
+</g>
+</g>
+<!-- proc~apply_boundary_conditions&#45;&gt;proc~bc_chapman_edge -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge24" class="edge">
+<title>proc~apply_boundary_conditions&#45;&gt;proc~bc_chapman_edge</title>
+<path fill="none" stroke="#fff100" d="M561.66,-610C566.13,-607.5 570.3,-604.52 574,-601 616.16,-560.81 568.14,-515.49 610,-475 615.35,-469.83 621.77,-465.87 628.65,-462.85"/>
+<polygon fill="#fff100" stroke="#fff100" points="630.09,-466.05 638.25,-459.29 627.66,-459.48 630.09,-466.05"/>
+</g>
+<!-- proc~bc_clamped_edge -->
+<g id="proc~~solver_step_impl~~CallsGraph_node27" class="node">
+<title>proc~bc_clamped_edge</title>
+<g id="a_proc~~solver_step_impl~~CallsGraph_node27"><a xlink:href="../proc/bc_clamped_edge.html" xlink:title="bc_clamped_edge">
+<polygon fill="#d9534f" stroke="#d9534f" points="749.5,-676 640.5,-676 640.5,-652 749.5,-652 749.5,-676"/>
+<text text-anchor="middle" x="695" y="-661.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">bc_clamped_edge</text>
+</a>
+</g>
+</g>
+<!-- proc~apply_boundary_conditions&#45;&gt;proc~bc_clamped_edge -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge25" class="edge">
+<title>proc~apply_boundary_conditions&#45;&gt;proc~bc_clamped_edge</title>
+<path fill="none" stroke="#fff100" d="M544.53,-634.04C571.46,-639.43 603.23,-645.8 630.54,-651.28"/>
+<polygon fill="#fff100" stroke="#fff100" points="629.89,-654.72 640.39,-653.25 631.27,-647.85 629.89,-654.72"/>
+</g>
+<!-- proc~bc_disch_edge -->
+<g id="proc~~solver_step_impl~~CallsGraph_node28" class="node">
+<title>proc~bc_disch_edge</title>
+<g id="a_proc~~solver_step_impl~~CallsGraph_node28"><a xlink:href="../proc/bc_disch_edge.html" xlink:title="bc_disch_edge">
+<polygon fill="#d9534f" stroke="#d9534f" points="740.5,-634 649.5,-634 649.5,-610 740.5,-610 740.5,-634"/>
+<text text-anchor="middle" x="695" y="-619.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">bc_disch_edge</text>
+</a>
+</g>
+</g>
+<!-- proc~apply_boundary_conditions&#45;&gt;proc~bc_disch_edge -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge26" class="edge">
+<title>proc~apply_boundary_conditions&#45;&gt;proc~bc_disch_edge</title>
+<path fill="none" stroke="#fff100" d="M562.51,-622C588.05,-622 615.86,-622 639.3,-622"/>
+<polygon fill="#fff100" stroke="#fff100" points="639.39,-625.5 649.39,-622 639.39,-618.5 639.39,-625.5"/>
+</g>
+<!-- proc~bc_flather_edge -->
+<g id="proc~~solver_step_impl~~CallsGraph_node29" class="node">
+<title>proc~bc_flather_edge</title>
+<g id="a_proc~~solver_step_impl~~CallsGraph_node29"><a xlink:href="../proc/bc_flather_edge.html" xlink:title="bc_flather_edge">
+<polygon fill="#d9534f" stroke="#d9534f" points="744,-592 646,-592 646,-568 744,-568 744,-592"/>
+<text text-anchor="middle" x="695" y="-577.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">bc_flather_edge</text>
+</a>
+</g>
+</g>
+<!-- proc~apply_boundary_conditions&#45;&gt;proc~bc_flather_edge -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge27" class="edge">
+<title>proc~apply_boundary_conditions&#45;&gt;proc~bc_flather_edge</title>
+<path fill="none" stroke="#fff100" d="M544.53,-609.96C573.3,-604.2 607.62,-597.32 636.1,-591.61"/>
+<polygon fill="#fff100" stroke="#fff100" points="636.8,-595.04 645.92,-589.64 635.43,-588.17 636.8,-595.04"/>
+</g>
+<!-- proc~bc_inflow_edge -->
+<g id="proc~~solver_step_impl~~CallsGraph_node30" class="node">
+<title>proc~bc_inflow_edge</title>
+<g id="a_proc~~solver_step_impl~~CallsGraph_node30"><a xlink:href="../proc/bc_inflow_edge.html" xlink:title="bc_inflow_edge">
+<polygon fill="#d9534f" stroke="#d9534f" points="742,-550 648,-550 648,-526 742,-526 742,-550"/>
+<text text-anchor="middle" x="695" y="-535.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">bc_inflow_edge</text>
+</a>
+</g>
+</g>
+<!-- proc~apply_boundary_conditions&#45;&gt;proc~bc_inflow_edge -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge28" class="edge">
+<title>proc~apply_boundary_conditions&#45;&gt;proc~bc_inflow_edge</title>
+<path fill="none" stroke="#fff100" d="M555.09,-609.98C561.72,-607.53 568.14,-604.57 574,-601 595.01,-588.23 589.09,-571.93 610,-559 618.54,-553.72 628.33,-549.77 638.15,-546.81"/>
+<polygon fill="#fff100" stroke="#fff100" points="639.19,-550.16 647.93,-544.17 637.36,-543.4 639.19,-550.16"/>
+</g>
+<!-- proc~bc_wall_edge -->
+<g id="proc~~solver_step_impl~~CallsGraph_node31" class="node">
+<title>proc~bc_wall_edge</title>
+<g id="a_proc~~solver_step_impl~~CallsGraph_node31"><a xlink:href="../proc/bc_wall_edge.html" xlink:title="bc_wall_edge">
+<polygon fill="#d9534f" stroke="#d9534f" points="737,-508 653,-508 653,-484 737,-484 737,-508"/>
+<text text-anchor="middle" x="695" y="-493.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">bc_wall_edge</text>
+</a>
+</g>
+</g>
+<!-- proc~apply_boundary_conditions&#45;&gt;proc~bc_wall_edge -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge29" class="edge">
+<title>proc~apply_boundary_conditions&#45;&gt;proc~bc_wall_edge</title>
+<path fill="none" stroke="#fff100" d="M560.31,-609.88C565.21,-607.42 569.84,-604.49 574,-601 605.11,-574.89 579.08,-543.34 610,-517 619.3,-509.08 631.16,-504.07 643.01,-500.93"/>
+<polygon fill="#fff100" stroke="#fff100" points="643.93,-504.31 652.91,-498.7 642.39,-497.48 643.93,-504.31"/>
+</g>
+<!-- local -->
+<g id="proc~~solver_step_impl~~CallsGraph_node21" class="node">
+<title>local</title>
+<polygon fill="#777777" stroke="#777777" points="871,-676 817,-676 817,-652 871,-652 871,-676"/>
+<text text-anchor="middle" x="844" y="-661.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">local</text>
+</g>
+<!-- proc~compute_depth_averaged_momentum&#45;&gt;local -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge30" class="edge">
+<title>proc~compute_depth_averaged_momentum&#45;&gt;local</title>
+<path fill="none" stroke="#6bff00" d="M357.16,-1134.51C494.86,-1143.93 720.86,-1150.01 780,-1095 840.17,-1039.04 843.58,-767.51 843.24,-686.72"/>
+<polygon fill="#6bff00" stroke="#6bff00" points="846.74,-686.21 843.17,-676.23 839.74,-686.26 846.74,-686.21"/>
+</g>
+<!-- proc~compute_rk2_average&#45;&gt;local -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge31" class="edge">
+<title>proc~compute_rk2_average&#45;&gt;local</title>
+<path fill="none" stroke="#1aff00" d="M313.15,-1082.57C439.68,-1097.67 712.22,-1122.14 780,-1063 837.05,-1013.22 842.68,-763.58 843.05,-686.62"/>
+<polygon fill="#1aff00" stroke="#1aff00" points="846.55,-686.19 843.07,-676.19 839.55,-686.18 846.55,-686.19"/>
+</g>
+<!-- proc~compute_timestep&#45;&gt;local -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge32" class="edge">
+<title>proc~compute_timestep&#45;&gt;local</title>
+<path fill="none" stroke="#00ff86" d="M539.57,-1265.33C606.72,-1270.86 718.81,-1268.48 780,-1203 815.89,-1164.6 837.08,-783.55 841.93,-686.43"/>
+<polygon fill="#00ff86" stroke="#00ff86" points="845.43,-686.43 842.43,-676.27 838.44,-686.09 845.43,-686.43"/>
+</g>
+<!-- proc~compute_timestep&#45;&gt;reduce -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge33" class="edge">
+<title>proc~compute_timestep&#45;&gt;reduce</title>
+<path fill="none" stroke="#00ff86" d="M529.89,-1245.88C544.11,-1241.8 559.81,-1237 574,-1232 602.81,-1221.85 634.7,-1208.45 658.36,-1198.08"/>
+<polygon fill="#00ff86" stroke="#00ff86" points="659.91,-1201.23 667.64,-1193.99 657.08,-1194.82 659.91,-1201.23"/>
+</g>
+<!-- proc~fused_update_stage1&#45;&gt;local -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge34" class="edge">
+<title>proc~fused_update_stage1&#45;&gt;local</title>
+<path fill="none" stroke="#00ffd6" d="M307.72,-1026.01C431.49,-1049.42 710.26,-1093.89 780,-1035 833.54,-989.79 841.59,-759.83 842.79,-686.5"/>
+<polygon fill="#00ffd6" stroke="#00ffd6" points="846.3,-686.17 842.93,-676.13 839.3,-686.08 846.3,-686.17"/>
+</g>
+<!-- proc~fused_update_stage2&#45;&gt;local -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge35" class="edge">
+<title>proc~fused_update_stage2&#45;&gt;local</title>
+<path fill="none" stroke="#00d6ff" d="M310.04,-855.08C326.58,-858.13 343.56,-863.81 357,-874 385.51,-895.62 365.52,-923.09 393,-946 470.14,-1010.3 510.57,-994.86 610,-1009 684.8,-1019.64 721.97,-1057.39 780,-1009 829.83,-967.44 840.36,-755.95 842.48,-686.28"/>
+<polygon fill="#00d6ff" stroke="#00d6ff" points="845.99,-686.11 842.77,-676.02 838.99,-685.92 845.99,-686.11"/>
+</g>
+<!-- proc~find_or_create_region -->
+<g id="proc~~solver_step_impl~~CallsGraph_node38" class="node">
+<title>proc~find_or_create_region</title>
+<g id="a_proc~~solver_step_impl~~CallsGraph_node38"><a xlink:href="../proc/find_or_create_region.html" xlink:title="find_or_create_region">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="758.5,-24 631.5,-24 631.5,0 758.5,0 758.5,-24"/>
+<text text-anchor="middle" x="695" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">find_or_create_region</text>
+</a>
+</g>
+</g>
+<!-- proc~profiler_start&#45;&gt;proc~find_or_create_region -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge36" class="edge">
+<title>proc~profiler_start&#45;&gt;proc~find_or_create_region</title>
+<path fill="none" stroke="#0035ff" d="M523.58,-244.08C541.28,-242.03 561.08,-236.49 574,-223 633.45,-160.93 551.01,-95.5 610,-33 613.58,-29.2 617.74,-26.05 622.25,-23.44"/>
+<polygon fill="#0035ff" stroke="#0035ff" points="623.83,-26.56 631.3,-19.04 620.78,-20.26 623.83,-26.56"/>
+</g>
+<!-- proc~get_wall_time -->
+<g id="proc~~solver_step_impl~~CallsGraph_node40" class="node">
+<title>proc~get_wall_time</title>
+<g id="a_proc~~solver_step_impl~~CallsGraph_node40"><a xlink:href="../proc/get_wall_time.html" xlink:title="get_wall_time">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="737.5,-108 652.5,-108 652.5,-84 737.5,-84 737.5,-108"/>
+<text text-anchor="middle" x="695" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">get_wall_time</text>
+</a>
+</g>
+</g>
+<!-- proc~profiler_start&#45;&gt;proc~get_wall_time -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge37" class="edge">
+<title>proc~profiler_start&#45;&gt;proc~get_wall_time</title>
+<path fill="none" stroke="#0035ff" d="M523.67,-243.13C540.97,-240.82 560.41,-235.33 574,-223 610.84,-189.56 573.4,-150.7 610,-117 618.98,-108.73 630.73,-103.59 642.57,-100.43"/>
+<polygon fill="#0035ff" stroke="#0035ff" points="643.49,-103.81 652.49,-98.22 641.97,-96.98 643.49,-103.81"/>
+</g>
+<!-- proc~nvtx_range_push -->
+<g id="proc~~solver_step_impl~~CallsGraph_node42" class="node">
+<title>proc~nvtx_range_push</title>
+<g id="a_proc~~solver_step_impl~~CallsGraph_node42"><a xlink:href="../proc/nvtx_range_push.html" xlink:title="nvtx_range_push">
+<polygon fill="#d9534f" stroke="#d9534f" points="746.5,-66 643.5,-66 643.5,-42 746.5,-42 746.5,-66"/>
+<text text-anchor="middle" x="695" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nvtx_range_push</text>
+</a>
+</g>
+</g>
+<!-- proc~profiler_start&#45;&gt;proc~nvtx_range_push -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge38" class="edge">
+<title>proc~profiler_start&#45;&gt;proc~nvtx_range_push</title>
+<path fill="none" stroke="#0035ff" d="M523.73,-243.73C541.25,-241.57 560.86,-236.04 574,-223 622.06,-175.33 562.28,-123.02 610,-75 616.54,-68.42 624.8,-63.8 633.58,-60.56"/>
+<polygon fill="#0035ff" stroke="#0035ff" points="634.73,-63.87 643.25,-57.57 632.66,-57.18 634.73,-63.87"/>
+</g>
+<!-- proc~profiler_stop&#45;&gt;proc~get_wall_time -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge39" class="edge">
+<title>proc~profiler_stop&#45;&gt;proc~get_wall_time</title>
+<path fill="none" stroke="#1a00ff" d="M523.28,-285.78C540.91,-283.67 560.74,-278.15 574,-265 622.06,-217.33 562.28,-165.02 610,-117 618.69,-108.25 630.44,-102.96 642.39,-99.79"/>
+<polygon fill="#1a00ff" stroke="#1a00ff" points="643.39,-103.16 652.41,-97.61 641.9,-96.32 643.39,-103.16"/>
+</g>
+<!-- proc~nvtx_range_pop -->
+<g id="proc~~solver_step_impl~~CallsGraph_node41" class="node">
+<title>proc~nvtx_range_pop</title>
+<g id="a_proc~~solver_step_impl~~CallsGraph_node41"><a xlink:href="../proc/nvtx_range_pop.html" xlink:title="nvtx_range_pop">
+<polygon fill="#d9534f" stroke="#d9534f" points="743.5,-150 646.5,-150 646.5,-126 743.5,-126 743.5,-150"/>
+<text text-anchor="middle" x="695" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nvtx_range_pop</text>
+</a>
+</g>
+</g>
+<!-- proc~profiler_stop&#45;&gt;proc~nvtx_range_pop -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge40" class="edge">
+<title>proc~profiler_stop&#45;&gt;proc~nvtx_range_pop</title>
+<path fill="none" stroke="#1a00ff" d="M523.22,-285.19C540.63,-282.92 560.29,-277.44 574,-265 610.84,-231.56 573.4,-192.7 610,-159 617.46,-152.13 626.83,-147.42 636.58,-144.21"/>
+<polygon fill="#1a00ff" stroke="#1a00ff" points="637.7,-147.53 646.4,-141.48 635.83,-140.79 637.7,-147.53"/>
+</g>
+<!-- proc~solver_advance_2d_generic&#45;&gt;proc~apply_boundary_conditions -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge41" class="edge">
+<title>proc~solver_advance_2d_generic&#45;&gt;proc~apply_boundary_conditions</title>
+<path fill="none" stroke="#6b00ff" d="M252.6,-403.04C267.11,-439.31 315.58,-548.21 393,-601 395.41,-602.64 397.93,-604.16 400.54,-605.56"/>
+<polygon fill="#6b00ff" stroke="#6b00ff" points="399.15,-608.77 409.68,-609.87 402.13,-602.44 399.15,-608.77"/>
+</g>
+<!-- proc~solver_advance_2d_generic&#45;&gt;proc~profiler_start -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge45" class="edge">
+<title>proc~solver_advance_2d_generic&#45;&gt;proc~profiler_start</title>
+<path fill="none" stroke="#6b00ff" d="M260.63,-378.59C290.07,-349.92 363.01,-280.34 393,-265 405.34,-258.69 419.61,-254.24 433.08,-251.12"/>
+<polygon fill="#6b00ff" stroke="#6b00ff" points="434.12,-254.48 443.18,-248.98 432.67,-247.63 434.12,-254.48"/>
+</g>
+<!-- proc~solver_advance_2d_generic&#45;&gt;proc~profiler_stop -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge46" class="edge">
+<title>proc~solver_advance_2d_generic&#45;&gt;proc~profiler_stop</title>
+<path fill="none" stroke="#6b00ff" d="M268.54,-378.89C306.96,-356.26 386.46,-309.6 393,-307 405.89,-301.89 420.33,-297.83 433.79,-294.69"/>
+<polygon fill="#6b00ff" stroke="#6b00ff" points="434.84,-298.04 443.85,-292.47 433.34,-291.21 434.84,-298.04"/>
+</g>
+<!-- proc~solver_advance_2d_generic&#45;&gt;proc~solver_compute_barotropic_flux -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge47" class="edge">
+<title>proc~solver_advance_2d_generic&#45;&gt;proc~solver_compute_barotropic_flux</title>
+<path fill="none" stroke="#6b00ff" d="M307.11,-378.99C323.45,-375.11 341.06,-370.39 357,-365 373.59,-359.39 376.4,-354.58 393,-349 399.76,-346.73 406.89,-344.61 414.05,-342.66"/>
+<polygon fill="#6b00ff" stroke="#6b00ff" points="415.01,-346.02 423.8,-340.1 413.24,-339.25 415.01,-346.02"/>
+</g>
+<!-- proc~solver_advance_2d_generic&#45;&gt;proc~solver_save_state -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge48" class="edge">
+<title>proc~solver_advance_2d_generic&#45;&gt;proc~solver_save_state</title>
+<path fill="none" stroke="#6b00ff" d="M257.01,-378.71C282.99,-343.58 358.4,-243.96 393,-223 401.31,-217.97 410.72,-214.14 420.25,-211.23"/>
+<polygon fill="#6b00ff" stroke="#6b00ff" points="421.46,-214.53 430.18,-208.52 419.61,-207.78 421.46,-214.53"/>
+</g>
+<!-- proc~solver_advance_2d_generic&#45;&gt;proc~apply_sponge -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge42" class="edge">
+<title>proc~solver_advance_2d_generic&#45;&gt;proc~apply_sponge</title>
+<path fill="none" stroke="#6b00ff" d="M254.66,-403.02C272.59,-434.15 325.11,-517.88 393,-559 404.2,-565.79 417.42,-570.38 430.21,-573.49"/>
+<polygon fill="#6b00ff" stroke="#6b00ff" points="429.81,-576.98 440.33,-575.68 431.29,-570.14 429.81,-576.98"/>
+</g>
+<!-- proc~compute_ssp_combine -->
+<g id="proc~~solver_step_impl~~CallsGraph_node35" class="node">
+<title>proc~compute_ssp_combine</title>
+<g id="a_proc~~solver_step_impl~~CallsGraph_node35"><a xlink:href="../proc/compute_ssp_combine.html" xlink:title="compute_ssp_combine">
+<polygon fill="#d9534f" stroke="#d9534f" points="550.5,-424 416.5,-424 416.5,-400 550.5,-400 550.5,-424"/>
+<text text-anchor="middle" x="483.5" y="-409.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_ssp_combine</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_advance_2d_generic&#45;&gt;proc~compute_ssp_combine -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge43" class="edge">
+<title>proc~solver_advance_2d_generic&#45;&gt;proc~compute_ssp_combine</title>
+<path fill="none" stroke="#6b00ff" d="M327.06,-398.08C352.54,-400.36 380.72,-402.89 406,-405.15"/>
+<polygon fill="#6b00ff" stroke="#6b00ff" points="406.01,-408.66 416.28,-406.07 406.63,-401.69 406.01,-408.66"/>
+</g>
+<!-- proc~fused_update_stage_generic -->
+<g id="proc~~solver_step_impl~~CallsGraph_node39" class="node">
+<title>proc~fused_update_stage_generic</title>
+<g id="a_proc~~solver_step_impl~~CallsGraph_node39"><a xlink:href="../proc/fused_update_stage_generic.html" xlink:title="fused_update_stage_generic">
+<polygon fill="#d9534f" stroke="#d9534f" points="566,-382 401,-382 401,-358 566,-358 566,-382"/>
+<text text-anchor="middle" x="483.5" y="-367.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">fused_update_stage_generic</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_advance_2d_generic&#45;&gt;proc~fused_update_stage_generic -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge44" class="edge">
+<title>proc~solver_advance_2d_generic&#45;&gt;proc~fused_update_stage_generic</title>
+<path fill="none" stroke="#6b00ff" d="M327.06,-383.92C347.52,-382.09 369.71,-380.1 390.75,-378.22"/>
+<polygon fill="#6b00ff" stroke="#6b00ff" points="391.33,-381.68 400.98,-377.3 390.71,-374.71 391.33,-381.68"/>
+</g>
+<!-- proc~compute_flux_hll -->
+<g id="proc~~solver_step_impl~~CallsGraph_node32" class="node">
+<title>proc~compute_flux_hll</title>
+<g id="a_proc~~solver_step_impl~~CallsGraph_node32"><a xlink:href="../proc/compute_flux_hll.html" xlink:title="compute_flux_hll">
+<polygon fill="#d9534f" stroke="#d9534f" points="746.5,-234 643.5,-234 643.5,-210 746.5,-210 746.5,-234"/>
+<text text-anchor="middle" x="695" y="-219.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_flux_hll</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_compute_barotropic_flux&#45;&gt;proc~compute_flux_hll -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge49" class="edge">
+<title>proc~solver_compute_barotropic_flux&#45;&gt;proc~compute_flux_hll</title>
+<path fill="none" stroke="#bb00ff" d="M557.98,-315.99C563.66,-313.52 569.09,-310.56 574,-307 598.88,-288.98 585.76,-266.87 610,-248 617,-242.55 625.15,-238.23 633.57,-234.82"/>
+<polygon fill="#bb00ff" stroke="#bb00ff" points="634.95,-238.04 643.15,-231.33 632.55,-231.46 634.95,-238.04"/>
+</g>
+<!-- proc~compute_flux_hllc -->
+<g id="proc~~solver_step_impl~~CallsGraph_node33" class="node">
+<title>proc~compute_flux_hllc</title>
+<g id="a_proc~~solver_step_impl~~CallsGraph_node33"><a xlink:href="../proc/compute_flux_hllc.html" xlink:title="compute_flux_hllc">
+<polygon fill="#d9534f" stroke="#d9534f" points="749.5,-192 640.5,-192 640.5,-168 749.5,-168 749.5,-192"/>
+<text text-anchor="middle" x="695" y="-177.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_flux_hllc</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_compute_barotropic_flux&#45;&gt;proc~compute_flux_hllc -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge50" class="edge">
+<title>proc~solver_compute_barotropic_flux&#45;&gt;proc~compute_flux_hllc</title>
+<path fill="none" stroke="#bb00ff" d="M561.47,-315.79C565.98,-313.33 570.22,-310.43 574,-307 610.84,-273.56 573.4,-234.7 610,-201 615.97,-195.5 623.17,-191.38 630.8,-188.32"/>
+<polygon fill="#bb00ff" stroke="#bb00ff" points="631.95,-191.62 640.28,-185.07 629.68,-185 631.95,-191.62"/>
+</g>
+<!-- proc~solver_nh_rk_stage&#45;&gt;proc~apply_boundary_conditions -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge51" class="edge">
+<title>proc~solver_nh_rk_stage&#45;&gt;proc~apply_boundary_conditions</title>
+<path fill="none" stroke="#ff00f1" d="M304.17,-622C331.07,-622 363.93,-622 394.07,-622"/>
+<polygon fill="#ff00f1" stroke="#ff00f1" points="394.18,-625.5 404.18,-622 394.18,-618.5 394.18,-625.5"/>
+</g>
+<!-- proc~solver_nh_rk_stage&#45;&gt;proc~apply_nh_boundary_conditions -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge54" class="edge">
+<title>proc~solver_nh_rk_stage&#45;&gt;proc~apply_nh_boundary_conditions</title>
+<path fill="none" stroke="#ff00f1" d="M269.9,-634.13C295.15,-649.34 335.9,-677.86 357,-714 400.34,-788.22 333.55,-841.93 393,-904 393.93,-904.97 394.9,-905.9 395.9,-906.8"/>
+<polygon fill="#ff00f1" stroke="#ff00f1" points="394.02,-909.76 404.14,-912.88 398.18,-904.13 394.02,-909.76"/>
+</g>
+<!-- proc~solver_nh_rk_stage&#45;&gt;proc~profiler_start -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge60" class="edge">
+<title>proc~solver_nh_rk_stage&#45;&gt;proc~profiler_start</title>
+<path fill="none" stroke="#ff00f1" d="M255.73,-609.7C275.3,-578.07 327.38,-490.83 357,-412 380.66,-349.04 345.21,-312.33 393,-265 403.69,-254.42 418.64,-248.78 433.26,-245.88"/>
+<polygon fill="#ff00f1" stroke="#ff00f1" points="433.95,-249.31 443.28,-244.28 432.85,-242.4 433.95,-249.31"/>
+</g>
+<!-- proc~solver_nh_rk_stage&#45;&gt;proc~profiler_stop -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge61" class="edge">
+<title>proc~solver_nh_rk_stage&#45;&gt;proc~profiler_stop</title>
+<path fill="none" stroke="#ff00f1" d="M255.04,-610C273.41,-578.37 323.7,-489.79 357,-412 376.42,-366.65 356.42,-340.1 393,-307 404.15,-296.91 419.23,-291.4 433.82,-288.47"/>
+<polygon fill="#ff00f1" stroke="#ff00f1" points="434.49,-291.91 443.79,-286.83 433.36,-285 434.49,-291.91"/>
+</g>
+<!-- proc~solver_nh_rk_stage&#45;&gt;proc~solver_compute_barotropic_flux -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge64" class="edge">
+<title>proc~solver_nh_rk_stage&#45;&gt;proc~solver_compute_barotropic_flux</title>
+<path fill="none" stroke="#ff00f1" d="M254.31,-609.79C281.45,-557.33 387.08,-353.57 393,-349 394.85,-347.58 396.78,-346.24 398.77,-345"/>
+<polygon fill="#ff00f1" stroke="#ff00f1" points="400.74,-347.92 407.9,-340.1 397.43,-341.75 400.74,-347.92"/>
+</g>
+<!-- proc~apply_coriolis -->
+<g id="proc~~solver_step_impl~~CallsGraph_node22" class="node">
+<title>proc~apply_coriolis</title>
+<g id="a_proc~~solver_step_impl~~CallsGraph_node22"><a xlink:href="../proc/apply_coriolis.html" xlink:title="apply_coriolis">
+<polygon fill="#d9534f" stroke="#d9534f" points="737.5,-832 652.5,-832 652.5,-808 737.5,-808 737.5,-832"/>
+<text text-anchor="middle" x="695" y="-817.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">apply_coriolis</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_nh_rk_stage&#45;&gt;proc~apply_coriolis -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge52" class="edge">
+<title>proc~solver_nh_rk_stage&#45;&gt;proc~apply_coriolis</title>
+<path fill="none" stroke="#ff00f1" d="M266.5,-634.2C289.86,-650.3 330.22,-680.56 357,-714 378.62,-741 364.57,-763.3 393,-783 467.4,-834.57 577.63,-833.56 642,-827.33"/>
+<polygon fill="#ff00f1" stroke="#ff00f1" points="642.73,-830.78 652.32,-826.25 642.01,-823.82 642.73,-830.78"/>
+</g>
+<!-- proc~apply_friction -->
+<g id="proc~~solver_step_impl~~CallsGraph_node23" class="node">
+<title>proc~apply_friction</title>
+<g id="a_proc~~solver_step_impl~~CallsGraph_node23"><a xlink:href="../proc/apply_friction.html" xlink:title="apply_friction">
+<polygon fill="#d9534f" stroke="#d9534f" points="526,-774 441,-774 441,-750 526,-750 526,-774"/>
+<text text-anchor="middle" x="483.5" y="-759.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">apply_friction</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_nh_rk_stage&#45;&gt;proc~apply_friction -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge53" class="edge">
+<title>proc~solver_nh_rk_stage&#45;&gt;proc~apply_friction</title>
+<path fill="none" stroke="#ff00f1" d="M260.55,-634.04C284.49,-656.42 339.1,-704.71 393,-733 404.87,-739.23 418.33,-744.45 431.14,-748.66"/>
+<polygon fill="#ff00f1" stroke="#ff00f1" points="430.18,-752.03 440.77,-751.68 432.28,-745.35 430.18,-752.03"/>
+</g>
+<!-- proc~apply_nh_correction -->
+<g id="proc~~solver_step_impl~~CallsGraph_node24" class="node">
+<title>proc~apply_nh_correction</title>
+<g id="a_proc~~solver_step_impl~~CallsGraph_node24"><a xlink:href="../proc/apply_nh_correction.html" xlink:title="apply_nh_correction">
+<polygon fill="#d9534f" stroke="#d9534f" points="543.5,-724 423.5,-724 423.5,-700 543.5,-700 543.5,-724"/>
+<text text-anchor="middle" x="483.5" y="-709.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">apply_nh_correction</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_nh_rk_stage&#45;&gt;proc~apply_nh_correction -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge55" class="edge">
+<title>proc~solver_nh_rk_stage&#45;&gt;proc~apply_nh_correction</title>
+<path fill="none" stroke="#ff00f1" d="M271.92,-634.05C300.3,-648.04 349.28,-671.2 393,-687 403.11,-690.65 414.01,-694.1 424.62,-697.2"/>
+<polygon fill="#ff00f1" stroke="#ff00f1" points="423.67,-700.56 434.24,-699.94 425.58,-693.83 423.67,-700.56"/>
+</g>
+<!-- proc~solver_nh_rk_stage&#45;&gt;proc~apply_sponge -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge56" class="edge">
+<title>proc~solver_nh_rk_stage&#45;&gt;proc~apply_sponge</title>
+<path fill="none" stroke="#ff00f1" d="M304.17,-611.94C342.44,-605.09 392.76,-596.07 430.18,-589.37"/>
+<polygon fill="#ff00f1" stroke="#ff00f1" points="431.15,-592.75 440.37,-587.54 429.91,-585.86 431.15,-592.75"/>
+</g>
+<!-- proc~compute_layer_from_barotropic -->
+<g id="proc~~solver_step_impl~~CallsGraph_node34" class="node">
+<title>proc~compute_layer_from_barotropic</title>
+<g id="a_proc~~solver_step_impl~~CallsGraph_node34"><a xlink:href="../proc/compute_layer_from_barotropic.html" xlink:title="compute_layer_from_barotropic">
+<polygon fill="#d9534f" stroke="#d9534f" points="574,-678 393,-678 393,-654 574,-654 574,-678"/>
+<text text-anchor="middle" x="483.5" y="-663.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_layer_from_barotropic</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_nh_rk_stage&#45;&gt;proc~compute_layer_from_barotropic -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge57" class="edge">
+<title>proc~solver_nh_rk_stage&#45;&gt;proc~compute_layer_from_barotropic</title>
+<path fill="none" stroke="#ff00f1" d="M304.17,-632.54C335.49,-638.42 374.89,-645.81 408.68,-652.15"/>
+<polygon fill="#ff00f1" stroke="#ff00f1" points="408.03,-655.59 418.51,-653.99 409.32,-648.71 408.03,-655.59"/>
+</g>
+<!-- proc~compute_update -->
+<g id="proc~~solver_step_impl~~CallsGraph_node36" class="node">
+<title>proc~compute_update</title>
+<g id="a_proc~~solver_step_impl~~CallsGraph_node36"><a xlink:href="../proc/compute_update.html" xlink:title="compute_update">
+<polygon fill="#d9534f" stroke="#d9534f" points="535,-550 432,-550 432,-526 535,-526 535,-550"/>
+<text text-anchor="middle" x="483.5" y="-535.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_update</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_nh_rk_stage&#45;&gt;proc~compute_update -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge58" class="edge">
+<title>proc~solver_nh_rk_stage&#45;&gt;proc~compute_update</title>
+<path fill="none" stroke="#ff00f1" d="M272.11,-609.93C300.46,-596.11 349.23,-573.51 393,-559 402.32,-555.91 412.32,-553.09 422.15,-550.6"/>
+<polygon fill="#ff00f1" stroke="#ff00f1" points="423,-553.99 431.88,-548.21 421.34,-547.19 423,-553.99"/>
+</g>
+<!-- proc~compute_vertical_velocity -->
+<g id="proc~~solver_step_impl~~CallsGraph_node37" class="node">
+<title>proc~compute_vertical_velocity</title>
+<g id="a_proc~~solver_step_impl~~CallsGraph_node37"><a xlink:href="../proc/compute_vertical_velocity.html" xlink:title="compute_vertical_velocity">
+<polygon fill="#d9534f" stroke="#d9534f" points="559,-466 408,-466 408,-442 559,-442 559,-466"/>
+<text text-anchor="middle" x="483.5" y="-451.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_vertical_velocity</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_nh_rk_stage&#45;&gt;proc~compute_vertical_velocity -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge59" class="edge">
+<title>proc~solver_nh_rk_stage&#45;&gt;proc~compute_vertical_velocity</title>
+<path fill="none" stroke="#ff00f1" d="M256.2,-609.87C276.08,-581.47 329.85,-510.44 393,-475 396.43,-473.08 400.02,-471.33 403.72,-469.74"/>
+<polygon fill="#ff00f1" stroke="#ff00f1" points="405.03,-472.99 413.09,-466.12 402.5,-466.46 405.03,-472.99"/>
+</g>
+<!-- proc~save_barotropic_state -->
+<g id="proc~~solver_step_impl~~CallsGraph_node43" class="node">
+<title>proc~save_barotropic_state</title>
+<g id="a_proc~~solver_step_impl~~CallsGraph_node43"><a xlink:href="../proc/save_barotropic_state.html" xlink:title="save_barotropic_state">
+<polygon fill="#d9534f" stroke="#d9534f" points="547.5,-508 419.5,-508 419.5,-484 547.5,-484 547.5,-508"/>
+<text text-anchor="middle" x="483.5" y="-493.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">save_barotropic_state</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_nh_rk_stage&#45;&gt;proc~save_barotropic_state -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge62" class="edge">
+<title>proc~solver_nh_rk_stage&#45;&gt;proc~save_barotropic_state</title>
+<path fill="none" stroke="#ff00f1" d="M260.85,-609.9C284.87,-587.98 339.01,-541.67 393,-517 398.3,-514.58 403.91,-512.42 409.63,-510.5"/>
+<polygon fill="#ff00f1" stroke="#ff00f1" points="410.82,-513.79 419.34,-507.49 408.75,-507.11 410.82,-513.79"/>
+</g>
+<!-- proc~solve_nh_pressure -->
+<g id="proc~~solver_step_impl~~CallsGraph_node44" class="node">
+<title>proc~solve_nh_pressure</title>
+<g id="a_proc~~solver_step_impl~~CallsGraph_node44"><a xlink:href="../proc/solve_nh_pressure.html" xlink:title="solve_nh_pressure">
+<polygon fill="#d9534f" stroke="#d9534f" points="538,-895 429,-895 429,-871 538,-871 538,-895"/>
+<text text-anchor="middle" x="483.5" y="-880.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solve_nh_pressure</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_nh_rk_stage&#45;&gt;proc~solve_nh_pressure -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge63" class="edge">
+<title>proc~solver_nh_rk_stage&#45;&gt;proc~solve_nh_pressure</title>
+<path fill="none" stroke="#ff00f1" d="M268.36,-634C292.89,-649.48 333.69,-678.65 357,-714 387.18,-759.78 358.76,-789.18 393,-832 404.95,-846.95 422.55,-858.31 438.98,-866.47"/>
+<polygon fill="#ff00f1" stroke="#ff00f1" points="437.93,-869.84 448.47,-870.91 440.9,-863.5 437.93,-869.84"/>
+</g>
+<!-- proc~apply_coriolis&#45;&gt;local -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge65" class="edge">
+<title>proc~apply_coriolis&#45;&gt;local</title>
+<path fill="none" stroke="#ff3d00" d="M737.8,-814.11C752.46,-810.34 768.19,-804.15 780,-794 813.4,-765.3 830.62,-714.82 838.14,-685.94"/>
+<polygon fill="#ff3d00" stroke="#ff3d00" points="841.59,-686.56 840.56,-676.01 834.79,-684.9 841.59,-686.56"/>
+</g>
+<!-- proc~apply_friction&#45;&gt;local -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge66" class="edge">
+<title>proc~apply_friction&#45;&gt;local</title>
+<path fill="none" stroke="#ff7a00" d="M526.47,-764.85C585.94,-767.14 696.78,-764.89 780,-725 799.33,-715.74 816.45,-698.21 827.95,-684.32"/>
+<polygon fill="#ff7a00" stroke="#ff7a00" points="830.88,-686.25 834.35,-676.24 825.4,-681.9 830.88,-686.25"/>
+</g>
+<!-- proc~apply_nh_correction&#45;&gt;local -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge67" class="edge">
+<title>proc~apply_nh_correction&#45;&gt;local</title>
+<path fill="none" stroke="#ffb700" d="M543.64,-718.6C604.32,-723.39 700.77,-725.5 780,-702 794.11,-697.82 808.28,-689.7 819.59,-682.04"/>
+<polygon fill="#ffb700" stroke="#ffb700" points="821.87,-684.72 828,-676.08 817.82,-679.01 821.87,-684.72"/>
+</g>
+<!-- proc~apply_sponge&#45;&gt;local -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge68" class="edge">
+<title>proc~apply_sponge&#45;&gt;local</title>
+<path fill="none" stroke="#fff400" d="M526.69,-579.05C543.31,-576.59 561.41,-571 574,-559 616.16,-518.81 563.5,-468.07 610,-433 670.32,-387.5 719.96,-387.14 780,-433 813.54,-458.62 833.51,-588.93 840.33,-641.73"/>
+<polygon fill="#fff400" stroke="#fff400" points="836.87,-642.27 841.59,-651.76 843.82,-641.4 836.87,-642.27"/>
+</g>
+<!-- proc~bc_chapman_edge&#45;&gt;local -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge69" class="edge">
+<title>proc~bc_chapman_edge&#45;&gt;local</title>
+<path fill="none" stroke="#cbff00" d="M751.93,-459.69C762.22,-462.9 772.17,-467.75 780,-475 828.15,-519.58 839.53,-601.89 842.2,-641.52"/>
+<polygon fill="#cbff00" stroke="#cbff00" points="838.72,-641.92 842.75,-651.71 845.71,-641.54 838.72,-641.92"/>
+</g>
+<!-- proc~bc_clamped_edge&#45;&gt;local -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge70" class="edge">
+<title>proc~bc_clamped_edge&#45;&gt;local</title>
+<path fill="none" stroke="#8eff00" d="M749.9,-664C768.77,-664 789.49,-664 806.58,-664"/>
+<polygon fill="#8eff00" stroke="#8eff00" points="806.71,-667.5 816.71,-664 806.71,-660.5 806.71,-667.5"/>
+</g>
+<!-- proc~bc_disch_edge&#45;&gt;local -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge71" class="edge">
+<title>proc~bc_disch_edge&#45;&gt;local</title>
+<path fill="none" stroke="#51ff00" d="M740.64,-632.48C753.4,-635.66 767.3,-639.3 780,-643 788.85,-645.58 798.31,-648.59 807.14,-651.52"/>
+<polygon fill="#51ff00" stroke="#51ff00" points="806.19,-654.89 816.78,-654.76 808.42,-648.25 806.19,-654.89"/>
+</g>
+<!-- proc~bc_flather_edge&#45;&gt;local -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge72" class="edge">
+<title>proc~bc_flather_edge&#45;&gt;local</title>
+<path fill="none" stroke="#14ff00" d="M744.36,-587.39C756.5,-590.48 769.14,-594.85 780,-601 798.95,-611.73 816.11,-629.71 827.72,-643.72"/>
+<polygon fill="#14ff00" stroke="#14ff00" points="825.22,-646.2 834.19,-651.83 830.69,-641.84 825.22,-646.2"/>
+</g>
+<!-- proc~bc_inflow_edge&#45;&gt;local -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge73" class="edge">
+<title>proc~bc_inflow_edge&#45;&gt;local</title>
+<path fill="none" stroke="#00ff28" d="M742.01,-542.78C755.22,-545.85 769.01,-550.86 780,-559 808.42,-580.06 826.51,-618.09 835.69,-642.15"/>
+<polygon fill="#00ff28" stroke="#00ff28" points="832.49,-643.59 839.19,-651.81 839.08,-641.21 832.49,-643.59"/>
+</g>
+<!-- proc~bc_wall_edge&#45;&gt;local -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge74" class="edge">
+<title>proc~bc_wall_edge&#45;&gt;local</title>
+<path fill="none" stroke="#00ff66" d="M737.09,-498.7C752,-501.5 768.1,-506.86 780,-517 818.2,-549.53 833.86,-609.37 839.77,-641.77"/>
+<polygon fill="#00ff66" stroke="#00ff66" points="836.38,-642.7 841.47,-651.99 843.28,-641.55 836.38,-642.7"/>
+</g>
+<!-- proc~compute_flux_hll&#45;&gt;local -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge75" class="edge">
+<title>proc~compute_flux_hll&#45;&gt;local</title>
+<path fill="none" stroke="#00ffa3" d="M746.6,-228C759.15,-231.85 771.44,-238.05 780,-248 831.54,-307.9 840.96,-563.69 842.64,-641.47"/>
+<polygon fill="#00ffa3" stroke="#00ffa3" points="839.15,-641.68 842.84,-651.61 846.15,-641.55 839.15,-641.68"/>
+</g>
+<!-- proc~flux_cell -->
+<g id="proc~~solver_step_impl~~CallsGraph_node50" class="node">
+<title>proc~flux_cell</title>
+<g id="a_proc~~solver_step_impl~~CallsGraph_node50"><a xlink:href="../proc/flux_cell.html" xlink:title="flux_cell">
+<polygon fill="#d9534f" stroke="#d9534f" points="872,-213 816,-213 816,-189 872,-189 872,-213"/>
+<text text-anchor="middle" x="844" y="-198.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">flux_cell</text>
+</a>
+</g>
+</g>
+<!-- proc~compute_flux_hll&#45;&gt;proc~flux_cell -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge76" class="edge">
+<title>proc~compute_flux_hll&#45;&gt;proc~flux_cell</title>
+<path fill="none" stroke="#00ffa3" d="M746.59,-214.77C766.03,-212 787.84,-208.88 805.8,-206.31"/>
+<polygon fill="#00ffa3" stroke="#00ffa3" points="806.47,-209.75 815.88,-204.87 805.48,-202.82 806.47,-209.75"/>
+</g>
+<!-- proc~compute_flux_hllc&#45;&gt;local -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge77" class="edge">
+<title>proc~compute_flux_hllc&#45;&gt;local</title>
+<path fill="none" stroke="#00ffe0" d="M749.58,-183.55C761.04,-186.77 772.08,-192.15 780,-201 839.26,-267.14 843.24,-558.79 843.15,-641.85"/>
+<polygon fill="#00ffe0" stroke="#00ffe0" points="839.65,-641.93 843.11,-651.94 846.65,-641.96 839.65,-641.93"/>
+</g>
+<!-- proc~compute_flux_hllc&#45;&gt;proc~flux_cell -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge78" class="edge">
+<title>proc~compute_flux_hllc&#45;&gt;proc~flux_cell</title>
+<path fill="none" stroke="#00ffe0" d="M749.9,-187.7C768.5,-190.36 788.89,-193.27 805.84,-195.69"/>
+<polygon fill="#00ffe0" stroke="#00ffe0" points="805.51,-199.18 815.91,-197.13 806.5,-192.25 805.51,-199.18"/>
+</g>
+<!-- proc~compute_layer_from_barotropic&#45;&gt;local -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge79" class="edge">
+<title>proc~compute_layer_from_barotropic&#45;&gt;local</title>
+<path fill="none" stroke="#00e0ff" d="M546.58,-678.03C606.65,-687.79 700.08,-697.97 780,-685 789.01,-683.54 798.48,-680.97 807.25,-678.12"/>
+<polygon fill="#00e0ff" stroke="#00e0ff" points="808.49,-681.4 816.81,-674.83 806.21,-674.78 808.49,-681.4"/>
+</g>
+<!-- proc~compute_ssp_combine&#45;&gt;local -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge80" class="edge">
+<title>proc~compute_ssp_combine&#45;&gt;local</title>
+<path fill="none" stroke="#00a3ff" d="M550.62,-403.52C559.03,-400.49 567.1,-396.42 574,-391 601.82,-369.14 579.85,-338.52 610,-320 674.38,-280.46 721.96,-271.63 780,-320 829.59,-361.33 840.27,-571.38 842.46,-641.31"/>
+<polygon fill="#00a3ff" stroke="#00a3ff" points="838.97,-641.74 842.75,-651.64 845.97,-641.54 838.97,-641.74"/>
+</g>
+<!-- proc~compute_update&#45;&gt;local -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge81" class="edge">
+<title>proc~compute_update&#45;&gt;local</title>
+<path fill="none" stroke="#0066ff" d="M535.42,-535.41C549.4,-532.39 563.56,-526.87 574,-517 615.09,-478.17 564.72,-428.85 610,-395 670.52,-349.76 720.8,-348.06 780,-395 818.93,-425.86 836.11,-582.91 841.25,-641.72"/>
+<polygon fill="#0066ff" stroke="#0066ff" points="837.77,-642.14 842.09,-651.81 844.74,-641.55 837.77,-642.14"/>
+</g>
+<!-- proc~compute_vertical_velocity&#45;&gt;local -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge82" class="edge">
+<title>proc~compute_vertical_velocity&#45;&gt;local</title>
+<path fill="none" stroke="#0028ff" d="M559.29,-442.13C564.55,-439.62 569.53,-436.61 574,-433 603.08,-409.51 578.42,-376.99 610,-357 673.85,-316.6 721.45,-309.25 780,-357 824.35,-393.17 838.35,-577.21 841.94,-641.66"/>
+<polygon fill="#0028ff" stroke="#0028ff" points="838.45,-642.12 842.47,-651.92 845.45,-641.75 838.45,-642.12"/>
+</g>
+<!-- proc~fused_update_stage_generic&#45;&gt;local -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge83" class="edge">
+<title>proc~fused_update_stage_generic&#45;&gt;local</title>
+<path fill="none" stroke="#5100ff" d="M559.06,-357.84C564.37,-355.4 569.43,-352.48 574,-349 600.58,-328.75 581.27,-300.06 610,-283 674.97,-244.43 722.38,-234.13 780,-283 835.08,-329.72 842.07,-567.64 842.9,-641.86"/>
+<polygon fill="#5100ff" stroke="#5100ff" points="839.41,-641.97 842.99,-651.94 846.4,-641.92 839.41,-641.97"/>
+</g>
+<!-- proc~solve_nh_pressure&#45;&gt;reduce -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge88" class="edge">
+<title>proc~solve_nh_pressure&#45;&gt;reduce</title>
+<path fill="none" stroke="#ff007a" d="M538.42,-886.63C551.32,-889.78 564.18,-895.11 574,-904 610.58,-937.1 591.19,-963.39 610,-1009 633.07,-1064.94 665.58,-1128.39 682.6,-1160.67"/>
+<polygon fill="#ff007a" stroke="#ff007a" points="679.58,-1162.45 687.35,-1169.65 685.76,-1159.17 679.58,-1162.45"/>
+</g>
+<!-- proc~apply_poisson_operator_fast -->
+<g id="proc~~solver_step_impl~~CallsGraph_node46" class="node">
+<title>proc~apply_poisson_operator_fast</title>
+<g id="a_proc~~solver_step_impl~~CallsGraph_node46"><a xlink:href="../proc/apply_poisson_operator_fast.html" xlink:title="apply_poisson_operator_fast">
+<polygon fill="#d9534f" stroke="#d9534f" points="777,-916 613,-916 613,-892 777,-892 777,-916"/>
+<text text-anchor="middle" x="695" y="-901.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">apply_poisson_operator_fast</text>
+</a>
+</g>
+</g>
+<!-- proc~solve_nh_pressure&#45;&gt;proc~apply_poisson_operator_fast -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge84" class="edge">
+<title>proc~solve_nh_pressure&#45;&gt;proc~apply_poisson_operator_fast</title>
+<path fill="none" stroke="#ff007a" d="M538.18,-888.38C557.84,-890.35 580.68,-892.64 602.71,-894.85"/>
+<polygon fill="#ff007a" stroke="#ff007a" points="602.46,-898.34 612.76,-895.86 603.16,-891.38 602.46,-898.34"/>
+</g>
+<!-- proc~apply_vertical_preconditioner -->
+<g id="proc~~solver_step_impl~~CallsGraph_node47" class="node">
+<title>proc~apply_vertical_preconditioner</title>
+<g id="a_proc~~solver_step_impl~~CallsGraph_node47"><a xlink:href="../proc/apply_vertical_preconditioner.html" xlink:title="apply_vertical_preconditioner">
+<polygon fill="#d9534f" stroke="#d9534f" points="780,-1000 610,-1000 610,-976 780,-976 780,-1000"/>
+<text text-anchor="middle" x="695" y="-985.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">apply_vertical_preconditioner</text>
+</a>
+</g>
+</g>
+<!-- proc~solve_nh_pressure&#45;&gt;proc~apply_vertical_preconditioner -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge85" class="edge">
+<title>proc~solve_nh_pressure&#45;&gt;proc~apply_vertical_preconditioner</title>
+<path fill="none" stroke="#ff007a" d="M538.26,-888.18C550.87,-891.33 563.64,-896.27 574,-904 599.85,-923.29 584.29,-947.53 610,-967 612.04,-968.55 614.19,-969.98 616.41,-971.32"/>
+<polygon fill="#ff007a" stroke="#ff007a" points="614.84,-974.44 625.33,-975.94 618.07,-968.23 614.84,-974.44"/>
+</g>
+<!-- proc~compute_nh_rhs -->
+<g id="proc~~solver_step_impl~~CallsGraph_node48" class="node">
+<title>proc~compute_nh_rhs</title>
+<g id="a_proc~~solver_step_impl~~CallsGraph_node48"><a xlink:href="../proc/compute_nh_rhs.html" xlink:title="compute_nh_rhs">
+<polygon fill="#d9534f" stroke="#d9534f" points="745,-958 645,-958 645,-934 745,-934 745,-958"/>
+<text text-anchor="middle" x="695" y="-943.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_nh_rhs</text>
+</a>
+</g>
+</g>
+<!-- proc~solve_nh_pressure&#45;&gt;proc~compute_nh_rhs -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge86" class="edge">
+<title>proc~solve_nh_pressure&#45;&gt;proc~compute_nh_rhs</title>
+<path fill="none" stroke="#ff007a" d="M538.31,-892.89C550.27,-895.83 562.73,-899.51 574,-904 591.21,-910.86 592.84,-918.02 610,-925 617.91,-928.22 626.44,-931.04 634.93,-933.49"/>
+<polygon fill="#ff007a" stroke="#ff007a" points="634.27,-936.93 644.84,-936.19 636.11,-930.18 634.27,-936.93"/>
+</g>
+<!-- proc~compute_vert_coefficients -->
+<g id="proc~~solver_step_impl~~CallsGraph_node49" class="node">
+<title>proc~compute_vert_coefficients</title>
+<g id="a_proc~~solver_step_impl~~CallsGraph_node49"><a xlink:href="../proc/compute_vert_coefficients.html" xlink:title="compute_vert_coefficients">
+<polygon fill="#d9534f" stroke="#d9534f" points="771.5,-874 618.5,-874 618.5,-850 771.5,-850 771.5,-874"/>
+<text text-anchor="middle" x="695" y="-859.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_vert_coefficients</text>
+</a>
+</g>
+</g>
+<!-- proc~solve_nh_pressure&#45;&gt;proc~compute_vert_coefficients -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge87" class="edge">
+<title>proc~solve_nh_pressure&#45;&gt;proc~compute_vert_coefficients</title>
+<path fill="none" stroke="#ff007a" d="M538.18,-877.62C559.5,-875.48 584.56,-872.97 608.28,-870.59"/>
+<polygon fill="#ff007a" stroke="#ff007a" points="608.74,-874.06 618.34,-869.58 608.04,-867.1 608.74,-874.06"/>
+</g>
+<!-- proc~apply_poisson_operator_fast&#45;&gt;local -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge89" class="edge">
+<title>proc~apply_poisson_operator_fast&#45;&gt;local</title>
+<path fill="none" stroke="#ff0000" d="M768.05,-891.8C772.39,-889.35 776.43,-886.45 780,-883 835.51,-829.41 843.01,-730.37 843.43,-686.23"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="846.93,-686.01 843.4,-676.02 839.93,-686.03 846.93,-686.01"/>
+</g>
+<!-- proc~apply_vertical_preconditioner&#45;&gt;local -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge90" class="edge">
+<title>proc~apply_vertical_preconditioner&#45;&gt;local</title>
+<path fill="none" stroke="#cbff00" d="M768.74,-975.87C772.86,-973.4 776.67,-970.47 780,-967 818.98,-926.43 836.35,-749.46 841.37,-686.41"/>
+<polygon fill="#cbff00" stroke="#cbff00" points="844.87,-686.58 842.15,-676.34 837.89,-686.04 844.87,-686.58"/>
+</g>
+<!-- proc~compute_nh_rhs&#45;&gt;local -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge91" class="edge">
+<title>proc~compute_nh_rhs&#45;&gt;local</title>
+<path fill="none" stroke="#00ff66" d="M745.01,-942.87C757.85,-939.81 770.68,-934.39 780,-925 813.78,-890.95 833.96,-743 840.58,-686.26"/>
+<polygon fill="#00ff66" stroke="#00ff66" points="844.07,-686.52 841.72,-676.19 837.11,-685.73 844.07,-686.52"/>
+</g>
+<!-- proc~extract_velocity -->
+<g id="proc~~solver_step_impl~~CallsGraph_node51" class="node">
+<title>proc~extract_velocity</title>
+<g id="a_proc~~solver_step_impl~~CallsGraph_node51"><a xlink:href="../proc/extract_velocity.html" xlink:title="extract_velocity">
+<polygon fill="#d9534f" stroke="#d9534f" points="1004,-318 908,-318 908,-294 1004,-294 1004,-318"/>
+<text text-anchor="middle" x="956" y="-303.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">extract_velocity</text>
+</a>
+</g>
+</g>
+<!-- proc~flux_cell&#45;&gt;proc~extract_velocity -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge92" class="edge">
+<title>proc~flux_cell&#45;&gt;proc~extract_velocity</title>
+<path fill="none" stroke="#cc00ff" d="M851.41,-213.1C861.4,-230.95 882.21,-264.41 908,-285 909.57,-286.25 911.23,-287.45 912.95,-288.59"/>
+<polygon fill="#cc00ff" stroke="#cc00ff" points="911.5,-291.8 921.9,-293.8 915.02,-285.75 911.5,-291.8"/>
+</g>
+<!-- proc~hll_flux_x -->
+<g id="proc~~solver_step_impl~~CallsGraph_node52" class="node">
+<title>proc~hll_flux_x</title>
+<g id="a_proc~~solver_step_impl~~CallsGraph_node52"><a xlink:href="../proc/hll_flux_x.html" xlink:title="hll_flux_x">
+<polygon fill="#d9534f" stroke="#d9534f" points="986.5,-276 925.5,-276 925.5,-252 986.5,-252 986.5,-276"/>
+<text text-anchor="middle" x="956" y="-261.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">hll_flux_x</text>
+</a>
+</g>
+</g>
+<!-- proc~flux_cell&#45;&gt;proc~hll_flux_x -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge93" class="edge">
+<title>proc~flux_cell&#45;&gt;proc~hll_flux_x</title>
+<path fill="none" stroke="#cc00ff" d="M861.37,-213.02C873.81,-221.88 891.54,-233.92 908,-243 910.73,-244.51 913.59,-245.99 916.49,-247.43"/>
+<polygon fill="#cc00ff" stroke="#cc00ff" points="915.26,-250.73 925.79,-251.87 918.27,-244.41 915.26,-250.73"/>
+</g>
+<!-- proc~hll_flux_y -->
+<g id="proc~~solver_step_impl~~CallsGraph_node53" class="node">
+<title>proc~hll_flux_y</title>
+<g id="a_proc~~solver_step_impl~~CallsGraph_node53"><a xlink:href="../proc/hll_flux_y.html" xlink:title="hll_flux_y">
+<polygon fill="#d9534f" stroke="#d9534f" points="986.5,-234 925.5,-234 925.5,-210 986.5,-210 986.5,-234"/>
+<text text-anchor="middle" x="956" y="-219.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">hll_flux_y</text>
+</a>
+</g>
+</g>
+<!-- proc~flux_cell&#45;&gt;proc~hll_flux_y -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge94" class="edge">
+<title>proc~flux_cell&#45;&gt;proc~hll_flux_y</title>
+<path fill="none" stroke="#cc00ff" d="M872.19,-206.19C885.19,-208.67 901.01,-211.69 915.33,-214.43"/>
+<polygon fill="#cc00ff" stroke="#cc00ff" points="914.94,-217.92 925.42,-216.35 916.25,-211.04 914.94,-217.92"/>
+</g>
+<!-- proc~hllc_flux_x -->
+<g id="proc~~solver_step_impl~~CallsGraph_node54" class="node">
+<title>proc~hllc_flux_x</title>
+<g id="a_proc~~solver_step_impl~~CallsGraph_node54"><a xlink:href="../proc/hllc_flux_x.html" xlink:title="hllc_flux_x">
+<polygon fill="#d9534f" stroke="#d9534f" points="989.5,-192 922.5,-192 922.5,-168 989.5,-168 989.5,-192"/>
+<text text-anchor="middle" x="956" y="-177.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">hllc_flux_x</text>
+</a>
+</g>
+</g>
+<!-- proc~flux_cell&#45;&gt;proc~hllc_flux_x -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge95" class="edge">
+<title>proc~flux_cell&#45;&gt;proc~hllc_flux_x</title>
+<path fill="none" stroke="#cc00ff" d="M872.19,-195.81C884.26,-193.51 898.75,-190.74 912.21,-188.17"/>
+<polygon fill="#cc00ff" stroke="#cc00ff" points="913.08,-191.57 922.25,-186.25 911.77,-184.69 913.08,-191.57"/>
+</g>
+<!-- proc~hllc_flux_y -->
+<g id="proc~~solver_step_impl~~CallsGraph_node55" class="node">
+<title>proc~hllc_flux_y</title>
+<g id="a_proc~~solver_step_impl~~CallsGraph_node55"><a xlink:href="../proc/hllc_flux_y.html" xlink:title="hllc_flux_y">
+<polygon fill="#d9534f" stroke="#d9534f" points="989.5,-150 922.5,-150 922.5,-126 989.5,-126 989.5,-150"/>
+<text text-anchor="middle" x="956" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">hllc_flux_y</text>
+</a>
+</g>
+</g>
+<!-- proc~flux_cell&#45;&gt;proc~hllc_flux_y -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge96" class="edge">
+<title>proc~flux_cell&#45;&gt;proc~hllc_flux_y</title>
+<path fill="none" stroke="#cc00ff" d="M861.37,-188.98C873.81,-180.12 891.54,-168.08 908,-159 910.73,-157.49 913.59,-156.01 916.49,-154.57"/>
+<polygon fill="#cc00ff" stroke="#cc00ff" points="918.27,-157.59 925.79,-150.13 915.26,-151.27 918.27,-157.59"/>
+</g>
+<!-- proc~minmod -->
+<g id="proc~~solver_step_impl~~CallsGraph_node56" class="node">
+<title>proc~minmod</title>
+<g id="a_proc~~solver_step_impl~~CallsGraph_node56"><a xlink:href="../proc/minmod.html" xlink:title="minmod">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="984.5,-108 927.5,-108 927.5,-84 984.5,-84 984.5,-108"/>
+<text text-anchor="middle" x="956" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">minmod</text>
+</a>
+</g>
+</g>
+<!-- proc~flux_cell&#45;&gt;proc~minmod -->
+<g id="proc~~solver_step_impl~~CallsGraph_edge97" class="edge">
+<title>proc~flux_cell&#45;&gt;proc~minmod</title>
+<path fill="none" stroke="#cc00ff" d="M851.41,-188.9C861.4,-171.05 882.21,-137.59 908,-117 911.13,-114.5 914.61,-112.23 918.21,-110.19"/>
+<polygon fill="#cc00ff" stroke="#cc00ff" points="919.98,-113.22 927.31,-105.58 916.81,-106.98 919.98,-113.22"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var panprocsolver_step_implCallsGraph = svgPanZoom('#procsolver_step_implCallsGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CallsGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CallsGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Called by</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~solver_step_impl~~CalledByGraph Pages: 1 -->
+<svg id="procsolver_step_implCalledByGraph" width="468pt" height="116pt"
+ viewBox="0.00 0.00 468.00 116.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~solver_step_impl~~CalledByGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 112)">
+<title>proc~~solver_step_impl~~CalledByGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-112 464,-112 464,4 -4,4"/>
+<!-- proc~solver_step_impl -->
+<g id="proc~~solver_step_impl~~CalledByGraph_node1" class="node">
+<title>proc~solver_step_impl</title>
+<polygon fill="none" stroke="black" points="460,-66 359,-66 359,-42 460,-42 460,-66"/>
+<text text-anchor="middle" x="409.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50">solver_step_impl</text>
+</g>
+<!-- proc~solver_step -->
+<g id="proc~~solver_step_impl~~CalledByGraph_node2" class="node">
+<title>proc~solver_step</title>
+<g id="a_proc~~solver_step_impl~~CalledByGraph_node2"><a xlink:href="../proc/solver_step.html" xlink:title="solver_step">
+<polygon fill="#d9534f" stroke="#d9534f" points="323,-66 250,-66 250,-42 323,-42 323,-66"/>
+<text text-anchor="middle" x="286.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_step</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_step&#45;&gt;proc~solver_step_impl -->
+<g id="proc~~solver_step_impl~~CalledByGraph_edge1" class="edge">
+<title>proc~solver_step&#45;&gt;proc~solver_step_impl</title>
+<path fill="none" stroke="#ff0000" d="M323.15,-54C331.17,-54 339.89,-54 348.59,-54"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="348.76,-57.5 358.76,-54 348.76,-50.5 348.76,-57.5"/>
+</g>
+<!-- proc~driver_run_coastal -->
+<g id="proc~~solver_step_impl~~CalledByGraph_node3" class="node">
+<title>proc~driver_run_coastal</title>
+<g id="a_proc~~solver_step_impl~~CalledByGraph_node3"><a xlink:href="../proc/driver_run_coastal.html" xlink:title="driver_run_coastal">
+<polygon fill="#d9534f" stroke="#d9534f" points="214,-108 103,-108 103,-84 214,-84 214,-108"/>
+<text text-anchor="middle" x="158.5" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">driver_run_coastal</text>
+</a>
+</g>
+</g>
+<!-- proc~driver_run_coastal&#45;&gt;proc~solver_step -->
+<g id="proc~~solver_step_impl~~CalledByGraph_edge2" class="edge">
+<title>proc~driver_run_coastal&#45;&gt;proc~solver_step</title>
+<path fill="none" stroke="#ff0000" d="M195.61,-83.96C209.43,-79.36 225.39,-74.04 239.98,-69.17"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="241.44,-72.37 249.82,-65.89 239.23,-65.73 241.44,-72.37"/>
+</g>
+<!-- proc~rki_advance -->
+<g id="proc~~solver_step_impl~~CalledByGraph_node4" class="node">
+<title>proc~rki_advance</title>
+<g id="a_proc~~solver_step_impl~~CalledByGraph_node4"><a xlink:href="../proc/rki_advance.html" xlink:title="rki_advance">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="197,-66 120,-66 120,-42 197,-42 197,-66"/>
+<text text-anchor="middle" x="158.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_advance</text>
+</a>
+</g>
+</g>
+<!-- proc~rki_advance&#45;&gt;proc~solver_step -->
+<g id="proc~~solver_step_impl~~CalledByGraph_edge3" class="edge">
+<title>proc~rki_advance&#45;&gt;proc~solver_step</title>
+<path fill="none" stroke="#ff0000" d="M197.3,-54C210.59,-54 225.67,-54 239.55,-54"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="239.88,-57.5 249.88,-54 239.88,-50.5 239.88,-57.5"/>
+</g>
+<!-- proc~rki_step -->
+<g id="proc~~solver_step_impl~~CalledByGraph_node5" class="node">
+<title>proc~rki_step</title>
+<g id="a_proc~~solver_step_impl~~CalledByGraph_node5"><a xlink:href="../proc/rki_step.html" xlink:title="rki_step">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="185.5,-24 131.5,-24 131.5,0 185.5,0 185.5,-24"/>
+<text text-anchor="middle" x="158.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_step</text>
+</a>
+</g>
+</g>
+<!-- proc~rki_step&#45;&gt;proc~solver_step -->
+<g id="proc~~solver_step_impl~~CalledByGraph_edge4" class="edge">
+<title>proc~rki_step&#45;&gt;proc~solver_step</title>
+<path fill="none" stroke="#ff0000" d="M185.61,-20.7C201.37,-25.96 221.89,-32.8 240.23,-38.91"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="239.28,-42.28 249.87,-42.12 241.49,-35.64 239.28,-42.28"/>
+</g>
+<!-- proc~driver_run -->
+<g id="proc~~solver_step_impl~~CalledByGraph_node6" class="node">
+<title>proc~driver_run</title>
+<g id="a_proc~~solver_step_impl~~CalledByGraph_node6"><a xlink:href="../proc/driver_run.html" xlink:title="driver_run">
+<polygon fill="#d9534f" stroke="#d9534f" points="67,-108 0,-108 0,-84 67,-84 67,-108"/>
+<text text-anchor="middle" x="33.5" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">driver_run</text>
+</a>
+</g>
+</g>
+<!-- proc~driver_run&#45;&gt;proc~driver_run_coastal -->
+<g id="proc~~solver_step_impl~~CalledByGraph_edge5" class="edge">
+<title>proc~driver_run&#45;&gt;proc~driver_run_coastal</title>
+<path fill="none" stroke="#ff0000" d="M67.14,-96C75.1,-96 83.9,-96 92.79,-96"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="92.82,-99.5 102.82,-96 92.82,-92.5 92.82,-99.5"/>
+</g>
+</g>
+</svg>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CalledByGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CalledByGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+
+
+    <section>    
+      <h2>Variables</h2>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Visibility</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+<th></th><th scope="col">Initial</th>        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nz~34"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nz</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ts~2"></span>
+              type(<a href='../type/timestepper_t.html'>timestepper_t</a>),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>ts</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-use_nh"></span>
+              logical,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>use_nh</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    </section>
+    <br>
+    
+    
+
+    
+    
+
+
+
+    
+    <section>
+    <h2><span class="anchor" id="src"></span>Source Code</h2>
+    <div class="hl codehilite"><pre><span></span><span class="w">   </span><span class="k">subroutine </span><span class="n">solver_step_impl</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="w"> </span><span class="n">dt_max</span><span class="p">)</span>
+<span class="w">      </span><span class="c">!! SSP-RK2 step for unsplit (2D or NH without mode splitting)</span>
+<span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="n">state_t</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">state</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">),</span><span class="w"> </span><span class="k">optional</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">dt_max</span>
+
+<span class="w">      </span><span class="kt">logical</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">use_nh</span>
+<span class="w">      </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">nz</span>
+<span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="n">timestepper_t</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">ts</span>
+
+<span class="w">      </span><span class="n">use_nh</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">use_nonhydrostatic</span>
+<span class="w">      </span><span class="n">nz</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">nh</span><span class="p">%</span><span class="n">nz</span>
+
+<span class="w">      </span><span class="c">! Build the explicit-integrator coefficient table for this step.</span>
+<span class="w">      </span><span class="c">! Host-side scalars only (never device-mapped); rebuilding each step</span>
+<span class="w">      </span><span class="c">! is a few branch tests.  NH stays on RK2 (configure guard forbids a</span>
+<span class="w">      </span><span class="c">! non-RK2 scheme unless the run is pure 2D barotropic).</span>
+<span class="w">      </span><span class="n">ts</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_timestepper</span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">time_scheme</span><span class="p">)</span>
+
+<span class="w">      </span><span class="c">! ---- NH: compute depth-averaged momentum from layers ----</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">use_nh</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">         call </span><span class="n">compute_depth_averaged_momentum</span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">h</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">nh</span><span class="p">%</span><span class="n">u_layer</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                              </span><span class="n">state</span><span class="p">%</span><span class="n">nh</span><span class="p">%</span><span class="n">v_layer</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">nh</span><span class="p">%</span><span class="n">dsig</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                              </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hu</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hv</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                              </span><span class="n">state</span><span class="p">%</span><span class="n">grid</span><span class="p">,</span><span class="w"> </span><span class="n">nz</span><span class="p">)</span>
+<span class="w">      </span><span class="k">end if</span>
+
+<span class="w">      </span><span class="c">! ---- Compute timestep from U^n ----</span>
+<span class="w">      </span><span class="k">call </span><span class="n">apply_boundary_conditions</span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">h</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hu</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hv</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                     </span><span class="n">state</span><span class="p">%</span><span class="n">grid</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">bc</span><span class="p">)</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">use_nh</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">         call </span><span class="n">apply_nh_boundary_conditions</span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">nh</span><span class="p">%</span><span class="n">q_nh</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">nh</span><span class="p">%</span><span class="n">u_layer</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                           </span><span class="n">state</span><span class="p">%</span><span class="n">nh</span><span class="p">%</span><span class="n">v_layer</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">nh</span><span class="p">%</span><span class="n">w</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                           </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">h</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                           </span><span class="n">state</span><span class="p">%</span><span class="n">grid</span><span class="p">,</span><span class="w"> </span><span class="n">nz</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">bc</span><span class="p">)</span>
+<span class="w">      </span><span class="k">end if</span>
+
+<span class="k">      if</span><span class="w"> </span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">dt_fixed</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mf">0.0_wp</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">         </span><span class="n">state</span><span class="p">%</span><span class="n">dt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">dt_fixed</span>
+<span class="w">         </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">present</span><span class="p">(</span><span class="n">dt_max</span><span class="p">))</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">dt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">min</span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="n">dt_max</span><span class="p">)</span>
+<span class="w">      </span><span class="k">else if</span><span class="w"> </span><span class="p">(</span><span class="nb">mod</span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">step_count</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">cfl_interval</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">.</span><span class="nb">or</span><span class="p">.</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">dt</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mf">0.0_wp</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">         call </span><span class="n">compute_timestep</span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">h</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hu</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hv</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                               </span><span class="n">state</span><span class="p">%</span><span class="n">grid</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">cfl</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">dt</span><span class="p">)</span>
+
+<span class="w">         </span><span class="c">! SSP coefficient: rk43 (C=2) is stable at 2x the forward-Euler</span>
+<span class="w">         </span><span class="c">! CFL dt.  Exact x1.0 for euler/rk2/rk3, so default RK2 is</span>
+<span class="w">         </span><span class="c">! bit-identical here.  Applied before dt_max so the cap still wins.</span>
+<span class="w">         </span><span class="n">state</span><span class="p">%</span><span class="n">dt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">dt</span><span class="o">*</span><span class="n">ts</span><span class="p">%</span><span class="n">ssp_coeff</span>
+
+<span class="w">         </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">present</span><span class="p">(</span><span class="n">dt_max</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            </span><span class="n">state</span><span class="p">%</span><span class="n">dt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">min</span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="n">dt_max</span><span class="p">)</span>
+<span class="w">         </span><span class="k">end if</span>
+
+<span class="k">      end if</span>
+<span class="k">      </span><span class="n">state</span><span class="p">%</span><span class="n">step_count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">step_count</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span>
+
+<span class="w">      </span><span class="c">! Propagate dt to BC params for Chapman radiation</span>
+<span class="w">      </span><span class="n">state</span><span class="p">%</span><span class="n">bc</span><span class="p">%</span><span class="n">dt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">dt</span>
+
+<span class="w">      </span><span class="c">! 2D barotropic fused path: save + update + friction + coriolis in one</span>
+<span class="w">      </span><span class="c">! kernel per RK stage. NH/multilayer use the unfused path below (layer</span>
+<span class="w">      </span><span class="c">! operations sit between update and friction).</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="w"> </span><span class="n">use_nh</span><span class="w"> </span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="w"> </span><span class="p">.</span><span class="nb">not</span><span class="p">.</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">use_multilayer</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">          </span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="w"> </span><span class="n">ts</span><span class="p">%</span><span class="n">scheme</span><span class="w"> </span><span class="o">/=</span><span class="w"> </span><span class="n">TIME_RK2</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="w">         </span><span class="c">! Selectable explicit integrator (euler/rk3/rk43): generic</span>
+<span class="w">         </span><span class="c">! N-stage advance.  RK2 falls through to the untouched fused</span>
+<span class="w">         </span><span class="c">! fast path below (its bit-identity gate).</span>
+<span class="w">         </span><span class="k">call </span><span class="n">solver_advance_2d_generic</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="w"> </span><span class="n">ts</span><span class="p">)</span>
+
+<span class="w">      </span><span class="k">else if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="w"> </span><span class="n">use_nh</span><span class="w"> </span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="w"> </span><span class="p">.</span><span class="nb">not</span><span class="p">.</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">use_multilayer</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+
+<span class="w">         </span><span class="c">! ==== Fused RK2 Stage 1 ====</span>
+<span class="w">         </span><span class="k">call </span><span class="n">profiler_start</span><span class="p">(</span><span class="s2">"boundary"</span><span class="p">)</span>
+<span class="w">         </span><span class="k">call </span><span class="n">apply_boundary_conditions</span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">h</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hu</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hv</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                        </span><span class="n">state</span><span class="p">%</span><span class="n">grid</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">bc</span><span class="p">)</span>
+<span class="w">         </span><span class="k">call </span><span class="n">profiler_stop</span><span class="p">(</span><span class="s2">"boundary"</span><span class="p">)</span>
+<span class="w">         </span><span class="k">call </span><span class="n">profiler_start</span><span class="p">(</span><span class="s2">"flux"</span><span class="p">)</span>
+<span class="w">         </span><span class="k">call </span><span class="n">solver_compute_barotropic_flux</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+<span class="w">         </span><span class="k">call </span><span class="n">accumulate_boundary_mass_out</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="w"> </span><span class="mf">0.5_wp</span><span class="p">)</span>
+<span class="w">         </span><span class="k">call </span><span class="n">profiler_stop</span><span class="p">(</span><span class="s2">"flux"</span><span class="p">)</span>
+<span class="w">         </span><span class="k">call </span><span class="n">profiler_start</span><span class="p">(</span><span class="s2">"update"</span><span class="p">)</span>
+<span class="w">         </span><span class="k">call </span><span class="n">fused_update_stage1</span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">h</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hu</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hv</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                  </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">h0</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hu0</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hv0</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                  </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">flux_h</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">flux_hu</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">flux_hv</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                  </span><span class="n">state</span><span class="p">%</span><span class="n">grid</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                  </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">manning_n</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">forcing</span><span class="p">%</span><span class="n">wind_x</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">forcing</span><span class="p">%</span><span class="n">wind_y</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                  </span><span class="n">state</span><span class="p">%</span><span class="n">forcing</span><span class="p">%</span><span class="n">atm_pressure</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">forcing</span><span class="p">%</span><span class="n">precipitation</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                  </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">coriolis_f</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                  </span><span class="n">state</span><span class="p">%</span><span class="n">forcing</span><span class="p">%</span><span class="n">active</span><span class="p">)</span>
+<span class="w">         </span><span class="c">! Accumulate the precipitation mass source for this stage.  The 2D</span>
+<span class="w">         </span><span class="c">! barotropic path has no evap mass sink (no multilayer tracers), so</span>
+<span class="w">         </span><span class="c">! evap_mass_sink=.false.</span>
+<span class="w">         </span><span class="k">call </span><span class="n">accumulate_mass_src</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="w"> </span><span class="mf">0.5_wp</span><span class="p">,</span><span class="w"> </span><span class="n">evap_mass_sink</span><span class="o">=</span><span class="p">.</span><span class="n">false</span><span class="p">.)</span>
+<span class="w">         </span><span class="k">call </span><span class="n">profiler_stop</span><span class="p">(</span><span class="s2">"update"</span><span class="p">)</span>
+
+<span class="w">         </span><span class="c">! Sponge: measure the h-change so it enters the mass-source budget.</span>
+<span class="w">         </span><span class="k">call </span><span class="n">accumulate_sponge_mass_src</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="w"> </span><span class="mf">0.5_wp</span><span class="p">)</span>
+
+<span class="w">         </span><span class="c">! ==== Fused RK2 Stage 2 ====</span>
+<span class="w">         </span><span class="n">state</span><span class="p">%</span><span class="n">bc</span><span class="p">%</span><span class="nb">time</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">bc</span><span class="p">%</span><span class="nb">time</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">dt</span>
+
+<span class="w">         </span><span class="k">call </span><span class="n">profiler_start</span><span class="p">(</span><span class="s2">"boundary"</span><span class="p">)</span>
+<span class="w">         </span><span class="k">call </span><span class="n">apply_boundary_conditions</span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">h</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hu</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hv</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                        </span><span class="n">state</span><span class="p">%</span><span class="n">grid</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">bc</span><span class="p">)</span>
+<span class="w">         </span><span class="k">call </span><span class="n">profiler_stop</span><span class="p">(</span><span class="s2">"boundary"</span><span class="p">)</span>
+<span class="w">         </span><span class="k">call </span><span class="n">profiler_start</span><span class="p">(</span><span class="s2">"flux"</span><span class="p">)</span>
+<span class="w">         </span><span class="k">call </span><span class="n">solver_compute_barotropic_flux</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+<span class="w">         </span><span class="k">call </span><span class="n">accumulate_boundary_mass_out</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="w"> </span><span class="mf">0.5_wp</span><span class="p">)</span>
+<span class="w">         </span><span class="k">call </span><span class="n">profiler_stop</span><span class="p">(</span><span class="s2">"flux"</span><span class="p">)</span>
+<span class="w">         </span><span class="k">call </span><span class="n">profiler_start</span><span class="p">(</span><span class="s2">"rk2_average"</span><span class="p">)</span>
+<span class="w">         </span><span class="k">call </span><span class="n">fused_update_stage2</span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">h</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hu</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hv</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                  </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">h0</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hu0</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hv0</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                  </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">flux_h</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">flux_hu</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">flux_hv</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                  </span><span class="n">state</span><span class="p">%</span><span class="n">grid</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                  </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">manning_n</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">forcing</span><span class="p">%</span><span class="n">wind_x</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">forcing</span><span class="p">%</span><span class="n">wind_y</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                  </span><span class="n">state</span><span class="p">%</span><span class="n">forcing</span><span class="p">%</span><span class="n">atm_pressure</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">forcing</span><span class="p">%</span><span class="n">precipitation</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                  </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">coriolis_f</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                  </span><span class="n">state</span><span class="p">%</span><span class="n">forcing</span><span class="p">%</span><span class="n">active</span><span class="p">)</span>
+<span class="w">         </span><span class="c">! Stage 2 precipitation source (same sign, same weight).</span>
+<span class="w">         </span><span class="k">call </span><span class="n">accumulate_mass_src</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="w"> </span><span class="mf">0.5_wp</span><span class="p">,</span><span class="w"> </span><span class="n">evap_mass_sink</span><span class="o">=</span><span class="p">.</span><span class="n">false</span><span class="p">.)</span>
+<span class="w">         </span><span class="k">call </span><span class="n">profiler_stop</span><span class="p">(</span><span class="s2">"rk2_average"</span><span class="p">)</span>
+
+<span class="w">         </span><span class="c">! Sponge stage 2.</span>
+<span class="w">         </span><span class="k">call </span><span class="n">accumulate_sponge_mass_src</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="w"> </span><span class="mf">0.5_wp</span><span class="p">)</span>
+
+<span class="w">      </span><span class="k">else</span>
+<span class="w">         </span><span class="c">! Unfused path: NH and multilayer.</span>
+
+<span class="w">         </span><span class="c">! ---- Save U^n for the averaging step ----</span>
+<span class="w">         </span><span class="k">call </span><span class="n">solver_save_state</span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">h</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hu</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hv</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">h0</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hu0</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hv0</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">grid</span><span class="p">)</span>
+<span class="w">         </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">use_nh</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            call </span><span class="n">solver_save_state_layers</span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">nh</span><span class="p">%</span><span class="n">u_layer</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">nh</span><span class="p">%</span><span class="n">v_layer</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">nh</span><span class="p">%</span><span class="n">w</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                          </span><span class="n">state</span><span class="p">%</span><span class="n">nh</span><span class="p">%</span><span class="n">u_layer0</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">nh</span><span class="p">%</span><span class="n">v_layer0</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">nh</span><span class="p">%</span><span class="n">w0</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                          </span><span class="n">state</span><span class="p">%</span><span class="n">grid</span><span class="p">,</span><span class="w"> </span><span class="n">nz</span><span class="p">)</span>
+<span class="w">         </span><span class="k">end if</span>
+
+<span class="w">         </span><span class="c">! ==== RK2 Stage 1 ====</span>
+<span class="w">         </span><span class="k">call </span><span class="n">solver_nh_rk_stage</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="w"> </span><span class="n">nz</span><span class="p">,</span><span class="w"> </span><span class="n">use_nh</span><span class="p">)</span>
+
+<span class="w">         </span><span class="c">! ---- Stage 2: U** = U* + dt * L(U*) ----</span>
+<span class="w">         </span><span class="c">! Advance BC time by dt for tidal boundaries at stage 2</span>
+<span class="w">         </span><span class="n">state</span><span class="p">%</span><span class="n">bc</span><span class="p">%</span><span class="nb">time</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">bc</span><span class="p">%</span><span class="nb">time</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">dt</span>
+
+<span class="w">         </span><span class="c">! NH: recompute depth-averaged momentum from updated layers</span>
+<span class="w">         </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">use_nh</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            call </span><span class="n">compute_depth_averaged_momentum</span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">h</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">nh</span><span class="p">%</span><span class="n">u_layer</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                                 </span><span class="n">state</span><span class="p">%</span><span class="n">nh</span><span class="p">%</span><span class="n">v_layer</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">nh</span><span class="p">%</span><span class="n">dsig</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                                 </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hu</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hv</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                                 </span><span class="n">state</span><span class="p">%</span><span class="n">grid</span><span class="p">,</span><span class="w"> </span><span class="n">nz</span><span class="p">)</span>
+<span class="w">         </span><span class="k">end if</span>
+
+<span class="k">         call </span><span class="n">solver_nh_rk_stage</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="w"> </span><span class="n">nz</span><span class="p">,</span><span class="w"> </span><span class="n">use_nh</span><span class="p">)</span>
+
+<span class="w">         </span><span class="c">! ---- Average: U^{n+1} = 0.5 * (U^n + U**) ----</span>
+<span class="w">         </span><span class="k">call </span><span class="n">profiler_start</span><span class="p">(</span><span class="s2">"rk2_average"</span><span class="p">)</span>
+<span class="w">         </span><span class="k">call </span><span class="n">compute_rk2_average</span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">h</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hu</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hv</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                  </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">h0</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hu0</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">hv0</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                  </span><span class="n">state</span><span class="p">%</span><span class="n">grid</span><span class="p">)</span>
+<span class="w">         </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">use_nh</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            call </span><span class="n">compute_rk2_average_layers</span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">nh</span><span class="p">%</span><span class="n">u_layer</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">nh</span><span class="p">%</span><span class="n">v_layer</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">nh</span><span class="p">%</span><span class="n">w</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                            </span><span class="n">state</span><span class="p">%</span><span class="n">nh</span><span class="p">%</span><span class="n">u_layer0</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">nh</span><span class="p">%</span><span class="n">v_layer0</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">nh</span><span class="p">%</span><span class="n">w0</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                            </span><span class="n">state</span><span class="p">%</span><span class="n">grid</span><span class="p">,</span><span class="w"> </span><span class="n">nz</span><span class="p">)</span>
+<span class="w">         </span><span class="k">end if</span>
+<span class="k">         call </span><span class="n">profiler_stop</span><span class="p">(</span><span class="s2">"rk2_average"</span><span class="p">)</span>
+
+<span class="w">      </span><span class="k">end if</span><span class="w">  </span><span class="c">! fused vs unfused path</span>
+
+<span class="w">   </span><span class="k">end subroutine </span><span class="n">solver_step_impl</span>
+</pre></div>
+
+    </section>
+    <br>
+    
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Rakali
+ was developed by Jorge Luis Galvez Vallejo<br>              &copy; 2026 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+ on 2026-10-08 12:55 +0000             </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>

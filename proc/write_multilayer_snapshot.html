@@ -1,0 +1,816 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="GPU-native coastal solver — structured Cartesian and unstructured triangular grids, hydrostatic multilayer + non-hydrostatic, portable across NVHPC/gfortran/ifx.">
+    <meta name="author" content="Jorge Luis Galvez Vallejo" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>write_multilayer_snapshot &ndash; Rakali</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">Rakali </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/absint.html">Abstract Interfaces</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>write_multilayer_snapshot
+      <small>Subroutine</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.2% of total for procedures.">53 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/rki_output_unstr.F90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/rki_output_unstr.f90.html'>rki_output_unstr.F90</a></li>
+                <li class="breadcrumb-item"><a href='../module/rki_output_unstr.html'>rki_output_unstr</a></li>
+            <li class="breadcrumb-item active" aria-current="page">write_multilayer_snapshot</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+  
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#vars-0"
+         aria-expanded="false" aria-controls="vars-0">
+         <h4 class="card-header bg-primary text-white">Variables</h4>
+      </a>
+      <div id="vars-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../proc/write_multilayer_snapshot.html#variable-buf~6">buf</a>
+            <a class="list-group-item" href="../proc/write_multilayer_snapshot.html#variable-cc~3">cc</a>
+            <a class="list-group-item" href="../proc/write_multilayer_snapshot.html#variable-h_k~31">h_k</a>
+            <a class="list-group-item" href="../proc/write_multilayer_snapshot.html#variable-it~18">it</a>
+            <a class="list-group-item" href="../proc/write_multilayer_snapshot.html#variable-kk~22">kk</a>
+            <a class="list-group-item" href="../proc/write_multilayer_snapshot.html#variable-n~81">n</a>
+            <a class="list-group-item" href="../proc/write_multilayer_snapshot.html#variable-nz~179">nz</a>
+            <a class="list-group-item" href="../proc/write_multilayer_snapshot.html#variable-ti~2">ti</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../proc/write_multilayer_snapshot.html#src">write_multilayer_snapshot</a>
+      </div>
+    </div>
+
+
+  </div>
+
+    </div>
+    
+    <div class="col-md-9" id='text'>
+    <h2>private  subroutine write_multilayer_snapshot(ostate, state)  
+</h2>
+    
+
+    <p>Write the 3D layer fields + per-tracer fields for the current
+time index.  Velocities are derived from <code>hu_layer / h_layer</code>
+with a dry-cell guard; tracers from <code>tracers(it)%hTr / h_layer</code>.</p>
+<p>Memory layout <code>(nz_ml, ncells_total)</code> matches the file layout
+<code>[nz_dimid, face_dimid, time_dimid]</code> so each field is one
+contiguous <code>nf90_put_var</code> — no transpose buffer.</p>
+
+
+    <h3>Arguments</h3>
+        <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ostate~16"></span>
+              type(<a href='../type/output_unstr_state_t.html'>output_unstr_state_t</a>),
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>ostate</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-state~134"></span>
+              type(<a href='../type/unstr_state_t.html'>unstr_state_t</a>),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>state</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <br>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Calls</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~write_multilayer_snapshot~~CallsGraph Pages: 1 -->
+<svg id="procwrite_multilayer_snapshotCallsGraph" width="394pt" height="95pt"
+ viewBox="0.00 0.00 394.00 95.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~write_multilayer_snapshot~~CallsGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 91)">
+<title>proc~~write_multilayer_snapshot~~CallsGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-91 390,-91 390,4 -4,4"/>
+<!-- proc~write_multilayer_snapshot -->
+<g id="proc~~write_multilayer_snapshot~~CallsGraph_node1" class="node">
+<title>proc~write_multilayer_snapshot</title>
+<polygon fill="none" stroke="black" points="151,-66 0,-66 0,-42 151,-42 151,-66"/>
+<text text-anchor="middle" x="75.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50">write_multilayer_snapshot</text>
+</g>
+<!-- nf90_put_var -->
+<g id="proc~~write_multilayer_snapshot~~CallsGraph_node2" class="node">
+<title>nf90_put_var</title>
+<polygon fill="#777777" stroke="#777777" points="269,-87 187,-87 187,-63 269,-63 269,-87"/>
+<text text-anchor="middle" x="228" y="-72.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nf90_put_var</text>
+</g>
+<!-- proc~write_multilayer_snapshot&#45;&gt;nf90_put_var -->
+<g id="proc~~write_multilayer_snapshot~~CallsGraph_edge1" class="edge">
+<title>proc~write_multilayer_snapshot&#45;&gt;nf90_put_var</title>
+<path fill="none" stroke="#ff0000" d="M151.31,-64.44C159.92,-65.64 168.54,-66.84 176.71,-67.98"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="176.41,-71.47 186.8,-69.39 177.38,-64.54 176.41,-71.47"/>
+</g>
+<!-- proc~nc_check -->
+<g id="proc~~write_multilayer_snapshot~~CallsGraph_node3" class="node">
+<title>proc~nc_check</title>
+<g id="a_proc~~write_multilayer_snapshot~~CallsGraph_node3"><a xlink:href="../proc/nc_check.html" xlink:title="nc_check">
+<polygon fill="#d9534f" stroke="#d9534f" points="259,-45 197,-45 197,-21 259,-21 259,-45"/>
+<text text-anchor="middle" x="228" y="-30.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nc_check</text>
+</a>
+</g>
+</g>
+<!-- proc~write_multilayer_snapshot&#45;&gt;proc~nc_check -->
+<g id="proc~~write_multilayer_snapshot~~CallsGraph_edge2" class="edge">
+<title>proc~write_multilayer_snapshot&#45;&gt;proc~nc_check</title>
+<path fill="none" stroke="#ff0000" d="M151.31,-43.56C163.5,-41.86 175.7,-40.16 186.64,-38.63"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="187.28,-42.08 196.7,-37.23 186.31,-35.14 187.28,-42.08"/>
+</g>
+<!-- error -->
+<g id="proc~~write_multilayer_snapshot~~CallsGraph_node4" class="node">
+<title>error</title>
+<polygon fill="#777777" stroke="#777777" points="372.5,-66 318.5,-66 318.5,-42 372.5,-42 372.5,-66"/>
+<text text-anchor="middle" x="345.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">error</text>
+</g>
+<!-- proc~nc_check&#45;&gt;error -->
+<g id="proc~~write_multilayer_snapshot~~CallsGraph_edge3" class="edge">
+<title>proc~nc_check&#45;&gt;error</title>
+<path fill="none" stroke="#00ffff" d="M259.04,-38.46C274.07,-41.19 292.37,-44.52 308.18,-47.4"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="307.68,-50.86 318.14,-49.21 308.93,-43.98 307.68,-50.86"/>
+</g>
+<!-- nf90_strerror -->
+<g id="proc~~write_multilayer_snapshot~~CallsGraph_node5" class="node">
+<title>nf90_strerror</title>
+<polygon fill="#777777" stroke="#777777" points="386,-24 305,-24 305,0 386,0 386,-24"/>
+<text text-anchor="middle" x="345.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nf90_strerror</text>
+</g>
+<!-- proc~nc_check&#45;&gt;nf90_strerror -->
+<g id="proc~~write_multilayer_snapshot~~CallsGraph_edge4" class="edge">
+<title>proc~nc_check&#45;&gt;nf90_strerror</title>
+<path fill="none" stroke="#00ffff" d="M259.04,-27.54C269.91,-25.56 282.48,-23.28 294.59,-21.07"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="295.39,-24.49 304.6,-19.25 294.14,-17.6 295.39,-24.49"/>
+</g>
+</g>
+</svg>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CallsGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CallsGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Called by</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~write_multilayer_snapshot~~CalledByGraph Pages: 1 -->
+<svg id="procwrite_multilayer_snapshotCalledByGraph" width="525pt" height="32pt"
+ viewBox="0.00 0.00 525.00 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~write_multilayer_snapshot~~CalledByGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<title>proc~~write_multilayer_snapshot~~CalledByGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 521,-28 521,4 -4,4"/>
+<!-- proc~write_multilayer_snapshot -->
+<g id="proc~~write_multilayer_snapshot~~CalledByGraph_node1" class="node">
+<title>proc~write_multilayer_snapshot</title>
+<polygon fill="none" stroke="black" points="517,-24 366,-24 366,0 517,0 517,-24"/>
+<text text-anchor="middle" x="441.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">write_multilayer_snapshot</text>
+</g>
+<!-- proc~output_unstr_write_snapshot -->
+<g id="proc~~write_multilayer_snapshot~~CalledByGraph_node2" class="node">
+<title>proc~output_unstr_write_snapshot</title>
+<g id="a_proc~~write_multilayer_snapshot~~CalledByGraph_node2"><a xlink:href="../proc/output_unstr_write_snapshot.html" xlink:title="output_unstr_write_snapshot">
+<polygon fill="#d9534f" stroke="#d9534f" points="330,-24 166,-24 166,0 330,0 330,-24"/>
+<text text-anchor="middle" x="248" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">output_unstr_write_snapshot</text>
+</a>
+</g>
+</g>
+<!-- proc~output_unstr_write_snapshot&#45;&gt;proc~write_multilayer_snapshot -->
+<g id="proc~~write_multilayer_snapshot~~CalledByGraph_edge1" class="edge">
+<title>proc~output_unstr_write_snapshot&#45;&gt;proc~write_multilayer_snapshot</title>
+<path fill="none" stroke="#ff0000" d="M330.21,-12C338.62,-12 347.18,-12 355.63,-12"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="355.85,-15.5 365.85,-12 355.85,-8.5 355.85,-15.5"/>
+</g>
+<!-- proc~rki_unstr_output_write -->
+<g id="proc~~write_multilayer_snapshot~~CalledByGraph_node3" class="node">
+<title>proc~rki_unstr_output_write</title>
+<g id="a_proc~~write_multilayer_snapshot~~CalledByGraph_node3"><a xlink:href="../proc/rki_unstr_output_write.html" xlink:title="rki_unstr_output_write">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="130,-24 0,-24 0,0 130,0 130,-24"/>
+<text text-anchor="middle" x="65" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_unstr_output_write</text>
+</a>
+</g>
+</g>
+<!-- proc~rki_unstr_output_write&#45;&gt;proc~output_unstr_write_snapshot -->
+<g id="proc~~write_multilayer_snapshot~~CalledByGraph_edge2" class="edge">
+<title>proc~rki_unstr_output_write&#45;&gt;proc~output_unstr_write_snapshot</title>
+<path fill="none" stroke="#ff0000" d="M130.07,-12C138.4,-12 147.06,-12 155.73,-12"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="155.89,-15.5 165.89,-12 155.89,-8.5 155.89,-15.5"/>
+</g>
+</g>
+</svg>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CalledByGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CalledByGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+
+
+    <section>    
+      <h2>Variables</h2>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Visibility</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+<th></th><th scope="col">Initial</th>        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-buf~6"></span>
+              real(kind=wp),
+            </td>
+              <td>private,</td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>buf</strong>(:,:)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-cc~3"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>cc</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-h_k~31"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>h_k</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-it~18"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>it</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-kk~22"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>kk</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-n~81"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>n</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nz~179"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nz</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ti~2"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>ti</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    </section>
+    <br>
+    
+    
+
+    
+    
+
+
+
+    
+    <section>
+    <h2><span class="anchor" id="src"></span>Source Code</h2>
+    <div class="hl codehilite"><pre><span></span><span class="w">   </span><span class="k">subroutine </span><span class="n">write_multilayer_snapshot</span><span class="p">(</span><span class="n">ostate</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span>
+<span class="w">      </span><span class="c">!! Write the 3D layer fields + per-tracer fields for the current</span>
+<span class="w">      </span><span class="c">!! time index.  Velocities are derived from `hu_layer / h_layer`</span>
+<span class="w">      </span><span class="c">!! with a dry-cell guard; tracers from `tracers(it)%hTr / h_layer`.</span>
+<span class="w">      </span><span class="c">!!</span>
+<span class="w">      </span><span class="c">!! Memory layout `(nz_ml, ncells_total)` matches the file layout</span>
+<span class="w">      </span><span class="c">!! `[nz_dimid, face_dimid, time_dimid]` so each field is one</span>
+<span class="w">      </span><span class="c">!! contiguous `nf90_put_var` — no transpose buffer.</span>
+<span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="n">output_unstr_state_t</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">ostate</span>
+<span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="n">unstr_state_t</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w">    </span><span class="kd">::</span><span class="w"> </span><span class="n">state</span>
+
+<span class="w">      </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">ti</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">nz</span><span class="p">,</span><span class="w"> </span><span class="n">kk</span><span class="p">,</span><span class="w"> </span><span class="n">cc</span><span class="p">,</span><span class="w"> </span><span class="n">it</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">buf</span><span class="p">(:,</span><span class="w"> </span><span class="p">:)</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">h_k</span>
+
+<span class="w">      </span><span class="n">ti</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ostate</span><span class="p">%</span><span class="n">time_index</span>
+<span class="w">      </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ostate</span><span class="p">%</span><span class="n">ncells</span>
+<span class="w">      </span><span class="n">nz</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ostate</span><span class="p">%</span><span class="n">nz_ml</span>
+
+<span class="w">      </span><span class="c">! Layer thickness — write directly from memory.</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_check</span><span class="p">(</span><span class="n">nf90_put_var</span><span class="p">(</span><span class="n">ostate</span><span class="p">%</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">ostate</span><span class="p">%</span><span class="n">ml_h_layer_varid</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                 </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">h_layer</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">nz</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="n">n</span><span class="p">),</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                 </span><span class="n">start</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">ti</span><span class="p">],</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                 </span><span class="nb">count</span><span class="o">=</span><span class="p">[</span><span class="n">nz</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">]),</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                    </span><span class="s2">"writing h_layer slice"</span><span class="p">)</span>
+
+<span class="w">      </span><span class="c">! Velocity components — derive u = hu / h with dry-cell guard.</span>
+<span class="w">      </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">buf</span><span class="p">(</span><span class="n">nz</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">))</span>
+<span class="w">      </span><span class="k">do </span><span class="n">cc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">n</span>
+<span class="w">         </span><span class="k">do </span><span class="n">kk</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">nz</span>
+<span class="w">            </span><span class="n">h_k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">h_layer</span><span class="p">(</span><span class="n">kk</span><span class="p">,</span><span class="w"> </span><span class="n">cc</span><span class="p">)</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">h_k</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">DRY_TOLERANCE</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">               </span><span class="n">buf</span><span class="p">(</span><span class="n">kk</span><span class="p">,</span><span class="w"> </span><span class="n">cc</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">hu_layer</span><span class="p">(</span><span class="n">kk</span><span class="p">,</span><span class="w"> </span><span class="n">cc</span><span class="p">)</span><span class="o">/</span><span class="n">h_k</span>
+<span class="w">            </span><span class="k">else</span>
+<span class="k">               </span><span class="n">buf</span><span class="p">(</span><span class="n">kk</span><span class="p">,</span><span class="w"> </span><span class="n">cc</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">            </span><span class="k">end if</span>
+<span class="k">         end do</span>
+<span class="k">      end do</span>
+<span class="k">      call </span><span class="n">nc_check</span><span class="p">(</span><span class="n">nf90_put_var</span><span class="p">(</span><span class="n">ostate</span><span class="p">%</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">ostate</span><span class="p">%</span><span class="n">ml_u_varid</span><span class="p">,</span><span class="w"> </span><span class="n">buf</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                 </span><span class="n">start</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">ti</span><span class="p">],</span><span class="w"> </span><span class="nb">count</span><span class="o">=</span><span class="p">[</span><span class="n">nz</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">]),</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                    </span><span class="s2">"writing u_ml slice"</span><span class="p">)</span>
+
+<span class="w">      </span><span class="k">do </span><span class="n">cc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">n</span>
+<span class="w">         </span><span class="k">do </span><span class="n">kk</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">nz</span>
+<span class="w">            </span><span class="n">h_k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">h_layer</span><span class="p">(</span><span class="n">kk</span><span class="p">,</span><span class="w"> </span><span class="n">cc</span><span class="p">)</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">h_k</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">DRY_TOLERANCE</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">               </span><span class="n">buf</span><span class="p">(</span><span class="n">kk</span><span class="p">,</span><span class="w"> </span><span class="n">cc</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">hv_layer</span><span class="p">(</span><span class="n">kk</span><span class="p">,</span><span class="w"> </span><span class="n">cc</span><span class="p">)</span><span class="o">/</span><span class="n">h_k</span>
+<span class="w">            </span><span class="k">else</span>
+<span class="k">               </span><span class="n">buf</span><span class="p">(</span><span class="n">kk</span><span class="p">,</span><span class="w"> </span><span class="n">cc</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">            </span><span class="k">end if</span>
+<span class="k">         end do</span>
+<span class="k">      end do</span>
+<span class="k">      call </span><span class="n">nc_check</span><span class="p">(</span><span class="n">nf90_put_var</span><span class="p">(</span><span class="n">ostate</span><span class="p">%</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">ostate</span><span class="p">%</span><span class="n">ml_v_varid</span><span class="p">,</span><span class="w"> </span><span class="n">buf</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                 </span><span class="n">start</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">ti</span><span class="p">],</span><span class="w"> </span><span class="nb">count</span><span class="o">=</span><span class="p">[</span><span class="n">nz</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">]),</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                    </span><span class="s2">"writing v_ml slice"</span><span class="p">)</span>
+
+<span class="w">      </span><span class="c">! Density (already a primitive variable — direct write).</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_check</span><span class="p">(</span><span class="n">nf90_put_var</span><span class="p">(</span><span class="n">ostate</span><span class="p">%</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">ostate</span><span class="p">%</span><span class="n">ml_rho_varid</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                 </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">rho_layer</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">nz</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="n">n</span><span class="p">),</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                 </span><span class="n">start</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">ti</span><span class="p">],</span><span class="w"> </span><span class="nb">count</span><span class="o">=</span><span class="p">[</span><span class="n">nz</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">]),</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                    </span><span class="s2">"writing rho_layer slice"</span><span class="p">)</span>
+
+<span class="w">      </span><span class="c">! Vertical velocity at interfaces (nz + 1 levels).</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_check</span><span class="p">(</span><span class="n">nf90_put_var</span><span class="p">(</span><span class="n">ostate</span><span class="p">%</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">ostate</span><span class="p">%</span><span class="n">ml_w_varid</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                 </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">w_interface</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">nz</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="n">n</span><span class="p">),</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                 </span><span class="n">start</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">ti</span><span class="p">],</span><span class="w"> </span><span class="nb">count</span><span class="o">=</span><span class="p">[</span><span class="n">nz</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">]),</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                    </span><span class="s2">"writing w_interface slice"</span><span class="p">)</span>
+
+<span class="w">      </span><span class="c">! ---- Per-tracer variables ----</span>
+<span class="w">      </span><span class="c">! Divide the conserved hTr by h_layer to recover the primitive</span>
+<span class="w">      </span><span class="c">! variable in the same units the registry advertises.</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">tracers</span><span class="p">)</span><span class="w"> </span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="w"> </span><span class="nb">allocated</span><span class="p">(</span><span class="n">ostate</span><span class="p">%</span><span class="n">ml_tracer_varids</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+<span class="k">         do </span><span class="n">it</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">tracers</span><span class="p">)</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ostate</span><span class="p">%</span><span class="n">ml_tracer_varids</span><span class="p">(</span><span class="n">it</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">cycle</span>
+<span class="k">            do </span><span class="n">cc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">n</span>
+<span class="w">               </span><span class="k">do </span><span class="n">kk</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">nz</span>
+<span class="w">                  </span><span class="n">h_k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">h_layer</span><span class="p">(</span><span class="n">kk</span><span class="p">,</span><span class="w"> </span><span class="n">cc</span><span class="p">)</span>
+<span class="w">                  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">h_k</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">DRY_TOLERANCE</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                     </span><span class="n">buf</span><span class="p">(</span><span class="n">kk</span><span class="p">,</span><span class="w"> </span><span class="n">cc</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">tracers</span><span class="p">(</span><span class="n">it</span><span class="p">)%</span><span class="n">hTr</span><span class="p">(</span><span class="n">kk</span><span class="p">,</span><span class="w"> </span><span class="n">cc</span><span class="p">)</span><span class="o">/</span><span class="n">h_k</span>
+<span class="w">                  </span><span class="k">else</span>
+<span class="k">                     </span><span class="n">buf</span><span class="p">(</span><span class="n">kk</span><span class="p">,</span><span class="w"> </span><span class="n">cc</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">                  </span><span class="k">end if</span>
+<span class="k">               end do</span>
+<span class="k">            end do</span>
+<span class="k">            call </span><span class="n">nc_check</span><span class="p">(</span><span class="n">nf90_put_var</span><span class="p">(</span><span class="n">ostate</span><span class="p">%</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">ostate</span><span class="p">%</span><span class="n">ml_tracer_varids</span><span class="p">(</span><span class="n">it</span><span class="p">),</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                       </span><span class="n">buf</span><span class="p">,</span><span class="w"> </span><span class="n">start</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">ti</span><span class="p">],</span><span class="w"> </span><span class="nb">count</span><span class="o">=</span><span class="p">[</span><span class="n">nz</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">]),</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                          </span><span class="s2">"writing tracer slice"</span><span class="p">)</span>
+<span class="w">         </span><span class="k">end do</span>
+<span class="k">      end if</span>
+
+<span class="k">      deallocate</span><span class="w"> </span><span class="p">(</span><span class="n">buf</span><span class="p">)</span>
+<span class="w">   </span><span class="k">end subroutine </span><span class="n">write_multilayer_snapshot</span>
+</pre></div>
+
+    </section>
+    <br>
+    
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Rakali
+ was developed by Jorge Luis Galvez Vallejo<br>              &copy; 2026 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+ on 2026-10-08 12:55 +0000             </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>

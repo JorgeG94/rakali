@@ -1,0 +1,1475 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="GPU-native coastal solver — structured Cartesian and unstructured triangular grids, hydrostatic multilayer + non-hydrostatic, portable across NVHPC/gfortran/ifx.">
+    <meta name="author" content="Jorge Luis Galvez Vallejo" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>si_unstr_column_solve &ndash; Rakali</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">Rakali </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/absint.html">Abstract Interfaces</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>si_unstr_column_solve
+      <small>Subroutine</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.5% of total for procedures.">127 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/rki_si_unstr_column.F90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/rki_si_unstr_column.f90.html'>rki_si_unstr_column.F90</a></li>
+                <li class="breadcrumb-item"><a href='../module/rki_si_unstr_column.html'>rki_si_unstr_column</a></li>
+            <li class="breadcrumb-item active" aria-current="page">si_unstr_column_solve</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+  
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#vars-0"
+         aria-expanded="false" aria-controls="vars-0">
+         <h4 class="card-header bg-primary text-white">Variables</h4>
+      </a>
+      <div id="vars-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../proc/si_unstr_column_solve.html#variable-ak_col">ak_col</a>
+            <a class="list-group-item" href="../proc/si_unstr_column_solve.html#variable-alph">alph</a>
+            <a class="list-group-item" href="../proc/si_unstr_column_solve.html#variable-beta_k">beta_k</a>
+            <a class="list-group-item" href="../proc/si_unstr_column_solve.html#variable-bk_col">bk_col</a>
+            <a class="list-group-item" href="../proc/si_unstr_column_solve.html#variable-c~28">c</a>
+            <a class="list-group-item" href="../proc/si_unstr_column_solve.html#variable-cf~10">cf</a>
+            <a class="list-group-item" href="../proc/si_unstr_column_solve.html#variable-ck_col">ck_col</a>
+            <a class="list-group-item" href="../proc/si_unstr_column_solve.html#variable-denom_k">denom_k</a>
+            <a class="list-group-item" href="../proc/si_unstr_column_solve.html#variable-dz_bot">dz_bot</a>
+            <a class="list-group-item" href="../proc/si_unstr_column_solve.html#variable-dz_top">dz_top</a>
+            <a class="list-group-item" href="../proc/si_unstr_column_solve.html#variable-gx_sum">gx_sum</a>
+            <a class="list-group-item" href="../proc/si_unstr_column_solve.html#variable-gy_sum">gy_sum</a>
+            <a class="list-group-item" href="../proc/si_unstr_column_solve.html#variable-h_total~4">h_total</a>
+            <a class="list-group-item" href="../proc/si_unstr_column_solve.html#variable-hc~2">hc</a>
+            <a class="list-group-item" href="../proc/si_unstr_column_solve.html#variable-hhat_sum">hhat_sum</a>
+            <a class="list-group-item" href="../proc/si_unstr_column_solve.html#variable-hk_col">hk_col</a>
+            <a class="list-group-item" href="../proc/si_unstr_column_solve.html#variable-hm">hm</a>
+            <a class="list-group-item" href="../proc/si_unstr_column_solve.html#variable-hp">hp</a>
+            <a class="list-group-item" href="../proc/si_unstr_column_solve.html#variable-k~98">k</a>
+            <a class="list-group-item" href="../proc/si_unstr_column_solve.html#variable-lambda_drag">lambda_drag</a>
+            <a class="list-group-item" href="../proc/si_unstr_column_solve.html#variable-rhs_r">rhs_r</a>
+            <a class="list-group-item" href="../proc/si_unstr_column_solve.html#variable-rhs_u">rhs_u</a>
+            <a class="list-group-item" href="../proc/si_unstr_column_solve.html#variable-rhs_v">rhs_v</a>
+            <a class="list-group-item" href="../proc/si_unstr_column_solve.html#variable-u_bed">u_bed</a>
+            <a class="list-group-item" href="../proc/si_unstr_column_solve.html#variable-v_bed">v_bed</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../proc/si_unstr_column_solve.html#src">si_unstr_column_solve</a>
+      </div>
+    </div>
+
+
+  </div>
+
+    </div>
+    
+    <div class="col-md-9" id='text'>
+    <h2>public pure subroutine si_unstr_column_solve(nz, nzp1, nct, nco, h_layer, hu_layer, hv_layer, nu_iface, manning_n, dt, g_col_u, g_col_v, r_col, Hhat_cell, Gbar_cell_x, Gbar_cell_y)  
+</h2>
+    
+
+    <p>Per-column semi-implicit solve — the structured <code>si_column_solve</code>
+ported per-cell (<code>(nz, ncells)</code> order).  Predictor: PLAIN old-time
+velocity u^n_k = hu_k/max(h_k, H_VANISHED) — NO surface PGF (the
+edge-based PGF split: by linearity of the tridiagonal, all surface
+PGF applies at edges via the -1 response R_k).  Bottom drag:
+Manning quadratic on the bed row (the unstructured barotropic
+state carries no linear-drag knob):
+  cf = g<em>n^2 / H_total^{1/3};  lambda = cf</em>|u_bed| / h_1
+folded into the bed diagonal as +dt*lambda.  Tridiagonal, Thomas
+factorisation, three back-solves (u^n, v^n, -1), then
+  Gbar = sum_k h_k G_k,  Hhat = -sum_k h_k R_k  (&gt;= 0).
+R_k is axis-independent (u and v share the matrix).</p>
+
+
+    <h3>Arguments</h3>
+        <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nz~96"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nz</strong></td>
+            <td>
+                <p>Number of layers.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nzp1~6"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nzp1</strong></td>
+            <td>
+                <p>nz + 1 (the interface-array leading dim, explicit-shape).</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nct~25"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nct</strong></td>
+            <td>
+                <p>Cell array extent (ncells_total).</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nco~29"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nco</strong></td>
+            <td>
+                <p>Owned-cell loop bound.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-h_layer~42"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>h_layer</strong>(nz,nct)</td>
+            <td>
+                <p>Layer thicknesses [m], bottom-up.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-hu_layer~24"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>hu_layer</strong>(nz,nct)</td>
+            <td>
+                <p>Layer x-transports [m^2/s] (predictor tendencies already folded).</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-hv_layer~24"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>hv_layer</strong>(nz,nct)</td>
+            <td>
+                <p>Layer y-transports [m^2/s].</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nu_iface~4"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nu_iface</strong>(nzp1,nct)</td>
+            <td>
+                <p>Interface viscosity [m^2/s] (vdiff convention).</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-manning_n~10"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>manning_n</strong></td>
+            <td>
+                <p>Manning roughness n [s/m^{1/3}]; &lt;= 0 disables bottom drag.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-dt~49"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>dt</strong></td>
+            <td>
+                <p>Time step [s].</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-g_col_u"></span>
+              real(kind=wp),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>g_col_u</strong>(nz,nct)</td>
+            <td>
+                <p>Column velocity response to u^n (G_k^u) [m/s].</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-g_col_v"></span>
+              real(kind=wp),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>g_col_v</strong>(nz,nct)</td>
+            <td>
+                <p>Column velocity response to v^n (G_k^v) [m/s].</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-r_col"></span>
+              real(kind=wp),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>r_col</strong>(nz,nct)</td>
+            <td>
+                <p>Column velocity response to -1 (R_k) [m/s] (&lt;= 0).</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-hhat_cell"></span>
+              real(kind=wp),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Hhat_cell</strong>(nct)</td>
+            <td>
+                <p>Effective column depth Hhat = -sum_k h_k R_k [m] (&gt;= 0).</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-gbar_cell_x"></span>
+              real(kind=wp),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Gbar_cell_x</strong>(nct)</td>
+            <td>
+                <p>Column-integrated predictor transport sum_k h_k G_k^u [m^2/s].</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-gbar_cell_y"></span>
+              real(kind=wp),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Gbar_cell_y</strong>(nct)</td>
+            <td>
+                <p>Column-integrated y predictor transport [m^2/s].</p>
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <br>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Calls</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~si_unstr_column_solve~~CallsGraph Pages: 1 -->
+<svg id="procsi_unstr_column_solveCallsGraph" width="229pt" height="32pt"
+ viewBox="0.00 0.00 229.00 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~si_unstr_column_solve~~CallsGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<title>proc~~si_unstr_column_solve~~CallsGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 225,-28 225,4 -4,4"/>
+<!-- proc~si_unstr_column_solve -->
+<g id="proc~~si_unstr_column_solve~~CallsGraph_node1" class="node">
+<title>proc~si_unstr_column_solve</title>
+<polygon fill="none" stroke="black" points="131,-24 0,-24 0,0 131,0 131,-24"/>
+<text text-anchor="middle" x="65.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">si_unstr_column_solve</text>
+</g>
+<!-- local -->
+<g id="proc~~si_unstr_column_solve~~CallsGraph_node2" class="node">
+<title>local</title>
+<polygon fill="#777777" stroke="#777777" points="221,-24 167,-24 167,0 221,0 221,-24"/>
+<text text-anchor="middle" x="194" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">local</text>
+</g>
+<!-- proc~si_unstr_column_solve&#45;&gt;local -->
+<g id="proc~~si_unstr_column_solve~~CallsGraph_edge1" class="edge">
+<title>proc~si_unstr_column_solve&#45;&gt;local</title>
+<path fill="none" stroke="#ff0000" d="M131.23,-12C140.02,-12 148.78,-12 156.81,-12"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="156.9,-15.5 166.9,-12 156.9,-8.5 156.9,-15.5"/>
+</g>
+</g>
+</svg>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CallsGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CallsGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Called by</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~si_unstr_column_solve~~CalledByGraph Pages: 1 -->
+<svg id="procsi_unstr_column_solveCalledByGraph" width="641pt" height="62pt"
+ viewBox="0.00 0.00 641.00 62.46" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~si_unstr_column_solve~~CalledByGraph" class="graph" transform="scale(0.66 0.66) rotate(0) translate(4 91)">
+<title>proc~~si_unstr_column_solve~~CalledByGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-91 971,-91 971,4 -4,4"/>
+<!-- proc~si_unstr_column_solve -->
+<g id="proc~~si_unstr_column_solve~~CalledByGraph_node1" class="node">
+<title>proc~si_unstr_column_solve</title>
+<polygon fill="none" stroke="black" points="967,-66 836,-66 836,-42 967,-42 967,-66"/>
+<text text-anchor="middle" x="901.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50">si_unstr_column_solve</text>
+</g>
+<!-- proc~si_unstr_step_ml -->
+<g id="proc~~si_unstr_column_solve~~CalledByGraph_node2" class="node">
+<title>proc~si_unstr_step_ml</title>
+<g id="a_proc~~si_unstr_column_solve~~CalledByGraph_node2"><a xlink:href="../proc/si_unstr_step_ml.html" xlink:title="si_unstr_step_ml">
+<polygon fill="#d9534f" stroke="#d9534f" points="800,-66 700,-66 700,-42 800,-42 800,-66"/>
+<text text-anchor="middle" x="750" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">si_unstr_step_ml</text>
+</a>
+</g>
+</g>
+<!-- proc~si_unstr_step_ml&#45;&gt;proc~si_unstr_column_solve -->
+<g id="proc~~si_unstr_column_solve~~CalledByGraph_edge1" class="edge">
+<title>proc~si_unstr_step_ml&#45;&gt;proc~si_unstr_column_solve</title>
+<path fill="none" stroke="#ff0000" d="M800.37,-54C808.56,-54 817.21,-54 825.86,-54"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="825.99,-57.5 835.99,-54 825.99,-50.5 825.99,-57.5"/>
+</g>
+<!-- proc~solver_unstr_step_semi_implicit -->
+<g id="proc~~si_unstr_column_solve~~CalledByGraph_node3" class="node">
+<title>proc~solver_unstr_step_semi_implicit</title>
+<g id="a_proc~~si_unstr_column_solve~~CalledByGraph_node3"><a xlink:href="../proc/solver_unstr_step_semi_implicit.html" xlink:title="solver_unstr_step_semi_implicit">
+<polygon fill="#d9534f" stroke="#d9534f" points="664,-66 484,-66 484,-42 664,-42 664,-66"/>
+<text text-anchor="middle" x="574" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_unstr_step_semi_implicit</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_unstr_step_semi_implicit&#45;&gt;proc~si_unstr_step_ml -->
+<g id="proc~~si_unstr_column_solve~~CalledByGraph_edge2" class="edge">
+<title>proc~solver_unstr_step_semi_implicit&#45;&gt;proc~si_unstr_step_ml</title>
+<path fill="none" stroke="#ff0000" d="M664.04,-54C672.84,-54 681.61,-54 689.99,-54"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="690,-57.5 700,-54 690,-50.5 690,-57.5"/>
+</g>
+<!-- proc~solver_unstr_step -->
+<g id="proc~~si_unstr_column_solve~~CalledByGraph_node4" class="node">
+<title>proc~solver_unstr_step</title>
+<g id="a_proc~~si_unstr_column_solve~~CalledByGraph_node4"><a xlink:href="../proc/solver_unstr_step.html" xlink:title="solver_unstr_step">
+<polygon fill="#d9534f" stroke="#d9534f" points="448,-66 343,-66 343,-42 448,-42 448,-66"/>
+<text text-anchor="middle" x="395.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_unstr_step</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_unstr_step&#45;&gt;proc~solver_unstr_step_semi_implicit -->
+<g id="proc~~si_unstr_column_solve~~CalledByGraph_edge3" class="edge">
+<title>proc~solver_unstr_step&#45;&gt;proc~solver_unstr_step_semi_implicit</title>
+<path fill="none" stroke="#ff0000" d="M448.03,-54C456.23,-54 464.95,-54 473.82,-54"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="473.88,-57.5 483.88,-54 473.88,-50.5 473.88,-57.5"/>
+</g>
+<!-- proc~rki_unstr_step -->
+<g id="proc~~si_unstr_column_solve~~CalledByGraph_node5" class="node">
+<title>proc~rki_unstr_step</title>
+<g id="a_proc~~si_unstr_column_solve~~CalledByGraph_node5"><a xlink:href="../proc/rki_unstr_step.html" xlink:title="rki_unstr_step">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="286,-87 200,-87 200,-63 286,-63 286,-87"/>
+<text text-anchor="middle" x="243" y="-72.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_unstr_step</text>
+</a>
+</g>
+</g>
+<!-- proc~rki_unstr_step&#45;&gt;proc~solver_unstr_step -->
+<g id="proc~~si_unstr_column_solve~~CalledByGraph_edge4" class="edge">
+<title>proc~rki_unstr_step&#45;&gt;proc~solver_unstr_step</title>
+<path fill="none" stroke="#ff0000" d="M286.32,-69.09C300.73,-67.08 317.14,-64.79 332.75,-62.62"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="333.45,-66.05 342.87,-61.2 332.48,-59.12 333.45,-66.05"/>
+</g>
+<!-- proc~solver_unstr_advance -->
+<g id="proc~~si_unstr_column_solve~~CalledByGraph_node6" class="node">
+<title>proc~solver_unstr_advance</title>
+<g id="a_proc~~si_unstr_column_solve~~CalledByGraph_node6"><a xlink:href="../proc/solver_unstr_advance.html" xlink:title="solver_unstr_advance">
+<polygon fill="#d9534f" stroke="#d9534f" points="307,-45 179,-45 179,-21 307,-21 307,-45"/>
+<text text-anchor="middle" x="243" y="-30.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_unstr_advance</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_unstr_advance&#45;&gt;proc~solver_unstr_step -->
+<g id="proc~~si_unstr_column_solve~~CalledByGraph_edge5" class="edge">
+<title>proc~solver_unstr_advance&#45;&gt;proc~solver_unstr_step</title>
+<path fill="none" stroke="#ff0000" d="M307.39,-41.85C315.73,-43.01 324.27,-44.2 332.58,-45.36"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="332.19,-48.84 342.58,-46.76 333.16,-41.91 332.19,-48.84"/>
+</g>
+<!-- proc~driver_run_coastal_unstr -->
+<g id="proc~~si_unstr_column_solve~~CalledByGraph_node7" class="node">
+<title>proc~driver_run_coastal_unstr</title>
+<g id="a_proc~~si_unstr_column_solve~~CalledByGraph_node7"><a xlink:href="../proc/driver_run_coastal_unstr.html" xlink:title="driver_run_coastal_unstr">
+<polygon fill="#d9534f" stroke="#d9534f" points="143,-66 0,-66 0,-42 143,-42 143,-66"/>
+<text text-anchor="middle" x="71.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">driver_run_coastal_unstr</text>
+</a>
+</g>
+</g>
+<!-- proc~driver_run_coastal_unstr&#45;&gt;proc~solver_unstr_advance -->
+<g id="proc~~si_unstr_column_solve~~CalledByGraph_edge6" class="edge">
+<title>proc~driver_run_coastal_unstr&#45;&gt;proc~solver_unstr_advance</title>
+<path fill="none" stroke="#00ffff" d="M143.4,-45.22C151.79,-44.18 160.36,-43.12 168.77,-42.07"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="169.44,-45.52 178.94,-40.81 168.58,-38.57 169.44,-45.52"/>
+</g>
+<!-- proc~rki_unstr_advance -->
+<g id="proc~~si_unstr_column_solve~~CalledByGraph_node8" class="node">
+<title>proc~rki_unstr_advance</title>
+<g id="a_proc~~si_unstr_column_solve~~CalledByGraph_node8"><a xlink:href="../proc/rki_unstr_advance.html" xlink:title="rki_unstr_advance">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="126,-24 17,-24 17,0 126,0 126,-24"/>
+<text text-anchor="middle" x="71.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_unstr_advance</text>
+</a>
+</g>
+</g>
+<!-- proc~rki_unstr_advance&#45;&gt;proc~solver_unstr_advance -->
+<g id="proc~~si_unstr_column_solve~~CalledByGraph_edge7" class="edge">
+<title>proc~rki_unstr_advance&#45;&gt;proc~solver_unstr_advance</title>
+<path fill="none" stroke="#00ffff" d="M126.13,-18.64C139.63,-20.32 154.36,-22.14 168.64,-23.91"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="168.59,-27.43 178.94,-25.19 169.45,-20.48 168.59,-27.43"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var panprocsi_unstr_column_solveCalledByGraph = svgPanZoom('#procsi_unstr_column_solveCalledByGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CalledByGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CalledByGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+
+
+    <section>    
+      <h2>Variables</h2>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Visibility</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+<th></th><th scope="col">Initial</th>        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ak_col"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>ak_col</strong>(NZ_STACK_MAX)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-alph"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>alph</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-beta_k"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>beta_k</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-bk_col"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>bk_col</strong>(NZ_STACK_MAX)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-c~28"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>c</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-cf~10"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>cf</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ck_col"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>ck_col</strong>(NZ_STACK_MAX)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-denom_k"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>denom_k</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-dz_bot"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>dz_bot</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-dz_top"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>dz_top</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-gx_sum"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>gx_sum</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-gy_sum"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>gy_sum</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-h_total~4"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>h_total</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-hc~2"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>hc</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-hhat_sum"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>hhat_sum</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-hk_col"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>hk_col</strong>(NZ_STACK_MAX)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-hm"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>hm</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-hp"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>hp</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-k~98"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>k</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-lambda_drag"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>lambda_drag</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-rhs_r"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>rhs_r</strong>(NZ_STACK_MAX)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-rhs_u"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>rhs_u</strong>(NZ_STACK_MAX)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-rhs_v"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>rhs_v</strong>(NZ_STACK_MAX)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-u_bed"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>u_bed</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-v_bed"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>v_bed</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    </section>
+    <br>
+    
+    
+
+    
+    
+
+
+
+    
+    <section>
+    <h2><span class="anchor" id="src"></span>Source Code</h2>
+    <div class="hl codehilite"><pre><span></span><span class="w">   </span><span class="k">pure subroutine </span><span class="n">si_unstr_column_solve</span><span class="p">(</span><span class="n">nz</span><span class="p">,</span><span class="w"> </span><span class="n">nzp1</span><span class="p">,</span><span class="w"> </span><span class="n">nct</span><span class="p">,</span><span class="w"> </span><span class="n">nco</span><span class="p">,</span><span class="w"> </span><span class="n">h_layer</span><span class="p">,</span><span class="w"> </span><span class="n">hu_layer</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                         </span><span class="n">hv_layer</span><span class="p">,</span><span class="w"> </span><span class="n">nu_iface</span><span class="p">,</span><span class="w"> </span><span class="n">manning_n</span><span class="p">,</span><span class="w"> </span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                         </span><span class="n">g_col_u</span><span class="p">,</span><span class="w"> </span><span class="n">g_col_v</span><span class="p">,</span><span class="w"> </span><span class="n">r_col</span><span class="p">,</span><span class="w"> </span><span class="n">Hhat_cell</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                         </span><span class="n">Gbar_cell_x</span><span class="p">,</span><span class="w"> </span><span class="n">Gbar_cell_y</span><span class="p">)</span>
+<span class="w">      </span><span class="c">!! Per-column semi-implicit solve — the structured `si_column_solve`</span>
+<span class="w">      </span><span class="c">!! ported per-cell (`(nz, ncells)` order).  Predictor: PLAIN old-time</span>
+<span class="w">      </span><span class="c">!! velocity u^n_k = hu_k/max(h_k, H_VANISHED) — NO surface PGF (the</span>
+<span class="w">      </span><span class="c">!! edge-based PGF split: by linearity of the tridiagonal, all surface</span>
+<span class="w">      </span><span class="c">!! PGF applies at edges via the -1 response R_k).  Bottom drag:</span>
+<span class="w">      </span><span class="c">!! Manning quadratic on the bed row (the unstructured barotropic</span>
+<span class="w">      </span><span class="c">!! state carries no linear-drag knob):</span>
+<span class="w">      </span><span class="c">!!   cf = g*n^2 / H_total^{1/3};  lambda = cf*|u_bed| / h_1</span>
+<span class="w">      </span><span class="c">!! folded into the bed diagonal as +dt*lambda.  Tridiagonal, Thomas</span>
+<span class="w">      </span><span class="c">!! factorisation, three back-solves (u^n, v^n, -1), then</span>
+<span class="w">      </span><span class="c">!!   Gbar = sum_k h_k G_k,  Hhat = -sum_k h_k R_k  (&gt;= 0).</span>
+<span class="w">      </span><span class="c">!! R_k is axis-independent (u and v share the matrix).</span>
+<span class="w">      </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">nz</span>
+<span class="w">         </span><span class="c">!! Number of layers.</span>
+<span class="w">      </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">nzp1</span>
+<span class="w">         </span><span class="c">!! nz + 1 (the interface-array leading dim, explicit-shape).</span>
+<span class="w">      </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">nct</span>
+<span class="w">         </span><span class="c">!! Cell array extent (ncells_total).</span>
+<span class="w">      </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">nco</span>
+<span class="w">         </span><span class="c">!! Owned-cell loop bound.</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">h_layer</span><span class="p">(</span><span class="n">nz</span><span class="p">,</span><span class="w"> </span><span class="n">nct</span><span class="p">)</span>
+<span class="w">         </span><span class="c">!! Layer thicknesses [m], bottom-up.</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">hu_layer</span><span class="p">(</span><span class="n">nz</span><span class="p">,</span><span class="w"> </span><span class="n">nct</span><span class="p">)</span>
+<span class="w">         </span><span class="c">!! Layer x-transports [m^2/s] (predictor tendencies already folded).</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">hv_layer</span><span class="p">(</span><span class="n">nz</span><span class="p">,</span><span class="w"> </span><span class="n">nct</span><span class="p">)</span>
+<span class="w">         </span><span class="c">!! Layer y-transports [m^2/s].</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">nu_iface</span><span class="p">(</span><span class="n">nzp1</span><span class="p">,</span><span class="w"> </span><span class="n">nct</span><span class="p">)</span>
+<span class="w">         </span><span class="c">!! Interface viscosity [m^2/s] (vdiff convention).</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">manning_n</span>
+<span class="w">         </span><span class="c">!! Manning roughness n [s/m^{1/3}]; &lt;= 0 disables bottom drag.</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">dt</span>
+<span class="w">         </span><span class="c">!! Time step [s].</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">g_col_u</span><span class="p">(</span><span class="n">nz</span><span class="p">,</span><span class="w"> </span><span class="n">nct</span><span class="p">)</span>
+<span class="w">         </span><span class="c">!! Column velocity response to u^n (G_k^u) [m/s].</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">g_col_v</span><span class="p">(</span><span class="n">nz</span><span class="p">,</span><span class="w"> </span><span class="n">nct</span><span class="p">)</span>
+<span class="w">         </span><span class="c">!! Column velocity response to v^n (G_k^v) [m/s].</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">r_col</span><span class="p">(</span><span class="n">nz</span><span class="p">,</span><span class="w"> </span><span class="n">nct</span><span class="p">)</span>
+<span class="w">         </span><span class="c">!! Column velocity response to -1 (R_k) [m/s] (&lt;= 0).</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">Hhat_cell</span><span class="p">(</span><span class="n">nct</span><span class="p">)</span>
+<span class="w">         </span><span class="c">!! Effective column depth Hhat = -sum_k h_k R_k [m] (&gt;= 0).</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">Gbar_cell_x</span><span class="p">(</span><span class="n">nct</span><span class="p">)</span>
+<span class="w">         </span><span class="c">!! Column-integrated predictor transport sum_k h_k G_k^u [m^2/s].</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">Gbar_cell_y</span><span class="p">(</span><span class="n">nct</span><span class="p">)</span>
+<span class="w">         </span><span class="c">!! Column-integrated y predictor transport [m^2/s].</span>
+
+<span class="w">      </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">c</span><span class="p">,</span><span class="w"> </span><span class="n">k</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">hk_col</span><span class="p">(</span><span class="n">NZ_STACK_MAX</span><span class="p">)</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">ak_col</span><span class="p">(</span><span class="n">NZ_STACK_MAX</span><span class="p">)</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">bk_col</span><span class="p">(</span><span class="n">NZ_STACK_MAX</span><span class="p">)</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">ck_col</span><span class="p">(</span><span class="n">NZ_STACK_MAX</span><span class="p">)</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">rhs_u</span><span class="p">(</span><span class="n">NZ_STACK_MAX</span><span class="p">)</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">rhs_v</span><span class="p">(</span><span class="n">NZ_STACK_MAX</span><span class="p">)</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">rhs_r</span><span class="p">(</span><span class="n">NZ_STACK_MAX</span><span class="p">)</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">hc</span><span class="p">,</span><span class="w"> </span><span class="n">hm</span><span class="p">,</span><span class="w"> </span><span class="n">hp</span><span class="p">,</span><span class="w"> </span><span class="n">dz_bot</span><span class="p">,</span><span class="w"> </span><span class="n">dz_top</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">alph</span><span class="p">,</span><span class="w"> </span><span class="n">beta_k</span><span class="p">,</span><span class="w"> </span><span class="n">denom_k</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">lambda_drag</span><span class="p">,</span><span class="w"> </span><span class="n">h_total</span><span class="p">,</span><span class="w"> </span><span class="n">u_bed</span><span class="p">,</span><span class="w"> </span><span class="n">v_bed</span><span class="p">,</span><span class="w"> </span><span class="n">cf</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">gx_sum</span><span class="p">,</span><span class="w"> </span><span class="n">gy_sum</span><span class="p">,</span><span class="w"> </span><span class="n">hhat_sum</span>
+
+<span class="w">      </span><span class="k">do</span><span class="w"> </span><span class="k">concurrent</span><span class="p">(</span><span class="n">c</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="n">nco</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">         </span><span class="n">local</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="n">hk_col</span><span class="p">,</span><span class="w"> </span><span class="n">ak_col</span><span class="p">,</span><span class="w"> </span><span class="n">bk_col</span><span class="p">,</span><span class="w"> </span><span class="n">ck_col</span><span class="p">,</span><span class="w"> </span><span class="n">rhs_u</span><span class="p">,</span><span class="w"> </span><span class="n">rhs_v</span><span class="p">,</span><span class="w"> </span><span class="n">rhs_r</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">               </span><span class="n">hc</span><span class="p">,</span><span class="w"> </span><span class="n">hm</span><span class="p">,</span><span class="w"> </span><span class="n">hp</span><span class="p">,</span><span class="w"> </span><span class="n">dz_bot</span><span class="p">,</span><span class="w"> </span><span class="n">dz_top</span><span class="p">,</span><span class="w"> </span><span class="n">alph</span><span class="p">,</span><span class="w"> </span><span class="n">beta_k</span><span class="p">,</span><span class="w"> </span><span class="n">denom_k</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">               </span><span class="n">lambda_drag</span><span class="p">,</span><span class="w"> </span><span class="n">h_total</span><span class="p">,</span><span class="w"> </span><span class="n">u_bed</span><span class="p">,</span><span class="w"> </span><span class="n">v_bed</span><span class="p">,</span><span class="w"> </span><span class="n">cf</span><span class="p">,</span><span class="w"> </span><span class="n">gx_sum</span><span class="p">,</span><span class="w"> </span><span class="n">gy_sum</span><span class="p">,</span><span class="w"> </span><span class="n">hhat_sum</span><span class="p">)</span>
+
+<span class="w">         </span><span class="c">! ---- Floored thicknesses + plain u^n/v^n predictors (no PGF) ----</span>
+<span class="w">         </span><span class="k">do </span><span class="n">k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">nz</span>
+<span class="w">            </span><span class="n">hc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">max</span><span class="p">(</span><span class="n">h_layer</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="n">c</span><span class="p">),</span><span class="w"> </span><span class="n">H_VANISHED</span><span class="p">)</span>
+<span class="w">            </span><span class="n">hk_col</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hc</span>
+<span class="w">            </span><span class="n">rhs_u</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hu_layer</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="n">c</span><span class="p">)</span><span class="o">/</span><span class="n">hc</span>
+<span class="w">            </span><span class="n">rhs_v</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hv_layer</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="n">c</span><span class="p">)</span><span class="o">/</span><span class="n">hc</span>
+<span class="w">            </span><span class="n">rhs_r</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">-</span><span class="mf">1.0_wp</span>
+<span class="w">         </span><span class="k">end do</span>
+
+<span class="w">         </span><span class="c">! ---- Manning bottom drag on the bed row ----</span>
+<span class="w">         </span><span class="n">lambda_drag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">         </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">manning_n</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mf">0.0_wp</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            </span><span class="n">h_total</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">            </span><span class="k">do </span><span class="n">k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">nz</span>
+<span class="w">               </span><span class="n">h_total</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">h_total</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">hk_col</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+<span class="w">            </span><span class="k">end do</span>
+<span class="k">            </span><span class="n">cf</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">GRAVITY</span><span class="o">*</span><span class="n">manning_n</span><span class="o">*</span><span class="n">manning_n</span><span class="o">/</span><span class="p">(</span><span class="n">h_total</span><span class="o">**</span><span class="p">(</span><span class="mf">1.0_wp</span><span class="o">/</span><span class="mf">3.0_wp</span><span class="p">))</span>
+<span class="w">            </span><span class="n">u_bed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hu_layer</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">c</span><span class="p">)</span><span class="o">/</span><span class="n">hk_col</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">            </span><span class="n">v_bed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hv_layer</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">c</span><span class="p">)</span><span class="o">/</span><span class="n">hk_col</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">            </span><span class="n">lambda_drag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cf</span><span class="o">*</span><span class="nb">sqrt</span><span class="p">(</span><span class="n">u_bed</span><span class="o">*</span><span class="n">u_bed</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">v_bed</span><span class="o">*</span><span class="n">v_bed</span><span class="p">)</span><span class="o">/</span><span class="n">hk_col</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">         </span><span class="k">end if</span>
+
+<span class="w">         </span><span class="c">! ---- Tridiagonal build (bottom-up; vanished layers decouple) ----</span>
+<span class="w">         </span><span class="n">hc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hk_col</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">         </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">nz</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            </span><span class="n">hp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hk_col</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="w">            </span><span class="n">dz_top</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.5_wp</span><span class="o">*</span><span class="p">(</span><span class="n">hc</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">hp</span><span class="p">)</span>
+<span class="w">            </span><span class="n">alph</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">dt</span><span class="o">*</span><span class="n">nu_iface</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">c</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">hc</span><span class="o">*</span><span class="n">dz_top</span><span class="p">)</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">h_layer</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">c</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">H_VANISHED</span><span class="w"> </span><span class="p">.</span><span class="nb">or</span><span class="p">.</span><span class="w"> </span><span class="n">h_layer</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">c</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">H_VANISHED</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">               </span><span class="n">alph</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">            </span><span class="k">end if</span>
+<span class="k">         else</span>
+<span class="k">            </span><span class="n">alph</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">         </span><span class="k">end if</span>
+<span class="k">         </span><span class="n">ak_col</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">         </span><span class="n">ck_col</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">-</span><span class="n">alph</span>
+<span class="w">         </span><span class="n">bk_col</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0_wp</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">alph</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">dt</span><span class="o">*</span><span class="n">lambda_drag</span>
+
+<span class="w">         </span><span class="k">do </span><span class="n">k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">nz</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">            </span><span class="n">hc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hk_col</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+<span class="w">            </span><span class="n">hm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hk_col</span><span class="p">(</span><span class="n">k</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="w">            </span><span class="n">hp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hk_col</span><span class="p">(</span><span class="n">k</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="w">            </span><span class="n">dz_bot</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.5_wp</span><span class="o">*</span><span class="p">(</span><span class="n">hm</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">hc</span><span class="p">)</span>
+<span class="w">            </span><span class="n">dz_top</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.5_wp</span><span class="o">*</span><span class="p">(</span><span class="n">hc</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">hp</span><span class="p">)</span>
+<span class="w">            </span><span class="n">beta_k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">dt</span><span class="o">*</span><span class="n">nu_iface</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="n">c</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">hc</span><span class="o">*</span><span class="n">dz_bot</span><span class="p">)</span>
+<span class="w">            </span><span class="n">alph</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">dt</span><span class="o">*</span><span class="n">nu_iface</span><span class="p">(</span><span class="n">k</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">c</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">hc</span><span class="o">*</span><span class="n">dz_top</span><span class="p">)</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">h_layer</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="n">c</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">H_VANISHED</span><span class="w"> </span><span class="p">.</span><span class="nb">or</span><span class="p">.</span><span class="w"> </span><span class="n">h_layer</span><span class="p">(</span><span class="n">k</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">c</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">H_VANISHED</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">               </span><span class="n">beta_k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">            </span><span class="k">end if</span>
+<span class="k">            if</span><span class="w"> </span><span class="p">(</span><span class="n">h_layer</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="n">c</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">H_VANISHED</span><span class="w"> </span><span class="p">.</span><span class="nb">or</span><span class="p">.</span><span class="w"> </span><span class="n">h_layer</span><span class="p">(</span><span class="n">k</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">c</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">H_VANISHED</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">               </span><span class="n">alph</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">            </span><span class="k">end if</span>
+<span class="k">            </span><span class="n">ak_col</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">-</span><span class="n">beta_k</span>
+<span class="w">            </span><span class="n">ck_col</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">-</span><span class="n">alph</span>
+<span class="w">            </span><span class="n">bk_col</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0_wp</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">alph</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">beta_k</span>
+<span class="w">         </span><span class="k">end do</span>
+
+<span class="k">         if</span><span class="w"> </span><span class="p">(</span><span class="n">nz</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            </span><span class="n">hc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hk_col</span><span class="p">(</span><span class="n">nz</span><span class="p">)</span>
+<span class="w">            </span><span class="n">hm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hk_col</span><span class="p">(</span><span class="n">nz</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="w">            </span><span class="n">dz_bot</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.5_wp</span><span class="o">*</span><span class="p">(</span><span class="n">hm</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">hc</span><span class="p">)</span>
+<span class="w">            </span><span class="n">beta_k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">dt</span><span class="o">*</span><span class="n">nu_iface</span><span class="p">(</span><span class="n">nz</span><span class="p">,</span><span class="w"> </span><span class="n">c</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">hc</span><span class="o">*</span><span class="n">dz_bot</span><span class="p">)</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">h_layer</span><span class="p">(</span><span class="n">nz</span><span class="p">,</span><span class="w"> </span><span class="n">c</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">H_VANISHED</span><span class="w"> </span><span class="p">.</span><span class="nb">or</span><span class="p">.</span><span class="w"> </span><span class="n">h_layer</span><span class="p">(</span><span class="n">nz</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">c</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">H_VANISHED</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">               </span><span class="n">beta_k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">            </span><span class="k">end if</span>
+<span class="k">            </span><span class="n">ak_col</span><span class="p">(</span><span class="n">nz</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">-</span><span class="n">beta_k</span>
+<span class="w">            </span><span class="n">ck_col</span><span class="p">(</span><span class="n">nz</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">            </span><span class="n">bk_col</span><span class="p">(</span><span class="n">nz</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0_wp</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">beta_k</span>
+<span class="w">         </span><span class="k">end if</span>
+
+<span class="w">         </span><span class="c">! ---- Thomas factorisation + three-RHS sweep ----</span>
+<span class="w">         </span><span class="n">ck_col</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ck_col</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">bk_col</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">         </span><span class="k">do </span><span class="n">k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">nz</span>
+<span class="w">            </span><span class="n">denom_k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">bk_col</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">ak_col</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">*</span><span class="n">ck_col</span><span class="p">(</span><span class="n">k</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="w">            </span><span class="n">ck_col</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ck_col</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">/</span><span class="n">denom_k</span>
+<span class="w">            </span><span class="n">bk_col</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">denom_k</span>
+<span class="w">         </span><span class="k">end do</span>
+<span class="k">         </span><span class="n">rhs_u</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rhs_u</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">bk_col</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">         </span><span class="n">rhs_v</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rhs_v</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">bk_col</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">         </span><span class="n">rhs_r</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rhs_r</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">bk_col</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">         </span><span class="k">do </span><span class="n">k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">nz</span>
+<span class="w">            </span><span class="n">rhs_u</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">rhs_u</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">ak_col</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">*</span><span class="n">rhs_u</span><span class="p">(</span><span class="n">k</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">))</span><span class="o">/</span><span class="n">bk_col</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+<span class="w">            </span><span class="n">rhs_v</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">rhs_v</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">ak_col</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">*</span><span class="n">rhs_v</span><span class="p">(</span><span class="n">k</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">))</span><span class="o">/</span><span class="n">bk_col</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+<span class="w">            </span><span class="n">rhs_r</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">rhs_r</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">ak_col</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">*</span><span class="n">rhs_r</span><span class="p">(</span><span class="n">k</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">))</span><span class="o">/</span><span class="n">bk_col</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+<span class="w">         </span><span class="k">end do</span>
+<span class="w">         </span><span class="c">! Back-substitution (in place: rhs_* become the solutions x_*).</span>
+<span class="w">         </span><span class="k">do </span><span class="n">k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nz</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="mi">1</span>
+<span class="w">            </span><span class="n">rhs_u</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rhs_u</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">ck_col</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">*</span><span class="n">rhs_u</span><span class="p">(</span><span class="n">k</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="w">            </span><span class="n">rhs_v</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rhs_v</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">ck_col</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">*</span><span class="n">rhs_v</span><span class="p">(</span><span class="n">k</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="w">            </span><span class="n">rhs_r</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rhs_r</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">ck_col</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">*</span><span class="n">rhs_r</span><span class="p">(</span><span class="n">k</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="w">         </span><span class="k">end do</span>
+
+<span class="w">         </span><span class="c">! ---- Cell integrals + store responses ----</span>
+<span class="w">         </span><span class="c">! RAW h_layer in the integrals (NOT the floored hk_col): the floor's</span>
+<span class="w">         </span><span class="c">! only job is arming the tridiagonal 1/h — a vanished layer carries</span>
+<span class="w">         </span><span class="c">! no transport, so it must contribute 0 to the column conveyance.</span>
+<span class="w">         </span><span class="c">! The per-layer recovery telescopes with raw h_k*R_k / h_k*G_k, so</span>
+<span class="w">         </span><span class="c">! floored integrals would make the eta-solve's face conveyance</span>
+<span class="w">         </span><span class="c">! DISAGREE with the recovered transports by up to nz*H_VANISHED at</span>
+<span class="w">         </span><span class="c">! dry/thin columns — measured as a ~1e-3 m/step mass&lt;-&gt;tracer</span>
+<span class="w">         </span><span class="c">! closure breach at the wet/dry front (water moving without salt,</span>
+<span class="w">         </span><span class="c">! ~1.7 PSU freshening over a flood; the Q8 ML+wet/dry lesson).</span>
+<span class="w">         </span><span class="c">! For any layer with h &gt; H_VANISHED raw == floored, so columns where</span>
+<span class="w">         </span><span class="c">! EVERY layer exceeds H_VANISHED are bit-identical (a genuinely wet</span>
+<span class="w">         </span><span class="c">! but sub-H_VANISHED-thin layer is wet yet floored — NOT</span>
+<span class="w">         </span><span class="c">! bit-identical).</span>
+<span class="w">         </span><span class="n">gx_sum</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">         </span><span class="n">gy_sum</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">         </span><span class="n">hhat_sum</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">         </span><span class="k">do </span><span class="n">k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">nz</span>
+<span class="w">            </span><span class="n">gx_sum</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">gx_sum</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">h_layer</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="n">c</span><span class="p">)</span><span class="o">*</span><span class="n">rhs_u</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+<span class="w">            </span><span class="n">gy_sum</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">gy_sum</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">h_layer</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="n">c</span><span class="p">)</span><span class="o">*</span><span class="n">rhs_v</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+<span class="w">            </span><span class="n">hhat_sum</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hhat_sum</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">h_layer</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="n">c</span><span class="p">)</span><span class="o">*</span><span class="n">rhs_r</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+<span class="w">            </span><span class="n">g_col_u</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="n">c</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rhs_u</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+<span class="w">            </span><span class="n">g_col_v</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="n">c</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rhs_v</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+<span class="w">            </span><span class="n">r_col</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="n">c</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rhs_r</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+<span class="w">         </span><span class="k">end do</span>
+<span class="k">         </span><span class="n">Gbar_cell_x</span><span class="p">(</span><span class="n">c</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">gx_sum</span>
+<span class="w">         </span><span class="n">Gbar_cell_y</span><span class="p">(</span><span class="n">c</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">gy_sum</span>
+<span class="w">         </span><span class="n">Hhat_cell</span><span class="p">(</span><span class="n">c</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hhat_sum</span>
+<span class="w">      </span><span class="k">end do</span>
+<span class="k">   end subroutine </span><span class="n">si_unstr_column_solve</span>
+</pre></div>
+
+    </section>
+    <br>
+    
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Rakali
+ was developed by Jorge Luis Galvez Vallejo<br>              &copy; 2026 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+ on 2026-10-08 12:55 +0000             </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,994 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="GPU-native coastal solver — structured Cartesian and unstructured triangular grids, hydrostatic multilayer + non-hydrostatic, portable across NVHPC/gfortran/ifx.">
+    <meta name="author" content="Jorge Luis Galvez Vallejo" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>define_multilayer_outputs &ndash; Rakali</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">Rakali </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/absint.html">Abstract Interfaces</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>define_multilayer_outputs
+      <small>Subroutine</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.3% of total for procedures.">80 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/rki_output_unstr.F90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/rki_output_unstr.f90.html'>rki_output_unstr.F90</a></li>
+                <li class="breadcrumb-item"><a href='../module/rki_output_unstr.html'>rki_output_unstr</a></li>
+            <li class="breadcrumb-item active" aria-current="page">define_multilayer_outputs</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+  
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#vars-0"
+         aria-expanded="false" aria-controls="vars-0">
+         <h4 class="card-header bg-primary text-white">Variables</h4>
+      </a>
+      <div id="vars-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../proc/define_multilayer_outputs.html#variable-dimids_3d~3">dimids_3d</a>
+            <a class="list-group-item" href="../proc/define_multilayer_outputs.html#variable-dimids_3d_w">dimids_3d_w</a>
+            <a class="list-group-item" href="../proc/define_multilayer_outputs.html#variable-it~17">it</a>
+            <a class="list-group-item" href="../proc/define_multilayer_outputs.html#variable-nz_dimid">nz_dimid</a>
+            <a class="list-group-item" href="../proc/define_multilayer_outputs.html#variable-nzi_dimid">nzi_dimid</a>
+            <a class="list-group-item" href="../proc/define_multilayer_outputs.html#variable-varid~29">varid</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../proc/define_multilayer_outputs.html#src">define_multilayer_outputs</a>
+      </div>
+    </div>
+
+
+  </div>
+
+    </div>
+    
+    <div class="col-md-9" id='text'>
+    <h2>private  subroutine define_multilayer_outputs(ostate, ncid, face_dimid, time_dimid, dlev, state)  
+</h2>
+    
+
+    <p>Define the 3D layer / tracer variables on a UGRID file that&rsquo;s
+still in define mode.  Per-tracer variables come from the
+registry — one NetCDF variable per <code>state%multilayer%tracers(:)</code>
+entry, metadata pulled directly from each <code>unstr_tracer_t</code>.
+Adding a sediment / passive scalar produces a correctly-
+labelled output variable with no I/O changes.</p>
+<p>Dim order <code>[nz_dimid, face_dimid, time_dimid]</code> matches the
+in-memory <code>(nz_ml, ncells_total)</code> layout so each snapshot is a
+single contiguous <code>nf90_put_var</code> (no transpose buffer needed).</p>
+
+
+    <h3>Arguments</h3>
+        <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ostate~12"></span>
+              type(<a href='../type/output_unstr_state_t.html'>output_unstr_state_t</a>),
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>ostate</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ncid~55"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>ncid</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-face_dimid~3"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>face_dimid</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-time_dimid~6"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>time_dimid</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-dlev~2"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>dlev</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-state~131"></span>
+              type(<a href='../type/unstr_state_t.html'>unstr_state_t</a>),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>state</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <br>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Calls</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~define_multilayer_outputs~~CallsGraph Pages: 1 -->
+<svg id="procdefine_multilayer_outputsCallsGraph" width="557pt" height="198pt"
+ viewBox="0.00 0.00 557.00 198.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~define_multilayer_outputs~~CallsGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 194)">
+<title>proc~~define_multilayer_outputs~~CallsGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-194 553,-194 553,4 -4,4"/>
+<!-- proc~define_multilayer_outputs -->
+<g id="proc~~define_multilayer_outputs~~CallsGraph_node1" class="node">
+<title>proc~define_multilayer_outputs</title>
+<polygon fill="none" stroke="black" points="151,-106 0,-106 0,-82 151,-82 151,-106"/>
+<text text-anchor="middle" x="75.5" y="-91.6" font-family="Helvetica,sans-Serif" font-size="10.50">define_multilayer_outputs</text>
+</g>
+<!-- nf90_def_var -->
+<g id="proc~~define_multilayer_outputs~~CallsGraph_node2" class="node">
+<title>nf90_def_var</title>
+<polygon fill="#777777" stroke="#777777" points="290,-190 208,-190 208,-166 290,-166 290,-190"/>
+<text text-anchor="middle" x="249" y="-175.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nf90_def_var</text>
+</g>
+<!-- proc~define_multilayer_outputs&#45;&gt;nf90_def_var -->
+<g id="proc~~define_multilayer_outputs~~CallsGraph_edge1" class="edge">
+<title>proc~define_multilayer_outputs&#45;&gt;nf90_def_var</title>
+<path fill="none" stroke="#ff0000" d="M95.1,-106.04C116.61,-119.62 153.4,-141.8 187,-157 191.13,-158.87 195.48,-160.67 199.87,-162.38"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="198.91,-165.76 209.5,-165.97 201.35,-159.2 198.91,-165.76"/>
+</g>
+<!-- nf90_def_var_deflate -->
+<g id="proc~~define_multilayer_outputs~~CallsGraph_node3" class="node">
+<title>nf90_def_var_deflate</title>
+<polygon fill="#777777" stroke="#777777" points="311,-148 187,-148 187,-124 311,-124 311,-148"/>
+<text text-anchor="middle" x="249" y="-133.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nf90_def_var_deflate</text>
+</g>
+<!-- proc~define_multilayer_outputs&#45;&gt;nf90_def_var_deflate -->
+<g id="proc~~define_multilayer_outputs~~CallsGraph_edge2" class="edge">
+<title>proc~define_multilayer_outputs&#45;&gt;nf90_def_var_deflate</title>
+<path fill="none" stroke="#ff0000" d="M125.65,-106.04C145.38,-110.87 168.3,-116.48 188.93,-121.53"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="188.3,-124.98 198.85,-123.96 189.97,-118.18 188.3,-124.98"/>
+</g>
+<!-- proc~nc_check -->
+<g id="proc~~define_multilayer_outputs~~CallsGraph_node4" class="node">
+<title>proc~nc_check</title>
+<g id="a_proc~~define_multilayer_outputs~~CallsGraph_node4"><a xlink:href="../proc/nc_check.html" xlink:title="nc_check">
+<polygon fill="#d9534f" stroke="#d9534f" points="420.5,-66 358.5,-66 358.5,-42 420.5,-42 420.5,-66"/>
+<text text-anchor="middle" x="389.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nc_check</text>
+</a>
+</g>
+</g>
+<!-- proc~define_multilayer_outputs&#45;&gt;proc~nc_check -->
+<g id="proc~~define_multilayer_outputs~~CallsGraph_edge3" class="edge">
+<title>proc~define_multilayer_outputs&#45;&gt;proc~nc_check</title>
+<path fill="none" stroke="#ff0000" d="M134.25,-81.97C151.19,-78.72 169.79,-75.44 187,-73 242.69,-65.1 307.51,-59.65 348.28,-56.68"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="348.63,-60.16 358.35,-55.96 348.13,-53.18 348.63,-60.16"/>
+</g>
+<!-- proc~nc_def_dim -->
+<g id="proc~~define_multilayer_outputs~~CallsGraph_node5" class="node">
+<title>proc~nc_def_dim</title>
+<g id="a_proc~~define_multilayer_outputs~~CallsGraph_node5"><a xlink:href="../proc/nc_def_dim.html" xlink:title="nc_def_dim">
+<polygon fill="#d9534f" stroke="#d9534f" points="285.5,-106 212.5,-106 212.5,-82 285.5,-82 285.5,-106"/>
+<text text-anchor="middle" x="249" y="-91.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nc_def_dim</text>
+</a>
+</g>
+</g>
+<!-- proc~define_multilayer_outputs&#45;&gt;proc~nc_def_dim -->
+<g id="proc~~define_multilayer_outputs~~CallsGraph_edge4" class="edge">
+<title>proc~define_multilayer_outputs&#45;&gt;proc~nc_def_dim</title>
+<path fill="none" stroke="#ff0000" d="M151.22,-94C168.39,-94 186.15,-94 201.69,-94"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="202.07,-97.5 212.07,-94 202.07,-90.5 202.07,-97.5"/>
+</g>
+<!-- proc~nc_put_att -->
+<g id="proc~~define_multilayer_outputs~~CallsGraph_node6" class="node">
+<title>proc~nc_put_att</title>
+<g id="a_proc~~define_multilayer_outputs~~CallsGraph_node6"><a xlink:href="../proc/nc_put_att.html" xlink:title="nc_put_att">
+<polygon fill="#d9534f" stroke="#d9534f" points="282.5,-26 215.5,-26 215.5,-2 282.5,-2 282.5,-26"/>
+<text text-anchor="middle" x="249" y="-11.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nc_put_att</text>
+</a>
+</g>
+</g>
+<!-- proc~define_multilayer_outputs&#45;&gt;proc~nc_put_att -->
+<g id="proc~~define_multilayer_outputs~~CallsGraph_edge5" class="edge">
+<title>proc~define_multilayer_outputs&#45;&gt;proc~nc_put_att</title>
+<path fill="none" stroke="#ff0000" d="M100.47,-81.84C122.74,-70.65 156.9,-53.76 187,-40 194.21,-36.7 201.96,-33.3 209.44,-30.08"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="210.88,-33.27 218.7,-26.13 208.13,-26.83 210.88,-33.27"/>
+</g>
+<!-- error -->
+<g id="proc~~define_multilayer_outputs~~CallsGraph_node7" class="node">
+<title>error</title>
+<polygon fill="#777777" stroke="#777777" points="535.5,-87 481.5,-87 481.5,-63 535.5,-63 535.5,-87"/>
+<text text-anchor="middle" x="508.5" y="-72.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">error</text>
+</g>
+<!-- proc~nc_check&#45;&gt;error -->
+<g id="proc~~define_multilayer_outputs~~CallsGraph_edge6" class="edge">
+<title>proc~nc_check&#45;&gt;error</title>
+<path fill="none" stroke="#00ff66" d="M420.63,-59.41C436.07,-62.18 454.99,-65.58 471.23,-68.49"/>
+<polygon fill="#00ff66" stroke="#00ff66" points="470.98,-72 481.45,-70.32 472.22,-65.11 470.98,-72"/>
+</g>
+<!-- nf90_strerror -->
+<g id="proc~~define_multilayer_outputs~~CallsGraph_node10" class="node">
+<title>nf90_strerror</title>
+<polygon fill="#777777" stroke="#777777" points="549,-45 468,-45 468,-21 549,-21 549,-45"/>
+<text text-anchor="middle" x="508.5" y="-30.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nf90_strerror</text>
+</g>
+<!-- proc~nc_check&#45;&gt;nf90_strerror -->
+<g id="proc~~define_multilayer_outputs~~CallsGraph_edge7" class="edge">
+<title>proc~nc_check&#45;&gt;nf90_strerror</title>
+<path fill="none" stroke="#00ff66" d="M420.63,-48.59C431.96,-46.56 445.15,-44.19 457.79,-41.92"/>
+<polygon fill="#00ff66" stroke="#00ff66" points="458.54,-45.34 467.76,-40.13 457.3,-38.45 458.54,-45.34"/>
+</g>
+<!-- proc~nc_def_dim&#45;&gt;proc~nc_check -->
+<g id="proc~~define_multilayer_outputs~~CallsGraph_edge9" class="edge">
+<title>proc~nc_def_dim&#45;&gt;proc~nc_check</title>
+<path fill="none" stroke="#0066ff" d="M285.67,-83.7C304.87,-78.15 328.61,-71.3 348.44,-65.57"/>
+<polygon fill="#0066ff" stroke="#0066ff" points="349.48,-68.91 358.12,-62.78 347.54,-62.19 349.48,-68.91"/>
+</g>
+<!-- nf90_def_dim -->
+<g id="proc~~define_multilayer_outputs~~CallsGraph_node8" class="node">
+<title>nf90_def_dim</title>
+<polygon fill="#777777" stroke="#777777" points="432,-108 347,-108 347,-84 432,-84 432,-108"/>
+<text text-anchor="middle" x="389.5" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nf90_def_dim</text>
+</g>
+<!-- proc~nc_def_dim&#45;&gt;nf90_def_dim -->
+<g id="proc~~define_multilayer_outputs~~CallsGraph_edge8" class="edge">
+<title>proc~nc_def_dim&#45;&gt;nf90_def_dim</title>
+<path fill="none" stroke="#0066ff" d="M285.67,-94.52C301.13,-94.74 319.55,-95 336.49,-95.25"/>
+<polygon fill="#0066ff" stroke="#0066ff" points="336.76,-98.75 346.81,-95.4 336.86,-91.75 336.76,-98.75"/>
+</g>
+<!-- proc~nc_put_att&#45;&gt;proc~nc_check -->
+<g id="proc~~define_multilayer_outputs~~CallsGraph_edge11" class="edge">
+<title>proc~nc_put_att&#45;&gt;proc~nc_check</title>
+<path fill="none" stroke="#cc00ff" d="M282.82,-23.48C302.48,-29.16 327.62,-36.42 348.45,-42.43"/>
+<polygon fill="#cc00ff" stroke="#cc00ff" points="347.7,-45.86 358.28,-45.27 349.64,-39.13 347.7,-45.86"/>
+</g>
+<!-- nf90_put_att -->
+<g id="proc~~define_multilayer_outputs~~CallsGraph_node9" class="node">
+<title>nf90_put_att</title>
+<polygon fill="#777777" stroke="#777777" points="429,-24 350,-24 350,0 429,0 429,-24"/>
+<text text-anchor="middle" x="389.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nf90_put_att</text>
+</g>
+<!-- proc~nc_put_att&#45;&gt;nf90_put_att -->
+<g id="proc~~define_multilayer_outputs~~CallsGraph_edge10" class="edge">
+<title>proc~nc_put_att&#45;&gt;nf90_put_att</title>
+<path fill="none" stroke="#cc00ff" d="M282.82,-13.53C299.76,-13.28 320.77,-12.98 339.58,-12.71"/>
+<polygon fill="#cc00ff" stroke="#cc00ff" points="339.82,-16.2 349.77,-12.56 339.72,-9.2 339.82,-16.2"/>
+</g>
+</g>
+</svg>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CallsGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CallsGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Called by</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~define_multilayer_outputs~~CalledByGraph Pages: 1 -->
+<svg id="procdefine_multilayer_outputsCalledByGraph" width="641pt" height="72pt"
+ viewBox="0.00 0.00 641.00 72.09" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~define_multilayer_outputs~~CalledByGraph" class="graph" transform="scale(0.97 0.97) rotate(0) translate(4 70)">
+<title>proc~~define_multilayer_outputs~~CalledByGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-70 654,-70 654,4 -4,4"/>
+<!-- proc~define_multilayer_outputs -->
+<g id="proc~~define_multilayer_outputs~~CalledByGraph_node1" class="node">
+<title>proc~define_multilayer_outputs</title>
+<polygon fill="none" stroke="black" points="650,-45 499,-45 499,-21 650,-21 650,-45"/>
+<text text-anchor="middle" x="574.5" y="-30.6" font-family="Helvetica,sans-Serif" font-size="10.50">define_multilayer_outputs</text>
+</g>
+<!-- proc~create_ugrid_file -->
+<g id="proc~~define_multilayer_outputs~~CalledByGraph_node2" class="node">
+<title>proc~create_ugrid_file</title>
+<g id="a_proc~~define_multilayer_outputs~~CalledByGraph_node2"><a xlink:href="../proc/create_ugrid_file.html" xlink:title="create_ugrid_file">
+<polygon fill="#d9534f" stroke="#d9534f" points="463,-45 362,-45 362,-21 463,-21 463,-45"/>
+<text text-anchor="middle" x="412.5" y="-30.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">create_ugrid_file</text>
+</a>
+</g>
+</g>
+<!-- proc~create_ugrid_file&#45;&gt;proc~define_multilayer_outputs -->
+<g id="proc~~define_multilayer_outputs~~CalledByGraph_edge1" class="edge">
+<title>proc~create_ugrid_file&#45;&gt;proc~define_multilayer_outputs</title>
+<path fill="none" stroke="#ff0000" d="M463.25,-33C471.36,-33 479.95,-33 488.63,-33"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="488.82,-36.5 498.82,-33 488.82,-29.5 488.82,-36.5"/>
+</g>
+<!-- proc~output_unstr_init -->
+<g id="proc~~define_multilayer_outputs~~CalledByGraph_node3" class="node">
+<title>proc~output_unstr_init</title>
+<g id="a_proc~~define_multilayer_outputs~~CalledByGraph_node3"><a xlink:href="../proc/output_unstr_init.html" xlink:title="output_unstr_init">
+<polygon fill="#d9534f" stroke="#d9534f" points="291.5,-66 190.5,-66 190.5,-42 291.5,-42 291.5,-66"/>
+<text text-anchor="middle" x="241" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">output_unstr_init</text>
+</a>
+</g>
+</g>
+<!-- proc~output_unstr_init&#45;&gt;proc~create_ugrid_file -->
+<g id="proc~~define_multilayer_outputs~~CalledByGraph_edge2" class="edge">
+<title>proc~output_unstr_init&#45;&gt;proc~create_ugrid_file</title>
+<path fill="none" stroke="#ff0000" d="M291.94,-47.81C310.73,-45.48 332.29,-42.81 351.88,-40.39"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="352.42,-43.85 361.92,-39.14 351.56,-36.9 352.42,-43.85"/>
+</g>
+<!-- proc~output_unstr_init_from_arrays -->
+<g id="proc~~define_multilayer_outputs~~CalledByGraph_node4" class="node">
+<title>proc~output_unstr_init_from_arrays</title>
+<g id="a_proc~~define_multilayer_outputs~~CalledByGraph_node4"><a xlink:href="../proc/output_unstr_init_from_arrays.html" xlink:title="output_unstr_init_from_arrays">
+<polygon fill="#d9534f" stroke="#d9534f" points="326,-24 156,-24 156,0 326,0 326,-24"/>
+<text text-anchor="middle" x="241" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">output_unstr_init_from_arrays</text>
+</a>
+</g>
+</g>
+<!-- proc~output_unstr_init_from_arrays&#45;&gt;proc~create_ugrid_file -->
+<g id="proc~~define_multilayer_outputs~~CalledByGraph_edge3" class="edge">
+<title>proc~output_unstr_init_from_arrays&#45;&gt;proc~create_ugrid_file</title>
+<path fill="none" stroke="#ff0000" d="M326.25,-22.44C334.78,-23.5 343.32,-24.55 351.52,-25.57"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="351.34,-29.07 361.69,-26.83 352.2,-22.13 351.34,-29.07"/>
+</g>
+<!-- proc~rki_unstr_output_init -->
+<g id="proc~~define_multilayer_outputs~~CalledByGraph_node5" class="node">
+<title>proc~rki_unstr_output_init</title>
+<g id="a_proc~~define_multilayer_outputs~~CalledByGraph_node5"><a xlink:href="../proc/rki_unstr_output_init.html" xlink:title="rki_unstr_output_init">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="120,-66 0,-66 0,-42 120,-42 120,-66"/>
+<text text-anchor="middle" x="60" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_unstr_output_init</text>
+</a>
+</g>
+</g>
+<!-- proc~rki_unstr_output_init&#45;&gt;proc~output_unstr_init -->
+<g id="proc~~define_multilayer_outputs~~CalledByGraph_edge4" class="edge">
+<title>proc~rki_unstr_output_init&#45;&gt;proc~output_unstr_init</title>
+<path fill="none" stroke="#ff0000" d="M120.11,-54C139.36,-54 160.73,-54 180.05,-54"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="180.23,-57.5 190.23,-54 180.23,-50.5 180.23,-57.5"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var panprocdefine_multilayer_outputsCalledByGraph = svgPanZoom('#procdefine_multilayer_outputsCalledByGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CalledByGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CalledByGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+
+
+    <section>    
+      <h2>Variables</h2>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Visibility</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+<th></th><th scope="col">Initial</th>        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-dimids_3d~3"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>dimids_3d</strong>(3)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-dimids_3d_w"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>dimids_3d_w</strong>(3)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-it~17"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>it</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nz_dimid"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nz_dimid</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nzi_dimid"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nzi_dimid</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-varid~29"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>varid</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    </section>
+    <br>
+    
+    
+
+    
+    
+
+
+
+    
+    <section>
+    <h2><span class="anchor" id="src"></span>Source Code</h2>
+    <div class="hl codehilite"><pre><span></span><span class="w">   </span><span class="k">subroutine </span><span class="n">define_multilayer_outputs</span><span class="p">(</span><span class="n">ostate</span><span class="p">,</span><span class="w"> </span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">face_dimid</span><span class="p">,</span><span class="w"> </span><span class="n">time_dimid</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                        </span><span class="n">dlev</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span>
+<span class="w">      </span><span class="c">!! Define the 3D layer / tracer variables on a UGRID file that's</span>
+<span class="w">      </span><span class="c">!! still in define mode.  Per-tracer variables come from the</span>
+<span class="w">      </span><span class="c">!! registry — one NetCDF variable per `state%multilayer%tracers(:)`</span>
+<span class="w">      </span><span class="c">!! entry, metadata pulled directly from each `unstr_tracer_t`.</span>
+<span class="w">      </span><span class="c">!! Adding a sediment / passive scalar produces a correctly-</span>
+<span class="w">      </span><span class="c">!! labelled output variable with no I/O changes.</span>
+<span class="w">      </span><span class="c">!!</span>
+<span class="w">      </span><span class="c">!! Dim order `[nz_dimid, face_dimid, time_dimid]` matches the</span>
+<span class="w">      </span><span class="c">!! in-memory `(nz_ml, ncells_total)` layout so each snapshot is a</span>
+<span class="w">      </span><span class="c">!! single contiguous `nf90_put_var` (no transpose buffer needed).</span>
+<span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="n">output_unstr_state_t</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">ostate</span>
+<span class="w">      </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w">    </span><span class="kd">::</span><span class="w"> </span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">face_dimid</span><span class="p">,</span><span class="w"> </span><span class="n">time_dimid</span><span class="p">,</span><span class="w"> </span><span class="n">dlev</span>
+<span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="n">unstr_state_t</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w">    </span><span class="kd">::</span><span class="w"> </span><span class="n">state</span>
+
+<span class="w">      </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">nz_dimid</span><span class="p">,</span><span class="w"> </span><span class="n">nzi_dimid</span>
+<span class="w">      </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">dimids_3d</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span><span class="w"> </span><span class="n">dimids_3d_w</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="w">      </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">it</span><span class="p">,</span><span class="w"> </span><span class="n">varid</span>
+
+<span class="w">      </span><span class="n">ostate</span><span class="p">%</span><span class="n">has_ml</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+<span class="w">      </span><span class="n">ostate</span><span class="p">%</span><span class="n">nz_ml</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">nz_ml</span>
+
+<span class="w">      </span><span class="k">call </span><span class="n">nc_def_dim</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">"nz_ml"</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">nz_ml</span><span class="p">,</span><span class="w"> </span><span class="n">nz_dimid</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_def_dim</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">"nz_ml_interface"</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">nz_ml</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">nzi_dimid</span><span class="p">)</span>
+
+<span class="w">      </span><span class="n">dimids_3d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">nz_dimid</span><span class="p">,</span><span class="w"> </span><span class="n">face_dimid</span><span class="p">,</span><span class="w"> </span><span class="n">time_dimid</span><span class="p">]</span>
+<span class="w">      </span><span class="n">dimids_3d_w</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">nzi_dimid</span><span class="p">,</span><span class="w"> </span><span class="n">face_dimid</span><span class="p">,</span><span class="w"> </span><span class="n">time_dimid</span><span class="p">]</span>
+
+<span class="w">      </span><span class="c">! Layer thickness (m)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_check</span><span class="p">(</span><span class="n">nf90_def_var</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">"h_layer"</span><span class="p">,</span><span class="w"> </span><span class="n">NC_WP</span><span class="p">,</span><span class="w"> </span><span class="n">dimids_3d</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                 </span><span class="n">ostate</span><span class="p">%</span><span class="n">ml_h_layer_varid</span><span class="p">),</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                    </span><span class="s2">"defining h_layer"</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">ostate</span><span class="p">%</span><span class="n">ml_h_layer_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"mesh"</span><span class="p">,</span><span class="w"> </span><span class="s2">"mesh2d"</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">ostate</span><span class="p">%</span><span class="n">ml_h_layer_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"location"</span><span class="p">,</span><span class="w"> </span><span class="s2">"face"</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">ostate</span><span class="p">%</span><span class="n">ml_h_layer_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"long_name"</span><span class="p">,</span><span class="w"> </span><span class="s2">"Layer thickness"</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">ostate</span><span class="p">%</span><span class="n">ml_h_layer_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"units"</span><span class="p">,</span><span class="w"> </span><span class="s2">"m"</span><span class="p">)</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">dlev</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">         call </span><span class="n">nc_check</span><span class="p">(</span><span class="n">nf90_def_var_deflate</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">ostate</span><span class="p">%</span><span class="n">ml_h_layer_varid</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                            </span><span class="n">shuffle</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">deflate</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">deflate_level</span><span class="o">=</span><span class="n">dlev</span><span class="p">),</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                       </span><span class="s2">"compress h_layer"</span><span class="p">)</span>
+<span class="w">      </span><span class="k">end if</span>
+
+<span class="w">      </span><span class="c">! Layer x-velocity (derived: hu_layer / h_layer)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_check</span><span class="p">(</span><span class="n">nf90_def_var</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">"u_ml"</span><span class="p">,</span><span class="w"> </span><span class="n">NC_WP</span><span class="p">,</span><span class="w"> </span><span class="n">dimids_3d</span><span class="p">,</span><span class="w"> </span><span class="n">ostate</span><span class="p">%</span><span class="n">ml_u_varid</span><span class="p">),</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                    </span><span class="s2">"defining u_ml"</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">ostate</span><span class="p">%</span><span class="n">ml_u_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"mesh"</span><span class="p">,</span><span class="w"> </span><span class="s2">"mesh2d"</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">ostate</span><span class="p">%</span><span class="n">ml_u_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"location"</span><span class="p">,</span><span class="w"> </span><span class="s2">"face"</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">ostate</span><span class="p">%</span><span class="n">ml_u_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"long_name"</span><span class="p">,</span><span class="w"> </span><span class="s2">"Layer x-velocity"</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">ostate</span><span class="p">%</span><span class="n">ml_u_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"units"</span><span class="p">,</span><span class="w"> </span><span class="s2">"m s-1"</span><span class="p">)</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">dlev</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">         call </span><span class="n">nc_check</span><span class="p">(</span><span class="n">nf90_def_var_deflate</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">ostate</span><span class="p">%</span><span class="n">ml_u_varid</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                            </span><span class="n">shuffle</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">deflate</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">deflate_level</span><span class="o">=</span><span class="n">dlev</span><span class="p">),</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                       </span><span class="s2">"compress u_ml"</span><span class="p">)</span>
+<span class="w">      </span><span class="k">end if</span>
+
+<span class="w">      </span><span class="c">! Layer y-velocity</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_check</span><span class="p">(</span><span class="n">nf90_def_var</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">"v_ml"</span><span class="p">,</span><span class="w"> </span><span class="n">NC_WP</span><span class="p">,</span><span class="w"> </span><span class="n">dimids_3d</span><span class="p">,</span><span class="w"> </span><span class="n">ostate</span><span class="p">%</span><span class="n">ml_v_varid</span><span class="p">),</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                    </span><span class="s2">"defining v_ml"</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">ostate</span><span class="p">%</span><span class="n">ml_v_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"mesh"</span><span class="p">,</span><span class="w"> </span><span class="s2">"mesh2d"</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">ostate</span><span class="p">%</span><span class="n">ml_v_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"location"</span><span class="p">,</span><span class="w"> </span><span class="s2">"face"</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">ostate</span><span class="p">%</span><span class="n">ml_v_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"long_name"</span><span class="p">,</span><span class="w"> </span><span class="s2">"Layer y-velocity"</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">ostate</span><span class="p">%</span><span class="n">ml_v_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"units"</span><span class="p">,</span><span class="w"> </span><span class="s2">"m s-1"</span><span class="p">)</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">dlev</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">         call </span><span class="n">nc_check</span><span class="p">(</span><span class="n">nf90_def_var_deflate</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">ostate</span><span class="p">%</span><span class="n">ml_v_varid</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                            </span><span class="n">shuffle</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">deflate</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">deflate_level</span><span class="o">=</span><span class="n">dlev</span><span class="p">),</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                       </span><span class="s2">"compress v_ml"</span><span class="p">)</span>
+<span class="w">      </span><span class="k">end if</span>
+
+<span class="w">      </span><span class="c">! Layer density</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_check</span><span class="p">(</span><span class="n">nf90_def_var</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">"rho_layer"</span><span class="p">,</span><span class="w"> </span><span class="n">NC_WP</span><span class="p">,</span><span class="w"> </span><span class="n">dimids_3d</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                 </span><span class="n">ostate</span><span class="p">%</span><span class="n">ml_rho_varid</span><span class="p">),</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                    </span><span class="s2">"defining rho_layer"</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">ostate</span><span class="p">%</span><span class="n">ml_rho_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"mesh"</span><span class="p">,</span><span class="w"> </span><span class="s2">"mesh2d"</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">ostate</span><span class="p">%</span><span class="n">ml_rho_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"location"</span><span class="p">,</span><span class="w"> </span><span class="s2">"face"</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">ostate</span><span class="p">%</span><span class="n">ml_rho_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"standard_name"</span><span class="p">,</span><span class="w"> </span><span class="s2">"sea_water_density"</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">ostate</span><span class="p">%</span><span class="n">ml_rho_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"long_name"</span><span class="p">,</span><span class="w"> </span><span class="s2">"Layer density"</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">ostate</span><span class="p">%</span><span class="n">ml_rho_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"units"</span><span class="p">,</span><span class="w"> </span><span class="s2">"kg m-3"</span><span class="p">)</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">dlev</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">         call </span><span class="n">nc_check</span><span class="p">(</span><span class="n">nf90_def_var_deflate</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">ostate</span><span class="p">%</span><span class="n">ml_rho_varid</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                            </span><span class="n">shuffle</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">deflate</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">deflate_level</span><span class="o">=</span><span class="n">dlev</span><span class="p">),</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                       </span><span class="s2">"compress rho_layer"</span><span class="p">)</span>
+<span class="w">      </span><span class="k">end if</span>
+
+<span class="w">      </span><span class="c">! Vertical velocity at layer interfaces (nz_ml + 1)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_check</span><span class="p">(</span><span class="n">nf90_def_var</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">"w_interface"</span><span class="p">,</span><span class="w"> </span><span class="n">NC_WP</span><span class="p">,</span><span class="w"> </span><span class="n">dimids_3d_w</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                 </span><span class="n">ostate</span><span class="p">%</span><span class="n">ml_w_varid</span><span class="p">),</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                    </span><span class="s2">"defining w_interface"</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">ostate</span><span class="p">%</span><span class="n">ml_w_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"mesh"</span><span class="p">,</span><span class="w"> </span><span class="s2">"mesh2d"</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">ostate</span><span class="p">%</span><span class="n">ml_w_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"location"</span><span class="p">,</span><span class="w"> </span><span class="s2">"face"</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">ostate</span><span class="p">%</span><span class="n">ml_w_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"long_name"</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                      </span><span class="s2">"Vertical velocity at layer interfaces"</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">ostate</span><span class="p">%</span><span class="n">ml_w_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"units"</span><span class="p">,</span><span class="w"> </span><span class="s2">"m s-1"</span><span class="p">)</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">dlev</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">         call </span><span class="n">nc_check</span><span class="p">(</span><span class="n">nf90_def_var_deflate</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">ostate</span><span class="p">%</span><span class="n">ml_w_varid</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                            </span><span class="n">shuffle</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">deflate</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">deflate_level</span><span class="o">=</span><span class="n">dlev</span><span class="p">),</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                       </span><span class="s2">"compress w_interface"</span><span class="p">)</span>
+<span class="w">      </span><span class="k">end if</span>
+
+<span class="w">      </span><span class="c">! ---- Tracer registry: one variable per registered tracer ----</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">tracers</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+<span class="k">         allocate</span><span class="w"> </span><span class="p">(</span><span class="n">ostate</span><span class="p">%</span><span class="n">ml_tracer_varids</span><span class="p">(</span><span class="n">size</span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">tracers</span><span class="p">)))</span>
+<span class="w">         </span><span class="n">ostate</span><span class="p">%</span><span class="n">ml_tracer_varids</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">-</span><span class="mi">1</span>
+<span class="w">         </span><span class="k">do </span><span class="n">it</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">tracers</span><span class="p">)</span>
+<span class="w">            </span><span class="k">associate</span><span class="w"> </span><span class="p">(</span><span class="n">tr</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">tracers</span><span class="p">(</span><span class="n">it</span><span class="p">))</span>
+<span class="w">               </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">len_trim</span><span class="p">(</span><span class="n">tr</span><span class="p">%</span><span class="n">name</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">cycle</span>
+<span class="k">               call </span><span class="n">nc_check</span><span class="p">(</span><span class="n">nf90_def_var</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="n">tr</span><span class="p">%</span><span class="n">name</span><span class="p">),</span><span class="w"> </span><span class="n">NC_WP</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                          </span><span class="n">dimids_3d</span><span class="p">,</span><span class="w"> </span><span class="n">varid</span><span class="p">),</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                             </span><span class="s2">"defining tracer "</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">tr</span><span class="p">%</span><span class="n">name</span><span class="p">))</span>
+<span class="w">               </span><span class="n">ostate</span><span class="p">%</span><span class="n">ml_tracer_varids</span><span class="p">(</span><span class="n">it</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">varid</span>
+<span class="w">               </span><span class="k">call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"mesh"</span><span class="p">,</span><span class="w"> </span><span class="s2">"mesh2d"</span><span class="p">)</span>
+<span class="w">               </span><span class="k">call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"location"</span><span class="p">,</span><span class="w"> </span><span class="s2">"face"</span><span class="p">)</span>
+<span class="w">               </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">len_trim</span><span class="p">(</span><span class="n">tr</span><span class="p">%</span><span class="n">units</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                  call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"units"</span><span class="p">,</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="n">tr</span><span class="p">%</span><span class="n">units</span><span class="p">))</span>
+<span class="w">               </span><span class="k">end if</span>
+<span class="k">               if</span><span class="w"> </span><span class="p">(</span><span class="nb">len_trim</span><span class="p">(</span><span class="n">tr</span><span class="p">%</span><span class="n">long_name</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                  call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"long_name"</span><span class="p">,</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="n">tr</span><span class="p">%</span><span class="n">long_name</span><span class="p">))</span>
+<span class="w">               </span><span class="k">end if</span>
+<span class="k">               if</span><span class="w"> </span><span class="p">(</span><span class="nb">len_trim</span><span class="p">(</span><span class="n">tr</span><span class="p">%</span><span class="n">standard_name</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                  call </span><span class="n">nc_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">varid</span><span class="p">,</span><span class="w"> </span><span class="s2">"standard_name"</span><span class="p">,</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="n">tr</span><span class="p">%</span><span class="n">standard_name</span><span class="p">))</span>
+<span class="w">               </span><span class="k">end if</span>
+<span class="k">               if</span><span class="w"> </span><span class="p">(</span><span class="n">dlev</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                  call </span><span class="n">nc_check</span><span class="p">(</span><span class="n">nf90_def_var_deflate</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">varid</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                                     </span><span class="n">shuffle</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">deflate</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                                     </span><span class="n">deflate_level</span><span class="o">=</span><span class="n">dlev</span><span class="p">),</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                </span><span class="s2">"compress "</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">tr</span><span class="p">%</span><span class="n">name</span><span class="p">))</span>
+<span class="w">               </span><span class="k">end if</span>
+<span class="k">            end associate</span>
+<span class="k">         end do</span>
+<span class="k">      end if</span>
+<span class="k">   end subroutine </span><span class="n">define_multilayer_outputs</span>
+</pre></div>
+
+    </section>
+    <br>
+    
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Rakali
+ was developed by Jorge Luis Galvez Vallejo<br>              &copy; 2026 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+ on 2026-10-08 12:55 +0000             </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>

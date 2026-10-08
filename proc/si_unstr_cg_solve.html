@@ -1,0 +1,1846 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="GPU-native coastal solver — structured Cartesian and unstructured triangular grids, hydrostatic multilayer + non-hydrostatic, portable across NVHPC/gfortran/ifx.">
+    <meta name="author" content="Jorge Luis Galvez Vallejo" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>si_unstr_cg_solve &ndash; Rakali</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">Rakali </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/absint.html">Abstract Interfaces</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>si_unstr_cg_solve
+      <small>Subroutine</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.5% of total for procedures.">121 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/rki_si_unstr_helmholtz.F90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/rki_si_unstr_helmholtz.f90.html'>rki_si_unstr_helmholtz.F90</a></li>
+                <li class="breadcrumb-item"><a href='../module/rki_si_unstr_helmholtz.html'>rki_si_unstr_helmholtz</a></li>
+            <li class="breadcrumb-item active" aria-current="page">si_unstr_cg_solve</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+  
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#vars-0"
+         aria-expanded="false" aria-controls="vars-0">
+         <h4 class="card-header bg-primary text-white">Variables</h4>
+      </a>
+      <div id="vars-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../proc/si_unstr_cg_solve.html#variable-alpha~3">alpha</a>
+            <a class="list-group-item" href="../proc/si_unstr_cg_solve.html#variable-beta">beta</a>
+            <a class="list-group-item" href="../proc/si_unstr_cg_solve.html#variable-have_mass~3">have_mass</a>
+            <a class="list-group-item" href="../proc/si_unstr_cg_solve.html#variable-iter">iter</a>
+            <a class="list-group-item" href="../proc/si_unstr_cg_solve.html#variable-k~79">k</a>
+            <a class="list-group-item" href="../proc/si_unstr_cg_solve.html#variable-pap">pAp</a>
+            <a class="list-group-item" href="../proc/si_unstr_cg_solve.html#variable-res_sum">res_sum</a>
+            <a class="list-group-item" href="../proc/si_unstr_cg_solve.html#variable-rhs2~2">rhs2</a>
+            <a class="list-group-item" href="../proc/si_unstr_cg_solve.html#variable-rr">rr</a>
+            <a class="list-group-item" href="../proc/si_unstr_cg_solve.html#variable-rz">rz</a>
+            <a class="list-group-item" href="../proc/si_unstr_cg_solve.html#variable-rz_new">rz_new</a>
+            <a class="list-group-item" href="../proc/si_unstr_cg_solve.html#variable-tol2~2">tol2</a>
+            <a class="list-group-item" href="../proc/si_unstr_cg_solve.html#variable-use_mg">use_mg</a>
+            <a class="list-group-item" href="../proc/si_unstr_cg_solve.html#variable-use_pc">use_pc</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../proc/si_unstr_cg_solve.html#src">si_unstr_cg_solve</a>
+      </div>
+    </div>
+
+
+  </div>
+
+    </div>
+    
+    <div class="col-md-9" id='text'>
+    <h2>public  subroutine si_unstr_cg_solve(mesh, ncell_total, ncell_owned, eta, cg_r, cg_p, cg_Ap, cg_z, eta_diag, Hf_edge, g_theta2_dt2, precond, rtol, iter_out, mass_res_out, mass_diag, mg)  
+</h2>
+        <div class="card mb-4">
+      <h3 class="card-header card-title bg-light">Uses</h3>
+      <div class="card-body">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <ul class="list-inline">
+                  <li class="list-inline-item"><a href='../module/rki_si_unstr_state.html'>rki_si_unstr_state</a></li>
+              </ul>
+            </li>
+            <li class="list-group-item">
+              <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~si_unstr_cg_solve~~UsesGraph Pages: 1 -->
+<svg id="procsi_unstr_cg_solveUsesGraph" width="641pt" height="136pt"
+ viewBox="0.00 0.00 641.00 135.97" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~si_unstr_cg_solve~~UsesGraph" class="graph" transform="scale(0.88 0.88) rotate(0) translate(4 150)">
+<title>proc~~si_unstr_cg_solve~~UsesGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-150 722,-150 722,4 -4,4"/>
+<!-- proc~si_unstr_cg_solve -->
+<g id="proc~~si_unstr_cg_solve~~UsesGraph_node1" class="node">
+<title>proc~si_unstr_cg_solve</title>
+<polygon fill="none" stroke="black" points="718,-64 614,-64 614,-40 718,-40 718,-64"/>
+<text text-anchor="middle" x="666" y="-49.6" font-family="Helvetica,sans-Serif" font-size="10.50">si_unstr_cg_solve</text>
+</g>
+<!-- module~rki_si_unstr_state -->
+<g id="proc~~si_unstr_cg_solve~~UsesGraph_node2" class="node">
+<title>module~rki_si_unstr_state</title>
+<g id="a_proc~~si_unstr_cg_solve~~UsesGraph_node2"><a xlink:href="../module/rki_si_unstr_state.html" xlink:title="rki_si_unstr_state">
+<polygon fill="#337ab7" stroke="#337ab7" points="578,-64 475,-64 475,-40 578,-40 578,-64"/>
+<text text-anchor="middle" x="526.5" y="-49.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_si_unstr_state</text>
+</a>
+</g>
+</g>
+<!-- proc~si_unstr_cg_solve&#45;&gt;module~rki_si_unstr_state -->
+<g id="proc~~si_unstr_cg_solve~~UsesGraph_edge1" class="edge">
+<title>proc~si_unstr_cg_solve&#45;&gt;module~rki_si_unstr_state</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M613.8,-52C605.55,-52 596.94,-52 588.48,-52"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="588.28,-48.5 578.28,-52 588.28,-55.5 588.28,-48.5"/>
+</g>
+<!-- module~rki_constants -->
+<g id="proc~~si_unstr_cg_solve~~UsesGraph_node3" class="node">
+<title>module~rki_constants</title>
+<g id="a_proc~~si_unstr_cg_solve~~UsesGraph_node3"><a xlink:href="../module/rki_constants.html" xlink:title="rki_constants">
+<polygon fill="#337ab7" stroke="#337ab7" points="180,-146 98,-146 98,-122 180,-122 180,-146"/>
+<text text-anchor="middle" x="139" y="-131.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_constants</text>
+</a>
+</g>
+</g>
+<!-- module~rki_si_unstr_state&#45;&gt;module~rki_constants -->
+<g id="proc~~si_unstr_cg_solve~~UsesGraph_edge2" class="edge">
+<title>module~rki_si_unstr_state&#45;&gt;module~rki_constants</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M391,-92C334.46,-95.85 318.54,-78.5 263.5,-92"/>
+</g>
+<!-- module~rki_mesh_unstr -->
+<g id="proc~~si_unstr_cg_solve~~UsesGraph_node4" class="node">
+<title>module~rki_mesh_unstr</title>
+<g id="a_proc~~si_unstr_cg_solve~~UsesGraph_node4"><a xlink:href="../module/rki_mesh_unstr.html" xlink:title="rki_mesh_unstr">
+<polygon fill="#337ab7" stroke="#337ab7" points="309,-64 216,-64 216,-40 309,-40 309,-64"/>
+<text text-anchor="middle" x="262.5" y="-49.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_mesh_unstr</text>
+</a>
+</g>
+</g>
+<!-- module~rki_si_unstr_state&#45;&gt;module~rki_mesh_unstr -->
+<g id="proc~~si_unstr_cg_solve~~UsesGraph_edge3" class="edge">
+<title>module~rki_si_unstr_state&#45;&gt;module~rki_mesh_unstr</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M498.52,-64.07C472.21,-74.88 430.76,-89.43 393,-92"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M391,-92C356.73,-94.33 319.44,-80.58 294.1,-68.57"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="295.52,-65.37 285,-64.1 292.43,-71.65 295.52,-65.37"/>
+</g>
+<!-- module~rki_si_unstr_mg -->
+<g id="proc~~si_unstr_cg_solve~~UsesGraph_node5" class="node">
+<title>module~rki_si_unstr_mg</title>
+<g id="a_proc~~si_unstr_cg_solve~~UsesGraph_node5"><a xlink:href="../module/rki_si_unstr_mg.html" xlink:title="rki_si_unstr_mg">
+<polygon fill="#337ab7" stroke="#337ab7" points="439,-64 345,-64 345,-40 439,-40 439,-64"/>
+<text text-anchor="middle" x="392" y="-49.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_si_unstr_mg</text>
+</a>
+</g>
+</g>
+<!-- module~rki_si_unstr_state&#45;&gt;module~rki_si_unstr_mg -->
+<g id="proc~~si_unstr_cg_solve~~UsesGraph_edge4" class="edge">
+<title>module~rki_si_unstr_state&#45;&gt;module~rki_si_unstr_mg</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M474.65,-52C466.35,-52 457.71,-52 449.28,-52"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="449.16,-48.5 439.16,-52 449.16,-55.5 449.16,-48.5"/>
+</g>
+<!-- pic_logger -->
+<g id="proc~~si_unstr_cg_solve~~UsesGraph_node6" class="node">
+<title>pic_logger</title>
+<polygon fill="#337ab7" stroke="#337ab7" points="173,-24 105,-24 105,0 173,0 173,-24"/>
+<text text-anchor="middle" x="139" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">pic_logger</text>
+</g>
+<!-- module~rki_si_unstr_state&#45;&gt;pic_logger -->
+<g id="proc~~si_unstr_cg_solve~~UsesGraph_edge5" class="edge">
+<title>module~rki_si_unstr_state&#45;&gt;pic_logger</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M480.84,-39.98C467.46,-36.7 452.7,-33.39 439,-31 361.72,-17.49 341.73,-18 263.5,-12"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M261.5,-12C235.66,-9.38 206.56,-9.28 183.33,-9.89"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="182.98,-6.39 173.09,-10.2 183.2,-13.39 182.98,-6.39"/>
+</g>
+<!-- pic_types -->
+<g id="proc~~si_unstr_cg_solve~~UsesGraph_node8" class="node">
+<title>pic_types</title>
+<polygon fill="#337ab7" stroke="#337ab7" points="62,-105 0,-105 0,-81 62,-81 62,-105"/>
+<text text-anchor="middle" x="31" y="-90.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">pic_types</text>
+</g>
+<!-- module~rki_constants&#45;&gt;pic_types -->
+<g id="proc~~si_unstr_cg_solve~~UsesGraph_edge6" class="edge">
+<title>module~rki_constants&#45;&gt;pic_types</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M106.77,-121.92C95.8,-117.68 83.32,-112.85 71.74,-108.37"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="72.87,-105.05 62.28,-104.71 70.34,-111.58 72.87,-105.05"/>
+</g>
+<!-- module~rki_mesh_unstr&#45;&gt;module~rki_constants -->
+<g id="proc~~si_unstr_cg_solve~~UsesGraph_edge7" class="edge">
+<title>module~rki_mesh_unstr&#45;&gt;module~rki_constants</title>
+<path fill="none" stroke="#7fff00" stroke-dasharray="5,2" d="M237.64,-64.14C230.44,-68.19 222.69,-72.97 216,-78 198.17,-91.42 198.07,-99.9 180,-113 178.19,-114.31 176.3,-115.59 174.35,-116.82"/>
+<polygon fill="#7fff00" stroke="#7fff00" points="172.47,-113.87 165.62,-121.96 176.02,-119.9 172.47,-113.87"/>
+</g>
+<!-- module~rki_mesh_unstr&#45;&gt;pic_logger -->
+<g id="proc~~si_unstr_cg_solve~~UsesGraph_edge9" class="edge">
+<title>module~rki_mesh_unstr&#45;&gt;pic_logger</title>
+<path fill="none" stroke="#7fff00" stroke-dasharray="5,2" d="M225.05,-40C211.77,-35.63 196.64,-30.65 182.86,-26.11"/>
+<polygon fill="#7fff00" stroke="#7fff00" points="183.71,-22.7 173.12,-22.9 181.52,-29.35 183.71,-22.7"/>
+</g>
+<!-- pic_io -->
+<g id="proc~~si_unstr_cg_solve~~UsesGraph_node7" class="node">
+<title>pic_io</title>
+<polygon fill="#337ab7" stroke="#337ab7" points="166,-104 112,-104 112,-80 166,-80 166,-104"/>
+<text text-anchor="middle" x="139" y="-89.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">pic_io</text>
+</g>
+<!-- module~rki_mesh_unstr&#45;&gt;pic_io -->
+<g id="proc~~si_unstr_cg_solve~~UsesGraph_edge8" class="edge">
+<title>module~rki_mesh_unstr&#45;&gt;pic_io</title>
+<path fill="none" stroke="#7fff00" stroke-dasharray="5,2" d="M225.05,-64C209.45,-69.14 191.3,-75.11 175.77,-80.22"/>
+<polygon fill="#7fff00" stroke="#7fff00" points="174.41,-76.99 166.01,-83.44 176.6,-83.63 174.41,-76.99"/>
+</g>
+<!-- module~rki_mesh_unstr&#45;&gt;pic_types -->
+<g id="proc~~si_unstr_cg_solve~~UsesGraph_edge10" class="edge">
+<title>module~rki_mesh_unstr&#45;&gt;pic_types</title>
+<path fill="none" stroke="#7fff00" stroke-dasharray="5,2" d="M215.97,-54.76C182.94,-57.38 137.33,-62.26 98,-71 89.44,-72.9 80.43,-75.5 71.91,-78.23"/>
+<polygon fill="#7fff00" stroke="#7fff00" points="70.56,-74.99 62.19,-81.48 72.78,-81.63 70.56,-74.99"/>
+</g>
+<!-- module~rki_si_unstr_mg&#45;&gt;module~rki_constants -->
+<g id="proc~~si_unstr_cg_solve~~UsesGraph_edge11" class="edge">
+<title>module~rki_si_unstr_mg&#45;&gt;module~rki_constants</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M356.7,-64.06C331.22,-72.7 295.49,-84.15 263.5,-92"/>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M261.5,-92C233.62,-98.84 203.08,-109.41 179.6,-118.23"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="178.09,-115.06 169.99,-121.89 180.58,-121.6 178.09,-115.06"/>
+</g>
+<!-- module~rki_si_unstr_mg&#45;&gt;module~rki_mesh_unstr -->
+<g id="proc~~si_unstr_cg_solve~~UsesGraph_edge12" class="edge">
+<title>module~rki_si_unstr_mg&#45;&gt;module~rki_mesh_unstr</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M344.97,-52C336.56,-52 327.71,-52 319.06,-52"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="319.04,-48.5 309.04,-52 319.04,-55.5 319.04,-48.5"/>
+</g>
+<!-- module~rki_si_unstr_mg&#45;&gt;pic_logger -->
+<g id="proc~~si_unstr_cg_solve~~UsesGraph_edge13" class="edge">
+<title>module~rki_si_unstr_mg&#45;&gt;pic_logger</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M364.84,-39.93C339.54,-29.2 299.82,-14.79 263.5,-12"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var panprocsi_unstr_cg_solveUsesGraph = svgPanZoom('#procsi_unstr_cg_solveUsesGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#UsesGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="UsesGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="518pt" height="32pt"
+ viewBox="0.00 0.00 517.50 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 513.5,-28 513.5,4 -4,4"/>
+<!-- Module -->
+<g id="node1" class="node">
+<title>Module</title>
+<polygon fill="#337ab7" stroke="#337ab7" points="54,-24 0,-24 0,0 54,0 54,-24"/>
+<text text-anchor="middle" x="27" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Module</text>
+</g>
+<!-- Submodule -->
+<g id="node2" class="node">
+<title>Submodule</title>
+<polygon fill="#5bc0de" stroke="#5bc0de" points="145.5,-24 72.5,-24 72.5,0 145.5,0 145.5,-24"/>
+<text text-anchor="middle" x="109" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Submodule</text>
+</g>
+<!-- Subroutine -->
+<g id="node3" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="234,-24 164,-24 164,0 234,0 234,-24"/>
+<text text-anchor="middle" x="199" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node4" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="310,-24 252,-24 252,0 310,0 310,-24"/>
+<text text-anchor="middle" x="281" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Program -->
+<g id="node5" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="386,-24 328,-24 328,0 386,0 386,-24"/>
+<text text-anchor="middle" x="357" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node6" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="509.5,-24 404.5,-24 404.5,0 509.5,0 509.5,-24"/>
+<text text-anchor="middle" x="457" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a submodule to the (sub)module which it is
+descended from. Dashed arrows point from a module or program unit to 
+modules which it uses.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+            </li>
+        </ul>
+      </div>
+    </div>
+
+
+    <p>Area-weighted (optionally preconditioned) CG for the TPFA Helmholtz
+eta-solve, warm-started from eta^n.  On entry <code>cg_r</code> holds the RHS and
+<code>eta</code> the warm start.  EVERY dot product carries the <code>mesh%area</code>
+weight (the operator is self-adjoint in <x,y>_A only — prototype
+§7.5); the convergence gate is the area-weighted relative residual
+<code>||r||_A^2 &lt; rtol^2 ||rhs||_A^2</code> on the UNPRECONDITIONED residual in
+every mode (comparable iteration counts).  Preconditioners:
+NONE (plain), JACOBI (<code>z = eta_diag*r</code>), MG (aggregation-multigrid
+V-cycle via <code>mg</code>, <code>z = Vcycle_Ahat(area*r)</code> — the same <code>area*r</code>
+symmetric-space RHS the Jacobi apply implicitly uses).</p>
+
+
+    <h3>Arguments</h3>
+        <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mesh~31"></span>
+              type(<a href='../type/mesh_unstr_t.html'>mesh_unstr_t</a>),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>mesh</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ncell_total~5"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>ncell_total</strong></td>
+            <td>
+                <p>Cell array extent (owned + halo) — the explicit-shape dim.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ncell_owned~5"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>ncell_owned</strong></td>
+            <td>
+                <p>Owned-cell loop bound.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-eta~12"></span>
+              real(kind=wp),
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>eta</strong>(ncell_total)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-cg_r~2"></span>
+              real(kind=wp),
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>cg_r</strong>(ncell_total)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-cg_p~2"></span>
+              real(kind=wp),
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>cg_p</strong>(ncell_total)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-cg_ap~2"></span>
+              real(kind=wp),
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>cg_Ap</strong>(ncell_total)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-cg_z~2"></span>
+              real(kind=wp),
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>cg_z</strong>(ncell_total)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-eta_diag~2"></span>
+              real(kind=wp),
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>eta_diag</strong>(ncell_total)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-hf_edge~11"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Hf_edge</strong>(EDGES_PER_TRI,ncell_total)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-g_theta2_dt2~6"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>g_theta2_dt2</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-precond"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>precond</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-rtol"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>rtol</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-iter_out~3"></span>
+              integer,
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>iter_out</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mass_res_out"></span>
+              real(kind=wp),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>mass_res_out</strong></td>
+            <td>
+                <p>Area-weighted interior residual sum at solve end (mass diagnostic).</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mass_diag~5"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>mass_diag</strong>(ncell_total)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mg"></span>
+              type(<a href='../type/agglom_hierarchy_unstr_t.html'>agglom_hierarchy_unstr_t</a>),
+            </td>
+<td>intent(inout),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>mg</strong></td>
+            <td>
+                <p>Aggregation-MG hierarchy (required when precond == MG); its
+operator must already be refreshed for this step&rsquo;s frozen Hf.</p>
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <br>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Calls</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~si_unstr_cg_solve~~CallsGraph Pages: 1 -->
+<svg id="procsi_unstr_cg_solveCallsGraph" width="641pt" height="179pt"
+ viewBox="0.00 0.00 641.00 179.27" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~si_unstr_cg_solve~~CallsGraph" class="graph" transform="scale(0.64 0.64) rotate(0) translate(4 274)">
+<title>proc~~si_unstr_cg_solve~~CallsGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-274 990,-274 990,4 -4,4"/>
+<!-- proc~si_unstr_cg_solve -->
+<g id="proc~~si_unstr_cg_solve~~CallsGraph_node1" class="node">
+<title>proc~si_unstr_cg_solve</title>
+<polygon fill="none" stroke="black" points="104,-208 0,-208 0,-184 104,-184 104,-208"/>
+<text text-anchor="middle" x="52" y="-193.6" font-family="Helvetica,sans-Serif" font-size="10.50">si_unstr_cg_solve</text>
+</g>
+<!-- proc~si_unstr_apply_helmholtz -->
+<g id="proc~~si_unstr_cg_solve~~CallsGraph_node2" class="node">
+<title>proc~si_unstr_apply_helmholtz</title>
+<g id="a_proc~~si_unstr_cg_solve~~CallsGraph_node2"><a xlink:href="../proc/si_unstr_apply_helmholtz.html" xlink:title="si_unstr_apply_helmholtz">
+<polygon fill="#d9534f" stroke="#d9534f" points="471,-270 326,-270 326,-246 471,-246 471,-270"/>
+<text text-anchor="middle" x="398.5" y="-255.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">si_unstr_apply_helmholtz</text>
+</a>
+</g>
+</g>
+<!-- proc~si_unstr_cg_solve&#45;&gt;proc~si_unstr_apply_helmholtz -->
+<g id="proc~~si_unstr_cg_solve~~CallsGraph_edge1" class="edge">
+<title>proc~si_unstr_cg_solve&#45;&gt;proc~si_unstr_apply_helmholtz</title>
+<path fill="none" stroke="#ff0000" d="M97.52,-208.11C111.1,-211.57 126.11,-215.17 140,-218 198.5,-229.91 265.1,-240.17 315.92,-247.32"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="315.47,-250.79 325.86,-248.7 316.44,-243.86 315.47,-250.79"/>
+</g>
+<!-- proc~si_unstr_compute_diag -->
+<g id="proc~~si_unstr_cg_solve~~CallsGraph_node3" class="node">
+<title>proc~si_unstr_compute_diag</title>
+<g id="a_proc~~si_unstr_cg_solve~~CallsGraph_node3"><a xlink:href="../proc/si_unstr_compute_diag.html" xlink:title="si_unstr_compute_diag">
+<polygon fill="#d9534f" stroke="#d9534f" points="465.5,-228 331.5,-228 331.5,-204 465.5,-204 465.5,-228"/>
+<text text-anchor="middle" x="398.5" y="-213.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">si_unstr_compute_diag</text>
+</a>
+</g>
+</g>
+<!-- proc~si_unstr_cg_solve&#45;&gt;proc~si_unstr_compute_diag -->
+<g id="proc~~si_unstr_cg_solve~~CallsGraph_edge2" class="edge">
+<title>proc~si_unstr_cg_solve&#45;&gt;proc~si_unstr_compute_diag</title>
+<path fill="none" stroke="#ff0000" d="M104.2,-198.97C161.49,-202.3 254.9,-207.72 320.9,-211.55"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="321.05,-215.07 331.24,-212.15 321.46,-208.08 321.05,-215.07"/>
+</g>
+<!-- proc~si_unstr_precond_apply -->
+<g id="proc~~si_unstr_cg_solve~~CallsGraph_node4" class="node">
+<title>proc~si_unstr_precond_apply</title>
+<g id="a_proc~~si_unstr_cg_solve~~CallsGraph_node4"><a xlink:href="../proc/si_unstr_precond_apply.html" xlink:title="si_unstr_precond_apply">
+<polygon fill="#d9534f" stroke="#d9534f" points="276,-188 140,-188 140,-164 276,-164 276,-188"/>
+<text text-anchor="middle" x="208" y="-173.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">si_unstr_precond_apply</text>
+</a>
+</g>
+</g>
+<!-- proc~si_unstr_cg_solve&#45;&gt;proc~si_unstr_precond_apply -->
+<g id="proc~~si_unstr_cg_solve~~CallsGraph_edge3" class="edge">
+<title>proc~si_unstr_cg_solve&#45;&gt;proc~si_unstr_precond_apply</title>
+<path fill="none" stroke="#ff0000" d="M104.28,-189.34C112.46,-188.28 121.07,-187.16 129.69,-186.04"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="130.31,-189.49 139.78,-184.73 129.41,-182.55 130.31,-189.49"/>
+</g>
+<!-- reduce -->
+<g id="proc~~si_unstr_cg_solve~~CallsGraph_node5" class="node">
+<title>reduce</title>
+<polygon fill="#777777" stroke="#777777" points="235,-146 181,-146 181,-122 235,-122 235,-146"/>
+<text text-anchor="middle" x="208" y="-131.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">reduce</text>
+</g>
+<!-- proc~si_unstr_cg_solve&#45;&gt;reduce -->
+<g id="proc~~si_unstr_cg_solve~~CallsGraph_edge4" class="edge">
+<title>proc~si_unstr_cg_solve&#45;&gt;reduce</title>
+<path fill="none" stroke="#ff0000" d="M76.25,-183.98C93.56,-175.29 117.91,-163.62 140,-155 149.96,-151.11 160.97,-147.42 171.13,-144.25"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="172.4,-147.52 180.94,-141.26 170.36,-140.83 172.4,-147.52"/>
+</g>
+<!-- local -->
+<g id="proc~~si_unstr_cg_solve~~CallsGraph_node6" class="node">
+<title>local</title>
+<polygon fill="#777777" stroke="#777777" points="955,-212 901,-212 901,-188 955,-188 955,-212"/>
+<text text-anchor="middle" x="928" y="-197.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">local</text>
+</g>
+<!-- proc~si_unstr_apply_helmholtz&#45;&gt;local -->
+<g id="proc~~si_unstr_cg_solve~~CallsGraph_edge5" class="edge">
+<title>proc~si_unstr_apply_helmholtz&#45;&gt;local</title>
+<path fill="none" stroke="#ff0000" d="M471.26,-253.59C557.62,-247.77 706.88,-236.11 834,-218 852.74,-215.33 873.43,-211.42 890.53,-207.93"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="891.58,-211.29 900.66,-205.82 890.16,-204.43 891.58,-211.29"/>
+</g>
+<!-- proc~si_unstr_compute_diag&#45;&gt;local -->
+<g id="proc~~si_unstr_cg_solve~~CallsGraph_edge6" class="edge">
+<title>proc~si_unstr_compute_diag&#45;&gt;local</title>
+<path fill="none" stroke="#7fff00" d="M465.51,-214C577.9,-210.59 802.77,-203.77 890.63,-201.1"/>
+<polygon fill="#7fff00" stroke="#7fff00" points="891.01,-204.59 900.9,-200.79 890.79,-197.6 891.01,-204.59"/>
+</g>
+<!-- proc~agglom_unstr_vcycle_precond -->
+<g id="proc~~si_unstr_cg_solve~~CallsGraph_node7" class="node">
+<title>proc~agglom_unstr_vcycle_precond</title>
+<g id="a_proc~~si_unstr_cg_solve~~CallsGraph_node7"><a xlink:href="../proc/agglom_unstr_vcycle_precond.html" xlink:title="agglom_unstr_vcycle_precond">
+<polygon fill="#d9534f" stroke="#d9534f" points="485,-108 312,-108 312,-84 485,-84 485,-108"/>
+<text text-anchor="middle" x="398.5" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">agglom_unstr_vcycle_precond</text>
+</a>
+</g>
+</g>
+<!-- proc~si_unstr_precond_apply&#45;&gt;proc~agglom_unstr_vcycle_precond -->
+<g id="proc~~si_unstr_cg_solve~~CallsGraph_edge7" class="edge">
+<title>proc~si_unstr_precond_apply&#45;&gt;proc~agglom_unstr_vcycle_precond</title>
+<path fill="none" stroke="#00ffff" d="M250.8,-163.95C259.22,-161.23 267.96,-158.19 276,-155 307.36,-142.55 341.86,-125.45 366.05,-112.87"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="367.88,-115.86 375.11,-108.12 364.63,-109.66 367.88,-115.86"/>
+</g>
+<!-- proc~agglom_copy_out -->
+<g id="proc~~si_unstr_cg_solve~~CallsGraph_node8" class="node">
+<title>proc~agglom_copy_out</title>
+<g id="a_proc~~si_unstr_cg_solve~~CallsGraph_node8"><a xlink:href="../proc/agglom_copy_out.html" xlink:title="agglom_copy_out">
+<polygon fill="#d9534f" stroke="#d9534f" points="645,-87 539,-87 539,-63 645,-63 645,-87"/>
+<text text-anchor="middle" x="592" y="-72.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">agglom_copy_out</text>
+</a>
+</g>
+</g>
+<!-- proc~agglom_unstr_vcycle_precond&#45;&gt;proc~agglom_copy_out -->
+<g id="proc~~si_unstr_cg_solve~~CallsGraph_edge8" class="edge">
+<title>proc~agglom_unstr_vcycle_precond&#45;&gt;proc~agglom_copy_out</title>
+<path fill="none" stroke="#00ffff" d="M485.17,-86.61C499.91,-84.99 514.98,-83.34 528.95,-81.8"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="529.35,-85.28 538.91,-80.71 528.59,-78.32 529.35,-85.28"/>
+</g>
+<!-- proc~agglom_scale_into_shim -->
+<g id="proc~~si_unstr_cg_solve~~CallsGraph_node9" class="node">
+<title>proc~agglom_scale_into_shim</title>
+<g id="a_proc~~si_unstr_cg_solve~~CallsGraph_node9"><a xlink:href="../proc/agglom_scale_into_shim.html" xlink:title="agglom_scale_into_shim">
+<polygon fill="#d9534f" stroke="#d9534f" points="663,-45 521,-45 521,-21 663,-21 663,-45"/>
+<text text-anchor="middle" x="592" y="-30.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">agglom_scale_into_shim</text>
+</a>
+</g>
+</g>
+<!-- proc~agglom_unstr_vcycle_precond&#45;&gt;proc~agglom_scale_into_shim -->
+<g id="proc~~si_unstr_cg_solve~~CallsGraph_edge9" class="edge">
+<title>proc~agglom_unstr_vcycle_precond&#45;&gt;proc~agglom_scale_into_shim</title>
+<path fill="none" stroke="#00ffff" d="M433.16,-83.95C457.47,-75.34 491.16,-63.63 521,-54 527.1,-52.03 533.52,-50.02 539.9,-48.06"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="541.28,-51.3 549.83,-45.04 539.24,-44.6 541.28,-51.3"/>
+</g>
+<!-- proc~agglom_vcycle -->
+<g id="proc~~si_unstr_cg_solve~~CallsGraph_node10" class="node">
+<title>proc~agglom_vcycle</title>
+<g id="a_proc~~si_unstr_cg_solve~~CallsGraph_node10"><a xlink:href="../proc/agglom_vcycle.html" xlink:title="agglom_vcycle">
+<polygon fill="#d9534f" stroke="#d9534f" points="638,-129 546,-129 546,-105 638,-105 638,-129"/>
+<text text-anchor="middle" x="592" y="-114.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">agglom_vcycle</text>
+</a>
+</g>
+</g>
+<!-- proc~agglom_unstr_vcycle_precond&#45;&gt;proc~agglom_vcycle -->
+<g id="proc~~si_unstr_cg_solve~~CallsGraph_edge10" class="edge">
+<title>proc~agglom_unstr_vcycle_precond&#45;&gt;proc~agglom_vcycle</title>
+<path fill="none" stroke="#00ffff" d="M485.17,-105.39C502.32,-107.28 519.91,-109.2 535.71,-110.94"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="535.48,-114.43 545.8,-112.04 536.24,-107.47 535.48,-114.43"/>
+</g>
+<!-- proc~agglom_vcycle&#45;&gt;proc~agglom_vcycle -->
+<g id="proc~~si_unstr_cg_solve~~CallsGraph_edge15" class="edge">
+<title>proc~agglom_vcycle&#45;&gt;proc~agglom_vcycle</title>
+<path fill="none" stroke="#0000ff" d="M563.23,-129.01C553.18,-137.97 562.77,-147 592,-147 610.27,-147 620.86,-143.47 623.79,-138.64"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="627.1,-137.51 620.77,-129.01 620.42,-139.6 627.1,-137.51"/>
+</g>
+<!-- proc~agglom_jacobi_sweeps -->
+<g id="proc~~si_unstr_cg_solve~~CallsGraph_node11" class="node">
+<title>proc~agglom_jacobi_sweeps</title>
+<g id="a_proc~~si_unstr_cg_solve~~CallsGraph_node11"><a xlink:href="../proc/agglom_jacobi_sweeps.html" xlink:title="agglom_jacobi_sweeps">
+<polygon fill="#d9534f" stroke="#d9534f" points="834,-108 699,-108 699,-84 834,-84 834,-108"/>
+<text text-anchor="middle" x="766.5" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">agglom_jacobi_sweeps</text>
+</a>
+</g>
+</g>
+<!-- proc~agglom_vcycle&#45;&gt;proc~agglom_jacobi_sweeps -->
+<g id="proc~~si_unstr_cg_solve~~CallsGraph_edge11" class="edge">
+<title>proc~agglom_vcycle&#45;&gt;proc~agglom_jacobi_sweeps</title>
+<path fill="none" stroke="#0000ff" d="M638.32,-111.48C653.76,-109.6 671.47,-107.45 688.68,-105.35"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="689.23,-108.81 698.73,-104.13 688.38,-101.86 689.23,-108.81"/>
+</g>
+<!-- proc~agglom_prolong_add -->
+<g id="proc~~si_unstr_cg_solve~~CallsGraph_node12" class="node">
+<title>proc~agglom_prolong_add</title>
+<g id="a_proc~~si_unstr_cg_solve~~CallsGraph_node12"><a xlink:href="../proc/agglom_prolong_add.html" xlink:title="agglom_prolong_add">
+<polygon fill="#d9534f" stroke="#d9534f" points="828.5,-66 704.5,-66 704.5,-42 828.5,-42 828.5,-66"/>
+<text text-anchor="middle" x="766.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">agglom_prolong_add</text>
+</a>
+</g>
+</g>
+<!-- proc~agglom_vcycle&#45;&gt;proc~agglom_prolong_add -->
+<g id="proc~~si_unstr_cg_solve~~CallsGraph_edge12" class="edge">
+<title>proc~agglom_vcycle&#45;&gt;proc~agglom_prolong_add</title>
+<path fill="none" stroke="#0000ff" d="M638,-105.22C646.44,-102.53 655.09,-99.44 663,-96 679.99,-88.62 682.06,-82.5 699,-75 703.4,-73.05 708.04,-71.2 712.74,-69.46"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="714.13,-72.68 722.41,-66.07 711.81,-66.08 714.13,-72.68"/>
+</g>
+<!-- proc~agglom_residual -->
+<g id="proc~~si_unstr_cg_solve~~CallsGraph_node13" class="node">
+<title>proc~agglom_residual</title>
+<g id="a_proc~~si_unstr_cg_solve~~CallsGraph_node13"><a xlink:href="../proc/agglom_residual.html" xlink:title="agglom_residual">
+<polygon fill="#d9534f" stroke="#d9534f" points="816.5,-192 716.5,-192 716.5,-168 816.5,-168 816.5,-192"/>
+<text text-anchor="middle" x="766.5" y="-177.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">agglom_residual</text>
+</a>
+</g>
+</g>
+<!-- proc~agglom_vcycle&#45;&gt;proc~agglom_residual -->
+<g id="proc~~si_unstr_cg_solve~~CallsGraph_edge13" class="edge">
+<title>proc~agglom_vcycle&#45;&gt;proc~agglom_residual</title>
+<path fill="none" stroke="#0000ff" d="M622.03,-129.15C643.22,-137.86 672.7,-149.65 699,-159 704.48,-160.95 710.25,-162.91 716,-164.8"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="715.02,-168.16 725.61,-167.91 717.18,-161.5 715.02,-168.16"/>
+</g>
+<!-- proc~agglom_restrict -->
+<g id="proc~~si_unstr_cg_solve~~CallsGraph_node14" class="node">
+<title>proc~agglom_restrict</title>
+<g id="a_proc~~si_unstr_cg_solve~~CallsGraph_node14"><a xlink:href="../proc/agglom_restrict.html" xlink:title="agglom_restrict">
+<polygon fill="#d9534f" stroke="#d9534f" points="814,-150 719,-150 719,-126 814,-126 814,-150"/>
+<text text-anchor="middle" x="766.5" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">agglom_restrict</text>
+</a>
+</g>
+</g>
+<!-- proc~agglom_vcycle&#45;&gt;proc~agglom_restrict -->
+<g id="proc~~si_unstr_cg_solve~~CallsGraph_edge14" class="edge">
+<title>proc~agglom_vcycle&#45;&gt;proc~agglom_restrict</title>
+<path fill="none" stroke="#0000ff" d="M638.32,-122.52C659.97,-125.15 686.11,-128.33 709.03,-131.13"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="708.63,-134.6 718.98,-132.34 709.48,-127.65 708.63,-134.6"/>
+</g>
+<!-- proc~agglom_zero -->
+<g id="proc~~si_unstr_cg_solve~~CallsGraph_node15" class="node">
+<title>proc~agglom_zero</title>
+<g id="a_proc~~si_unstr_cg_solve~~CallsGraph_node15"><a xlink:href="../proc/agglom_zero.html" xlink:title="agglom_zero">
+<polygon fill="#d9534f" stroke="#d9534f" points="807,-24 726,-24 726,0 807,0 807,-24"/>
+<text text-anchor="middle" x="766.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">agglom_zero</text>
+</a>
+</g>
+</g>
+<!-- proc~agglom_vcycle&#45;&gt;proc~agglom_zero -->
+<g id="proc~~si_unstr_cg_solve~~CallsGraph_edge16" class="edge">
+<title>proc~agglom_vcycle&#45;&gt;proc~agglom_zero</title>
+<path fill="none" stroke="#0000ff" d="M638.05,-108.98C646.94,-105.95 655.75,-101.76 663,-96 688.25,-75.93 673.9,-53.25 699,-33 704.07,-28.91 709.95,-25.61 716.07,-22.95"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="717.69,-26.08 725.81,-19.28 715.22,-19.53 717.69,-26.08"/>
+</g>
+<!-- proc~agglom_copy -->
+<g id="proc~~si_unstr_cg_solve~~CallsGraph_node16" class="node">
+<title>proc~agglom_copy</title>
+<g id="a_proc~~si_unstr_cg_solve~~CallsGraph_node16"><a xlink:href="../proc/agglom_copy.html" xlink:title="agglom_copy">
+<polygon fill="#d9534f" stroke="#d9534f" points="970,-129 886,-129 886,-105 970,-105 970,-129"/>
+<text text-anchor="middle" x="928" y="-114.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">agglom_copy</text>
+</a>
+</g>
+</g>
+<!-- proc~agglom_jacobi_sweeps&#45;&gt;proc~agglom_copy -->
+<g id="proc~~si_unstr_cg_solve~~CallsGraph_edge17" class="edge">
+<title>proc~agglom_jacobi_sweeps&#45;&gt;proc~agglom_copy</title>
+<path fill="none" stroke="#ff0000" d="M834.22,-104.78C847.96,-106.59 862.23,-108.47 875.34,-110.2"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="875.2,-113.71 885.57,-111.55 876.12,-106.77 875.2,-113.71"/>
+</g>
+<!-- proc~agglom_jacobi_one -->
+<g id="proc~~si_unstr_cg_solve~~CallsGraph_node17" class="node">
+<title>proc~agglom_jacobi_one</title>
+<g id="a_proc~~si_unstr_cg_solve~~CallsGraph_node17"><a xlink:href="../proc/agglom_jacobi_one.html" xlink:title="agglom_jacobi_one">
+<polygon fill="#d9534f" stroke="#d9534f" points="986,-87 870,-87 870,-63 986,-63 986,-87"/>
+<text text-anchor="middle" x="928" y="-72.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">agglom_jacobi_one</text>
+</a>
+</g>
+</g>
+<!-- proc~agglom_jacobi_sweeps&#45;&gt;proc~agglom_jacobi_one -->
+<g id="proc~~si_unstr_cg_solve~~CallsGraph_edge18" class="edge">
+<title>proc~agglom_jacobi_sweeps&#45;&gt;proc~agglom_jacobi_one</title>
+<path fill="none" stroke="#ff0000" d="M834.22,-87.22C842.59,-86.11 851.17,-84.98 859.55,-83.88"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="860.21,-87.32 869.66,-82.55 859.29,-80.38 860.21,-87.32"/>
+</g>
+<!-- proc~agglom_residual&#45;&gt;local -->
+<g id="proc~~si_unstr_cg_solve~~CallsGraph_edge19" class="edge">
+<title>proc~agglom_residual&#45;&gt;local</title>
+<path fill="none" stroke="#00ff66" d="M816.66,-186.16C840.57,-189.16 868.81,-192.7 890.73,-195.45"/>
+<polygon fill="#00ff66" stroke="#00ff66" points="890.58,-198.96 900.94,-196.73 891.45,-192.02 890.58,-198.96"/>
+</g>
+<!-- proc~agglom_restrict&#45;&gt;local -->
+<g id="proc~~si_unstr_cg_solve~~CallsGraph_edge20" class="edge">
+<title>proc~agglom_restrict&#45;&gt;local</title>
+<path fill="none" stroke="#0066ff" d="M808.18,-150.07C816.77,-152.83 825.73,-155.88 834,-159 853.64,-166.41 875.11,-175.78 892.47,-183.7"/>
+<polygon fill="#0066ff" stroke="#0066ff" points="891.11,-186.92 901.65,-187.93 894.03,-180.57 891.11,-186.92"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var panprocsi_unstr_cg_solveCallsGraph = svgPanZoom('#procsi_unstr_cg_solveCallsGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CallsGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CallsGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Called by</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~si_unstr_cg_solve~~CalledByGraph Pages: 1 -->
+<svg id="procsi_unstr_cg_solveCalledByGraph" width="641pt" height="76pt"
+ viewBox="0.00 0.00 641.00 75.92" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~si_unstr_cg_solve~~CalledByGraph" class="graph" transform="scale(0.57 0.57) rotate(0) translate(4 129.72)">
+<title>proc~~si_unstr_cg_solve~~CalledByGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-129.72 1125,-129.72 1125,4 -4,4"/>
+<!-- proc~si_unstr_cg_solve -->
+<g id="proc~~si_unstr_cg_solve~~CalledByGraph_node1" class="node">
+<title>proc~si_unstr_cg_solve</title>
+<polygon fill="none" stroke="black" points="1121,-87 1017,-87 1017,-63 1121,-63 1121,-87"/>
+<text text-anchor="middle" x="1069" y="-72.6" font-family="Helvetica,sans-Serif" font-size="10.50">si_unstr_cg_solve</text>
+</g>
+<!-- proc~si_ml_wetdry_newton -->
+<g id="proc~~si_unstr_cg_solve~~CalledByGraph_node2" class="node">
+<title>proc~si_ml_wetdry_newton</title>
+<g id="a_proc~~si_unstr_cg_solve~~CalledByGraph_node2"><a xlink:href="../proc/si_ml_wetdry_newton.html" xlink:title="si_ml_wetdry_newton">
+<polygon fill="#d9534f" stroke="#d9534f" points="971,-108 846,-108 846,-84 971,-84 971,-108"/>
+<text text-anchor="middle" x="908.5" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">si_ml_wetdry_newton</text>
+</a>
+</g>
+</g>
+<!-- proc~si_ml_wetdry_newton&#45;&gt;proc~si_unstr_cg_solve -->
+<g id="proc~~si_unstr_cg_solve~~CalledByGraph_edge1" class="edge">
+<title>proc~si_ml_wetdry_newton&#45;&gt;proc~si_unstr_cg_solve</title>
+<path fill="none" stroke="#ff0000" d="M971.23,-87.82C982.93,-86.27 995.17,-84.65 1006.85,-83.1"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="1007.49,-86.55 1016.94,-81.77 1006.57,-79.61 1007.49,-86.55"/>
+</g>
+<!-- proc~si_unstr_advance -->
+<g id="proc~~si_unstr_cg_solve~~CalledByGraph_node3" class="node">
+<title>proc~si_unstr_advance</title>
+<g id="a_proc~~si_unstr_cg_solve~~CalledByGraph_node3"><a xlink:href="../proc/si_unstr_advance.html" xlink:title="si_unstr_advance">
+<polygon fill="#d9534f" stroke="#d9534f" points="960.5,-66 856.5,-66 856.5,-42 960.5,-42 960.5,-66"/>
+<text text-anchor="middle" x="908.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">si_unstr_advance</text>
+</a>
+</g>
+</g>
+<!-- proc~si_unstr_advance&#45;&gt;proc~si_unstr_cg_solve -->
+<g id="proc~~si_unstr_cg_solve~~CalledByGraph_edge2" class="edge">
+<title>proc~si_unstr_advance&#45;&gt;proc~si_unstr_cg_solve</title>
+<path fill="none" stroke="#ff0000" d="M960.52,-60.76C975.16,-62.7 991.26,-64.83 1006.46,-66.85"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="1006.43,-70.37 1016.8,-68.22 1007.35,-63.43 1006.43,-70.37"/>
+</g>
+<!-- proc~si_unstr_advance_wetdry -->
+<g id="proc~~si_unstr_cg_solve~~CalledByGraph_node4" class="node">
+<title>proc~si_unstr_advance_wetdry</title>
+<g id="a_proc~~si_unstr_cg_solve~~CalledByGraph_node4"><a xlink:href="../proc/si_unstr_advance_wetdry.html" xlink:title="si_unstr_advance_wetdry">
+<polygon fill="#d9534f" stroke="#d9534f" points="981,-24 836,-24 836,0 981,0 981,-24"/>
+<text text-anchor="middle" x="908.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">si_unstr_advance_wetdry</text>
+</a>
+</g>
+</g>
+<!-- proc~si_unstr_advance_wetdry&#45;&gt;proc~si_unstr_cg_solve -->
+<g id="proc~~si_unstr_cg_solve~~CalledByGraph_edge3" class="edge">
+<title>proc~si_unstr_advance_wetdry&#45;&gt;proc~si_unstr_cg_solve</title>
+<path fill="none" stroke="#ff0000" d="M954.88,-24.11C963.64,-26.79 972.67,-29.79 981,-33 999.84,-40.26 1020.2,-49.98 1036.48,-58.24"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="1035.06,-61.44 1045.56,-62.9 1038.26,-55.22 1035.06,-61.44"/>
+</g>
+<!-- proc~si_unstr_step_ml -->
+<g id="proc~~si_unstr_cg_solve~~CalledByGraph_node5" class="node">
+<title>proc~si_unstr_step_ml</title>
+<g id="a_proc~~si_unstr_cg_solve~~CalledByGraph_node5"><a xlink:href="../proc/si_unstr_step_ml.html" xlink:title="si_unstr_step_ml">
+<polygon fill="#d9534f" stroke="#d9534f" points="800,-108 700,-108 700,-84 800,-84 800,-108"/>
+<text text-anchor="middle" x="750" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">si_unstr_step_ml</text>
+</a>
+</g>
+</g>
+<!-- proc~si_unstr_step_ml&#45;&gt;proc~si_unstr_cg_solve -->
+<g id="proc~~si_unstr_cg_solve~~CalledByGraph_edge4" class="edge">
+<title>proc~si_unstr_step_ml&#45;&gt;proc~si_unstr_cg_solve</title>
+<path fill="none" stroke="#ff0000" d="M791.27,-108.07C805.29,-111.7 821.21,-115.2 836,-117 899.97,-124.79 918.18,-131.37 981,-117 1001.91,-112.22 1023.64,-101.73 1040.16,-92.43"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="1042.35,-95.2 1049.23,-87.15 1038.83,-89.16 1042.35,-95.2"/>
+</g>
+<!-- proc~si_unstr_step_ml&#45;&gt;proc~si_ml_wetdry_newton -->
+<g id="proc~~si_unstr_cg_solve~~CalledByGraph_edge5" class="edge">
+<title>proc~si_unstr_step_ml&#45;&gt;proc~si_ml_wetdry_newton</title>
+<path fill="none" stroke="#ff0000" d="M800.09,-96C811.43,-96 823.73,-96 835.82,-96"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="835.9,-99.5 845.9,-96 835.9,-92.5 835.9,-99.5"/>
+</g>
+<!-- proc~si_unstr_step -->
+<g id="proc~~si_unstr_cg_solve~~CalledByGraph_node6" class="node">
+<title>proc~si_unstr_step</title>
+<g id="a_proc~~si_unstr_cg_solve~~CalledByGraph_node6"><a xlink:href="../proc/si_unstr_step.html" xlink:title="si_unstr_step">
+<polygon fill="#d9534f" stroke="#d9534f" points="790.5,-66 709.5,-66 709.5,-42 790.5,-42 790.5,-66"/>
+<text text-anchor="middle" x="750" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">si_unstr_step</text>
+</a>
+</g>
+</g>
+<!-- proc~si_unstr_step&#45;&gt;proc~si_unstr_advance -->
+<g id="proc~~si_unstr_cg_solve~~CalledByGraph_edge6" class="edge">
+<title>proc~si_unstr_step&#45;&gt;proc~si_unstr_advance</title>
+<path fill="none" stroke="#7fff00" d="M790.9,-54C807.71,-54 827.65,-54 846.26,-54"/>
+<polygon fill="#7fff00" stroke="#7fff00" points="846.42,-57.5 856.42,-54 846.42,-50.5 846.42,-57.5"/>
+</g>
+<!-- proc~si_unstr_step&#45;&gt;proc~si_unstr_advance_wetdry -->
+<g id="proc~~si_unstr_cg_solve~~CalledByGraph_edge7" class="edge">
+<title>proc~si_unstr_step&#45;&gt;proc~si_unstr_advance_wetdry</title>
+<path fill="none" stroke="#00ffff" d="M790.9,-43.29C809.73,-38.24 832.5,-32.13 852.91,-26.65"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="853.95,-29.99 862.7,-24.02 852.14,-23.23 853.95,-29.99"/>
+</g>
+<!-- proc~solver_unstr_step_semi_implicit -->
+<g id="proc~~si_unstr_cg_solve~~CalledByGraph_node7" class="node">
+<title>proc~solver_unstr_step_semi_implicit</title>
+<g id="a_proc~~si_unstr_cg_solve~~CalledByGraph_node7"><a xlink:href="../proc/solver_unstr_step_semi_implicit.html" xlink:title="solver_unstr_step_semi_implicit">
+<polygon fill="#d9534f" stroke="#d9534f" points="664,-87 484,-87 484,-63 664,-63 664,-87"/>
+<text text-anchor="middle" x="574" y="-72.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_unstr_step_semi_implicit</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_unstr_step_semi_implicit&#45;&gt;proc~si_unstr_step_ml -->
+<g id="proc~~si_unstr_cg_solve~~CalledByGraph_edge8" class="edge">
+<title>proc~solver_unstr_step_semi_implicit&#45;&gt;proc~si_unstr_step_ml</title>
+<path fill="none" stroke="#7f00ff" d="M664.04,-85.75C672.84,-86.81 681.61,-87.87 689.99,-88.88"/>
+<polygon fill="#7f00ff" stroke="#7f00ff" points="689.65,-92.36 700,-90.09 690.49,-85.41 689.65,-92.36"/>
+</g>
+<!-- proc~solver_unstr_step_semi_implicit&#45;&gt;proc~si_unstr_step -->
+<g id="proc~~si_unstr_cg_solve~~CalledByGraph_edge9" class="edge">
+<title>proc~solver_unstr_step_semi_implicit&#45;&gt;proc~si_unstr_step</title>
+<path fill="none" stroke="#ff0000" d="M664.04,-64.25C676.08,-62.8 688.06,-61.35 699.08,-60.03"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="699.8,-63.46 709.31,-58.79 698.96,-56.51 699.8,-63.46"/>
+</g>
+<!-- proc~solver_unstr_step -->
+<g id="proc~~si_unstr_cg_solve~~CalledByGraph_node8" class="node">
+<title>proc~solver_unstr_step</title>
+<g id="a_proc~~si_unstr_cg_solve~~CalledByGraph_node8"><a xlink:href="../proc/solver_unstr_step.html" xlink:title="solver_unstr_step">
+<polygon fill="#d9534f" stroke="#d9534f" points="448,-87 343,-87 343,-63 448,-63 448,-87"/>
+<text text-anchor="middle" x="395.5" y="-72.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_unstr_step</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_unstr_step&#45;&gt;proc~solver_unstr_step_semi_implicit -->
+<g id="proc~~si_unstr_cg_solve~~CalledByGraph_edge10" class="edge">
+<title>proc~solver_unstr_step&#45;&gt;proc~solver_unstr_step_semi_implicit</title>
+<path fill="none" stroke="#00ffff" d="M448.03,-75C456.23,-75 464.95,-75 473.82,-75"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="473.88,-78.5 483.88,-75 473.88,-71.5 473.88,-78.5"/>
+</g>
+<!-- proc~rki_unstr_step -->
+<g id="proc~~si_unstr_cg_solve~~CalledByGraph_node9" class="node">
+<title>proc~rki_unstr_step</title>
+<g id="a_proc~~si_unstr_cg_solve~~CalledByGraph_node9"><a xlink:href="../proc/rki_unstr_step.html" xlink:title="rki_unstr_step">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="286,-108 200,-108 200,-84 286,-84 286,-108"/>
+<text text-anchor="middle" x="243" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_unstr_step</text>
+</a>
+</g>
+</g>
+<!-- proc~rki_unstr_step&#45;&gt;proc~solver_unstr_step -->
+<g id="proc~~si_unstr_cg_solve~~CalledByGraph_edge11" class="edge">
+<title>proc~rki_unstr_step&#45;&gt;proc~solver_unstr_step</title>
+<path fill="none" stroke="#ff0000" d="M286.32,-90.09C300.73,-88.08 317.14,-85.79 332.75,-83.62"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="333.45,-87.05 342.87,-82.2 332.48,-80.12 333.45,-87.05"/>
+</g>
+<!-- proc~solver_unstr_advance -->
+<g id="proc~~si_unstr_cg_solve~~CalledByGraph_node10" class="node">
+<title>proc~solver_unstr_advance</title>
+<g id="a_proc~~si_unstr_cg_solve~~CalledByGraph_node10"><a xlink:href="../proc/solver_unstr_advance.html" xlink:title="solver_unstr_advance">
+<polygon fill="#d9534f" stroke="#d9534f" points="307,-66 179,-66 179,-42 307,-42 307,-66"/>
+<text text-anchor="middle" x="243" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_unstr_advance</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_unstr_advance&#45;&gt;proc~solver_unstr_step -->
+<g id="proc~~si_unstr_cg_solve~~CalledByGraph_edge12" class="edge">
+<title>proc~solver_unstr_advance&#45;&gt;proc~solver_unstr_step</title>
+<path fill="none" stroke="#ff0000" d="M307.39,-62.85C315.73,-64.01 324.27,-65.2 332.58,-66.36"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="332.19,-69.84 342.58,-67.76 333.16,-62.91 332.19,-69.84"/>
+</g>
+<!-- proc~driver_run_coastal_unstr -->
+<g id="proc~~si_unstr_cg_solve~~CalledByGraph_node11" class="node">
+<title>proc~driver_run_coastal_unstr</title>
+<g id="a_proc~~si_unstr_cg_solve~~CalledByGraph_node11"><a xlink:href="../proc/driver_run_coastal_unstr.html" xlink:title="driver_run_coastal_unstr">
+<polygon fill="#d9534f" stroke="#d9534f" points="143,-87 0,-87 0,-63 143,-63 143,-87"/>
+<text text-anchor="middle" x="71.5" y="-72.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">driver_run_coastal_unstr</text>
+</a>
+</g>
+</g>
+<!-- proc~driver_run_coastal_unstr&#45;&gt;proc~solver_unstr_advance -->
+<g id="proc~~si_unstr_cg_solve~~CalledByGraph_edge13" class="edge">
+<title>proc~driver_run_coastal_unstr&#45;&gt;proc~solver_unstr_advance</title>
+<path fill="none" stroke="#00ffff" d="M143.4,-66.22C151.79,-65.18 160.36,-64.12 168.77,-63.07"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="169.44,-66.52 178.94,-61.81 168.58,-59.57 169.44,-66.52"/>
+</g>
+<!-- proc~rki_unstr_advance -->
+<g id="proc~~si_unstr_cg_solve~~CalledByGraph_node12" class="node">
+<title>proc~rki_unstr_advance</title>
+<g id="a_proc~~si_unstr_cg_solve~~CalledByGraph_node12"><a xlink:href="../proc/rki_unstr_advance.html" xlink:title="rki_unstr_advance">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="126,-45 17,-45 17,-21 126,-21 126,-45"/>
+<text text-anchor="middle" x="71.5" y="-30.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_unstr_advance</text>
+</a>
+</g>
+</g>
+<!-- proc~rki_unstr_advance&#45;&gt;proc~solver_unstr_advance -->
+<g id="proc~~si_unstr_cg_solve~~CalledByGraph_edge14" class="edge">
+<title>proc~rki_unstr_advance&#45;&gt;proc~solver_unstr_advance</title>
+<path fill="none" stroke="#00ffff" d="M126.13,-39.64C139.63,-41.32 154.36,-43.14 168.64,-44.91"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="168.59,-48.43 178.94,-46.19 169.45,-41.48 168.59,-48.43"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var panprocsi_unstr_cg_solveCalledByGraph = svgPanZoom('#procsi_unstr_cg_solveCalledByGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CalledByGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CalledByGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+
+
+    <section>    
+      <h2>Variables</h2>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Visibility</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+<th></th><th scope="col">Initial</th>        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-alpha~3"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>alpha</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-beta"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>beta</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-have_mass~3"></span>
+              logical,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>have_mass</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-iter"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>iter</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-k~79"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>k</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-pap"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>pAp</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-res_sum"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>res_sum</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-rhs2~2"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>rhs2</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-rr"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>rr</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-rz"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>rz</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-rz_new"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>rz_new</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-tol2~2"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>tol2</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-use_mg"></span>
+              logical,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>use_mg</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-use_pc"></span>
+              logical,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>use_pc</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    </section>
+    <br>
+    
+    
+
+    
+    
+
+
+
+    
+    <section>
+    <h2><span class="anchor" id="src"></span>Source Code</h2>
+    <div class="hl codehilite"><pre><span></span><span class="w">   </span><span class="k">subroutine </span><span class="n">si_unstr_cg_solve</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span><span class="w"> </span><span class="n">ncell_total</span><span class="p">,</span><span class="w"> </span><span class="n">ncell_owned</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                </span><span class="n">eta</span><span class="p">,</span><span class="w"> </span><span class="n">cg_r</span><span class="p">,</span><span class="w"> </span><span class="n">cg_p</span><span class="p">,</span><span class="w"> </span><span class="n">cg_Ap</span><span class="p">,</span><span class="w"> </span><span class="n">cg_z</span><span class="p">,</span><span class="w"> </span><span class="n">eta_diag</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                </span><span class="n">Hf_edge</span><span class="p">,</span><span class="w"> </span><span class="n">g_theta2_dt2</span><span class="p">,</span><span class="w"> </span><span class="n">precond</span><span class="p">,</span><span class="w"> </span><span class="n">rtol</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                </span><span class="n">iter_out</span><span class="p">,</span><span class="w"> </span><span class="n">mass_res_out</span><span class="p">,</span><span class="w"> </span><span class="n">mass_diag</span><span class="p">,</span><span class="w"> </span><span class="n">mg</span><span class="p">)</span>
+<span class="w">      </span><span class="c">!! Area-weighted (optionally preconditioned) CG for the TPFA Helmholtz</span>
+<span class="w">      </span><span class="c">!! eta-solve, warm-started from eta^n.  On entry `cg_r` holds the RHS and</span>
+<span class="w">      </span><span class="c">!! `eta` the warm start.  EVERY dot product carries the `mesh%area`</span>
+<span class="w">      </span><span class="c">!! weight (the operator is self-adjoint in &lt;x,y&gt;_A only — prototype</span>
+<span class="w">      </span><span class="c">!! §7.5); the convergence gate is the area-weighted relative residual</span>
+<span class="w">      </span><span class="c">!! `||r||_A^2 &lt; rtol^2 ||rhs||_A^2` on the UNPRECONDITIONED residual in</span>
+<span class="w">      </span><span class="c">!! every mode (comparable iteration counts).  Preconditioners:</span>
+<span class="w">      </span><span class="c">!! NONE (plain), JACOBI (`z = eta_diag*r`), MG (aggregation-multigrid</span>
+<span class="w">      </span><span class="c">!! V-cycle via `mg`, `z = Vcycle_Ahat(area*r)` — the same `area*r`</span>
+<span class="w">      </span><span class="c">!! symmetric-space RHS the Jacobi apply implicitly uses).</span>
+<span class="w">      </span><span class="k">use </span><span class="n">rki_si_unstr_state</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">SI_PRECOND_NONE</span><span class="p">,</span><span class="w"> </span><span class="n">SI_PRECOND_JACOBI</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                    </span><span class="n">SI_PRECOND_MG</span>
+<span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="n">mesh_unstr_t</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">mesh</span>
+<span class="w">      </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">ncell_total</span>
+<span class="w">         </span><span class="c">!! Cell array extent (owned + halo) — the explicit-shape dim.</span>
+<span class="w">      </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">ncell_owned</span>
+<span class="w">         </span><span class="c">!! Owned-cell loop bound.</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">eta</span><span class="p">(</span><span class="n">ncell_total</span><span class="p">)</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">cg_r</span><span class="p">(</span><span class="n">ncell_total</span><span class="p">),</span><span class="w"> </span><span class="n">cg_p</span><span class="p">(</span><span class="n">ncell_total</span><span class="p">)</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">cg_Ap</span><span class="p">(</span><span class="n">ncell_total</span><span class="p">),</span><span class="w"> </span><span class="n">cg_z</span><span class="p">(</span><span class="n">ncell_total</span><span class="p">)</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">eta_diag</span><span class="p">(</span><span class="n">ncell_total</span><span class="p">)</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">Hf_edge</span><span class="p">(</span><span class="n">EDGES_PER_TRI</span><span class="p">,</span><span class="w"> </span><span class="n">ncell_total</span><span class="p">)</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">g_theta2_dt2</span><span class="p">,</span><span class="w"> </span><span class="n">rtol</span>
+<span class="w">      </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">precond</span>
+<span class="w">      </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">iter_out</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">mass_res_out</span>
+<span class="w">         </span><span class="c">!! Area-weighted interior residual sum at solve end (mass diagnostic).</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">),</span><span class="w"> </span><span class="k">optional</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">mass_diag</span><span class="p">(</span><span class="n">ncell_total</span><span class="p">)</span>
+<span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="n">agglom_hierarchy_unstr_t</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">),</span><span class="w"> </span><span class="k">optional</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">mg</span>
+<span class="w">         </span><span class="c">!! Aggregation-MG hierarchy (required when precond == MG); its</span>
+<span class="w">         </span><span class="c">!! operator must already be refreshed for this step's frozen Hf.</span>
+
+<span class="w">      </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="n">iter</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">rz</span><span class="p">,</span><span class="w"> </span><span class="n">rr</span><span class="p">,</span><span class="w"> </span><span class="n">rz_new</span><span class="p">,</span><span class="w"> </span><span class="n">pAp</span><span class="p">,</span><span class="w"> </span><span class="n">alpha</span><span class="p">,</span><span class="w"> </span><span class="n">beta</span><span class="p">,</span><span class="w"> </span><span class="n">tol2</span><span class="p">,</span><span class="w"> </span><span class="n">rhs2</span><span class="p">,</span><span class="w"> </span><span class="n">res_sum</span>
+<span class="w">      </span><span class="kt">logical</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">use_pc</span><span class="p">,</span><span class="w"> </span><span class="n">use_mg</span><span class="p">,</span><span class="w"> </span><span class="n">have_mass</span>
+
+<span class="w">      </span><span class="n">iter_out</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">      </span><span class="n">mass_res_out</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">      </span><span class="n">use_mg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">precond</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">SI_PRECOND_MG</span><span class="p">)</span>
+<span class="w">      </span><span class="n">use_pc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">precond</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">SI_PRECOND_JACOBI</span><span class="p">)</span><span class="w"> </span><span class="p">.</span><span class="nb">or</span><span class="p">.</span><span class="w"> </span><span class="n">use_mg</span>
+<span class="w">      </span><span class="n">have_mass</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">present</span><span class="p">(</span><span class="n">mass_diag</span><span class="p">)</span>
+
+<span class="w">      </span><span class="c">! Jacobi needs the operator diagonal; MG carries its own per-level diag</span>
+<span class="w">      </span><span class="c">! (under MG `eta_diag` stays STALE and is threaded through</span>
+<span class="w">      </span><span class="c">! si_unstr_precond_apply UNREAD — do not consume it on that branch).</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">precond</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">SI_PRECOND_JACOBI</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">         if</span><span class="w"> </span><span class="p">(</span><span class="n">have_mass</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            call </span><span class="n">si_unstr_compute_diag</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span><span class="w"> </span><span class="n">ncell_total</span><span class="p">,</span><span class="w"> </span><span class="n">ncell_owned</span><span class="p">,</span><span class="w"> </span><span class="n">Hf_edge</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                       </span><span class="n">eta_diag</span><span class="p">,</span><span class="w"> </span><span class="n">g_theta2_dt2</span><span class="p">,</span><span class="w"> </span><span class="n">mass_diag</span><span class="o">=</span><span class="n">mass_diag</span><span class="p">)</span>
+<span class="w">         </span><span class="k">else</span>
+<span class="k">            call </span><span class="n">si_unstr_compute_diag</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span><span class="w"> </span><span class="n">ncell_total</span><span class="p">,</span><span class="w"> </span><span class="n">ncell_owned</span><span class="p">,</span><span class="w"> </span><span class="n">Hf_edge</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                       </span><span class="n">eta_diag</span><span class="p">,</span><span class="w"> </span><span class="n">g_theta2_dt2</span><span class="p">)</span>
+<span class="w">         </span><span class="k">end if</span>
+<span class="k">      end if</span>
+
+<span class="w">      </span><span class="c">! ||rhs||_A^2 for the relative test (cg_r still holds the RHS).</span>
+<span class="w">      </span><span class="n">rhs2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">      </span><span class="k">do</span><span class="w"> </span><span class="k">concurrent</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="n">ncell_owned</span><span class="p">)</span><span class="w"> </span><span class="n">reduce</span><span class="p">(</span><span class="o">+</span><span class="p">:</span><span class="n">rhs2</span><span class="p">)</span>
+<span class="w">         </span><span class="n">rhs2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rhs2</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">mesh</span><span class="p">%</span><span class="n">area</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">*</span><span class="n">cg_r</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">*</span><span class="n">cg_r</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+<span class="w">      </span><span class="k">end do</span>
+<span class="k">      </span><span class="n">tol2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">max</span><span class="p">(</span><span class="n">rtol</span><span class="o">*</span><span class="n">rtol</span><span class="o">*</span><span class="n">rhs2</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0e-60_wp</span><span class="p">)</span>
+
+<span class="w">      </span><span class="c">! Zero the full search direction (ghost/halo band stays 0 so a</span>
+<span class="w">      </span><span class="c">! Dirichlet ghost is never a CG unknown).</span>
+<span class="w">      </span><span class="k">do</span><span class="w"> </span><span class="k">concurrent</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="n">ncell_total</span><span class="p">)</span>
+<span class="w">         </span><span class="n">cg_p</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">      </span><span class="k">end do</span>
+
+<span class="w">      </span><span class="c">! r = rhs - A*eta (warm start eta = eta^n).</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">have_mass</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">         call </span><span class="n">si_unstr_apply_helmholtz</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span><span class="w"> </span><span class="n">ncell_total</span><span class="p">,</span><span class="w"> </span><span class="n">ncell_owned</span><span class="p">,</span><span class="w"> </span><span class="n">eta</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                       </span><span class="n">cg_Ap</span><span class="p">,</span><span class="w"> </span><span class="n">Hf_edge</span><span class="p">,</span><span class="w"> </span><span class="n">g_theta2_dt2</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                       </span><span class="n">mass_diag</span><span class="o">=</span><span class="n">mass_diag</span><span class="p">)</span>
+<span class="w">      </span><span class="k">else</span>
+<span class="k">         call </span><span class="n">si_unstr_apply_helmholtz</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span><span class="w"> </span><span class="n">ncell_total</span><span class="p">,</span><span class="w"> </span><span class="n">ncell_owned</span><span class="p">,</span><span class="w"> </span><span class="n">eta</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                       </span><span class="n">cg_Ap</span><span class="p">,</span><span class="w"> </span><span class="n">Hf_edge</span><span class="p">,</span><span class="w"> </span><span class="n">g_theta2_dt2</span><span class="p">)</span>
+<span class="w">      </span><span class="k">end if</span>
+<span class="k">      do</span><span class="w"> </span><span class="k">concurrent</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="n">ncell_owned</span><span class="p">)</span>
+<span class="w">         </span><span class="n">cg_r</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cg_r</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">cg_Ap</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+<span class="w">      </span><span class="k">end do</span>
+
+<span class="k">      </span><span class="n">rr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">      </span><span class="k">do</span><span class="w"> </span><span class="k">concurrent</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="n">ncell_owned</span><span class="p">)</span><span class="w"> </span><span class="n">reduce</span><span class="p">(</span><span class="o">+</span><span class="p">:</span><span class="n">rr</span><span class="p">)</span>
+<span class="w">         </span><span class="n">rr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rr</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">mesh</span><span class="p">%</span><span class="n">area</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">*</span><span class="n">cg_r</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">*</span><span class="n">cg_r</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+<span class="w">      </span><span class="k">end do</span>
+
+<span class="k">      if</span><span class="w"> </span><span class="p">(</span><span class="n">rr</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">tol2</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">         </span><span class="n">res_sum</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">         </span><span class="k">do</span><span class="w"> </span><span class="k">concurrent</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="n">ncell_owned</span><span class="p">)</span><span class="w"> </span><span class="n">reduce</span><span class="p">(</span><span class="o">+</span><span class="p">:</span><span class="n">res_sum</span><span class="p">)</span>
+<span class="w">            </span><span class="n">res_sum</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">res_sum</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">mesh</span><span class="p">%</span><span class="n">area</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">*</span><span class="n">cg_r</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+<span class="w">         </span><span class="k">end do</span>
+<span class="k">         </span><span class="n">mass_res_out</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">res_sum</span>
+<span class="w">         </span><span class="k">return</span>
+<span class="k">      end if</span>
+
+<span class="k">      if</span><span class="w"> </span><span class="p">(</span><span class="n">use_pc</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">         call </span><span class="n">si_unstr_precond_apply</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span><span class="w"> </span><span class="n">ncell_total</span><span class="p">,</span><span class="w"> </span><span class="n">ncell_owned</span><span class="p">,</span><span class="w"> </span><span class="n">cg_r</span><span class="p">,</span><span class="w"> </span><span class="n">cg_z</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                     </span><span class="n">eta_diag</span><span class="p">,</span><span class="w"> </span><span class="n">use_mg</span><span class="p">,</span><span class="w"> </span><span class="n">mg</span><span class="p">)</span>
+<span class="w">         </span><span class="k">do</span><span class="w"> </span><span class="k">concurrent</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="n">ncell_owned</span><span class="p">)</span>
+<span class="w">            </span><span class="n">cg_p</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cg_z</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+<span class="w">         </span><span class="k">end do</span>
+<span class="k">         </span><span class="n">rz</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">         </span><span class="k">do</span><span class="w"> </span><span class="k">concurrent</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="n">ncell_owned</span><span class="p">)</span><span class="w"> </span><span class="n">reduce</span><span class="p">(</span><span class="o">+</span><span class="p">:</span><span class="n">rz</span><span class="p">)</span>
+<span class="w">            </span><span class="n">rz</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rz</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">mesh</span><span class="p">%</span><span class="n">area</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">*</span><span class="n">cg_r</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">*</span><span class="n">cg_z</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+<span class="w">         </span><span class="k">end do</span>
+<span class="k">      else</span>
+<span class="k">         do</span><span class="w"> </span><span class="k">concurrent</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="n">ncell_owned</span><span class="p">)</span>
+<span class="w">            </span><span class="n">cg_p</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cg_r</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+<span class="w">         </span><span class="k">end do</span>
+<span class="k">         </span><span class="n">rz</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rr</span>
+<span class="w">      </span><span class="k">end if</span>
+
+<span class="k">      do </span><span class="n">iter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">SI_MAX_ITER</span>
+<span class="w">         </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">have_mass</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            call </span><span class="n">si_unstr_apply_helmholtz</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span><span class="w"> </span><span class="n">ncell_total</span><span class="p">,</span><span class="w"> </span><span class="n">ncell_owned</span><span class="p">,</span><span class="w"> </span><span class="n">cg_p</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                          </span><span class="n">cg_Ap</span><span class="p">,</span><span class="w"> </span><span class="n">Hf_edge</span><span class="p">,</span><span class="w"> </span><span class="n">g_theta2_dt2</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                          </span><span class="n">mass_diag</span><span class="o">=</span><span class="n">mass_diag</span><span class="p">)</span>
+<span class="w">         </span><span class="k">else</span>
+<span class="k">            call </span><span class="n">si_unstr_apply_helmholtz</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span><span class="w"> </span><span class="n">ncell_total</span><span class="p">,</span><span class="w"> </span><span class="n">ncell_owned</span><span class="p">,</span><span class="w"> </span><span class="n">cg_p</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                          </span><span class="n">cg_Ap</span><span class="p">,</span><span class="w"> </span><span class="n">Hf_edge</span><span class="p">,</span><span class="w"> </span><span class="n">g_theta2_dt2</span><span class="p">)</span>
+<span class="w">         </span><span class="k">end if</span>
+
+<span class="k">         </span><span class="n">pAp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">         </span><span class="k">do</span><span class="w"> </span><span class="k">concurrent</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="n">ncell_owned</span><span class="p">)</span><span class="w"> </span><span class="n">reduce</span><span class="p">(</span><span class="o">+</span><span class="p">:</span><span class="n">pAp</span><span class="p">)</span>
+<span class="w">            </span><span class="n">pAp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pAp</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">mesh</span><span class="p">%</span><span class="n">area</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">*</span><span class="n">cg_p</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">*</span><span class="n">cg_Ap</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+<span class="w">         </span><span class="k">end do</span>
+
+<span class="k">         if</span><span class="w"> </span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">pAp</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mf">1.0e-30_wp</span><span class="p">)</span><span class="w"> </span><span class="k">exit</span>
+<span class="k">         </span><span class="n">alpha</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rz</span><span class="o">/</span><span class="n">pAp</span>
+
+<span class="w">         </span><span class="k">do</span><span class="w"> </span><span class="k">concurrent</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="n">ncell_owned</span><span class="p">)</span>
+<span class="w">            </span><span class="n">eta</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">eta</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">alpha</span><span class="o">*</span><span class="n">cg_p</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+<span class="w">            </span><span class="n">cg_r</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cg_r</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">alpha</span><span class="o">*</span><span class="n">cg_Ap</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+<span class="w">         </span><span class="k">end do</span>
+
+<span class="k">         </span><span class="n">rr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">         </span><span class="k">do</span><span class="w"> </span><span class="k">concurrent</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="n">ncell_owned</span><span class="p">)</span><span class="w"> </span><span class="n">reduce</span><span class="p">(</span><span class="o">+</span><span class="p">:</span><span class="n">rr</span><span class="p">)</span>
+<span class="w">            </span><span class="n">rr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rr</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">mesh</span><span class="p">%</span><span class="n">area</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">*</span><span class="n">cg_r</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">*</span><span class="n">cg_r</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+<span class="w">         </span><span class="k">end do</span>
+
+<span class="k">         </span><span class="n">iter_out</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">iter</span>
+<span class="w">         </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">rr</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">tol2</span><span class="p">)</span><span class="w"> </span><span class="k">exit</span>
+
+<span class="k">         if</span><span class="w"> </span><span class="p">(</span><span class="n">use_pc</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            call </span><span class="n">si_unstr_precond_apply</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span><span class="w"> </span><span class="n">ncell_total</span><span class="p">,</span><span class="w"> </span><span class="n">ncell_owned</span><span class="p">,</span><span class="w"> </span><span class="n">cg_r</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                        </span><span class="n">cg_z</span><span class="p">,</span><span class="w"> </span><span class="n">eta_diag</span><span class="p">,</span><span class="w"> </span><span class="n">use_mg</span><span class="p">,</span><span class="w"> </span><span class="n">mg</span><span class="p">)</span>
+<span class="w">            </span><span class="n">rz_new</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">            </span><span class="k">do</span><span class="w"> </span><span class="k">concurrent</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="n">ncell_owned</span><span class="p">)</span><span class="w"> </span><span class="n">reduce</span><span class="p">(</span><span class="o">+</span><span class="p">:</span><span class="n">rz_new</span><span class="p">)</span>
+<span class="w">               </span><span class="n">rz_new</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rz_new</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">mesh</span><span class="p">%</span><span class="n">area</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">*</span><span class="n">cg_r</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">*</span><span class="n">cg_z</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+<span class="w">            </span><span class="k">end do</span>
+<span class="k">            </span><span class="n">beta</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rz_new</span><span class="o">/</span><span class="n">rz</span>
+<span class="w">            </span><span class="n">rz</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rz_new</span>
+<span class="w">            </span><span class="k">do</span><span class="w"> </span><span class="k">concurrent</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="n">ncell_owned</span><span class="p">)</span>
+<span class="w">               </span><span class="n">cg_p</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cg_z</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">beta</span><span class="o">*</span><span class="n">cg_p</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+<span class="w">            </span><span class="k">end do</span>
+<span class="k">         else</span>
+<span class="k">            </span><span class="n">beta</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rr</span><span class="o">/</span><span class="n">rz</span>
+<span class="w">            </span><span class="n">rz</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rr</span>
+<span class="w">            </span><span class="k">do</span><span class="w"> </span><span class="k">concurrent</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="n">ncell_owned</span><span class="p">)</span>
+<span class="w">               </span><span class="n">cg_p</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cg_r</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">beta</span><span class="o">*</span><span class="n">cg_p</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+<span class="w">            </span><span class="k">end do</span>
+<span class="k">         end if</span>
+<span class="k">      end do</span>
+
+<span class="k">      </span><span class="n">res_sum</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">      </span><span class="k">do</span><span class="w"> </span><span class="k">concurrent</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="n">ncell_owned</span><span class="p">)</span><span class="w"> </span><span class="n">reduce</span><span class="p">(</span><span class="o">+</span><span class="p">:</span><span class="n">res_sum</span><span class="p">)</span>
+<span class="w">         </span><span class="n">res_sum</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">res_sum</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">mesh</span><span class="p">%</span><span class="n">area</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">*</span><span class="n">cg_r</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+<span class="w">      </span><span class="k">end do</span>
+<span class="k">      </span><span class="n">mass_res_out</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">res_sum</span>
+<span class="w">   </span><span class="k">end subroutine </span><span class="n">si_unstr_cg_solve</span>
+</pre></div>
+
+    </section>
+    <br>
+    
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Rakali
+ was developed by Jorge Luis Galvez Vallejo<br>              &copy; 2026 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+ on 2026-10-08 12:55 +0000             </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>

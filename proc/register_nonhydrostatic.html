@@ -1,0 +1,947 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="GPU-native coastal solver — structured Cartesian and unstructured triangular grids, hydrostatic multilayer + non-hydrostatic, portable across NVHPC/gfortran/ifx.">
+    <meta name="author" content="Jorge Luis Galvez Vallejo" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>register_nonhydrostatic &ndash; Rakali</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">Rakali </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/absint.html">Abstract Interfaces</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>register_nonhydrostatic
+      <small>Subroutine</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.3% of total for procedures.">66 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/rki_config.F90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/rki_config.f90.html'>rki_config.F90</a></li>
+                <li class="breadcrumb-item"><a href='../module/rki_config.html'>rki_config</a></li>
+            <li class="breadcrumb-item active" aria-current="page">register_nonhydrostatic</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+  
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#vars-0"
+         aria-expanded="false" aria-controls="vars-0">
+         <h4 class="card-header bg-primary text-white">Variables</h4>
+      </a>
+      <div id="vars-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../proc/register_nonhydrostatic.html#variable-g~26">g</a>
+            <a class="list-group-item" href="../proc/register_nonhydrostatic.html#variable-pi~7">pi</a>
+            <a class="list-group-item" href="../proc/register_nonhydrostatic.html#variable-pl~6">pl</a>
+            <a class="list-group-item" href="../proc/register_nonhydrostatic.html#variable-pr~11">pr</a>
+            <a class="list-group-item" href="../proc/register_nonhydrostatic.html#variable-ps~12">ps</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../proc/register_nonhydrostatic.html#src">register_nonhydrostatic</a>
+      </div>
+    </div>
+
+
+  </div>
+
+    </div>
+    
+    <div class="col-md-9" id='text'>
+    <h2>private  subroutine register_nonhydrostatic(cfg, schema)  
+</h2>
+    
+
+    <p><code>&amp;nonhydrostatic_nml</code>: NH/multilayer switches, CG-Poisson
+controls, PP81 vmix, KPP knobs, k-eps, Smagorinsky, BPG, mode
+split.  <code>keps_stability</code> and <code>bpg_method</code> are enums.</p>
+
+
+    <h3>Arguments</h3>
+        <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-cfg~44"></span>
+              type(<a href='../type/config_t.html'>config_t</a>),
+            </td>
+<td>intent(in),</td>
+              <td></td>            <td>
+              target
+            </td>
+            <td>::</td>
+            <td><strong>cfg</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-schema~17"></span>
+              type(<a href='../type/nml_schema_t.html'>nml_schema_t</a>),
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>schema</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <br>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Calls</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~register_nonhydrostatic~~CallsGraph Pages: 1 -->
+<svg id="procregister_nonhydrostaticCallsGraph" width="498pt" height="242pt"
+ viewBox="0.00 0.00 498.00 242.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~register_nonhydrostatic~~CallsGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 238)">
+<title>proc~~register_nonhydrostatic~~CallsGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-238 494,-238 494,4 -4,4"/>
+<!-- proc~register_nonhydrostatic -->
+<g id="proc~~register_nonhydrostatic~~CallsGraph_node1" class="node">
+<title>proc~register_nonhydrostatic</title>
+<polygon fill="none" stroke="black" points="137,-129 0,-129 0,-105 137,-105 137,-129"/>
+<text text-anchor="middle" x="68.5" y="-114.6" font-family="Helvetica,sans-Serif" font-size="10.50">register_nonhydrostatic</text>
+</g>
+<!-- proc~group_add -->
+<g id="proc~~register_nonhydrostatic~~CallsGraph_node2" class="node">
+<title>proc~group_add</title>
+<g id="a_proc~~register_nonhydrostatic~~CallsGraph_node2"><a xlink:href="../proc/group_add.html" xlink:title="nml_group_t%group_add">
+<polygon fill="#d9534f" stroke="#d9534f" points="346,-234 202,-234 202,-210 346,-210 346,-234"/>
+<text text-anchor="middle" x="274" y="-219.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nml_group_t%group_add</text>
+</a>
+</g>
+</g>
+<!-- proc~register_nonhydrostatic&#45;&gt;proc~group_add -->
+<g id="proc~~register_nonhydrostatic~~CallsGraph_edge1" class="edge">
+<title>proc~register_nonhydrostatic&#45;&gt;proc~group_add</title>
+<path fill="none" stroke="#ff0000" d="M80.62,-129.15C98.3,-147.69 134.76,-182.79 173,-201 179.08,-203.9 185.56,-206.39 192.18,-208.55"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="191.37,-211.96 201.95,-211.47 193.37,-205.25 191.37,-211.96"/>
+</g>
+<!-- proc~nml_enum -->
+<g id="proc~~register_nonhydrostatic~~CallsGraph_node3" class="node">
+<title>proc~nml_enum</title>
+<g id="a_proc~~register_nonhydrostatic~~CallsGraph_node3"><a xlink:href="../proc/nml_enum.html" xlink:title="nml_enum">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="308.5,-150 239.5,-150 239.5,-126 308.5,-126 308.5,-150"/>
+<text text-anchor="middle" x="274" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nml_enum</text>
+</a>
+</g>
+</g>
+<!-- proc~register_nonhydrostatic&#45;&gt;proc~nml_enum -->
+<g id="proc~~register_nonhydrostatic~~CallsGraph_edge2" class="edge">
+<title>proc~register_nonhydrostatic&#45;&gt;proc~nml_enum</title>
+<path fill="none" stroke="#ff0000" d="M137.26,-123.99C167.58,-127.12 202.44,-130.72 229.24,-133.48"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="229.16,-136.99 239.46,-134.54 229.87,-130.03 229.16,-136.99"/>
+</g>
+<!-- proc~nml_int -->
+<g id="proc~~register_nonhydrostatic~~CallsGraph_node4" class="node">
+<title>proc~nml_int</title>
+<g id="a_proc~~register_nonhydrostatic~~CallsGraph_node4"><a xlink:href="../proc/nml_int.html" xlink:title="nml_int">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="301,-108 247,-108 247,-84 301,-84 301,-108"/>
+<text text-anchor="middle" x="274" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nml_int</text>
+</a>
+</g>
+</g>
+<!-- proc~register_nonhydrostatic&#45;&gt;proc~nml_int -->
+<g id="proc~~register_nonhydrostatic~~CallsGraph_edge3" class="edge">
+<title>proc~register_nonhydrostatic&#45;&gt;proc~nml_int</title>
+<path fill="none" stroke="#ff0000" d="M137.26,-110.01C170.58,-106.57 209.4,-102.56 236.96,-99.72"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="237.36,-103.2 246.94,-98.69 236.64,-96.23 237.36,-103.2"/>
+</g>
+<!-- proc~nml_logical -->
+<g id="proc~~register_nonhydrostatic~~CallsGraph_node5" class="node">
+<title>proc~nml_logical</title>
+<g id="a_proc~~register_nonhydrostatic~~CallsGraph_node5"><a xlink:href="../proc/nml_logical.html" xlink:title="nml_logical">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="310.5,-66 237.5,-66 237.5,-42 310.5,-42 310.5,-66"/>
+<text text-anchor="middle" x="274" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nml_logical</text>
+</a>
+</g>
+</g>
+<!-- proc~register_nonhydrostatic&#45;&gt;proc~nml_logical -->
+<g id="proc~~register_nonhydrostatic~~CallsGraph_edge4" class="edge">
+<title>proc~register_nonhydrostatic&#45;&gt;proc~nml_logical</title>
+<path fill="none" stroke="#ff0000" d="M95.41,-104.98C116.07,-95.76 145.92,-83.27 173,-75 190.59,-69.63 210.33,-65.17 227.59,-61.76"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="228.28,-65.19 237.44,-59.87 226.96,-58.31 228.28,-65.19"/>
+</g>
+<!-- proc~nml_real -->
+<g id="proc~~register_nonhydrostatic~~CallsGraph_node6" class="node">
+<title>proc~nml_real</title>
+<g id="a_proc~~register_nonhydrostatic~~CallsGraph_node6"><a xlink:href="../proc/nml_real.html" xlink:title="nml_real">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="303,-24 245,-24 245,0 303,0 303,-24"/>
+<text text-anchor="middle" x="274" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nml_real</text>
+</a>
+</g>
+</g>
+<!-- proc~register_nonhydrostatic&#45;&gt;proc~nml_real -->
+<g id="proc~~register_nonhydrostatic~~CallsGraph_edge5" class="edge">
+<title>proc~register_nonhydrostatic&#45;&gt;proc~nml_real</title>
+<path fill="none" stroke="#ff0000" d="M80.62,-104.85C98.3,-86.31 134.76,-51.21 173,-33 192.28,-23.82 215.54,-18.63 234.77,-15.71"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="235.27,-19.17 244.7,-14.34 234.32,-12.24 235.27,-19.17"/>
+</g>
+<!-- proc~schema_add_group -->
+<g id="proc~~register_nonhydrostatic~~CallsGraph_node7" class="node">
+<title>proc~schema_add_group</title>
+<g id="a_proc~~register_nonhydrostatic~~CallsGraph_node7"><a xlink:href="../proc/schema_add_group.html" xlink:title="nml_schema_t%schema_add_group">
+<polygon fill="#d9534f" stroke="#d9534f" points="375,-192 173,-192 173,-168 375,-168 375,-192"/>
+<text text-anchor="middle" x="274" y="-177.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nml_schema_t%schema_add_group</text>
+</a>
+</g>
+</g>
+<!-- proc~register_nonhydrostatic&#45;&gt;proc~schema_add_group -->
+<g id="proc~~register_nonhydrostatic~~CallsGraph_edge6" class="edge">
+<title>proc~register_nonhydrostatic&#45;&gt;proc~schema_add_group</title>
+<path fill="none" stroke="#ff0000" d="M95.41,-129.02C116.07,-138.24 145.92,-150.73 173,-159 180.93,-161.42 189.29,-163.66 197.67,-165.69"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="196.95,-169.12 207.48,-168 198.55,-162.3 196.95,-169.12"/>
+</g>
+<!-- error -->
+<g id="proc~~register_nonhydrostatic~~CallsGraph_node8" class="node">
+<title>error</title>
+<polygon fill="#777777" stroke="#777777" points="477.5,-192 423.5,-192 423.5,-168 477.5,-168 477.5,-192"/>
+<text text-anchor="middle" x="450.5" y="-177.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">error</text>
+</g>
+<!-- proc~group_add&#45;&gt;error -->
+<g id="proc~~register_nonhydrostatic~~CallsGraph_edge7" class="edge">
+<title>proc~group_add&#45;&gt;error</title>
+<path fill="none" stroke="#ff0000" d="M335.43,-210C348.52,-207.21 362.25,-204.13 375,-201 387.64,-197.89 401.38,-194.13 413.58,-190.65"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="414.77,-193.95 423.41,-187.82 412.83,-187.23 414.77,-193.95"/>
+</g>
+<!-- proc~lower -->
+<g id="proc~~register_nonhydrostatic~~CallsGraph_node9" class="node">
+<title>proc~lower</title>
+<g id="a_proc~~register_nonhydrostatic~~CallsGraph_node9"><a xlink:href="../proc/lower.html" xlink:title="lower">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="477.5,-234 423.5,-234 423.5,-210 477.5,-210 477.5,-234"/>
+<text text-anchor="middle" x="450.5" y="-219.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">lower</text>
+</a>
+</g>
+</g>
+<!-- proc~group_add&#45;&gt;proc~lower -->
+<g id="proc~~register_nonhydrostatic~~CallsGraph_edge8" class="edge">
+<title>proc~group_add&#45;&gt;proc~lower</title>
+<path fill="none" stroke="#ff0000" d="M346.23,-222C369.13,-222 393.55,-222 412.9,-222"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="413.08,-225.5 423.08,-222 413.08,-218.5 413.08,-225.5"/>
+</g>
+<!-- proc~schema_add_group&#45;&gt;error -->
+<g id="proc~~register_nonhydrostatic~~CallsGraph_edge9" class="edge">
+<title>proc~schema_add_group&#45;&gt;error</title>
+<path fill="none" stroke="#ff00ff" d="M375.24,-180C388.71,-180 401.76,-180 413.06,-180"/>
+<polygon fill="#ff00ff" stroke="#ff00ff" points="413.32,-183.5 423.32,-180 413.32,-176.5 413.32,-183.5"/>
+</g>
+<!-- proc~schema_add_group&#45;&gt;proc~lower -->
+<g id="proc~~register_nonhydrostatic~~CallsGraph_edge10" class="edge">
+<title>proc~schema_add_group&#45;&gt;proc~lower</title>
+<path fill="none" stroke="#ff00ff" d="M335.43,-192C348.52,-194.79 362.25,-197.87 375,-201 387.64,-204.11 401.38,-207.87 413.58,-211.35"/>
+<polygon fill="#ff00ff" stroke="#ff00ff" points="412.83,-214.77 423.41,-214.18 414.77,-208.05 412.83,-214.77"/>
+</g>
+<!-- proc~move_group -->
+<g id="proc~~register_nonhydrostatic~~CallsGraph_node10" class="node">
+<title>proc~move_group</title>
+<g id="a_proc~~register_nonhydrostatic~~CallsGraph_node10"><a xlink:href="../proc/move_group.html" xlink:title="move_group">
+<polygon fill="#d9534f" stroke="#d9534f" points="490,-150 411,-150 411,-126 490,-126 490,-150"/>
+<text text-anchor="middle" x="450.5" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">move_group</text>
+</a>
+</g>
+</g>
+<!-- proc~schema_add_group&#45;&gt;proc~move_group -->
+<g id="proc~~register_nonhydrostatic~~CallsGraph_edge11" class="edge">
+<title>proc~schema_add_group&#45;&gt;proc~move_group</title>
+<path fill="none" stroke="#ff00ff" d="M335.43,-168C348.52,-165.21 362.25,-162.13 375,-159 383.53,-156.9 392.57,-154.51 401.29,-152.1"/>
+<polygon fill="#ff00ff" stroke="#ff00ff" points="402.28,-155.46 410.96,-149.4 400.39,-148.72 402.28,-155.46"/>
+</g>
+</g>
+</svg>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CallsGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CallsGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Called by</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~register_nonhydrostatic~~CalledByGraph Pages: 1 -->
+<svg id="procregister_nonhydrostaticCalledByGraph" width="641pt" height="44pt"
+ viewBox="0.00 0.00 641.00 44.50" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~register_nonhydrostatic~~CalledByGraph" class="graph" transform="scale(0.6 0.6) rotate(0) translate(4 70)">
+<title>proc~~register_nonhydrostatic~~CalledByGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-70 1062,-70 1062,4 -4,4"/>
+<!-- proc~register_nonhydrostatic -->
+<g id="proc~~register_nonhydrostatic~~CalledByGraph_node1" class="node">
+<title>proc~register_nonhydrostatic</title>
+<polygon fill="none" stroke="black" points="1058,-45 921,-45 921,-21 1058,-21 1058,-45"/>
+<text text-anchor="middle" x="989.5" y="-30.6" font-family="Helvetica,sans-Serif" font-size="10.50">register_nonhydrostatic</text>
+</g>
+<!-- proc~build_rakali_schema -->
+<g id="proc~~register_nonhydrostatic~~CalledByGraph_node2" class="node">
+<title>proc~build_rakali_schema</title>
+<g id="a_proc~~register_nonhydrostatic~~CalledByGraph_node2"><a xlink:href="../proc/build_rakali_schema.html" xlink:title="build_rakali_schema">
+<polygon fill="#d9534f" stroke="#d9534f" points="885,-45 764,-45 764,-21 885,-21 885,-45"/>
+<text text-anchor="middle" x="824.5" y="-30.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">build_rakali_schema</text>
+</a>
+</g>
+</g>
+<!-- proc~build_rakali_schema&#45;&gt;proc~register_nonhydrostatic -->
+<g id="proc~~register_nonhydrostatic~~CalledByGraph_edge1" class="edge">
+<title>proc~build_rakali_schema&#45;&gt;proc~register_nonhydrostatic</title>
+<path fill="none" stroke="#ff0000" d="M885.27,-33C893.56,-33 902.18,-33 910.74,-33"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="910.75,-36.5 920.75,-33 910.75,-29.5 910.75,-36.5"/>
+</g>
+<!-- proc~read_config_from_string_impl -->
+<g id="proc~~register_nonhydrostatic~~CalledByGraph_node3" class="node">
+<title>proc~read_config_from_string_impl</title>
+<g id="a_proc~~register_nonhydrostatic~~CalledByGraph_node3"><a xlink:href="../proc/read_config_from_string_impl.html" xlink:title="read_config_from_string_impl">
+<polygon fill="#d9534f" stroke="#d9534f" points="728,-66 559,-66 559,-42 728,-42 728,-66"/>
+<text text-anchor="middle" x="643.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">read_config_from_string_impl</text>
+</a>
+</g>
+</g>
+<!-- proc~read_config_from_string_impl&#45;&gt;proc~build_rakali_schema -->
+<g id="proc~~register_nonhydrostatic~~CalledByGraph_edge2" class="edge">
+<title>proc~read_config_from_string_impl&#45;&gt;proc~build_rakali_schema</title>
+<path fill="none" stroke="#ff0000" d="M728.23,-44.18C736.77,-43.17 745.38,-42.16 753.75,-41.18"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="754.29,-44.64 763.81,-40 753.47,-37.69 754.29,-44.64"/>
+</g>
+<!-- proc~read_config_impl -->
+<g id="proc~~register_nonhydrostatic~~CalledByGraph_node4" class="node">
+<title>proc~read_config_impl</title>
+<g id="a_proc~~register_nonhydrostatic~~CalledByGraph_node4"><a xlink:href="../proc/read_config_impl.html" xlink:title="read_config_impl">
+<polygon fill="#d9534f" stroke="#d9534f" points="695,-24 592,-24 592,0 695,0 695,-24"/>
+<text text-anchor="middle" x="643.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">read_config_impl</text>
+</a>
+</g>
+</g>
+<!-- proc~read_config_impl&#45;&gt;proc~build_rakali_schema -->
+<g id="proc~~register_nonhydrostatic~~CalledByGraph_edge3" class="edge">
+<title>proc~read_config_impl&#45;&gt;proc~build_rakali_schema</title>
+<path fill="none" stroke="#ff0000" d="M695.32,-17.96C713.45,-20.09 734.2,-22.52 753.65,-24.81"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="753.35,-28.29 763.69,-25.98 754.16,-21.34 753.35,-28.29"/>
+</g>
+<!-- proc~read_config -->
+<g id="proc~~register_nonhydrostatic~~CalledByGraph_node5" class="node">
+<title>proc~read_config</title>
+<g id="a_proc~~register_nonhydrostatic~~CalledByGraph_node5"><a xlink:href="../proc/read_config.html" xlink:title="read_config">
+<polygon fill="#d9534f" stroke="#d9534f" points="490.5,-24 415.5,-24 415.5,0 490.5,0 490.5,-24"/>
+<text text-anchor="middle" x="453" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">read_config</text>
+</a>
+</g>
+</g>
+<!-- proc~read_config&#45;&gt;proc~read_config_impl -->
+<g id="proc~~register_nonhydrostatic~~CalledByGraph_edge5" class="edge">
+<title>proc~read_config&#45;&gt;proc~read_config_impl</title>
+<path fill="none" stroke="#00ffff" d="M490.79,-12C516.57,-12 551.63,-12 581.55,-12"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="581.9,-15.5 591.9,-12 581.9,-8.5 581.9,-15.5"/>
+</g>
+<!-- proc~read_config_from_string -->
+<g id="proc~~register_nonhydrostatic~~CalledByGraph_node6" class="node">
+<title>proc~read_config_from_string</title>
+<g id="a_proc~~register_nonhydrostatic~~CalledByGraph_node6"><a xlink:href="../proc/read_config_from_string.html" xlink:title="read_config_from_string">
+<polygon fill="#d9534f" stroke="#d9534f" points="523,-66 383,-66 383,-42 523,-42 523,-66"/>
+<text text-anchor="middle" x="453" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">read_config_from_string</text>
+</a>
+</g>
+</g>
+<!-- proc~read_config_from_string&#45;&gt;proc~read_config_from_string_impl -->
+<g id="proc~~register_nonhydrostatic~~CalledByGraph_edge4" class="edge">
+<title>proc~read_config_from_string&#45;&gt;proc~read_config_from_string_impl</title>
+<path fill="none" stroke="#ff0000" d="M523.12,-54C531.5,-54 540.17,-54 548.83,-54"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="548.98,-57.5 558.98,-54 548.98,-50.5 548.98,-57.5"/>
+</g>
+<!-- proc~rki_create -->
+<g id="proc~~register_nonhydrostatic~~CalledByGraph_node7" class="node">
+<title>proc~rki_create</title>
+<g id="a_proc~~register_nonhydrostatic~~CalledByGraph_node7"><a xlink:href="../proc/rki_create.html" xlink:title="rki_create">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="314.5,-24 249.5,-24 249.5,0 314.5,0 314.5,-24"/>
+<text text-anchor="middle" x="282" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_create</text>
+</a>
+</g>
+</g>
+<!-- proc~rki_create&#45;&gt;proc~read_config -->
+<g id="proc~~register_nonhydrostatic~~CalledByGraph_edge6" class="edge">
+<title>proc~rki_create&#45;&gt;proc~read_config</title>
+<path fill="none" stroke="#ff0000" d="M314.79,-12C340.25,-12 376.34,-12 405.12,-12"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="405.36,-15.5 415.36,-12 405.36,-8.5 405.36,-15.5"/>
+</g>
+<!-- proc~rki_create_from_string -->
+<g id="proc~~register_nonhydrostatic~~CalledByGraph_node8" class="node">
+<title>proc~rki_create_from_string</title>
+<g id="a_proc~~register_nonhydrostatic~~CalledByGraph_node8"><a xlink:href="../proc/rki_create_from_string.html" xlink:title="rki_create_from_string">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="347,-66 217,-66 217,-42 347,-42 347,-66"/>
+<text text-anchor="middle" x="282" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_create_from_string</text>
+</a>
+</g>
+</g>
+<!-- proc~rki_create_from_string&#45;&gt;proc~read_config_from_string -->
+<g id="proc~~register_nonhydrostatic~~CalledByGraph_edge7" class="edge">
+<title>proc~rki_create_from_string&#45;&gt;proc~read_config_from_string</title>
+<path fill="none" stroke="#00ffff" d="M347.37,-54C355.6,-54 364.09,-54 372.52,-54"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="372.74,-57.5 382.74,-54 372.74,-50.5 372.74,-57.5"/>
+</g>
+<!-- proc~rki_create_from_namelist -->
+<g id="proc~~register_nonhydrostatic~~CalledByGraph_node9" class="node">
+<title>proc~rki_create_from_namelist</title>
+<g id="a_proc~~register_nonhydrostatic~~CalledByGraph_node9"><a xlink:href="../proc/rki_create_from_namelist.html" xlink:title="rki_create_from_namelist">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="163.5,-24 17.5,-24 17.5,0 163.5,0 163.5,-24"/>
+<text text-anchor="middle" x="90.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_create_from_namelist</text>
+</a>
+</g>
+</g>
+<!-- proc~rki_create_from_namelist&#45;&gt;proc~rki_create -->
+<g id="proc~~register_nonhydrostatic~~CalledByGraph_edge8" class="edge">
+<title>proc~rki_create_from_namelist&#45;&gt;proc~rki_create</title>
+<path fill="none" stroke="#ff0000" d="M163.68,-12C189.15,-12 216.92,-12 239.05,-12"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="239.1,-15.5 249.1,-12 239.1,-8.5 239.1,-15.5"/>
+</g>
+<!-- proc~rki_create_from_namelist_string -->
+<g id="proc~~register_nonhydrostatic~~CalledByGraph_node10" class="node">
+<title>proc~rki_create_from_namelist_string</title>
+<g id="a_proc~~register_nonhydrostatic~~CalledByGraph_node10"><a xlink:href="../proc/rki_create_from_namelist_string.html" xlink:title="rki_create_from_namelist_string">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="181,-66 0,-66 0,-42 181,-42 181,-66"/>
+<text text-anchor="middle" x="90.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_create_from_namelist_string</text>
+</a>
+</g>
+</g>
+<!-- proc~rki_create_from_namelist_string&#45;&gt;proc~rki_create_from_string -->
+<g id="proc~~register_nonhydrostatic~~CalledByGraph_edge9" class="edge">
+<title>proc~rki_create_from_namelist_string&#45;&gt;proc~rki_create_from_string</title>
+<path fill="none" stroke="#00ffff" d="M181.26,-54C189.82,-54 198.45,-54 206.85,-54"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="206.96,-57.5 216.96,-54 206.96,-50.5 206.96,-57.5"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var panprocregister_nonhydrostaticCalledByGraph = svgPanZoom('#procregister_nonhydrostaticCalledByGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CalledByGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CalledByGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+
+
+    <section>    
+      <h2>Variables</h2>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Visibility</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+<th></th><th scope="col">Initial</th>        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-g~26"></span>
+              type(<a href='../type/nml_group_t.html'>nml_group_t</a>),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>g</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-pi~7"></span>
+              integer,
+            </td>
+              <td>private,</td>
+            <td>
+              pointer
+            </td>
+            <td>::</td>
+            <td><strong>pi</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-pl~6"></span>
+              logical,
+            </td>
+              <td>private,</td>
+            <td>
+              pointer
+            </td>
+            <td>::</td>
+            <td><strong>pl</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-pr~11"></span>
+              real(kind=wp),
+            </td>
+              <td>private,</td>
+            <td>
+              pointer
+            </td>
+            <td>::</td>
+            <td><strong>pr</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ps~12"></span>
+              character(len=:),
+            </td>
+              <td>private,</td>
+            <td>
+              pointer
+            </td>
+            <td>::</td>
+            <td><strong>ps</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    </section>
+    <br>
+    
+    
+
+    
+    
+
+
+
+    
+    <section>
+    <h2><span class="anchor" id="src"></span>Source Code</h2>
+    <div class="hl codehilite"><pre><span></span><span class="w">   </span><span class="k">subroutine </span><span class="n">register_nonhydrostatic</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span><span class="w"> </span><span class="n">schema</span><span class="p">)</span>
+<span class="w">      </span><span class="c">!! `&amp;nonhydrostatic_nml`: NH/multilayer switches, CG-Poisson</span>
+<span class="w">      </span><span class="c">!! controls, PP81 vmix, KPP knobs, k-eps, Smagorinsky, BPG, mode</span>
+<span class="w">      </span><span class="c">!! split.  `keps_stability` and `bpg_method` are enums.</span>
+<span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="n">config_t</span><span class="p">),</span><span class="w"> </span><span class="k">target</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">cfg</span>
+<span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="n">nml_schema_t</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">schema</span>
+<span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="n">nml_group_t</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">g</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">pointer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">pr</span>
+<span class="w">      </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">pointer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">pi</span>
+<span class="w">      </span><span class="kt">logical</span><span class="p">,</span><span class="w"> </span><span class="k">pointer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">pl</span>
+<span class="w">      </span><span class="kt">character</span><span class="p">(</span><span class="nb">len</span><span class="o">=</span><span class="p">:),</span><span class="w"> </span><span class="k">pointer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">ps</span>
+
+<span class="w">      </span><span class="n">g</span><span class="p">%</span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"nonhydrostatic"</span>
+<span class="w">      </span><span class="n">g</span><span class="p">%</span><span class="n">doc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"Non-hydrostatic / multilayer: CG-Poisson, PP81/KPP/k-eps vmix, Smagorinsky, BPG, mode split."</span>
+<span class="w">      </span><span class="n">pl</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">cfg</span><span class="p">%</span><span class="n">use_nonhydrostatic</span>
+<span class="w">      </span><span class="k">call </span><span class="n">g</span><span class="p">%</span><span class="n">add</span><span class="p">(</span><span class="n">nml_logical</span><span class="p">(</span><span class="s2">"use_nonhydrostatic"</span><span class="p">,</span><span class="w"> </span><span class="n">pl</span><span class="p">,</span><span class="w"> </span><span class="s2">"Enable multi-layer NH pressure correction"</span><span class="p">))</span>
+<span class="w">      </span><span class="n">pi</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">cfg</span><span class="p">%</span><span class="n">nz_layers</span>
+<span class="w">      </span><span class="k">call </span><span class="n">g</span><span class="p">%</span><span class="n">add</span><span class="p">(</span><span class="n">nml_int</span><span class="p">(</span><span class="s2">"nz_layers"</span><span class="p">,</span><span class="w"> </span><span class="n">pi</span><span class="p">,</span><span class="w"> </span><span class="s2">"Number of sigma layers"</span><span class="p">,</span><span class="w"> </span><span class="nb">min</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+<span class="w">      </span><span class="n">pr</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">cfg</span><span class="p">%</span><span class="n">nh_tolerance</span>
+<span class="w">      </span><span class="k">call </span><span class="n">g</span><span class="p">%</span><span class="n">add</span><span class="p">(</span><span class="n">nml_real</span><span class="p">(</span><span class="s2">"nh_tolerance"</span><span class="p">,</span><span class="w"> </span><span class="n">pr</span><span class="p">,</span><span class="w"> </span><span class="s2">"CG convergence tolerance for NH pressure"</span><span class="p">))</span>
+<span class="w">      </span><span class="n">pi</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">cfg</span><span class="p">%</span><span class="n">nh_max_iterations</span>
+<span class="w">      </span><span class="k">call </span><span class="n">g</span><span class="p">%</span><span class="n">add</span><span class="p">(</span><span class="n">nml_int</span><span class="p">(</span><span class="s2">"nh_max_iterations"</span><span class="p">,</span><span class="w"> </span><span class="n">pi</span><span class="p">,</span><span class="w"> </span><span class="s2">"Maximum CG iterations for NH pressure"</span><span class="p">,</span><span class="w"> </span><span class="nb">min</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+<span class="w">      </span><span class="n">pl</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">cfg</span><span class="p">%</span><span class="n">nh_preconditioner</span>
+<span class="w">      </span><span class="k">call </span><span class="n">g</span><span class="p">%</span><span class="n">add</span><span class="p">(</span><span class="n">nml_logical</span><span class="p">(</span><span class="s2">"nh_preconditioner"</span><span class="p">,</span><span class="w"> </span><span class="n">pl</span><span class="p">,</span><span class="w"> </span><span class="s2">"Vertical-line preconditioner for CG solver"</span><span class="p">))</span>
+<span class="w">      </span><span class="n">pi</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">cfg</span><span class="p">%</span><span class="n">nh_solve_interval</span>
+<span class="w">      </span><span class="k">call </span><span class="n">g</span><span class="p">%</span><span class="n">add</span><span class="p">(</span><span class="n">nml_int</span><span class="p">(</span><span class="s2">"nh_solve_interval"</span><span class="p">,</span><span class="w"> </span><span class="n">pi</span><span class="p">,</span><span class="w"> </span><span class="s2">"Solve NH pressure every N steps"</span><span class="p">,</span><span class="w"> </span><span class="nb">min</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+<span class="w">      </span><span class="n">pi</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">cfg</span><span class="p">%</span><span class="n">split_ratio</span>
+<span class="w">      </span><span class="k">call </span><span class="n">g</span><span class="p">%</span><span class="n">add</span><span class="p">(</span><span class="n">nml_int</span><span class="p">(</span><span class="s2">"split_ratio"</span><span class="p">,</span><span class="w"> </span><span class="n">pi</span><span class="p">,</span><span class="w"> </span><span class="s2">"Mode-split ratio: 0=auto, 1=unsplit, N&gt;1=fixed"</span><span class="p">,</span><span class="w"> </span><span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+<span class="w">      </span><span class="n">pl</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">cfg</span><span class="p">%</span><span class="n">split_averaging</span>
+<span class="w">      </span><span class="k">call </span><span class="n">g</span><span class="p">%</span><span class="n">add</span><span class="p">(</span><span class="n">nml_logical</span><span class="p">(</span><span class="s2">"split_averaging"</span><span class="p">,</span><span class="w"> </span><span class="n">pl</span><span class="p">,</span><span class="w"> </span><span class="s2">"ROMS-style averaging over barotropic substeps"</span><span class="p">))</span>
+<span class="w">      </span><span class="n">pl</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">cfg</span><span class="p">%</span><span class="n">use_multilayer</span>
+<span class="w">      </span><span class="k">call </span><span class="n">g</span><span class="p">%</span><span class="n">add</span><span class="p">(</span><span class="n">nml_logical</span><span class="p">(</span><span class="s2">"use_multilayer"</span><span class="p">,</span><span class="w"> </span><span class="n">pl</span><span class="p">,</span><span class="w"> </span><span class="s2">"Enable coupled hydrostatic vertical layers"</span><span class="p">))</span>
+<span class="w">      </span><span class="n">pr</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">cfg</span><span class="p">%</span><span class="n">rho_0</span>
+<span class="w">      </span><span class="k">call </span><span class="n">g</span><span class="p">%</span><span class="n">add</span><span class="p">(</span><span class="n">nml_real</span><span class="p">(</span><span class="s2">"rho_0"</span><span class="p">,</span><span class="w"> </span><span class="n">pr</span><span class="p">,</span><span class="w"> </span><span class="s2">"Reference density for EOS"</span><span class="p">,</span><span class="w"> </span><span class="n">units</span><span class="o">=</span><span class="s2">"kg/m^3"</span><span class="p">))</span>
+<span class="w">      </span><span class="n">pr</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">cfg</span><span class="p">%</span><span class="n">vmix_nu_max</span>
+<span class="w">      </span><span class="k">call </span><span class="n">g</span><span class="p">%</span><span class="n">add</span><span class="p">(</span><span class="n">nml_real</span><span class="p">(</span><span class="s2">"vmix_nu_max"</span><span class="p">,</span><span class="w"> </span><span class="n">pr</span><span class="p">,</span><span class="w"> </span><span class="s2">"PP81 max turbulent viscosity"</span><span class="p">,</span><span class="w"> </span><span class="n">units</span><span class="o">=</span><span class="s2">"m^2/s"</span><span class="p">))</span>
+<span class="w">      </span><span class="n">pr</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">cfg</span><span class="p">%</span><span class="n">vmix_nu_bg</span>
+<span class="w">      </span><span class="k">call </span><span class="n">g</span><span class="p">%</span><span class="n">add</span><span class="p">(</span><span class="n">nml_real</span><span class="p">(</span><span class="s2">"vmix_nu_bg"</span><span class="p">,</span><span class="w"> </span><span class="n">pr</span><span class="p">,</span><span class="w"> </span><span class="s2">"Background vertical viscosity"</span><span class="p">,</span><span class="w"> </span><span class="n">units</span><span class="o">=</span><span class="s2">"m^2/s"</span><span class="p">))</span>
+<span class="w">      </span><span class="n">pr</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">cfg</span><span class="p">%</span><span class="n">vmix_ri_alpha</span>
+<span class="w">      </span><span class="k">call </span><span class="n">g</span><span class="p">%</span><span class="n">add</span><span class="p">(</span><span class="n">nml_real</span><span class="p">(</span><span class="s2">"vmix_ri_alpha"</span><span class="p">,</span><span class="w"> </span><span class="n">pr</span><span class="p">,</span><span class="w"> </span><span class="s2">"PP81 Richardson-number scaling coefficient"</span><span class="p">))</span>
+<span class="w">      </span><span class="n">pl</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">cfg</span><span class="p">%</span><span class="n">vmix_use_kpp</span>
+<span class="w">      </span><span class="k">call </span><span class="n">g</span><span class="p">%</span><span class="n">add</span><span class="p">(</span><span class="n">nml_logical</span><span class="p">(</span><span class="s2">"vmix_use_kpp"</span><span class="p">,</span><span class="w"> </span><span class="n">pl</span><span class="p">,</span><span class="w"> </span><span class="s2">"Enable KPP surface-boundary-layer overlay on PP81"</span><span class="p">))</span>
+<span class="w">      </span><span class="n">pl</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">cfg</span><span class="p">%</span><span class="n">vmix_use_keps</span>
+<span class="w">      </span><span class="k">call </span><span class="n">g</span><span class="p">%</span><span class="n">add</span><span class="p">(</span><span class="n">nml_logical</span><span class="p">(</span><span class="s2">"vmix_use_keps"</span><span class="p">,</span><span class="w"> </span><span class="n">pl</span><span class="p">,</span><span class="w"> </span><span class="s2">"Enable two-equation k-epsilon vertical mixing"</span><span class="p">))</span>
+<span class="w">      </span><span class="n">pi</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">cfg</span><span class="p">%</span><span class="n">keps_si_picard</span>
+<span class="w">      </span><span class="k">call </span><span class="n">g</span><span class="p">%</span><span class="n">add</span><span class="p">(</span><span class="n">nml_int</span><span class="p">(</span><span class="s2">"keps_si_picard"</span><span class="p">,</span><span class="w"> </span><span class="n">pi</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                         </span><span class="s2">"Picard passes of the k&lt;-&gt;eps coupling per semi-implicit step (SI+keps only)"</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                         </span><span class="nb">min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="nb">max</span><span class="o">=</span><span class="mi">3</span><span class="p">))</span>
+<span class="w">      </span><span class="n">pr</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">cfg</span><span class="p">%</span><span class="n">kpp_ri_crit</span>
+<span class="w">      </span><span class="k">call </span><span class="n">g</span><span class="p">%</span><span class="n">add</span><span class="p">(</span><span class="n">nml_real</span><span class="p">(</span><span class="s2">"kpp_ri_crit"</span><span class="p">,</span><span class="w"> </span><span class="n">pr</span><span class="p">,</span><span class="w"> </span><span class="s2">"Critical bulk Richardson number for KPP BL-depth"</span><span class="p">))</span>
+<span class="w">      </span><span class="n">pr</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">cfg</span><span class="p">%</span><span class="n">kpp_cs_nonlocal</span>
+<span class="w">      </span><span class="k">call </span><span class="n">g</span><span class="p">%</span><span class="n">add</span><span class="p">(</span><span class="n">nml_real</span><span class="p">(</span><span class="s2">"kpp_cs_nonlocal"</span><span class="p">,</span><span class="w"> </span><span class="n">pr</span><span class="p">,</span><span class="w"> </span><span class="s2">"KPP non-local (counter-gradient) transport coefficient"</span><span class="p">))</span>
+<span class="w">      </span><span class="n">pr</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">cfg</span><span class="p">%</span><span class="n">kpp_c_vt2</span>
+<span class="w">      </span><span class="k">call </span><span class="n">g</span><span class="p">%</span><span class="n">add</span><span class="p">(</span><span class="n">nml_real</span><span class="p">(</span><span class="s2">"kpp_c_vt2"</span><span class="p">,</span><span class="w"> </span><span class="n">pr</span><span class="p">,</span><span class="w"> </span><span class="s2">"KPP V_t^2 unresolved-turbulence coefficient (0 = off)"</span><span class="p">))</span>
+<span class="w">      </span><span class="n">pr</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">cfg</span><span class="p">%</span><span class="n">hdiff_kappa</span>
+<span class="w">      </span><span class="k">call </span><span class="n">g</span><span class="p">%</span><span class="n">add</span><span class="p">(</span><span class="n">nml_real</span><span class="p">(</span><span class="s2">"hdiff_kappa"</span><span class="p">,</span><span class="w"> </span><span class="n">pr</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                          </span><span class="s2">"Horizontal tracer diffusion coefficient"</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                          </span><span class="n">units</span><span class="o">=</span><span class="s2">"m^2/s"</span><span class="p">))</span>
+<span class="w">      </span><span class="n">pr</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">cfg</span><span class="p">%</span><span class="n">smagorinsky_cs</span>
+<span class="w">      </span><span class="k">call </span><span class="n">g</span><span class="p">%</span><span class="n">add</span><span class="p">(</span><span class="n">nml_real</span><span class="p">(</span><span class="s2">"smagorinsky_cs"</span><span class="p">,</span><span class="w"> </span><span class="n">pr</span><span class="p">,</span><span class="w"> </span><span class="s2">"Smagorinsky horizontal-viscosity coefficient"</span><span class="p">))</span>
+<span class="w">      </span><span class="n">pr</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">cfg</span><span class="p">%</span><span class="n">biharmonic_nu4</span>
+<span class="w">      </span><span class="k">call </span><span class="n">g</span><span class="p">%</span><span class="n">add</span><span class="p">(</span><span class="n">nml_real</span><span class="p">(</span><span class="s2">"biharmonic_nu4"</span><span class="p">,</span><span class="w"> </span><span class="n">pr</span><span class="p">,</span><span class="w"> </span><span class="s2">"Biharmonic lateral viscosity (0 = off)"</span><span class="p">,</span><span class="w"> </span><span class="n">units</span><span class="o">=</span><span class="s2">"m^4/s"</span><span class="p">))</span>
+<span class="w">      </span><span class="n">pl</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">cfg</span><span class="p">%</span><span class="n">evap_mass_sink</span>
+<span class="w">      </span><span class="k">call </span><span class="n">g</span><span class="p">%</span><span class="n">add</span><span class="p">(</span><span class="n">nml_logical</span><span class="p">(</span><span class="s2">"evap_mass_sink"</span><span class="p">,</span><span class="w"> </span><span class="n">pl</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                             </span><span class="s2">"Treat net evaporation as a real surface mass sink (default off = virtual salt flux)"</span><span class="p">))</span>
+<span class="w">      </span><span class="n">pl</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">cfg</span><span class="p">%</span><span class="n">evap_latent_cooling</span>
+<span class="w">      </span><span class="k">call </span><span class="n">g</span><span class="p">%</span><span class="n">add</span><span class="p">(</span><span class="n">nml_logical</span><span class="p">(</span><span class="s2">"evap_latent_cooling"</span><span class="p">,</span><span class="w"> </span><span class="n">pl</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                             </span><span class="s2">"Evaporative latent-heat surface cooling (requires evap_mass_sink; default off)"</span><span class="p">))</span>
+<span class="w">      </span><span class="n">pr</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">cfg</span><span class="p">%</span><span class="n">ml_min_depth</span>
+<span class="w">      </span><span class="k">call </span><span class="n">g</span><span class="p">%</span><span class="n">add</span><span class="p">(</span><span class="n">nml_real</span><span class="p">(</span><span class="s2">"ml_min_depth"</span><span class="p">,</span><span class="w"> </span><span class="n">pr</span><span class="p">,</span><span class="w"> </span><span class="s2">"Minimum total depth for vertical-layer operations"</span><span class="p">,</span><span class="w"> </span><span class="n">units</span><span class="o">=</span><span class="s2">"m"</span><span class="p">))</span>
+<span class="w">      </span><span class="n">ps</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">cfg</span><span class="p">%</span><span class="n">bpg_method</span>
+<span class="w">      </span><span class="k">call </span><span class="n">g</span><span class="p">%</span><span class="n">add</span><span class="p">(</span><span class="n">nml_enum</span><span class="p">(</span><span class="s2">"bpg_method"</span><span class="p">,</span><span class="w"> </span><span class="n">ps</span><span class="p">,</span><span class="w"> </span><span class="s2">"BPG computation method"</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                          </span><span class="n">allowed</span><span class="o">=</span><span class="p">[</span><span class="kt">character</span><span class="p">(</span><span class="nb">len</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="s2">"sigma"</span><span class="p">,</span><span class="w"> </span><span class="s2">"jacobian"</span><span class="p">]))</span>
+<span class="w">      </span><span class="n">ps</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">cfg</span><span class="p">%</span><span class="n">keps_stability</span>
+<span class="w">      </span><span class="k">call </span><span class="n">g</span><span class="p">%</span><span class="n">add</span><span class="p">(</span><span class="n">nml_enum</span><span class="p">(</span><span class="s2">"keps_stability"</span><span class="p">,</span><span class="w"> </span><span class="n">ps</span><span class="p">,</span><span class="w"> </span><span class="s2">"k-epsilon stability functions"</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                          </span><span class="n">allowed</span><span class="o">=</span><span class="p">[</span><span class="kt">character</span><span class="p">(</span><span class="nb">len</span><span class="o">=</span><span class="mi">9</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="s2">"constant"</span><span class="p">,</span><span class="w"> </span><span class="s2">"galperin"</span><span class="p">,</span><span class="w"> </span><span class="s2">"canuto"</span><span class="p">]))</span>
+<span class="w">      </span><span class="k">call </span><span class="n">schema</span><span class="p">%</span><span class="n">add_group</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+<span class="w">   </span><span class="k">end subroutine </span><span class="n">register_nonhydrostatic</span>
+</pre></div>
+
+    </section>
+    <br>
+    
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Rakali
+ was developed by Jorge Luis Galvez Vallejo<br>              &copy; 2026 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+ on 2026-10-08 12:55 +0000             </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>

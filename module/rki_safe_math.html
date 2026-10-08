@@ -1,0 +1,1998 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="GPU-native coastal solver — structured Cartesian and unstructured triangular grids, hydrostatic multilayer + non-hydrostatic, portable across NVHPC/gfortran/ifx.">
+    <meta name="author" content="Jorge Luis Galvez Vallejo" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>rki_safe_math &ndash; Rakali</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">Rakali </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/absint.html">Abstract Interfaces</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>rki_safe_math
+      <small>Module</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.9% of total for modules and submodules.">246 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/rki_safe_math.F90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/rki_safe_math.f90.html'>rki_safe_math.F90</a></li>
+            <li class="breadcrumb-item active" aria-current="page">rki_safe_math</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+
+  <div class="row">
+    <div class="col-md-3">
+        <div id="sidebar">
+      <h3>Contents</h3>
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#vars-0"
+         aria-expanded="false" aria-controls="vars-0">
+         <h4 class="card-header bg-primary text-white">Variables</h4>
+      </a>
+      <div id="vars-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../module/rki_safe_math.html#variable-cos_c0">COS_C0</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#variable-cos_c1">COS_C1</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#variable-cos_c2">COS_C2</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#variable-cos_c3">COS_C3</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#variable-cos_c4">COS_C4</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#variable-cos_c5">COS_C5</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#variable-cos_c6">COS_C6</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#variable-cos_c7">COS_C7</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#variable-cos_c8">COS_C8</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#variable-exp_c0">EXP_C0</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#variable-exp_c1">EXP_C1</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#variable-exp_c10">EXP_C10</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#variable-exp_c11">EXP_C11</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#variable-exp_c12">EXP_C12</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#variable-exp_c13">EXP_C13</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#variable-exp_c2">EXP_C2</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#variable-exp_c3">EXP_C3</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#variable-exp_c4">EXP_C4</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#variable-exp_c5">EXP_C5</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#variable-exp_c6">EXP_C6</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#variable-exp_c7">EXP_C7</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#variable-exp_c8">EXP_C8</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#variable-exp_c9">EXP_C9</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#variable-exp_overflow">EXP_OVERFLOW</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#variable-exp_underflow">EXP_UNDERFLOW</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#variable-inv_ln2">INV_LN2</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#variable-inv_pi_over_2">INV_PI_OVER_2</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#variable-ln2_hi">LN2_HI</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#variable-ln2_lo">LN2_LO</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#variable-log_c0">LOG_C0</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#variable-log_c1">LOG_C1</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#variable-log_c2">LOG_C2</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#variable-log_c3">LOG_C3</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#variable-log_c4">LOG_C4</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#variable-log_c5">LOG_C5</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#variable-log_c6">LOG_C6</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#variable-log_c7">LOG_C7</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#variable-log_c8">LOG_C8</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#variable-log_c9">LOG_C9</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#variable-pi_over_2_hi">PI_OVER_2_HI</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#variable-pi_over_2_lo">PI_OVER_2_LO</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#variable-sin_c0">SIN_C0</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#variable-sin_c1">SIN_C1</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#variable-sin_c2">SIN_C2</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#variable-sin_c3">SIN_C3</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#variable-sin_c4">SIN_C4</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#variable-sin_c5">SIN_C5</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#variable-sin_c6">SIN_C6</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#variable-sin_c7">SIN_C7</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#variable-sin_c8">SIN_C8</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#variable-sqrt_half">SQRT_HALF</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#funcs-0"
+         aria-expanded="false" aria-controls="funcs-0">
+         <h4 class="card-header bg-primary text-white">Functions</h4>
+      </a>
+      <div id="funcs-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../module/rki_safe_math.html#proc-safe_cos">safe_cos</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#proc-safe_cos_polynomial">safe_cos_polynomial</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#proc-safe_exp">safe_exp</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#proc-safe_exp_polynomial">safe_exp_polynomial</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#proc-safe_log">safe_log</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#proc-safe_log_polynomial">safe_log_polynomial</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#proc-safe_pow">safe_pow</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#proc-safe_pow_polynomial">safe_pow_polynomial</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#proc-safe_sin">safe_sin</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#proc-safe_sin_polynomial">safe_sin_polynomial</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#proc-safe_sqrt">safe_sqrt</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#proc-cos_reduced">cos_reduced</a>
+            <a class="list-group-item" href="../module/rki_safe_math.html#proc-sin_reduced">sin_reduced</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+
+
+  </div>
+
+    </div>
+
+    <div class="col-md-9" id='text'>
+      <p>Single point of control the math functions that break bitwise
+reproducibility across compilers, GPU vendors, and optimization
+levels would route through IF adopted: <code>exp</code>, <code>log</code>, <code>sin</code>,
+<code>cos</code>, <code>sqrt</code>, <code>pow</code>.</p>
+<p><strong>Status (PR-8):</strong> the <code>safe_*</code> wrappers (<code>safe_exp</code>, <code>safe_log</code>,
+<code>safe_sin</code>, <code>safe_cos</code>, <code>safe_sqrt</code>, <code>safe_pow</code>) are plain
+elemental inlines around the bare intrinsic — zero overhead,
+codegen identical to writing <code>exp(x)</code> directly.  This module
+used to carry a second &ldquo;safe&rdquo; mode, selected by the
+<code>RAKALI_BITWISE_REPRO</code> build option, that dispatched the
+wrappers to the <code>*_polynomial</code> implementations below instead.
+That option was <strong>removed in PR-8</strong>: grep across <code>src/</code>/<code>app/</code>
+found zero call sites of any <code>safe_*</code> wrapper from a production
+kernel (one stale comment, no calls) — the option changed
+nothing at all, so it was a lie about a capability nothing used.</p>
+<p>What SURVIVES this PR: every <code>*_polynomial</code> function and its
+coefficients are correct, unit-tested (<code>tests/test_safe_math.F90</code>,
+unconditionally compiled — no <code>#ifdef</code>), and are the raw material
+for a future bitwise-reproducibility PR.  This module is a
+<strong>library with no production consumer today</strong> — adopting <code>safe_*</code>
+in kernels (which would first require re-adding a build-time or
+run-time dispatch) is future work, not a promise this module
+currently keeps.</p>
+<p>Would-be convention (not currently enforced by any build path):
+a kernel wanting repro-safety would call the <code>safe_*</code> wrapper
+instead of the bare intrinsic.  For integer exponents, <code>a**2</code> /
+<code>a**3</code> etc. compile to multiplications and are already
+deterministic — don&rsquo;t wrap those.</p>
+<p>Coverage: <code>safe_exp</code>, <code>safe_log</code>, <code>safe_sin</code>, <code>safe_cos</code> each
+have real polynomial paths (Cody-Waite reduction + Horner
+Taylor).  <code>safe_sqrt</code> is IEEE-correctly-rounded by mandate so
+the intrinsic path is already deterministic.  <code>safe_pow</code>&rsquo;s
+polynomial path is unused by <code>safe_pow</code> itself (which is the
+bare intrinsic <code>**</code>) — it exists for a future
+<code>safe_exp(b * safe_log(a))</code> decomposition.</p>
+<br>          <div class="card mb-4">
+      <h3 class="card-header card-title bg-light">Uses</h3>
+      <div class="card-body">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <ul class="list-inline">
+                  <li class="list-inline-item"><a href='rki_constants.html'>rki_constants</a></li>
+                  <li class="list-inline-item"><a href='http://fortranwiki.org/fortran/show/iso_fortran_env'>iso_fortran_env</a></li>
+              </ul>
+            </li>
+            <li class="list-group-item">
+              <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: module~~rki_safe_math~~UsesGraph Pages: 1 -->
+<svg id="modulerki_safe_mathUsesGraph" width="323pt" height="74pt"
+ viewBox="0.00 0.00 323.00 74.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="module~~rki_safe_math~~UsesGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 70)">
+<title>module~~rki_safe_math~~UsesGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-70 319,-70 319,4 -4,4"/>
+<!-- module~rki_safe_math -->
+<g id="module~~rki_safe_math~~UsesGraph_node1" class="node">
+<title>module~rki_safe_math</title>
+<polygon fill="none" stroke="black" points="315,-45 228,-45 228,-21 315,-21 315,-45"/>
+<text text-anchor="middle" x="271.5" y="-30.6" font-family="Helvetica,sans-Serif" font-size="10.50">rki_safe_math</text>
+</g>
+<!-- iso_fortran_env -->
+<g id="module~~rki_safe_math~~UsesGraph_node2" class="node">
+<title>iso_fortran_env</title>
+<g id="a_module~~rki_safe_math~~UsesGraph_node2"><a xlink:href="http://fortranwiki.org/fortran/show/iso_fortran_env" xlink:title="iso_fortran_env">
+<polygon fill="#337ab7" stroke="#337ab7" points="192,-66 98,-66 98,-42 192,-42 192,-66"/>
+<text text-anchor="middle" x="145" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">iso_fortran_env</text>
+</a>
+</g>
+</g>
+<!-- module~rki_safe_math&#45;&gt;iso_fortran_env -->
+<g id="module~~rki_safe_math~~UsesGraph_edge1" class="edge">
+<title>module~rki_safe_math&#45;&gt;iso_fortran_env</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M227.65,-40.23C219.46,-41.61 210.78,-43.07 202.24,-44.51"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="201.61,-41.07 192.33,-46.19 202.77,-47.97 201.61,-41.07"/>
+</g>
+<!-- module~rki_constants -->
+<g id="module~~rki_safe_math~~UsesGraph_node3" class="node">
+<title>module~rki_constants</title>
+<g id="a_module~~rki_safe_math~~UsesGraph_node3"><a xlink:href="../module/rki_constants.html" xlink:title="rki_constants">
+<polygon fill="#337ab7" stroke="#337ab7" points="186,-24 104,-24 104,0 186,0 186,-24"/>
+<text text-anchor="middle" x="145" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_constants</text>
+</a>
+</g>
+</g>
+<!-- module~rki_safe_math&#45;&gt;module~rki_constants -->
+<g id="module~~rki_safe_math~~UsesGraph_edge2" class="edge">
+<title>module~rki_safe_math&#45;&gt;module~rki_constants</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M227.65,-25.77C217.63,-24.08 206.86,-22.27 196.54,-20.52"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="196.85,-17.03 186.41,-18.82 195.69,-23.93 196.85,-17.03"/>
+</g>
+<!-- pic_types -->
+<g id="module~~rki_safe_math~~UsesGraph_node4" class="node">
+<title>pic_types</title>
+<polygon fill="#337ab7" stroke="#337ab7" points="62,-24 0,-24 0,0 62,0 62,-24"/>
+<text text-anchor="middle" x="31" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">pic_types</text>
+</g>
+<!-- module~rki_constants&#45;&gt;pic_types -->
+<g id="module~~rki_safe_math~~UsesGraph_edge3" class="edge">
+<title>module~rki_constants&#45;&gt;pic_types</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M103.88,-12C93.73,-12 82.81,-12 72.63,-12"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="72.35,-8.5 62.35,-12 72.35,-15.5 72.35,-8.5"/>
+</g>
+</g>
+</svg>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#UsesGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="UsesGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="518pt" height="32pt"
+ viewBox="0.00 0.00 517.50 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 513.5,-28 513.5,4 -4,4"/>
+<!-- Module -->
+<g id="node1" class="node">
+<title>Module</title>
+<polygon fill="#337ab7" stroke="#337ab7" points="54,-24 0,-24 0,0 54,0 54,-24"/>
+<text text-anchor="middle" x="27" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Module</text>
+</g>
+<!-- Submodule -->
+<g id="node2" class="node">
+<title>Submodule</title>
+<polygon fill="#5bc0de" stroke="#5bc0de" points="145.5,-24 72.5,-24 72.5,0 145.5,0 145.5,-24"/>
+<text text-anchor="middle" x="109" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Submodule</text>
+</g>
+<!-- Subroutine -->
+<g id="node3" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="234,-24 164,-24 164,0 234,0 234,-24"/>
+<text text-anchor="middle" x="199" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node4" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="310,-24 252,-24 252,0 310,0 310,-24"/>
+<text text-anchor="middle" x="281" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Program -->
+<g id="node5" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="386,-24 328,-24 328,0 386,0 386,-24"/>
+<text text-anchor="middle" x="357" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node6" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="509.5,-24 404.5,-24 404.5,0 509.5,0 509.5,-24"/>
+<text text-anchor="middle" x="457" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a submodule to the (sub)module which it is
+descended from. Dashed arrows point from a module or program unit to 
+modules which it uses.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+            </li>
+        </ul>
+      </div>
+    </div>
+
+      
+      <br>
+
+
+        <section>
+          <h2>Variables</h2>
+            <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Visibility</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+<th></th><th scope="col">Initial</th>        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-cos_c0"></span>
+              real(kind=wp),
+            </td>
+              <td>private,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>COS_C0</strong></td>
+<td> =</td>
+                <td>1.0_wp</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-cos_c1"></span>
+              real(kind=wp),
+            </td>
+              <td>private,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>COS_C1</strong></td>
+<td> =</td>
+                <td>-1.0_wp/2.0_wp</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-cos_c2"></span>
+              real(kind=wp),
+            </td>
+              <td>private,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>COS_C2</strong></td>
+<td> =</td>
+                <td>1.0_wp/24.0_wp</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-cos_c3"></span>
+              real(kind=wp),
+            </td>
+              <td>private,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>COS_C3</strong></td>
+<td> =</td>
+                <td>-1.0_wp/720.0_wp</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-cos_c4"></span>
+              real(kind=wp),
+            </td>
+              <td>private,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>COS_C4</strong></td>
+<td> =</td>
+                <td>1.0_wp/40320.0_wp</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-cos_c5"></span>
+              real(kind=wp),
+            </td>
+              <td>private,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>COS_C5</strong></td>
+<td> =</td>
+                <td>-1.0_wp/3628800.0_wp</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-cos_c6"></span>
+              real(kind=wp),
+            </td>
+              <td>private,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>COS_C6</strong></td>
+<td> =</td>
+                <td>1.0_wp/479001600.0_wp</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-cos_c7"></span>
+              real(kind=wp),
+            </td>
+              <td>private,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>COS_C7</strong></td>
+<td> =</td>
+                <td>-1.0_wp/87178291200.0_wp</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-cos_c8"></span>
+              real(kind=wp),
+            </td>
+              <td>private,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>COS_C8</strong></td>
+<td> =</td>
+                <td>1.0_wp/20922789888000.0_wp</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-exp_c0"></span>
+              real(kind=wp),
+            </td>
+              <td>private,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>EXP_C0</strong></td>
+<td> =</td>
+                <td>1.0_wp</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-exp_c1"></span>
+              real(kind=wp),
+            </td>
+              <td>private,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>EXP_C1</strong></td>
+<td> =</td>
+                <td>1.0_wp</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-exp_c10"></span>
+              real(kind=wp),
+            </td>
+              <td>private,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>EXP_C10</strong></td>
+<td> =</td>
+                <td>1.0_wp/3628800.0_wp</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-exp_c11"></span>
+              real(kind=wp),
+            </td>
+              <td>private,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>EXP_C11</strong></td>
+<td> =</td>
+                <td>1.0_wp/39916800.0_wp</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-exp_c12"></span>
+              real(kind=wp),
+            </td>
+              <td>private,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>EXP_C12</strong></td>
+<td> =</td>
+                <td>1.0_wp/479001600.0_wp</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-exp_c13"></span>
+              real(kind=wp),
+            </td>
+              <td>private,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>EXP_C13</strong></td>
+<td> =</td>
+                <td>1.0_wp/6227020800.0_wp</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-exp_c2"></span>
+              real(kind=wp),
+            </td>
+              <td>private,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>EXP_C2</strong></td>
+<td> =</td>
+                <td>1.0_wp/2.0_wp</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-exp_c3"></span>
+              real(kind=wp),
+            </td>
+              <td>private,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>EXP_C3</strong></td>
+<td> =</td>
+                <td>1.0_wp/6.0_wp</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-exp_c4"></span>
+              real(kind=wp),
+            </td>
+              <td>private,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>EXP_C4</strong></td>
+<td> =</td>
+                <td>1.0_wp/24.0_wp</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-exp_c5"></span>
+              real(kind=wp),
+            </td>
+              <td>private,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>EXP_C5</strong></td>
+<td> =</td>
+                <td>1.0_wp/120.0_wp</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-exp_c6"></span>
+              real(kind=wp),
+            </td>
+              <td>private,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>EXP_C6</strong></td>
+<td> =</td>
+                <td>1.0_wp/720.0_wp</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-exp_c7"></span>
+              real(kind=wp),
+            </td>
+              <td>private,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>EXP_C7</strong></td>
+<td> =</td>
+                <td>1.0_wp/5040.0_wp</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-exp_c8"></span>
+              real(kind=wp),
+            </td>
+              <td>private,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>EXP_C8</strong></td>
+<td> =</td>
+                <td>1.0_wp/40320.0_wp</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-exp_c9"></span>
+              real(kind=wp),
+            </td>
+              <td>private,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>EXP_C9</strong></td>
+<td> =</td>
+                <td>1.0_wp/362880.0_wp</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-exp_overflow"></span>
+              real(kind=wp),
+            </td>
+              <td>private,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>EXP_OVERFLOW</strong></td>
+<td> =</td>
+                <td>log(huge(1.0_wp))</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-exp_underflow"></span>
+              real(kind=wp),
+            </td>
+              <td>private,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>EXP_UNDERFLOW</strong></td>
+<td> =</td>
+                <td>log(tiny(1.0_wp))</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-inv_ln2"></span>
+              real(kind=wp),
+            </td>
+              <td>private,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>INV_LN2</strong></td>
+<td> =</td>
+                <td>1.4426950408889634074_wp</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-inv_pi_over_2"></span>
+              real(kind=wp),
+            </td>
+              <td>private,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>INV_PI_OVER_2</strong></td>
+<td> =</td>
+                <td>0.6366197723675813431_wp</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ln2_hi"></span>
+              real(kind=wp),
+            </td>
+              <td>private,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>LN2_HI</strong></td>
+<td> =</td>
+                <td>0.6931471805599452862_wp</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ln2_lo"></span>
+              real(kind=wp),
+            </td>
+              <td>private,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>LN2_LO</strong></td>
+<td> =</td>
+                <td>2.319046813846299558e-17_wp</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-log_c0"></span>
+              real(kind=wp),
+            </td>
+              <td>private,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>LOG_C0</strong></td>
+<td> =</td>
+                <td>1.0_wp</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-log_c1"></span>
+              real(kind=wp),
+            </td>
+              <td>private,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>LOG_C1</strong></td>
+<td> =</td>
+                <td>1.0_wp/3.0_wp</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-log_c2"></span>
+              real(kind=wp),
+            </td>
+              <td>private,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>LOG_C2</strong></td>
+<td> =</td>
+                <td>1.0_wp/5.0_wp</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-log_c3"></span>
+              real(kind=wp),
+            </td>
+              <td>private,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>LOG_C3</strong></td>
+<td> =</td>
+                <td>1.0_wp/7.0_wp</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-log_c4"></span>
+              real(kind=wp),
+            </td>
+              <td>private,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>LOG_C4</strong></td>
+<td> =</td>
+                <td>1.0_wp/9.0_wp</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-log_c5"></span>
+              real(kind=wp),
+            </td>
+              <td>private,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>LOG_C5</strong></td>
+<td> =</td>
+                <td>1.0_wp/11.0_wp</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-log_c6"></span>
+              real(kind=wp),
+            </td>
+              <td>private,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>LOG_C6</strong></td>
+<td> =</td>
+                <td>1.0_wp/13.0_wp</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-log_c7"></span>
+              real(kind=wp),
+            </td>
+              <td>private,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>LOG_C7</strong></td>
+<td> =</td>
+                <td>1.0_wp/15.0_wp</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-log_c8"></span>
+              real(kind=wp),
+            </td>
+              <td>private,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>LOG_C8</strong></td>
+<td> =</td>
+                <td>1.0_wp/17.0_wp</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-log_c9"></span>
+              real(kind=wp),
+            </td>
+              <td>private,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>LOG_C9</strong></td>
+<td> =</td>
+                <td>1.0_wp/19.0_wp</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-pi_over_2_hi"></span>
+              real(kind=wp),
+            </td>
+              <td>private,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>PI_OVER_2_HI</strong></td>
+<td> =</td>
+                <td>1.5707963267948965580_wp</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-pi_over_2_lo"></span>
+              real(kind=wp),
+            </td>
+              <td>private,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>PI_OVER_2_LO</strong></td>
+<td> =</td>
+                <td>6.123233995736766036e-17_wp</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-sin_c0"></span>
+              real(kind=wp),
+            </td>
+              <td>private,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>SIN_C0</strong></td>
+<td> =</td>
+                <td>1.0_wp</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-sin_c1"></span>
+              real(kind=wp),
+            </td>
+              <td>private,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>SIN_C1</strong></td>
+<td> =</td>
+                <td>-1.0_wp/6.0_wp</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-sin_c2"></span>
+              real(kind=wp),
+            </td>
+              <td>private,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>SIN_C2</strong></td>
+<td> =</td>
+                <td>1.0_wp/120.0_wp</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-sin_c3"></span>
+              real(kind=wp),
+            </td>
+              <td>private,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>SIN_C3</strong></td>
+<td> =</td>
+                <td>-1.0_wp/5040.0_wp</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-sin_c4"></span>
+              real(kind=wp),
+            </td>
+              <td>private,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>SIN_C4</strong></td>
+<td> =</td>
+                <td>1.0_wp/362880.0_wp</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-sin_c5"></span>
+              real(kind=wp),
+            </td>
+              <td>private,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>SIN_C5</strong></td>
+<td> =</td>
+                <td>-1.0_wp/39916800.0_wp</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-sin_c6"></span>
+              real(kind=wp),
+            </td>
+              <td>private,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>SIN_C6</strong></td>
+<td> =</td>
+                <td>1.0_wp/6227020800.0_wp</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-sin_c7"></span>
+              real(kind=wp),
+            </td>
+              <td>private,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>SIN_C7</strong></td>
+<td> =</td>
+                <td>-1.0_wp/1307674368000.0_wp</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-sin_c8"></span>
+              real(kind=wp),
+            </td>
+              <td>private,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>SIN_C8</strong></td>
+<td> =</td>
+                <td>1.0_wp/355687428096000.0_wp</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-sqrt_half"></span>
+              real(kind=wp),
+            </td>
+              <td>private,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>SQRT_HALF</strong></td>
+<td> =</td>
+                <td>0.7071067811865475244_wp</td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+        </section>
+        <br>
+
+
+
+
+
+        <section>
+          <h2>Functions</h2>
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-safe_cos"></span> <h3>public elemental function <a href='../proc/safe_cos.html'>safe_cos</a>(x) result(y)  
+</h3></div>
+    <div class="card-body">
+          
+  <p><code>cos(x)</code>.  Plain elemental inline around the intrinsic; see
+<code>safe_exp</code> and the module docstring.</p>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-x~6"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>x</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <h4>
+    Return Value
+    <small>real(kind=wp)</small>
+    </h4>
+    
+
+    </div>
+  </div>
+
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-safe_cos_polynomial"></span> <h3>public elemental function <a href='../proc/safe_cos_polynomial.html'>safe_cos_polynomial</a>(x) result(y)  
+</h3></div>
+    <div class="card-body">
+          
+  <p>Public only for the unit-test suite (no production module imports it);
+ignore when developing production code in other modules.
+<code>cos(x)</code> via the same Cody-Waite reduction; the quadrant
+map is shifted by 1 vs sin:</p><a href="../proc/safe_cos_polynomial.html" class="pull-right"><emph>Read more&hellip;</emph></a>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-x~8"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>x</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <h4>
+    Return Value
+    <small>real(kind=wp)</small>
+    </h4>
+    
+
+    </div>
+  </div>
+
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-safe_exp"></span> <h3>public elemental function <a href='../proc/safe_exp.html'>safe_exp</a>(x) result(y)  
+</h3></div>
+    <div class="card-body">
+          
+  <p><code>exp(x)</code>.  Plain elemental inline around the intrinsic — zero
+overhead, codegen identical to writing <code>exp(x)</code> directly.  No
+production module calls this today (PR-8 removed the
+<code>RAKALI_BITWISE_REPRO</code> dispatch that once routed it to
+<code>safe_exp_polynomial</code>, which enabled nothing); see the module
+docstring.</p>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-x"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>x</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <h4>
+    Return Value
+    <small>real(kind=wp)</small>
+    </h4>
+    
+
+    </div>
+  </div>
+
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-safe_exp_polynomial"></span> <h3>public elemental function <a href='../proc/safe_exp_polynomial.html'>safe_exp_polynomial</a>(x) result(y)  
+</h3></div>
+    <div class="card-body">
+          
+  <p>Public only for the unit-test suite (no production module imports it);
+ignore when developing production code in other modules.
+Cody-Waite range reduction <code>x = k*ln(2) + r</code>, |r| ≤ ln(2)/2,
+followed by a 14-term Horner Taylor on <code>exp(r)</code> and an
+IEEE-exact <code>2^k</code> multiply via <code>scale()</code>.  Max relative
+error ≈ 2-3 ULP across [-709, 709].</p><a href="../proc/safe_exp_polynomial.html" class="pull-right"><emph>Read more&hellip;</emph></a>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-x~2"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>x</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <h4>
+    Return Value
+    <small>real(kind=wp)</small>
+    </h4>
+    
+
+    </div>
+  </div>
+
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-safe_log"></span> <h3>public elemental function <a href='../proc/safe_log.html'>safe_log</a>(x) result(y)  
+</h3></div>
+    <div class="card-body">
+          
+  <p><code>log(x)</code> (natural log).  Plain elemental inline around the
+intrinsic; see <code>safe_exp</code> and the module docstring.</p>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-x~3"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>x</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <h4>
+    Return Value
+    <small>real(kind=wp)</small>
+    </h4>
+    
+
+    </div>
+  </div>
+
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-safe_log_polynomial"></span> <h3>public elemental function <a href='../proc/safe_log_polynomial.html'>safe_log_polynomial</a>(x) result(y)  
+</h3></div>
+    <div class="card-body">
+          
+  <p>Public only for the unit-test suite (no production module imports it);
+ignore when developing production code in other modules.
+<code>log(x)</code> via IEEE exponent extraction + atanh-form series.</p><a href="../proc/safe_log_polynomial.html" class="pull-right"><emph>Read more&hellip;</emph></a>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-x~4"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>x</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <h4>
+    Return Value
+    <small>real(kind=wp)</small>
+    </h4>
+    
+
+    </div>
+  </div>
+
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-safe_pow"></span> <h3>public elemental function <a href='../proc/safe_pow.html'>safe_pow</a>(base, exponent) result(y)  
+</h3></div>
+    <div class="card-body">
+          
+  <p>Non-integer exponent only.  For integer exponents
+(<code>a**2</code>, <code>a**3</code>, &hellip;), write the multiplication out — the
+compiler unrolls those and they&rsquo;re already deterministic.
+Plain elemental inline around the intrinsic; see <code>safe_exp</code>
+and the module docstring.</p>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-base"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>base</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-exponent"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>exponent</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <h4>
+    Return Value
+    <small>real(kind=wp)</small>
+    </h4>
+    
+
+    </div>
+  </div>
+
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-safe_pow_polynomial"></span> <h3>public elemental function <a href='../proc/safe_pow_polynomial.html'>safe_pow_polynomial</a>(base, exponent) result(y)  
+</h3></div>
+    <div class="card-body">
+          
+  <p>Public only for the unit-test suite (no production module imports it);
+ignore when developing production code in other modules.
+<code>base^exponent</code> via the identity
+  base^exponent = exp(exponent * log(base))
+Routes through the polynomial log and exp paths so the
+result is deterministic across builds.</p><a href="../proc/safe_pow_polynomial.html" class="pull-right"><emph>Read more&hellip;</emph></a>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-base~2"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>base</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-exponent~2"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>exponent</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <h4>
+    Return Value
+    <small>real(kind=wp)</small>
+    </h4>
+    
+
+    </div>
+  </div>
+
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-safe_sin"></span> <h3>public elemental function <a href='../proc/safe_sin.html'>safe_sin</a>(x) result(y)  
+</h3></div>
+    <div class="card-body">
+          
+  <p><code>sin(x)</code>.  Plain elemental inline around the intrinsic; see
+<code>safe_exp</code> and the module docstring.</p>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-x~5"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>x</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <h4>
+    Return Value
+    <small>real(kind=wp)</small>
+    </h4>
+    
+
+    </div>
+  </div>
+
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-safe_sin_polynomial"></span> <h3>public elemental function <a href='../proc/safe_sin_polynomial.html'>safe_sin_polynomial</a>(x) result(y)  
+</h3></div>
+    <div class="card-body">
+          
+  <p>Public only for the unit-test suite (no production module imports it);
+ignore when developing production code in other modules.
+<code>sin(x)</code> via Cody-Waite reduction mod π/2 and a 9-term
+Horner Taylor on the reduced argument.  The quadrant
+<code>k mod 4</code> picks sin vs cos and a sign:</p><a href="../proc/safe_sin_polynomial.html" class="pull-right"><emph>Read more&hellip;</emph></a>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-x~7"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>x</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <h4>
+    Return Value
+    <small>real(kind=wp)</small>
+    </h4>
+    
+
+    </div>
+  </div>
+
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-safe_sqrt"></span> <h3>public elemental function <a href='../proc/safe_sqrt.html'>safe_sqrt</a>(x) result(y)  
+</h3></div>
+    <div class="card-body">
+          
+  <p>IEEE-correctly-rounded by mandate, so the intrinsic is
+already bit-identical across compliant compilers.</p>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-x~9"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>x</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <h4>
+    Return Value
+    <small>real(kind=wp)</small>
+    </h4>
+    
+
+    </div>
+  </div>
+
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-cos_reduced"></span> <h3>private elemental function <a href='../proc/cos_reduced.html'>cos_reduced</a>(r) result(y)  
+</h3></div>
+    <div class="card-body">
+          
+  <p>Horner cos Taylor on |r| ≤ π/4.  9 even-power terms.</p>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-r~5"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>r</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <h4>
+    Return Value
+    <small>real(kind=wp)</small>
+    </h4>
+    
+
+    </div>
+  </div>
+
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-sin_reduced"></span> <h3>private elemental function <a href='../proc/sin_reduced.html'>sin_reduced</a>(r) result(y)  
+</h3></div>
+    <div class="card-body">
+          
+  <p>Horner sin Taylor on |r| ≤ π/4.  <code>sin(r) = r * P(r²)</code> where
+P is the odd-power polynomial in r² — avoids computing r¹,
+r³, r⁵&hellip; separately.  9 terms (highest power r¹⁷) gives
+&lt; 1e-18 truncation error.</p>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-r~4"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>r</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <h4>
+    Return Value
+    <small>real(kind=wp)</small>
+    </h4>
+    
+
+    </div>
+  </div>
+
+        </section>
+        <br>
+
+
+
+
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Rakali
+ was developed by Jorge Luis Galvez Vallejo<br>              &copy; 2026 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+ on 2026-10-08 12:55 +0000             </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>

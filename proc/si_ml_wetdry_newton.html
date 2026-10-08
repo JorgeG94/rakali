@@ -1,0 +1,1333 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="GPU-native coastal solver — structured Cartesian and unstructured triangular grids, hydrostatic multilayer + non-hydrostatic, portable across NVHPC/gfortran/ifx.">
+    <meta name="author" content="Jorge Luis Galvez Vallejo" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>si_ml_wetdry_newton &ndash; Rakali</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">Rakali </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/absint.html">Abstract Interfaces</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>si_ml_wetdry_newton
+      <small>Subroutine</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.2% of total for procedures.">56 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/rki_si_unstr_step_ml.F90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/rki_si_unstr_step_ml.f90.html'>rki_si_unstr_step_ml.F90</a></li>
+                <li class="breadcrumb-item"><a href='../module/rki_si_unstr_step_ml.html'>rki_si_unstr_step_ml</a></li>
+            <li class="breadcrumb-item active" aria-current="page">si_ml_wetdry_newton</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+  
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#vars-0"
+         aria-expanded="false" aria-controls="vars-0">
+         <h4 class="card-header bg-primary text-white">Variables</h4>
+      </a>
+      <div id="vars-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../proc/si_ml_wetdry_newton.html#variable-cg_it~2">cg_it</a>
+            <a class="list-group-item" href="../proc/si_ml_wetdry_newton.html#variable-cg_it_total">cg_it_total</a>
+            <a class="list-group-item" href="../proc/si_ml_wetdry_newton.html#variable-converged">converged</a>
+            <a class="list-group-item" href="../proc/si_ml_wetdry_newton.html#variable-f2">f2</a>
+            <a class="list-group-item" href="../proc/si_ml_wetdry_newton.html#variable-k~72">k</a>
+            <a class="list-group-item" href="../proc/si_ml_wetdry_newton.html#variable-mass_res~2">mass_res</a>
+            <a class="list-group-item" href="../proc/si_ml_wetdry_newton.html#variable-nit">nit</a>
+            <a class="list-group-item" href="../proc/si_ml_wetdry_newton.html#variable-rhs2">rhs2</a>
+            <a class="list-group-item" href="../proc/si_ml_wetdry_newton.html#variable-tol2">tol2</a>
+            <a class="list-group-item" href="../proc/si_ml_wetdry_newton.html#variable-wetcount">wetcount</a>
+            <a class="list-group-item" href="../proc/si_ml_wetdry_newton.html#variable-wetcount_prev">wetcount_prev</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../proc/si_ml_wetdry_newton.html#src">si_ml_wetdry_newton</a>
+      </div>
+    </div>
+
+
+  </div>
+
+    </div>
+    
+    <div class="col-md-9" id='text'>
+    <h2>private  subroutine si_ml_wetdry_newton(state, mesh, nct, nco, g_theta2_dt2, iter_out)  
+</h2>
+    
+
+    <p>Newton outer loop for the 3D column-integrated wet/dry eta-solve on
+the triangulation — the triangular twin of the structured
+<code>si_ml_wetdry_newton</code> (and the 2D-unstr <code>si_unstr_advance_wetdry</code>&rsquo;s
+Newton loop).  The column responses (g_col/r_col/Hhat/Gbar) and the
+frozen Hf are held FIXED (they depend on h_layer at time n, not eta),
+so only the surface mass system F = v(eta) + T*eta - rhs_d iterates,
+with T the Hhat-weighted TPFA stiffness and the surface wet-fraction
+Newton diagonal a(eta)+floor.  On entry <code>state%si%eta_r</code> holds the
+LINEAR RHS (leading eta^n from si_unstr_compute_rhs); this swaps the
+leading term for v(eta^n) once, then Newton-solves.  Host-side
+orchestration; flat device kernels.  Writes state%si%newton_iters
+and state%si%mass_res = the NONLINEAR mass residual ||F||^2 at
+Newton exit (the conservation diagnostic — NOT the inner-CG residual
+of the last delta-solve, which is an internal solver number).</p>
+
+
+    <h3>Arguments</h3>
+        <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-state~46"></span>
+              type(<a href='../type/unstr_state_t.html'>unstr_state_t</a>),
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>state</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mesh~25"></span>
+              type(<a href='../type/mesh_unstr_t.html'>mesh_unstr_t</a>),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>mesh</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nct~19"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nct</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nco~23"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nco</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-g_theta2_dt2~2"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>g_theta2_dt2</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-iter_out~2"></span>
+              integer,
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>iter_out</strong></td>
+            <td>
+                <p>Inner CG iterations summed over the Newton outers.</p>
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <br>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Calls</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~si_ml_wetdry_newton~~CallsGraph Pages: 1 -->
+<svg id="procsi_ml_wetdry_newtonCallsGraph" width="641pt" height="222pt"
+ viewBox="0.00 0.00 641.00 221.59" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~si_ml_wetdry_newton~~CallsGraph" class="graph" transform="scale(0.58 0.58) rotate(0) translate(4 378)">
+<title>proc~~si_ml_wetdry_newton~~CallsGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-378 1101,-378 1101,4 -4,4"/>
+<!-- proc~si_ml_wetdry_newton -->
+<g id="proc~~si_ml_wetdry_newton~~CallsGraph_node1" class="node">
+<title>proc~si_ml_wetdry_newton</title>
+<polygon fill="none" stroke="black" points="125,-212 0,-212 0,-188 125,-188 125,-212"/>
+<text text-anchor="middle" x="62.5" y="-197.6" font-family="Helvetica,sans-Serif" font-size="10.50">si_ml_wetdry_newton</text>
+</g>
+<!-- proc~si_unstr_apply_helmholtz -->
+<g id="proc~~si_ml_wetdry_newton~~CallsGraph_node2" class="node">
+<title>proc~si_unstr_apply_helmholtz</title>
+<g id="a_proc~~si_ml_wetdry_newton~~CallsGraph_node2"><a xlink:href="../proc/si_unstr_apply_helmholtz.html" xlink:title="si_unstr_apply_helmholtz">
+<polygon fill="#d9534f" stroke="#d9534f" points="533.5,-252 388.5,-252 388.5,-228 533.5,-228 533.5,-252"/>
+<text text-anchor="middle" x="461" y="-237.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">si_unstr_apply_helmholtz</text>
+</a>
+</g>
+</g>
+<!-- proc~si_ml_wetdry_newton&#45;&gt;proc~si_unstr_apply_helmholtz -->
+<g id="proc~~si_ml_wetdry_newton~~CallsGraph_edge1" class="edge">
+<title>proc~si_ml_wetdry_newton&#45;&gt;proc~si_unstr_apply_helmholtz</title>
+<path fill="none" stroke="#ff0000" d="M112.35,-212.01C127.82,-215.41 145.05,-218.79 161,-221 234.06,-231.13 317.91,-235.87 378.19,-238.08"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="378.3,-241.58 388.41,-238.44 378.54,-234.59 378.3,-241.58"/>
+</g>
+<!-- proc~si_unstr_cg_solve -->
+<g id="proc~~si_ml_wetdry_newton~~CallsGraph_node3" class="node">
+<title>proc~si_unstr_cg_solve</title>
+<g id="a_proc~~si_ml_wetdry_newton~~CallsGraph_node3"><a xlink:href="../proc/si_unstr_cg_solve.html" xlink:title="si_unstr_cg_solve">
+<polygon fill="#d9534f" stroke="#d9534f" points="306,-212 202,-212 202,-188 306,-188 306,-212"/>
+<text text-anchor="middle" x="254" y="-197.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">si_unstr_cg_solve</text>
+</a>
+</g>
+</g>
+<!-- proc~si_ml_wetdry_newton&#45;&gt;proc~si_unstr_cg_solve -->
+<g id="proc~~si_ml_wetdry_newton~~CallsGraph_edge2" class="edge">
+<title>proc~si_ml_wetdry_newton&#45;&gt;proc~si_unstr_cg_solve</title>
+<path fill="none" stroke="#ff0000" d="M125.03,-200C146.39,-200 170.33,-200 191.67,-200"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="191.92,-203.5 201.92,-200 191.92,-196.5 191.92,-203.5"/>
+</g>
+<!-- proc~si_unstr_wetdry_mass_diag -->
+<g id="proc~~si_ml_wetdry_newton~~CallsGraph_node4" class="node">
+<title>proc~si_unstr_wetdry_mass_diag</title>
+<g id="a_proc~~si_ml_wetdry_newton~~CallsGraph_node4"><a xlink:href="../proc/si_unstr_wetdry_mass_diag.html" xlink:title="si_unstr_wetdry_mass_diag">
+<polygon fill="#d9534f" stroke="#d9534f" points="539,-332 383,-332 383,-308 539,-308 539,-332"/>
+<text text-anchor="middle" x="461" y="-317.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">si_unstr_wetdry_mass_diag</text>
+</a>
+</g>
+</g>
+<!-- proc~si_ml_wetdry_newton&#45;&gt;proc~si_unstr_wetdry_mass_diag -->
+<g id="proc~~si_ml_wetdry_newton~~CallsGraph_edge3" class="edge">
+<title>proc~si_ml_wetdry_newton&#45;&gt;proc~si_unstr_wetdry_mass_diag</title>
+<path fill="none" stroke="#ff0000" d="M70.77,-212.1C84.92,-234.36 118.53,-281.35 161,-301 227.3,-331.67 310.83,-334.4 372.74,-330.63"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="373.14,-334.11 382.88,-329.94 372.66,-327.13 373.14,-334.11"/>
+</g>
+<!-- proc~si_unstr_wetdry_newton_residual -->
+<g id="proc~~si_ml_wetdry_newton~~CallsGraph_node5" class="node">
+<title>proc~si_unstr_wetdry_newton_residual</title>
+<g id="a_proc~~si_ml_wetdry_newton~~CallsGraph_node5"><a xlink:href="../proc/si_unstr_wetdry_newton_residual.html" xlink:title="si_unstr_wetdry_newton_residual">
+<polygon fill="#d9534f" stroke="#d9534f" points="347,-132 161,-132 161,-108 347,-108 347,-132"/>
+<text text-anchor="middle" x="254" y="-117.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">si_unstr_wetdry_newton_residual</text>
+</a>
+</g>
+</g>
+<!-- proc~si_ml_wetdry_newton&#45;&gt;proc~si_unstr_wetdry_newton_residual -->
+<g id="proc~~si_ml_wetdry_newton~~CallsGraph_edge4" class="edge">
+<title>proc~si_ml_wetdry_newton&#45;&gt;proc~si_unstr_wetdry_newton_residual</title>
+<path fill="none" stroke="#ff0000" d="M82.27,-187.89C101.44,-175.93 132.37,-157.79 161,-146 170.99,-141.89 181.84,-138.19 192.48,-134.95"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="193.54,-138.29 202.15,-132.11 191.57,-131.57 193.54,-138.29"/>
+</g>
+<!-- proc~si_unstr_wetdry_volume -->
+<g id="proc~~si_ml_wetdry_newton~~CallsGraph_node6" class="node">
+<title>proc~si_unstr_wetdry_volume</title>
+<g id="a_proc~~si_ml_wetdry_newton~~CallsGraph_node6"><a xlink:href="../proc/si_unstr_wetdry_volume.html" xlink:title="si_unstr_wetdry_volume">
+<polygon fill="#d9534f" stroke="#d9534f" points="530.5,-374 391.5,-374 391.5,-350 530.5,-350 530.5,-374"/>
+<text text-anchor="middle" x="461" y="-359.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">si_unstr_wetdry_volume</text>
+</a>
+</g>
+</g>
+<!-- proc~si_ml_wetdry_newton&#45;&gt;proc~si_unstr_wetdry_volume -->
+<g id="proc~~si_ml_wetdry_newton~~CallsGraph_edge5" class="edge">
+<title>proc~si_ml_wetdry_newton&#45;&gt;proc~si_unstr_wetdry_volume</title>
+<path fill="none" stroke="#ff0000" d="M68.59,-212.34C80.35,-239.09 112.19,-302.25 161,-330 228.17,-368.19 317.62,-372.92 381.13,-370.11"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="381.68,-373.58 391.49,-369.57 381.32,-366.59 381.68,-373.58"/>
+</g>
+<!-- proc~si_unstr_wetdry_wetcount -->
+<g id="proc~~si_ml_wetdry_newton~~CallsGraph_node7" class="node">
+<title>proc~si_unstr_wetdry_wetcount</title>
+<g id="a_proc~~si_ml_wetdry_newton~~CallsGraph_node7"><a xlink:href="../proc/si_unstr_wetdry_wetcount.html" xlink:title="si_unstr_wetdry_wetcount">
+<polygon fill="#d9534f" stroke="#d9534f" points="328,-90 180,-90 180,-66 328,-66 328,-90"/>
+<text text-anchor="middle" x="254" y="-75.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">si_unstr_wetdry_wetcount</text>
+</a>
+</g>
+</g>
+<!-- proc~si_ml_wetdry_newton&#45;&gt;proc~si_unstr_wetdry_wetcount -->
+<g id="proc~~si_ml_wetdry_newton~~CallsGraph_edge6" class="edge">
+<title>proc~si_ml_wetdry_newton&#45;&gt;proc~si_unstr_wetdry_wetcount</title>
+<path fill="none" stroke="#ff0000" d="M71.56,-187.86C86.5,-166.37 120.67,-121.76 161,-99 164.43,-97.06 168.03,-95.3 171.74,-93.71"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="173.08,-96.94 181.14,-90.06 170.55,-90.42 173.08,-96.94"/>
+</g>
+<!-- proc~si_unstr_wetdry_wetfrac -->
+<g id="proc~~si_ml_wetdry_newton~~CallsGraph_node8" class="node">
+<title>proc~si_unstr_wetdry_wetfrac</title>
+<g id="a_proc~~si_ml_wetdry_newton~~CallsGraph_node8"><a xlink:href="../proc/si_unstr_wetdry_wetfrac.html" xlink:title="si_unstr_wetdry_wetfrac">
+<polygon fill="#d9534f" stroke="#d9534f" points="323.5,-292 184.5,-292 184.5,-268 323.5,-268 323.5,-292"/>
+<text text-anchor="middle" x="254" y="-277.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">si_unstr_wetdry_wetfrac</text>
+</a>
+</g>
+</g>
+<!-- proc~si_ml_wetdry_newton&#45;&gt;proc~si_unstr_wetdry_wetfrac -->
+<g id="proc~~si_ml_wetdry_newton~~CallsGraph_edge7" class="edge">
+<title>proc~si_ml_wetdry_newton&#45;&gt;proc~si_unstr_wetdry_wetfrac</title>
+<path fill="none" stroke="#ff0000" d="M82.27,-212.11C101.44,-224.07 132.37,-242.21 161,-254 170.99,-258.11 181.84,-261.81 192.48,-265.05"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="191.57,-268.43 202.15,-267.89 193.54,-261.71 191.57,-268.43"/>
+</g>
+<!-- reduce -->
+<g id="proc~~si_ml_wetdry_newton~~CallsGraph_node9" class="node">
+<title>reduce</title>
+<polygon fill="#777777" stroke="#777777" points="488,-126 434,-126 434,-102 488,-102 488,-126"/>
+<text text-anchor="middle" x="461" y="-111.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">reduce</text>
+</g>
+<!-- proc~si_ml_wetdry_newton&#45;&gt;reduce -->
+<g id="proc~~si_ml_wetdry_newton~~CallsGraph_edge8" class="edge">
+<title>proc~si_ml_wetdry_newton&#45;&gt;reduce</title>
+<path fill="none" stroke="#ff0000" d="M118.91,-187.96C132.66,-185 147.36,-181.86 161,-179 243.58,-161.67 264.62,-159.25 347,-141 372.67,-135.31 401.5,-128.42 423.61,-123.02"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="424.69,-126.36 433.57,-120.58 423.03,-119.56 424.69,-126.36"/>
+</g>
+<!-- warning -->
+<g id="proc~~si_ml_wetdry_newton~~CallsGraph_node10" class="node">
+<title>warning</title>
+<polygon fill="#777777" stroke="#777777" points="281.5,-48 226.5,-48 226.5,-24 281.5,-24 281.5,-48"/>
+<text text-anchor="middle" x="254" y="-33.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">warning</text>
+</g>
+<!-- proc~si_ml_wetdry_newton&#45;&gt;warning -->
+<g id="proc~~si_ml_wetdry_newton~~CallsGraph_edge9" class="edge">
+<title>proc~si_ml_wetdry_newton&#45;&gt;warning</title>
+<path fill="none" stroke="#ff0000" d="M68.16,-187.75C79.45,-159.77 111.1,-91.02 161,-57 177.18,-45.97 198.31,-40.66 216.24,-38.14"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="216.84,-41.59 226.36,-36.95 216.02,-34.64 216.84,-41.59"/>
+</g>
+<!-- local -->
+<g id="proc~~si_ml_wetdry_newton~~CallsGraph_node11" class="node">
+<title>local</title>
+<polygon fill="#777777" stroke="#777777" points="688.5,-292 634.5,-292 634.5,-268 688.5,-268 688.5,-292"/>
+<text text-anchor="middle" x="661.5" y="-277.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">local</text>
+</g>
+<!-- proc~si_unstr_apply_helmholtz&#45;&gt;local -->
+<g id="proc~~si_ml_wetdry_newton~~CallsGraph_edge10" class="edge">
+<title>proc~si_unstr_apply_helmholtz&#45;&gt;local</title>
+<path fill="none" stroke="#ff0000" d="M521.56,-252C555.02,-258.74 595.69,-266.94 624.35,-272.72"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="623.84,-276.18 634.34,-274.73 625.23,-269.32 623.84,-276.18"/>
+</g>
+<!-- proc~si_unstr_cg_solve&#45;&gt;proc~si_unstr_apply_helmholtz -->
+<g id="proc~~si_ml_wetdry_newton~~CallsGraph_edge11" class="edge">
+<title>proc~si_unstr_cg_solve&#45;&gt;proc~si_unstr_apply_helmholtz</title>
+<path fill="none" stroke="#ffaa00" d="M306.2,-209.99C330.91,-214.81 360.99,-220.68 387.96,-225.94"/>
+<polygon fill="#ffaa00" stroke="#ffaa00" points="387.65,-229.45 398.13,-227.93 388.99,-222.58 387.65,-229.45"/>
+</g>
+<!-- proc~si_unstr_cg_solve&#45;&gt;reduce -->
+<g id="proc~~si_ml_wetdry_newton~~CallsGraph_edge14" class="edge">
+<title>proc~si_unstr_cg_solve&#45;&gt;reduce</title>
+<path fill="none" stroke="#ffaa00" d="M306.25,-190.84C320.12,-186.97 334.69,-181.55 347,-174 367.11,-161.66 362.84,-147.25 383,-135 395.36,-127.49 410.45,-122.61 423.98,-119.47"/>
+<polygon fill="#ffaa00" stroke="#ffaa00" points="424.88,-122.86 433.95,-117.39 423.45,-116.01 424.88,-122.86"/>
+</g>
+<!-- proc~si_unstr_compute_diag -->
+<g id="proc~~si_ml_wetdry_newton~~CallsGraph_node12" class="node">
+<title>proc~si_unstr_compute_diag</title>
+<g id="a_proc~~si_ml_wetdry_newton~~CallsGraph_node12"><a xlink:href="../proc/si_unstr_compute_diag.html" xlink:title="si_unstr_compute_diag">
+<polygon fill="#d9534f" stroke="#d9534f" points="528,-210 394,-210 394,-186 528,-186 528,-210"/>
+<text text-anchor="middle" x="461" y="-195.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">si_unstr_compute_diag</text>
+</a>
+</g>
+</g>
+<!-- proc~si_unstr_cg_solve&#45;&gt;proc~si_unstr_compute_diag -->
+<g id="proc~~si_ml_wetdry_newton~~CallsGraph_edge12" class="edge">
+<title>proc~si_unstr_cg_solve&#45;&gt;proc~si_unstr_compute_diag</title>
+<path fill="none" stroke="#ffaa00" d="M306.2,-199.5C329.65,-199.27 357.93,-199 383.81,-198.74"/>
+<polygon fill="#ffaa00" stroke="#ffaa00" points="384.01,-202.24 393.97,-198.64 383.94,-195.24 384.01,-202.24"/>
+</g>
+<!-- proc~si_unstr_precond_apply -->
+<g id="proc~~si_ml_wetdry_newton~~CallsGraph_node13" class="node">
+<title>proc~si_unstr_precond_apply</title>
+<g id="a_proc~~si_ml_wetdry_newton~~CallsGraph_node13"><a xlink:href="../proc/si_unstr_precond_apply.html" xlink:title="si_unstr_precond_apply">
+<polygon fill="#d9534f" stroke="#d9534f" points="529,-168 393,-168 393,-144 529,-144 529,-168"/>
+<text text-anchor="middle" x="461" y="-153.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">si_unstr_precond_apply</text>
+</a>
+</g>
+</g>
+<!-- proc~si_unstr_cg_solve&#45;&gt;proc~si_unstr_precond_apply -->
+<g id="proc~~si_ml_wetdry_newton~~CallsGraph_edge13" class="edge">
+<title>proc~si_unstr_cg_solve&#45;&gt;proc~si_unstr_precond_apply</title>
+<path fill="none" stroke="#ffaa00" d="M306.2,-189.01C332.83,-183.3 365.68,-176.24 394.17,-170.13"/>
+<polygon fill="#ffaa00" stroke="#ffaa00" points="395.01,-173.53 404.05,-168.01 393.54,-166.68 395.01,-173.53"/>
+</g>
+<!-- proc~si_unstr_wetdry_mass_diag&#45;&gt;local -->
+<g id="proc~~si_ml_wetdry_newton~~CallsGraph_edge15" class="edge">
+<title>proc~si_unstr_wetdry_mass_diag&#45;&gt;local</title>
+<path fill="none" stroke="#aaff00" d="M521.56,-308C555.02,-301.26 595.69,-293.06 624.35,-287.28"/>
+<polygon fill="#aaff00" stroke="#aaff00" points="625.23,-290.68 634.34,-285.27 623.84,-283.82 625.23,-290.68"/>
+</g>
+<!-- proc~si_unstr_wetdry_newton_residual&#45;&gt;reduce -->
+<g id="proc~~si_ml_wetdry_newton~~CallsGraph_edge16" class="edge">
+<title>proc~si_unstr_wetdry_newton_residual&#45;&gt;reduce</title>
+<path fill="none" stroke="#00ff00" d="M347.01,-117.31C374.14,-116.51 402.27,-115.69 423.67,-115.06"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="424.01,-118.55 433.91,-114.76 423.81,-111.56 424.01,-118.55"/>
+</g>
+<!-- proc~si_unstr_wetdry_volume&#45;&gt;local -->
+<g id="proc~~si_ml_wetdry_newton~~CallsGraph_edge17" class="edge">
+<title>proc~si_unstr_wetdry_volume&#45;&gt;local</title>
+<path fill="none" stroke="#00ffa9" d="M511.76,-349.99C520.92,-347.34 530.33,-344.32 539,-341 571.3,-328.63 606.44,-310.43 630.58,-297.13"/>
+<polygon fill="#00ffa9" stroke="#00ffa9" points="632.54,-300.04 639.57,-292.12 629.14,-293.93 632.54,-300.04"/>
+</g>
+<!-- proc~si_unstr_wetdry_wetcount&#45;&gt;reduce -->
+<g id="proc~~si_ml_wetdry_newton~~CallsGraph_edge18" class="edge">
+<title>proc~si_unstr_wetdry_wetcount&#45;&gt;reduce</title>
+<path fill="none" stroke="#00a9ff" d="M323.55,-90.04C357.09,-95.93 396.1,-102.78 423.8,-107.64"/>
+<polygon fill="#00a9ff" stroke="#00a9ff" points="423.37,-111.12 433.83,-109.4 424.58,-104.23 423.37,-111.12"/>
+</g>
+<!-- proc~si_unstr_wetdry_wetfrac&#45;&gt;local -->
+<g id="proc~~si_ml_wetdry_newton~~CallsGraph_edge19" class="edge">
+<title>proc~si_unstr_wetdry_wetfrac&#45;&gt;local</title>
+<path fill="none" stroke="#0000ff" d="M323.79,-280C410.44,-280 556.18,-280 623.89,-280"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="624.06,-283.5 634.06,-280 624.06,-276.5 624.06,-283.5"/>
+</g>
+<!-- proc~si_unstr_compute_diag&#45;&gt;local -->
+<g id="proc~~si_ml_wetdry_newton~~CallsGraph_edge20" class="edge">
+<title>proc~si_unstr_compute_diag&#45;&gt;local</title>
+<path fill="none" stroke="#00ff00" d="M511.76,-210.01C520.92,-212.66 530.33,-215.68 539,-219 571.3,-231.37 606.44,-249.57 630.58,-262.87"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="629.14,-266.07 639.57,-267.88 632.54,-259.96 629.14,-266.07"/>
+</g>
+<!-- proc~agglom_unstr_vcycle_precond -->
+<g id="proc~~si_ml_wetdry_newton~~CallsGraph_node14" class="node">
+<title>proc~agglom_unstr_vcycle_precond</title>
+<g id="a_proc~~si_ml_wetdry_newton~~CallsGraph_node14"><a xlink:href="../proc/agglom_unstr_vcycle_precond.html" xlink:title="agglom_unstr_vcycle_precond">
+<polygon fill="#d9534f" stroke="#d9534f" points="748,-168 575,-168 575,-144 748,-144 748,-168"/>
+<text text-anchor="middle" x="661.5" y="-153.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">agglom_unstr_vcycle_precond</text>
+</a>
+</g>
+</g>
+<!-- proc~si_unstr_precond_apply&#45;&gt;proc~agglom_unstr_vcycle_precond -->
+<g id="proc~~si_ml_wetdry_newton~~CallsGraph_edge21" class="edge">
+<title>proc~si_unstr_precond_apply&#45;&gt;proc~agglom_unstr_vcycle_precond</title>
+<path fill="none" stroke="#0000ff" d="M529.2,-156C540.63,-156 552.68,-156 564.67,-156"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="564.72,-159.5 574.72,-156 564.72,-152.5 564.72,-159.5"/>
+</g>
+<!-- proc~agglom_copy_out -->
+<g id="proc~~si_ml_wetdry_newton~~CallsGraph_node15" class="node">
+<title>proc~agglom_copy_out</title>
+<g id="a_proc~~si_ml_wetdry_newton~~CallsGraph_node15"><a xlink:href="../proc/agglom_copy_out.html" xlink:title="agglom_copy_out">
+<polygon fill="#d9534f" stroke="#d9534f" points="908,-210 802,-210 802,-186 908,-186 908,-210"/>
+<text text-anchor="middle" x="855" y="-195.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">agglom_copy_out</text>
+</a>
+</g>
+</g>
+<!-- proc~agglom_unstr_vcycle_precond&#45;&gt;proc~agglom_copy_out -->
+<g id="proc~~si_ml_wetdry_newton~~CallsGraph_edge22" class="edge">
+<title>proc~agglom_unstr_vcycle_precond&#45;&gt;proc~agglom_copy_out</title>
+<path fill="none" stroke="#ff0000" d="M717.38,-168.04C740.59,-173.13 767.74,-179.08 791.7,-184.34"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="791.23,-187.82 801.75,-186.54 792.73,-180.98 791.23,-187.82"/>
+</g>
+<!-- proc~agglom_scale_into_shim -->
+<g id="proc~~si_ml_wetdry_newton~~CallsGraph_node16" class="node">
+<title>proc~agglom_scale_into_shim</title>
+<g id="a_proc~~si_ml_wetdry_newton~~CallsGraph_node16"><a xlink:href="../proc/agglom_scale_into_shim.html" xlink:title="agglom_scale_into_shim">
+<polygon fill="#d9534f" stroke="#d9534f" points="926,-168 784,-168 784,-144 926,-144 926,-168"/>
+<text text-anchor="middle" x="855" y="-153.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">agglom_scale_into_shim</text>
+</a>
+</g>
+</g>
+<!-- proc~agglom_unstr_vcycle_precond&#45;&gt;proc~agglom_scale_into_shim -->
+<g id="proc~~si_ml_wetdry_newton~~CallsGraph_edge23" class="edge">
+<title>proc~agglom_unstr_vcycle_precond&#45;&gt;proc~agglom_scale_into_shim</title>
+<path fill="none" stroke="#ff0000" d="M748.17,-156C756.66,-156 765.27,-156 773.71,-156"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="773.9,-159.5 783.9,-156 773.9,-152.5 773.9,-159.5"/>
+</g>
+<!-- proc~agglom_vcycle -->
+<g id="proc~~si_ml_wetdry_newton~~CallsGraph_node17" class="node">
+<title>proc~agglom_vcycle</title>
+<g id="a_proc~~si_ml_wetdry_newton~~CallsGraph_node17"><a xlink:href="../proc/agglom_vcycle.html" xlink:title="agglom_vcycle">
+<polygon fill="#d9534f" stroke="#d9534f" points="901,-108 809,-108 809,-84 901,-84 901,-108"/>
+<text text-anchor="middle" x="855" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">agglom_vcycle</text>
+</a>
+</g>
+</g>
+<!-- proc~agglom_unstr_vcycle_precond&#45;&gt;proc~agglom_vcycle -->
+<g id="proc~~si_ml_wetdry_newton~~CallsGraph_edge24" class="edge">
+<title>proc~agglom_unstr_vcycle_precond&#45;&gt;proc~agglom_vcycle</title>
+<path fill="none" stroke="#ff0000" d="M701.25,-143.86C731.46,-134.39 773.57,-121.2 805.93,-111.06"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="807.14,-114.35 815.63,-108.02 805.04,-107.67 807.14,-114.35"/>
+</g>
+<!-- proc~agglom_vcycle&#45;&gt;proc~agglom_vcycle -->
+<g id="proc~~si_ml_wetdry_newton~~CallsGraph_edge29" class="edge">
+<title>proc~agglom_vcycle&#45;&gt;proc~agglom_vcycle</title>
+<path fill="none" stroke="#0000ff" d="M826.23,-108.01C816.18,-116.97 825.77,-126 855,-126 873.27,-126 883.86,-122.47 886.79,-117.64"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="890.1,-116.51 883.77,-108.01 883.42,-118.6 890.1,-116.51"/>
+</g>
+<!-- proc~agglom_jacobi_sweeps -->
+<g id="proc~~si_ml_wetdry_newton~~CallsGraph_node18" class="node">
+<title>proc~agglom_jacobi_sweeps</title>
+<g id="a_proc~~si_ml_wetdry_newton~~CallsGraph_node18"><a xlink:href="../proc/agglom_jacobi_sweeps.html" xlink:title="agglom_jacobi_sweeps">
+<polygon fill="#d9534f" stroke="#d9534f" points="1097,-192 962,-192 962,-168 1097,-168 1097,-192"/>
+<text text-anchor="middle" x="1029.5" y="-177.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">agglom_jacobi_sweeps</text>
+</a>
+</g>
+</g>
+<!-- proc~agglom_vcycle&#45;&gt;proc~agglom_jacobi_sweeps -->
+<g id="proc~~si_ml_wetdry_newton~~CallsGraph_edge25" class="edge">
+<title>proc~agglom_vcycle&#45;&gt;proc~agglom_jacobi_sweeps</title>
+<path fill="none" stroke="#0000ff" d="M878.64,-108.02C892.48,-115.51 910.45,-125.5 926,-135 942.41,-145.02 944.66,-150.69 962,-159 966.04,-160.94 970.3,-162.75 974.63,-164.44"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="973.59,-167.78 984.18,-167.93 975.99,-161.21 973.59,-167.78"/>
+</g>
+<!-- proc~agglom_prolong_add -->
+<g id="proc~~si_ml_wetdry_newton~~CallsGraph_node19" class="node">
+<title>proc~agglom_prolong_add</title>
+<g id="a_proc~~si_ml_wetdry_newton~~CallsGraph_node19"><a xlink:href="../proc/agglom_prolong_add.html" xlink:title="agglom_prolong_add">
+<polygon fill="#d9534f" stroke="#d9534f" points="1091.5,-150 967.5,-150 967.5,-126 1091.5,-126 1091.5,-150"/>
+<text text-anchor="middle" x="1029.5" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">agglom_prolong_add</text>
+</a>
+</g>
+</g>
+<!-- proc~agglom_vcycle&#45;&gt;proc~agglom_prolong_add -->
+<g id="proc~~si_ml_wetdry_newton~~CallsGraph_edge26" class="edge">
+<title>proc~agglom_vcycle&#45;&gt;proc~agglom_prolong_add</title>
+<path fill="none" stroke="#0000ff" d="M901.32,-107.04C922.01,-112.07 946.79,-118.11 968.96,-123.5"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="968.39,-126.97 978.93,-125.93 970.05,-120.17 968.39,-126.97"/>
+</g>
+<!-- proc~agglom_residual -->
+<g id="proc~~si_ml_wetdry_newton~~CallsGraph_node20" class="node">
+<title>proc~agglom_residual</title>
+<g id="a_proc~~si_ml_wetdry_newton~~CallsGraph_node20"><a xlink:href="../proc/agglom_residual.html" xlink:title="agglom_residual">
+<polygon fill="#d9534f" stroke="#d9534f" points="1079.5,-108 979.5,-108 979.5,-84 1079.5,-84 1079.5,-108"/>
+<text text-anchor="middle" x="1029.5" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">agglom_residual</text>
+</a>
+</g>
+</g>
+<!-- proc~agglom_vcycle&#45;&gt;proc~agglom_residual -->
+<g id="proc~~si_ml_wetdry_newton~~CallsGraph_edge27" class="edge">
+<title>proc~agglom_vcycle&#45;&gt;proc~agglom_residual</title>
+<path fill="none" stroke="#0000ff" d="M901.32,-96C922.1,-96 947,-96 969.24,-96"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="969.24,-99.5 979.24,-96 969.24,-92.5 969.24,-99.5"/>
+</g>
+<!-- proc~agglom_restrict -->
+<g id="proc~~si_ml_wetdry_newton~~CallsGraph_node21" class="node">
+<title>proc~agglom_restrict</title>
+<g id="a_proc~~si_ml_wetdry_newton~~CallsGraph_node21"><a xlink:href="../proc/agglom_restrict.html" xlink:title="agglom_restrict">
+<polygon fill="#d9534f" stroke="#d9534f" points="1077,-66 982,-66 982,-42 1077,-42 1077,-66"/>
+<text text-anchor="middle" x="1029.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">agglom_restrict</text>
+</a>
+</g>
+</g>
+<!-- proc~agglom_vcycle&#45;&gt;proc~agglom_restrict -->
+<g id="proc~~si_ml_wetdry_newton~~CallsGraph_edge28" class="edge">
+<title>proc~agglom_vcycle&#45;&gt;proc~agglom_restrict</title>
+<path fill="none" stroke="#0000ff" d="M901.32,-84.96C922.97,-79.69 949.11,-73.33 972.03,-67.75"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="973.09,-71.09 981.98,-65.33 971.43,-64.29 973.09,-71.09"/>
+</g>
+<!-- proc~agglom_zero -->
+<g id="proc~~si_ml_wetdry_newton~~CallsGraph_node22" class="node">
+<title>proc~agglom_zero</title>
+<g id="a_proc~~si_ml_wetdry_newton~~CallsGraph_node22"><a xlink:href="../proc/agglom_zero.html" xlink:title="agglom_zero">
+<polygon fill="#d9534f" stroke="#d9534f" points="1070,-24 989,-24 989,0 1070,0 1070,-24"/>
+<text text-anchor="middle" x="1029.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">agglom_zero</text>
+</a>
+</g>
+</g>
+<!-- proc~agglom_vcycle&#45;&gt;proc~agglom_zero -->
+<g id="proc~~si_ml_wetdry_newton~~CallsGraph_edge30" class="edge">
+<title>proc~agglom_vcycle&#45;&gt;proc~agglom_zero</title>
+<path fill="none" stroke="#0000ff" d="M873.33,-84C893.78,-70.24 929.18,-47.7 962,-33 967.45,-30.56 973.27,-28.28 979.11,-26.19"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="980.57,-29.39 988.91,-22.85 978.31,-22.76 980.57,-29.39"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var panprocsi_ml_wetdry_newtonCallsGraph = svgPanZoom('#procsi_ml_wetdry_newtonCallsGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CallsGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CallsGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Called by</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~si_ml_wetdry_newton~~CalledByGraph Pages: 1 -->
+<svg id="procsi_ml_wetdry_newtonCalledByGraph" width="641pt" height="63pt"
+ viewBox="0.00 0.00 641.00 62.84" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~si_ml_wetdry_newton~~CalledByGraph" class="graph" transform="scale(0.66 0.66) rotate(0) translate(4 91)">
+<title>proc~~si_ml_wetdry_newton~~CalledByGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-91 965,-91 965,4 -4,4"/>
+<!-- proc~si_ml_wetdry_newton -->
+<g id="proc~~si_ml_wetdry_newton~~CalledByGraph_node1" class="node">
+<title>proc~si_ml_wetdry_newton</title>
+<polygon fill="none" stroke="black" points="961,-66 836,-66 836,-42 961,-42 961,-66"/>
+<text text-anchor="middle" x="898.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50">si_ml_wetdry_newton</text>
+</g>
+<!-- proc~si_unstr_step_ml -->
+<g id="proc~~si_ml_wetdry_newton~~CalledByGraph_node2" class="node">
+<title>proc~si_unstr_step_ml</title>
+<g id="a_proc~~si_ml_wetdry_newton~~CalledByGraph_node2"><a xlink:href="../proc/si_unstr_step_ml.html" xlink:title="si_unstr_step_ml">
+<polygon fill="#d9534f" stroke="#d9534f" points="800,-66 700,-66 700,-42 800,-42 800,-66"/>
+<text text-anchor="middle" x="750" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">si_unstr_step_ml</text>
+</a>
+</g>
+</g>
+<!-- proc~si_unstr_step_ml&#45;&gt;proc~si_ml_wetdry_newton -->
+<g id="proc~~si_ml_wetdry_newton~~CalledByGraph_edge1" class="edge">
+<title>proc~si_unstr_step_ml&#45;&gt;proc~si_ml_wetdry_newton</title>
+<path fill="none" stroke="#ff0000" d="M800.19,-54C808.43,-54 817.14,-54 825.81,-54"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="825.95,-57.5 835.95,-54 825.95,-50.5 825.95,-57.5"/>
+</g>
+<!-- proc~solver_unstr_step_semi_implicit -->
+<g id="proc~~si_ml_wetdry_newton~~CalledByGraph_node3" class="node">
+<title>proc~solver_unstr_step_semi_implicit</title>
+<g id="a_proc~~si_ml_wetdry_newton~~CalledByGraph_node3"><a xlink:href="../proc/solver_unstr_step_semi_implicit.html" xlink:title="solver_unstr_step_semi_implicit">
+<polygon fill="#d9534f" stroke="#d9534f" points="664,-66 484,-66 484,-42 664,-42 664,-66"/>
+<text text-anchor="middle" x="574" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_unstr_step_semi_implicit</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_unstr_step_semi_implicit&#45;&gt;proc~si_unstr_step_ml -->
+<g id="proc~~si_ml_wetdry_newton~~CalledByGraph_edge2" class="edge">
+<title>proc~solver_unstr_step_semi_implicit&#45;&gt;proc~si_unstr_step_ml</title>
+<path fill="none" stroke="#ff0000" d="M664.04,-54C672.84,-54 681.61,-54 689.99,-54"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="690,-57.5 700,-54 690,-50.5 690,-57.5"/>
+</g>
+<!-- proc~solver_unstr_step -->
+<g id="proc~~si_ml_wetdry_newton~~CalledByGraph_node4" class="node">
+<title>proc~solver_unstr_step</title>
+<g id="a_proc~~si_ml_wetdry_newton~~CalledByGraph_node4"><a xlink:href="../proc/solver_unstr_step.html" xlink:title="solver_unstr_step">
+<polygon fill="#d9534f" stroke="#d9534f" points="448,-66 343,-66 343,-42 448,-42 448,-66"/>
+<text text-anchor="middle" x="395.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_unstr_step</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_unstr_step&#45;&gt;proc~solver_unstr_step_semi_implicit -->
+<g id="proc~~si_ml_wetdry_newton~~CalledByGraph_edge3" class="edge">
+<title>proc~solver_unstr_step&#45;&gt;proc~solver_unstr_step_semi_implicit</title>
+<path fill="none" stroke="#ff0000" d="M448.03,-54C456.23,-54 464.95,-54 473.82,-54"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="473.88,-57.5 483.88,-54 473.88,-50.5 473.88,-57.5"/>
+</g>
+<!-- proc~rki_unstr_step -->
+<g id="proc~~si_ml_wetdry_newton~~CalledByGraph_node5" class="node">
+<title>proc~rki_unstr_step</title>
+<g id="a_proc~~si_ml_wetdry_newton~~CalledByGraph_node5"><a xlink:href="../proc/rki_unstr_step.html" xlink:title="rki_unstr_step">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="286,-87 200,-87 200,-63 286,-63 286,-87"/>
+<text text-anchor="middle" x="243" y="-72.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_unstr_step</text>
+</a>
+</g>
+</g>
+<!-- proc~rki_unstr_step&#45;&gt;proc~solver_unstr_step -->
+<g id="proc~~si_ml_wetdry_newton~~CalledByGraph_edge4" class="edge">
+<title>proc~rki_unstr_step&#45;&gt;proc~solver_unstr_step</title>
+<path fill="none" stroke="#ff0000" d="M286.32,-69.09C300.73,-67.08 317.14,-64.79 332.75,-62.62"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="333.45,-66.05 342.87,-61.2 332.48,-59.12 333.45,-66.05"/>
+</g>
+<!-- proc~solver_unstr_advance -->
+<g id="proc~~si_ml_wetdry_newton~~CalledByGraph_node6" class="node">
+<title>proc~solver_unstr_advance</title>
+<g id="a_proc~~si_ml_wetdry_newton~~CalledByGraph_node6"><a xlink:href="../proc/solver_unstr_advance.html" xlink:title="solver_unstr_advance">
+<polygon fill="#d9534f" stroke="#d9534f" points="307,-45 179,-45 179,-21 307,-21 307,-45"/>
+<text text-anchor="middle" x="243" y="-30.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_unstr_advance</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_unstr_advance&#45;&gt;proc~solver_unstr_step -->
+<g id="proc~~si_ml_wetdry_newton~~CalledByGraph_edge5" class="edge">
+<title>proc~solver_unstr_advance&#45;&gt;proc~solver_unstr_step</title>
+<path fill="none" stroke="#ff0000" d="M307.39,-41.85C315.73,-43.01 324.27,-44.2 332.58,-45.36"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="332.19,-48.84 342.58,-46.76 333.16,-41.91 332.19,-48.84"/>
+</g>
+<!-- proc~driver_run_coastal_unstr -->
+<g id="proc~~si_ml_wetdry_newton~~CalledByGraph_node7" class="node">
+<title>proc~driver_run_coastal_unstr</title>
+<g id="a_proc~~si_ml_wetdry_newton~~CalledByGraph_node7"><a xlink:href="../proc/driver_run_coastal_unstr.html" xlink:title="driver_run_coastal_unstr">
+<polygon fill="#d9534f" stroke="#d9534f" points="143,-66 0,-66 0,-42 143,-42 143,-66"/>
+<text text-anchor="middle" x="71.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">driver_run_coastal_unstr</text>
+</a>
+</g>
+</g>
+<!-- proc~driver_run_coastal_unstr&#45;&gt;proc~solver_unstr_advance -->
+<g id="proc~~si_ml_wetdry_newton~~CalledByGraph_edge6" class="edge">
+<title>proc~driver_run_coastal_unstr&#45;&gt;proc~solver_unstr_advance</title>
+<path fill="none" stroke="#00ffff" d="M143.4,-45.22C151.79,-44.18 160.36,-43.12 168.77,-42.07"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="169.44,-45.52 178.94,-40.81 168.58,-38.57 169.44,-45.52"/>
+</g>
+<!-- proc~rki_unstr_advance -->
+<g id="proc~~si_ml_wetdry_newton~~CalledByGraph_node8" class="node">
+<title>proc~rki_unstr_advance</title>
+<g id="a_proc~~si_ml_wetdry_newton~~CalledByGraph_node8"><a xlink:href="../proc/rki_unstr_advance.html" xlink:title="rki_unstr_advance">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="126,-24 17,-24 17,0 126,0 126,-24"/>
+<text text-anchor="middle" x="71.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_unstr_advance</text>
+</a>
+</g>
+</g>
+<!-- proc~rki_unstr_advance&#45;&gt;proc~solver_unstr_advance -->
+<g id="proc~~si_ml_wetdry_newton~~CalledByGraph_edge7" class="edge">
+<title>proc~rki_unstr_advance&#45;&gt;proc~solver_unstr_advance</title>
+<path fill="none" stroke="#00ffff" d="M126.13,-18.64C139.63,-20.32 154.36,-22.14 168.64,-23.91"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="168.59,-27.43 178.94,-25.19 169.45,-20.48 168.59,-27.43"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var panprocsi_ml_wetdry_newtonCalledByGraph = svgPanZoom('#procsi_ml_wetdry_newtonCalledByGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CalledByGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CalledByGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+
+
+    <section>    
+      <h2>Variables</h2>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Visibility</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+<th></th><th scope="col">Initial</th>        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-cg_it~2"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>cg_it</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-cg_it_total"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>cg_it_total</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-converged"></span>
+              logical,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>converged</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-f2"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>f2</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-k~72"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>k</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mass_res~2"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>mass_res</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nit"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nit</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-rhs2"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>rhs2</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-tol2"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>tol2</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-wetcount"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>wetcount</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-wetcount_prev"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>wetcount_prev</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    </section>
+    <br>
+    
+    
+
+    
+    
+
+
+
+    
+    <section>
+    <h2><span class="anchor" id="src"></span>Source Code</h2>
+    <div class="hl codehilite"><pre><span></span><span class="w">   </span><span class="k">subroutine </span><span class="n">si_ml_wetdry_newton</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="w"> </span><span class="n">mesh</span><span class="p">,</span><span class="w"> </span><span class="n">nct</span><span class="p">,</span><span class="w"> </span><span class="n">nco</span><span class="p">,</span><span class="w"> </span><span class="n">g_theta2_dt2</span><span class="p">,</span><span class="w"> </span><span class="n">iter_out</span><span class="p">)</span>
+<span class="w">      </span><span class="c">!! Newton outer loop for the 3D column-integrated wet/dry eta-solve on</span>
+<span class="w">      </span><span class="c">!! the triangulation — the triangular twin of the structured</span>
+<span class="w">      </span><span class="c">!! `si_ml_wetdry_newton` (and the 2D-unstr `si_unstr_advance_wetdry`'s</span>
+<span class="w">      </span><span class="c">!! Newton loop).  The column responses (g_col/r_col/Hhat/Gbar) and the</span>
+<span class="w">      </span><span class="c">!! frozen Hf are held FIXED (they depend on h_layer at time n, not eta),</span>
+<span class="w">      </span><span class="c">!! so only the surface mass system F = v(eta) + T*eta - rhs_d iterates,</span>
+<span class="w">      </span><span class="c">!! with T the Hhat-weighted TPFA stiffness and the surface wet-fraction</span>
+<span class="w">      </span><span class="c">!! Newton diagonal a(eta)+floor.  On entry `state%si%eta_r` holds the</span>
+<span class="w">      </span><span class="c">!! LINEAR RHS (leading eta^n from si_unstr_compute_rhs); this swaps the</span>
+<span class="w">      </span><span class="c">!! leading term for v(eta^n) once, then Newton-solves.  Host-side</span>
+<span class="w">      </span><span class="c">!! orchestration; flat device kernels.  Writes state%si%newton_iters</span>
+<span class="w">      </span><span class="c">!! and state%si%mass_res = the NONLINEAR mass residual ||F||^2 at</span>
+<span class="w">      </span><span class="c">!! Newton exit (the conservation diagnostic — NOT the inner-CG residual</span>
+<span class="w">      </span><span class="c">!! of the last delta-solve, which is an internal solver number).</span>
+<span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="n">unstr_state_t</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">state</span>
+<span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="n">mesh_unstr_t</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">mesh</span>
+<span class="w">      </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">nct</span><span class="p">,</span><span class="w"> </span><span class="n">nco</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">g_theta2_dt2</span>
+<span class="w">      </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">iter_out</span>
+<span class="w">         </span><span class="c">!! Inner CG iterations summed over the Newton outers.</span>
+
+<span class="w">      </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="n">nit</span><span class="p">,</span><span class="w"> </span><span class="n">cg_it</span><span class="p">,</span><span class="w"> </span><span class="n">cg_it_total</span><span class="p">,</span><span class="w"> </span><span class="n">wetcount</span><span class="p">,</span><span class="w"> </span><span class="n">wetcount_prev</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">rhs2</span><span class="p">,</span><span class="w"> </span><span class="n">f2</span><span class="p">,</span><span class="w"> </span><span class="n">tol2</span><span class="p">,</span><span class="w"> </span><span class="n">mass_res</span>
+<span class="w">      </span><span class="kt">logical</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">converged</span>
+
+<span class="w">      </span><span class="k">associate</span><span class="w"> </span><span class="p">(</span><span class="n">si</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">si</span><span class="p">)</span>
+<span class="w">         </span><span class="c">! rhs_d = eta_r + (v(eta^n) - eta^n): swap the linear RHS leading</span>
+<span class="w">         </span><span class="c">! term for the wetted volume (same as the 2D/structured wet/dry).</span>
+<span class="w">         </span><span class="k">call </span><span class="n">si_unstr_wetdry_volume</span><span class="p">(</span><span class="n">si</span><span class="p">%</span><span class="n">n_sub</span><span class="p">,</span><span class="w"> </span><span class="n">nct</span><span class="p">,</span><span class="w"> </span><span class="n">nco</span><span class="p">,</span><span class="w"> </span><span class="n">si</span><span class="p">%</span><span class="n">eta</span><span class="p">,</span><span class="w"> </span><span class="n">si</span><span class="p">%</span><span class="n">b_sub</span><span class="p">,</span><span class="w"> </span><span class="n">si</span><span class="p">%</span><span class="n">v_cell</span><span class="p">)</span>
+<span class="w">         </span><span class="k">do</span><span class="w"> </span><span class="k">concurrent</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="n">nco</span><span class="p">)</span>
+<span class="w">            </span><span class="n">si</span><span class="p">%</span><span class="n">rhs_d</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">si</span><span class="p">%</span><span class="n">eta_r</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="p">(</span><span class="n">si</span><span class="p">%</span><span class="n">v_cell</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">si</span><span class="p">%</span><span class="n">eta</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
+<span class="w">         </span><span class="k">end do</span>
+
+<span class="k">         </span><span class="n">rhs2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">         </span><span class="k">do</span><span class="w"> </span><span class="k">concurrent</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="n">nco</span><span class="p">)</span><span class="w"> </span><span class="n">reduce</span><span class="p">(</span><span class="o">+</span><span class="p">:</span><span class="n">rhs2</span><span class="p">)</span>
+<span class="w">            </span><span class="n">rhs2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rhs2</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">si</span><span class="p">%</span><span class="n">rhs_d</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">*</span><span class="n">si</span><span class="p">%</span><span class="n">rhs_d</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+<span class="w">         </span><span class="k">end do</span>
+<span class="k">         </span><span class="n">tol2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">max</span><span class="p">(</span><span class="n">SI_UNSTR_NEWTON_TOL</span><span class="o">*</span><span class="n">SI_UNSTR_NEWTON_TOL</span><span class="o">*</span><span class="n">rhs2</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0e-60_wp</span><span class="p">)</span>
+
+<span class="w">         </span><span class="n">cg_it_total</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">         </span><span class="n">cg_it</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">         </span><span class="n">mass_res</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">         </span><span class="n">wetcount_prev</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">-</span><span class="mi">1</span>
+<span class="w">         </span><span class="n">converged</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">false</span><span class="p">.</span>
+<span class="w">         </span><span class="k">do </span><span class="n">nit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">SI_UNSTR_NEWTON_MAX</span>
+<span class="w">            </span><span class="k">call </span><span class="n">si_unstr_wetdry_wetfrac</span><span class="p">(</span><span class="n">si</span><span class="p">%</span><span class="n">n_sub</span><span class="p">,</span><span class="w"> </span><span class="n">nct</span><span class="p">,</span><span class="w"> </span><span class="n">nco</span><span class="p">,</span><span class="w"> </span><span class="n">si</span><span class="p">%</span><span class="n">eta</span><span class="p">,</span><span class="w"> </span><span class="n">si</span><span class="p">%</span><span class="n">b_sub</span><span class="p">,</span><span class="w"> </span><span class="n">si</span><span class="p">%</span><span class="n">a_wet</span><span class="p">)</span>
+<span class="w">            </span><span class="k">call </span><span class="n">si_unstr_wetdry_volume</span><span class="p">(</span><span class="n">si</span><span class="p">%</span><span class="n">n_sub</span><span class="p">,</span><span class="w"> </span><span class="n">nct</span><span class="p">,</span><span class="w"> </span><span class="n">nco</span><span class="p">,</span><span class="w"> </span><span class="n">si</span><span class="p">%</span><span class="n">eta</span><span class="p">,</span><span class="w"> </span><span class="n">si</span><span class="p">%</span><span class="n">b_sub</span><span class="p">,</span><span class="w"> </span><span class="n">si</span><span class="p">%</span><span class="n">v_cell</span><span class="p">)</span>
+<span class="w">            </span><span class="k">call </span><span class="n">si_unstr_wetdry_mass_diag</span><span class="p">(</span><span class="n">nct</span><span class="p">,</span><span class="w"> </span><span class="n">nco</span><span class="p">,</span><span class="w"> </span><span class="n">si</span><span class="p">%</span><span class="n">a_wet</span><span class="p">,</span><span class="w"> </span><span class="n">si</span><span class="p">%</span><span class="n">Hf_edge</span><span class="p">,</span><span class="w"> </span><span class="n">si</span><span class="p">%</span><span class="n">mass_diag</span><span class="p">)</span>
+<span class="w">            </span><span class="k">call </span><span class="n">si_unstr_apply_helmholtz</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span><span class="w"> </span><span class="n">nct</span><span class="p">,</span><span class="w"> </span><span class="n">nco</span><span class="p">,</span><span class="w"> </span><span class="n">si</span><span class="p">%</span><span class="n">eta</span><span class="p">,</span><span class="w"> </span><span class="n">si</span><span class="p">%</span><span class="n">newton_Jeta</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                          </span><span class="n">si</span><span class="p">%</span><span class="n">Hf_edge</span><span class="p">,</span><span class="w"> </span><span class="n">g_theta2_dt2</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                          </span><span class="n">mass_diag</span><span class="o">=</span><span class="n">si</span><span class="p">%</span><span class="n">mass_diag</span><span class="p">)</span>
+<span class="w">            </span><span class="k">call </span><span class="n">si_unstr_wetdry_newton_residual</span><span class="p">(</span><span class="n">nct</span><span class="p">,</span><span class="w"> </span><span class="n">nco</span><span class="p">,</span><span class="w"> </span><span class="n">si</span><span class="p">%</span><span class="n">eta</span><span class="p">,</span><span class="w"> </span><span class="n">si</span><span class="p">%</span><span class="n">newton_Jeta</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                                 </span><span class="n">si</span><span class="p">%</span><span class="n">mass_diag</span><span class="p">,</span><span class="w"> </span><span class="n">si</span><span class="p">%</span><span class="n">v_cell</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                                 </span><span class="n">si</span><span class="p">%</span><span class="n">rhs_d</span><span class="p">,</span><span class="w"> </span><span class="n">si</span><span class="p">%</span><span class="n">newton_F</span><span class="p">,</span><span class="w"> </span><span class="n">f2</span><span class="p">)</span>
+<span class="w">            </span><span class="k">call </span><span class="n">si_unstr_wetdry_wetcount</span><span class="p">(</span><span class="n">si</span><span class="p">%</span><span class="n">n_sub</span><span class="p">,</span><span class="w"> </span><span class="n">nct</span><span class="p">,</span><span class="w"> </span><span class="n">nco</span><span class="p">,</span><span class="w"> </span><span class="n">si</span><span class="p">%</span><span class="n">eta</span><span class="p">,</span><span class="w"> </span><span class="n">si</span><span class="p">%</span><span class="n">b_sub</span><span class="p">,</span><span class="w"> </span><span class="n">wetcount</span><span class="p">)</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">nit</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="w"> </span><span class="n">wetcount</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">wetcount_prev</span><span class="w"> </span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="w"> </span><span class="n">f2</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">tol2</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">               </span><span class="n">converged</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+<span class="w">               </span><span class="k">exit</span>
+<span class="k">            end if</span>
+<span class="k">            </span><span class="n">wetcount_prev</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">wetcount</span>
+
+<span class="w">            </span><span class="c">! Solve J*dz = -F from zero (full-array zero so the ghost band of</span>
+<span class="w">            </span><span class="c">! the search space stays 0); eta += dz.</span>
+<span class="w">            </span><span class="k">do</span><span class="w"> </span><span class="k">concurrent</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="n">nct</span><span class="p">)</span>
+<span class="w">               </span><span class="n">si</span><span class="p">%</span><span class="n">newton_dz</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">            </span><span class="k">end do</span>
+<span class="k">            do</span><span class="w"> </span><span class="k">concurrent</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="n">nco</span><span class="p">)</span>
+<span class="w">               </span><span class="n">si</span><span class="p">%</span><span class="n">eta_r</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">-</span><span class="n">si</span><span class="p">%</span><span class="n">newton_F</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+<span class="w">            </span><span class="k">end do</span>
+<span class="k">            call </span><span class="n">si_unstr_cg_solve</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span><span class="w"> </span><span class="n">nct</span><span class="p">,</span><span class="w"> </span><span class="n">nco</span><span class="p">,</span><span class="w"> </span><span class="n">si</span><span class="p">%</span><span class="n">newton_dz</span><span class="p">,</span><span class="w"> </span><span class="n">si</span><span class="p">%</span><span class="n">eta_r</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                   </span><span class="n">si</span><span class="p">%</span><span class="n">eta_p</span><span class="p">,</span><span class="w"> </span><span class="n">si</span><span class="p">%</span><span class="n">eta_Ap</span><span class="p">,</span><span class="w"> </span><span class="n">si</span><span class="p">%</span><span class="n">eta_z</span><span class="p">,</span><span class="w"> </span><span class="n">si</span><span class="p">%</span><span class="n">eta_diag</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                   </span><span class="n">si</span><span class="p">%</span><span class="n">Hf_edge</span><span class="p">,</span><span class="w"> </span><span class="n">g_theta2_dt2</span><span class="p">,</span><span class="w"> </span><span class="n">si</span><span class="p">%</span><span class="n">precond</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                   </span><span class="n">si</span><span class="p">%</span><span class="n">rtol</span><span class="p">,</span><span class="w"> </span><span class="n">cg_it</span><span class="p">,</span><span class="w"> </span><span class="n">mass_res</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                   </span><span class="n">mass_diag</span><span class="o">=</span><span class="n">si</span><span class="p">%</span><span class="n">mass_diag</span><span class="p">)</span>
+<span class="w">            </span><span class="n">cg_it_total</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cg_it_total</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">cg_it</span>
+<span class="w">            </span><span class="k">do</span><span class="w"> </span><span class="k">concurrent</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="n">nco</span><span class="p">)</span>
+<span class="w">               </span><span class="n">si</span><span class="p">%</span><span class="n">eta</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">si</span><span class="p">%</span><span class="n">eta</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">si</span><span class="p">%</span><span class="n">newton_dz</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+<span class="w">            </span><span class="k">end do</span>
+<span class="k">         end do</span>
+
+<span class="k">         </span><span class="n">si</span><span class="p">%</span><span class="n">newton_iters</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">min</span><span class="p">(</span><span class="n">nit</span><span class="p">,</span><span class="w"> </span><span class="n">SI_UNSTR_NEWTON_MAX</span><span class="p">)</span>
+<span class="w">         </span><span class="c">! Report the NONLINEAR mass residual ||F||^2 (the conservation</span>
+<span class="w">         </span><span class="c">! diagnostic), not `mass_res` (the inner-CG residual of the final</span>
+<span class="w">         </span><span class="c">! delta-solve — an internal solver number that misleads anyone</span>
+<span class="w">         </span><span class="c">! reading state%si%mass_res as a mass defect).</span>
+<span class="w">         </span><span class="n">si</span><span class="p">%</span><span class="n">mass_res</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">f2</span>
+<span class="w">         </span><span class="k">if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="w"> </span><span class="n">converged</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            call </span><span class="n">global_logger</span><span class="p">%</span><span class="n">warning</span><span class="p">(</span><span class="s2">"si_ml_wetdry_newton: Newton did not "</span><span class="o">//</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                       </span><span class="s2">"converge in the iteration cap; last ||F||^2 above tol."</span><span class="p">)</span>
+<span class="w">         </span><span class="k">end if</span>
+<span class="k">      end associate</span>
+
+<span class="k">      </span><span class="n">iter_out</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cg_it_total</span>
+<span class="w">   </span><span class="k">end subroutine </span><span class="n">si_ml_wetdry_newton</span>
+</pre></div>
+
+    </section>
+    <br>
+    
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Rakali
+ was developed by Jorge Luis Galvez Vallejo<br>              &copy; 2026 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+ on 2026-10-08 12:55 +0000             </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,2392 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="GPU-native coastal solver — structured Cartesian and unstructured triangular grids, hydrostatic multilayer + non-hydrostatic, portable across NVHPC/gfortran/ifx.">
+    <meta name="author" content="Jorge Luis Galvez Vallejo" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>flux_cell &ndash; Rakali</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">Rakali </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/absint.html">Abstract Interfaces</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>flux_cell
+      <small>Subroutine</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.7% of total for procedures.">180 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/rki_kernel_flux.F90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/rki_kernel_flux.f90.html'>rki_kernel_flux.F90</a></li>
+                <li class="breadcrumb-item"><a href='../module/rki_kernel_flux.html'>rki_kernel_flux</a></li>
+            <li class="breadcrumb-item active" aria-current="page">flux_cell</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+  
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#vars-0"
+         aria-expanded="false" aria-controls="vars-0">
+         <h4 class="card-header bg-primary text-white">Variables</h4>
+      </a>
+      <div id="vars-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../proc/flux_cell.html#variable-b_max">b_max</a>
+            <a class="list-group-item" href="../proc/flux_cell.html#variable-eta_l">eta_L</a>
+            <a class="list-group-item" href="../proc/flux_cell.html#variable-eta_r">eta_R</a>
+            <a class="list-group-item" href="../proc/flux_cell.html#variable-eta_c">eta_c</a>
+            <a class="list-group-item" href="../proc/flux_cell.html#variable-eta_im1">eta_im1</a>
+            <a class="list-group-item" href="../proc/flux_cell.html#variable-eta_im2">eta_im2</a>
+            <a class="list-group-item" href="../proc/flux_cell.html#variable-eta_ip1">eta_ip1</a>
+            <a class="list-group-item" href="../proc/flux_cell.html#variable-eta_ip2">eta_ip2</a>
+            <a class="list-group-item" href="../proc/flux_cell.html#variable-eta_jm1">eta_jm1</a>
+            <a class="list-group-item" href="../proc/flux_cell.html#variable-eta_jm2">eta_jm2</a>
+            <a class="list-group-item" href="../proc/flux_cell.html#variable-eta_jp1">eta_jp1</a>
+            <a class="list-group-item" href="../proc/flux_cell.html#variable-eta_jp2">eta_jp2</a>
+            <a class="list-group-item" href="../proc/flux_cell.html#variable-fx_h_l">fx_h_l</a>
+            <a class="list-group-item" href="../proc/flux_cell.html#variable-fx_h_r">fx_h_r</a>
+            <a class="list-group-item" href="../proc/flux_cell.html#variable-fx_hu_l">fx_hu_l</a>
+            <a class="list-group-item" href="../proc/flux_cell.html#variable-fx_hu_r">fx_hu_r</a>
+            <a class="list-group-item" href="../proc/flux_cell.html#variable-fx_hv_l">fx_hv_l</a>
+            <a class="list-group-item" href="../proc/flux_cell.html#variable-fx_hv_r">fx_hv_r</a>
+            <a class="list-group-item" href="../proc/flux_cell.html#variable-fy_h_b">fy_h_b</a>
+            <a class="list-group-item" href="../proc/flux_cell.html#variable-fy_h_t">fy_h_t</a>
+            <a class="list-group-item" href="../proc/flux_cell.html#variable-fy_hu_b">fy_hu_b</a>
+            <a class="list-group-item" href="../proc/flux_cell.html#variable-fy_hu_t">fy_hu_t</a>
+            <a class="list-group-item" href="../proc/flux_cell.html#variable-fy_hv_b">fy_hv_b</a>
+            <a class="list-group-item" href="../proc/flux_cell.html#variable-fy_hv_t">fy_hv_t</a>
+            <a class="list-group-item" href="../proc/flux_cell.html#variable-h_l">h_L</a>
+            <a class="list-group-item" href="../proc/flux_cell.html#variable-h_r">h_R</a>
+            <a class="list-group-item" href="../proc/flux_cell.html#variable-h_hyd_bottom">h_hyd_bottom</a>
+            <a class="list-group-item" href="../proc/flux_cell.html#variable-h_hyd_l">h_hyd_l</a>
+            <a class="list-group-item" href="../proc/flux_cell.html#variable-h_hyd_left">h_hyd_left</a>
+            <a class="list-group-item" href="../proc/flux_cell.html#variable-h_hyd_r">h_hyd_r</a>
+            <a class="list-group-item" href="../proc/flux_cell.html#variable-h_hyd_right">h_hyd_right</a>
+            <a class="list-group-item" href="../proc/flux_cell.html#variable-h_hyd_top">h_hyd_top</a>
+            <a class="list-group-item" href="../proc/flux_cell.html#variable-h_pre_bottom">h_pre_bottom</a>
+            <a class="list-group-item" href="../proc/flux_cell.html#variable-h_pre_left">h_pre_left</a>
+            <a class="list-group-item" href="../proc/flux_cell.html#variable-h_pre_right">h_pre_right</a>
+            <a class="list-group-item" href="../proc/flux_cell.html#variable-h_pre_top">h_pre_top</a>
+            <a class="list-group-item" href="../proc/flux_cell.html#variable-half_g">half_g</a>
+            <a class="list-group-item" href="../proc/flux_cell.html#variable-hu_l">hu_L</a>
+            <a class="list-group-item" href="../proc/flux_cell.html#variable-hu_r">hu_R</a>
+            <a class="list-group-item" href="../proc/flux_cell.html#variable-hv_l">hv_L</a>
+            <a class="list-group-item" href="../proc/flux_cell.html#variable-hv_r">hv_R</a>
+            <a class="list-group-item" href="../proc/flux_cell.html#variable-seta_x">seta_x</a>
+            <a class="list-group-item" href="../proc/flux_cell.html#variable-seta_x_nb">seta_x_nb</a>
+            <a class="list-group-item" href="../proc/flux_cell.html#variable-seta_y">seta_y</a>
+            <a class="list-group-item" href="../proc/flux_cell.html#variable-seta_y_nb">seta_y_nb</a>
+            <a class="list-group-item" href="../proc/flux_cell.html#variable-shu_x">shu_x</a>
+            <a class="list-group-item" href="../proc/flux_cell.html#variable-shu_x_nb">shu_x_nb</a>
+            <a class="list-group-item" href="../proc/flux_cell.html#variable-shu_y">shu_y</a>
+            <a class="list-group-item" href="../proc/flux_cell.html#variable-shu_y_nb">shu_y_nb</a>
+            <a class="list-group-item" href="../proc/flux_cell.html#variable-shv_x">shv_x</a>
+            <a class="list-group-item" href="../proc/flux_cell.html#variable-shv_x_nb">shv_x_nb</a>
+            <a class="list-group-item" href="../proc/flux_cell.html#variable-shv_y">shv_y</a>
+            <a class="list-group-item" href="../proc/flux_cell.html#variable-shv_y_nb">shv_y_nb</a>
+            <a class="list-group-item" href="../proc/flux_cell.html#variable-u_l">u_l</a>
+            <a class="list-group-item" href="../proc/flux_cell.html#variable-u_r">u_r</a>
+            <a class="list-group-item" href="../proc/flux_cell.html#variable-v_l">v_l</a>
+            <a class="list-group-item" href="../proc/flux_cell.html#variable-v_r">v_r</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../proc/flux_cell.html#src">flux_cell</a>
+      </div>
+    </div>
+
+
+  </div>
+
+    </div>
+    
+    <div class="col-md-9" id='text'>
+    <h2>private pure subroutine flux_cell(h, hu, hv, b, nx, ny, i, j, dx, dy, use_hllc, out_fh, out_fhu, out_fhv, out_fmass_xL, out_fmass_xR, out_fmass_yB, out_fmass_yT)  
+</h2>
+    
+
+    <p>Net flux divergence for a single cell (i, j). Also returns the
+four per-face HLL h-fluxes for the multilayer tracer kernels&rsquo; CWC.</p>
+
+
+    <h3>Arguments</h3>
+        <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-h~3"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>h</strong>(nx,ny)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-hu~3"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>hu</strong>(nx,ny)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-hv~3"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>hv</strong>(nx,ny)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-b~3"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>b</strong>(nx,ny)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nx~20"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nx</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ny~20"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>ny</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-i~18"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>i</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-j~18"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>j</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-dx~8"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>dx</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-dy~8"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>dy</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-use_hllc~3"></span>
+              logical,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>use_hllc</strong></td>
+            <td>
+                <p>Selects the Riemann solver. Passed as a literal constant from
+the two entry points, so the in-kernel branch constant-folds.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-out_fh"></span>
+              real(kind=wp),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>out_fh</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-out_fhu"></span>
+              real(kind=wp),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>out_fhu</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-out_fhv"></span>
+              real(kind=wp),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>out_fhv</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-out_fmass_xl"></span>
+              real(kind=wp),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>out_fmass_xL</strong></td>
+            <td>
+                <p>HLL h-flux at left face (i-1/2).</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-out_fmass_xr"></span>
+              real(kind=wp),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>out_fmass_xR</strong></td>
+            <td>
+                <p>HLL h-flux at right face (i+1/2).</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-out_fmass_yb"></span>
+              real(kind=wp),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>out_fmass_yB</strong></td>
+            <td>
+                <p>HLL h-flux at bottom face (j-1/2).</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-out_fmass_yt"></span>
+              real(kind=wp),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>out_fmass_yT</strong></td>
+            <td>
+                <p>HLL h-flux at top face (j+1/2).</p>
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <br>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Calls</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~flux_cell~~CallsGraph Pages: 1 -->
+<svg id="procflux_cellCallsGraph" width="196pt" height="242pt"
+ viewBox="0.00 0.00 196.00 242.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~flux_cell~~CallsGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 238)">
+<title>proc~~flux_cell~~CallsGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-238 192,-238 192,4 -4,4"/>
+<!-- proc~flux_cell -->
+<g id="proc~~flux_cell~~CallsGraph_node1" class="node">
+<title>proc~flux_cell</title>
+<polygon fill="none" stroke="black" points="56,-129 0,-129 0,-105 56,-105 56,-129"/>
+<text text-anchor="middle" x="28" y="-114.6" font-family="Helvetica,sans-Serif" font-size="10.50">flux_cell</text>
+</g>
+<!-- proc~extract_velocity -->
+<g id="proc~~flux_cell~~CallsGraph_node2" class="node">
+<title>proc~extract_velocity</title>
+<g id="a_proc~~flux_cell~~CallsGraph_node2"><a xlink:href="../proc/extract_velocity.html" xlink:title="extract_velocity">
+<polygon fill="#d9534f" stroke="#d9534f" points="188,-234 92,-234 92,-210 188,-210 188,-234"/>
+<text text-anchor="middle" x="140" y="-219.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">extract_velocity</text>
+</a>
+</g>
+</g>
+<!-- proc~flux_cell&#45;&gt;proc~extract_velocity -->
+<g id="proc~~flux_cell~~CallsGraph_edge1" class="edge">
+<title>proc~flux_cell&#45;&gt;proc~extract_velocity</title>
+<path fill="none" stroke="#ff0000" d="M35.41,-129.1C45.4,-146.95 66.21,-180.41 92,-201 93.57,-202.25 95.23,-203.45 96.95,-204.59"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="95.5,-207.8 105.9,-209.8 99.02,-201.75 95.5,-207.8"/>
+</g>
+<!-- proc~hll_flux_x -->
+<g id="proc~~flux_cell~~CallsGraph_node3" class="node">
+<title>proc~hll_flux_x</title>
+<g id="a_proc~~flux_cell~~CallsGraph_node3"><a xlink:href="../proc/hll_flux_x.html" xlink:title="hll_flux_x">
+<polygon fill="#d9534f" stroke="#d9534f" points="170.5,-192 109.5,-192 109.5,-168 170.5,-168 170.5,-192"/>
+<text text-anchor="middle" x="140" y="-177.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">hll_flux_x</text>
+</a>
+</g>
+</g>
+<!-- proc~flux_cell&#45;&gt;proc~hll_flux_x -->
+<g id="proc~~flux_cell~~CallsGraph_edge2" class="edge">
+<title>proc~flux_cell&#45;&gt;proc~hll_flux_x</title>
+<path fill="none" stroke="#ff0000" d="M45.37,-129.02C57.81,-137.88 75.54,-149.92 92,-159 94.73,-160.51 97.59,-161.99 100.49,-163.43"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="99.26,-166.73 109.79,-167.87 102.27,-160.41 99.26,-166.73"/>
+</g>
+<!-- proc~hll_flux_y -->
+<g id="proc~~flux_cell~~CallsGraph_node4" class="node">
+<title>proc~hll_flux_y</title>
+<g id="a_proc~~flux_cell~~CallsGraph_node4"><a xlink:href="../proc/hll_flux_y.html" xlink:title="hll_flux_y">
+<polygon fill="#d9534f" stroke="#d9534f" points="170.5,-150 109.5,-150 109.5,-126 170.5,-126 170.5,-150"/>
+<text text-anchor="middle" x="140" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">hll_flux_y</text>
+</a>
+</g>
+</g>
+<!-- proc~flux_cell&#45;&gt;proc~hll_flux_y -->
+<g id="proc~~flux_cell~~CallsGraph_edge3" class="edge">
+<title>proc~flux_cell&#45;&gt;proc~hll_flux_y</title>
+<path fill="none" stroke="#ff0000" d="M56.19,-122.19C69.19,-124.67 85.01,-127.69 99.33,-130.43"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="98.94,-133.92 109.42,-132.35 100.25,-127.04 98.94,-133.92"/>
+</g>
+<!-- proc~hllc_flux_x -->
+<g id="proc~~flux_cell~~CallsGraph_node5" class="node">
+<title>proc~hllc_flux_x</title>
+<g id="a_proc~~flux_cell~~CallsGraph_node5"><a xlink:href="../proc/hllc_flux_x.html" xlink:title="hllc_flux_x">
+<polygon fill="#d9534f" stroke="#d9534f" points="173.5,-108 106.5,-108 106.5,-84 173.5,-84 173.5,-108"/>
+<text text-anchor="middle" x="140" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">hllc_flux_x</text>
+</a>
+</g>
+</g>
+<!-- proc~flux_cell&#45;&gt;proc~hllc_flux_x -->
+<g id="proc~~flux_cell~~CallsGraph_edge4" class="edge">
+<title>proc~flux_cell&#45;&gt;proc~hllc_flux_x</title>
+<path fill="none" stroke="#ff0000" d="M56.19,-111.81C68.26,-109.51 82.75,-106.74 96.21,-104.17"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="97.08,-107.57 106.25,-102.25 95.77,-100.69 97.08,-107.57"/>
+</g>
+<!-- proc~hllc_flux_y -->
+<g id="proc~~flux_cell~~CallsGraph_node6" class="node">
+<title>proc~hllc_flux_y</title>
+<g id="a_proc~~flux_cell~~CallsGraph_node6"><a xlink:href="../proc/hllc_flux_y.html" xlink:title="hllc_flux_y">
+<polygon fill="#d9534f" stroke="#d9534f" points="173.5,-66 106.5,-66 106.5,-42 173.5,-42 173.5,-66"/>
+<text text-anchor="middle" x="140" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">hllc_flux_y</text>
+</a>
+</g>
+</g>
+<!-- proc~flux_cell&#45;&gt;proc~hllc_flux_y -->
+<g id="proc~~flux_cell~~CallsGraph_edge5" class="edge">
+<title>proc~flux_cell&#45;&gt;proc~hllc_flux_y</title>
+<path fill="none" stroke="#ff0000" d="M45.37,-104.98C57.81,-96.12 75.54,-84.08 92,-75 94.73,-73.49 97.59,-72.01 100.49,-70.57"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="102.27,-73.59 109.79,-66.13 99.26,-67.27 102.27,-73.59"/>
+</g>
+<!-- proc~minmod -->
+<g id="proc~~flux_cell~~CallsGraph_node7" class="node">
+<title>proc~minmod</title>
+<g id="a_proc~~flux_cell~~CallsGraph_node7"><a xlink:href="../proc/minmod.html" xlink:title="minmod">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="168.5,-24 111.5,-24 111.5,0 168.5,0 168.5,-24"/>
+<text text-anchor="middle" x="140" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">minmod</text>
+</a>
+</g>
+</g>
+<!-- proc~flux_cell&#45;&gt;proc~minmod -->
+<g id="proc~~flux_cell~~CallsGraph_edge6" class="edge">
+<title>proc~flux_cell&#45;&gt;proc~minmod</title>
+<path fill="none" stroke="#ff0000" d="M35.41,-104.9C45.4,-87.05 66.21,-53.59 92,-33 95.13,-30.5 98.61,-28.23 102.21,-26.19"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="103.98,-29.22 111.31,-21.58 100.81,-22.98 103.98,-29.22"/>
+</g>
+</g>
+</svg>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CallsGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CallsGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Called by</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~flux_cell~~CalledByGraph Pages: 1 -->
+<svg id="procflux_cellCalledByGraph" width="641pt" height="103pt"
+ viewBox="0.00 0.00 641.00 103.03" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~flux_cell~~CalledByGraph" class="graph" transform="scale(0.5 0.5) rotate(0) translate(4 202.06)">
+<title>proc~~flux_cell~~CalledByGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-202.06 1278,-202.06 1278,4 -4,4"/>
+<!-- proc~flux_cell -->
+<g id="proc~~flux_cell~~CalledByGraph_node1" class="node">
+<title>proc~flux_cell</title>
+<polygon fill="none" stroke="black" points="1274,-111.24 1218,-111.24 1218,-87.24 1274,-87.24 1274,-111.24"/>
+<text text-anchor="middle" x="1246" y="-96.84" font-family="Helvetica,sans-Serif" font-size="10.50">flux_cell</text>
+</g>
+<!-- proc~compute_flux_hll -->
+<g id="proc~~flux_cell~~CalledByGraph_node2" class="node">
+<title>proc~compute_flux_hll</title>
+<g id="a_proc~~flux_cell~~CalledByGraph_node2"><a xlink:href="../proc/compute_flux_hll.html" xlink:title="compute_flux_hll">
+<polygon fill="#d9534f" stroke="#d9534f" points="1179,-132.24 1076,-132.24 1076,-108.24 1179,-108.24 1179,-132.24"/>
+<text text-anchor="middle" x="1127.5" y="-117.84" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_flux_hll</text>
+</a>
+</g>
+</g>
+<!-- proc~compute_flux_hll&#45;&gt;proc~flux_cell -->
+<g id="proc~~flux_cell~~CalledByGraph_edge1" class="edge">
+<title>proc~compute_flux_hll&#45;&gt;proc~flux_cell</title>
+<path fill="none" stroke="#ff0000" d="M1179.26,-111.09C1188.88,-109.36 1198.78,-107.57 1207.89,-105.93"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="1208.55,-109.37 1217.77,-104.15 1207.31,-102.48 1208.55,-109.37"/>
+</g>
+<!-- proc~compute_flux_hllc -->
+<g id="proc~~flux_cell~~CalledByGraph_node3" class="node">
+<title>proc~compute_flux_hllc</title>
+<g id="a_proc~~flux_cell~~CalledByGraph_node3"><a xlink:href="../proc/compute_flux_hllc.html" xlink:title="compute_flux_hllc">
+<polygon fill="#d9534f" stroke="#d9534f" points="1182,-90.24 1073,-90.24 1073,-66.24 1182,-66.24 1182,-90.24"/>
+<text text-anchor="middle" x="1127.5" y="-75.84" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_flux_hllc</text>
+</a>
+</g>
+</g>
+<!-- proc~compute_flux_hllc&#45;&gt;proc~flux_cell -->
+<g id="proc~~flux_cell~~CalledByGraph_edge2" class="edge">
+<title>proc~compute_flux_hllc&#45;&gt;proc~flux_cell</title>
+<path fill="none" stroke="#ff0000" d="M1182.32,-87.94C1190.95,-89.5 1199.72,-91.08 1207.85,-92.55"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="1207.29,-96 1217.75,-94.33 1208.53,-89.11 1207.29,-96"/>
+</g>
+<!-- proc~solver_compute_barotropic_flux -->
+<g id="proc~~flux_cell~~CalledByGraph_node4" class="node">
+<title>proc~solver_compute_barotropic_flux</title>
+<g id="a_proc~~flux_cell~~CalledByGraph_node4"><a xlink:href="../proc/solver_compute_barotropic_flux.html" xlink:title="solver_compute_barotropic_flux">
+<polygon fill="#d9534f" stroke="#d9534f" points="1037,-111.24 856,-111.24 856,-87.24 1037,-87.24 1037,-111.24"/>
+<text text-anchor="middle" x="946.5" y="-96.84" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_compute_barotropic_flux</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_compute_barotropic_flux&#45;&gt;proc~compute_flux_hll -->
+<g id="proc~~flux_cell~~CalledByGraph_edge3" class="edge">
+<title>proc~solver_compute_barotropic_flux&#45;&gt;proc~compute_flux_hll</title>
+<path fill="none" stroke="#ff0000" d="M1037.26,-109.77C1046.9,-110.9 1056.53,-112.03 1065.7,-113.11"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="1065.51,-116.61 1075.85,-114.3 1066.33,-109.66 1065.51,-116.61"/>
+</g>
+<!-- proc~solver_compute_barotropic_flux&#45;&gt;proc~compute_flux_hllc -->
+<g id="proc~~flux_cell~~CalledByGraph_edge4" class="edge">
+<title>proc~solver_compute_barotropic_flux&#45;&gt;proc~compute_flux_hllc</title>
+<path fill="none" stroke="#00ffff" d="M1037.26,-88.71C1045.94,-87.69 1054.62,-86.67 1062.97,-85.7"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="1063.45,-89.16 1072.97,-84.52 1062.63,-82.21 1063.45,-89.16"/>
+</g>
+<!-- proc~solver_advance_2d_generic -->
+<g id="proc~~flux_cell~~CalledByGraph_node5" class="node">
+<title>proc~solver_advance_2d_generic</title>
+<g id="a_proc~~flux_cell~~CalledByGraph_node5"><a xlink:href="../proc/solver_advance_2d_generic.html" xlink:title="solver_advance_2d_generic">
+<polygon fill="#d9534f" stroke="#d9534f" points="811,-173.24 651,-173.24 651,-149.24 811,-149.24 811,-173.24"/>
+<text text-anchor="middle" x="731" y="-158.84" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_advance_2d_generic</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_advance_2d_generic&#45;&gt;proc~solver_compute_barotropic_flux -->
+<g id="proc~~flux_cell~~CalledByGraph_edge5" class="edge">
+<title>proc~solver_advance_2d_generic&#45;&gt;proc~solver_compute_barotropic_flux</title>
+<path fill="none" stroke="#ff0000" d="M785.7,-149.16C797.07,-146.4 808.96,-143.36 820,-140.24 847.34,-132.53 877.62,-122.68 901.58,-114.56"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="902.77,-117.85 911.11,-111.32 900.51,-111.23 902.77,-117.85"/>
+</g>
+<!-- proc~solver_barotropic_rk_stage -->
+<g id="proc~~flux_cell~~CalledByGraph_node6" class="node">
+<title>proc~solver_barotropic_rk_stage</title>
+<g id="a_proc~~flux_cell~~CalledByGraph_node6"><a xlink:href="../proc/solver_barotropic_rk_stage.html" xlink:title="solver_barotropic_rk_stage">
+<polygon fill="#d9534f" stroke="#d9534f" points="606,-25.24 452,-25.24 452,-1.24 606,-1.24 606,-25.24"/>
+<text text-anchor="middle" x="529" y="-10.84" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_barotropic_rk_stage</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_barotropic_rk_stage&#45;&gt;proc~solver_compute_barotropic_flux -->
+<g id="proc~~flux_cell~~CalledByGraph_edge6" class="edge">
+<title>proc~solver_barotropic_rk_stage&#45;&gt;proc~solver_compute_barotropic_flux</title>
+<path fill="none" stroke="#ff0000" d="M606.27,-3.32C665.81,1.77 749.9,3.07 820,-18.24 860.88,-30.67 901.12,-60.66 924.62,-80.45"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="922.63,-83.35 932.49,-87.23 927.2,-78.05 922.63,-83.35"/>
+</g>
+<!-- proc~solver_multilayer_rk_stage -->
+<g id="proc~~flux_cell~~CalledByGraph_node7" class="node">
+<title>proc~solver_multilayer_rk_stage</title>
+<g id="a_proc~~flux_cell~~CalledByGraph_node7"><a xlink:href="../proc/solver_multilayer_rk_stage.html" xlink:title="solver_multilayer_rk_stage">
+<polygon fill="#d9534f" stroke="#d9534f" points="606,-85.24 452,-85.24 452,-61.24 606,-61.24 606,-85.24"/>
+<text text-anchor="middle" x="529" y="-70.84" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_multilayer_rk_stage</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_multilayer_rk_stage&#45;&gt;proc~solver_compute_barotropic_flux -->
+<g id="proc~~flux_cell~~CalledByGraph_edge7" class="edge">
+<title>proc~solver_multilayer_rk_stage&#45;&gt;proc~solver_compute_barotropic_flux</title>
+<path fill="none" stroke="#ff0000" d="M606.21,-78.01C673.45,-82.22 771.92,-88.38 845.47,-92.98"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="845.48,-96.49 855.68,-93.62 845.92,-89.5 845.48,-96.49"/>
+</g>
+<!-- proc~solver_multilayer_rk_stage_nz1 -->
+<g id="proc~~flux_cell~~CalledByGraph_node8" class="node">
+<title>proc~solver_multilayer_rk_stage_nz1</title>
+<g id="a_proc~~flux_cell~~CalledByGraph_node8"><a xlink:href="../proc/solver_multilayer_rk_stage_nz1.html" xlink:title="solver_multilayer_rk_stage_nz1">
+<polygon fill="#d9534f" stroke="#d9534f" points="820,-51.24 642,-51.24 642,-27.24 820,-27.24 820,-51.24"/>
+<text text-anchor="middle" x="731" y="-36.84" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_multilayer_rk_stage_nz1</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_multilayer_rk_stage&#45;&gt;proc~solver_multilayer_rk_stage_nz1 -->
+<g id="proc~~flux_cell~~CalledByGraph_edge14" class="edge">
+<title>proc~solver_multilayer_rk_stage&#45;&gt;proc~solver_multilayer_rk_stage_nz1</title>
+<path fill="none" stroke="#00ffff" d="M600.79,-61.21C616.52,-58.53 633.3,-55.68 649.39,-52.95"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="650.03,-56.39 659.3,-51.26 648.86,-49.49 650.03,-56.39"/>
+</g>
+<!-- proc~solver_multilayer_rk_stage_nz1&#45;&gt;proc~solver_compute_barotropic_flux -->
+<g id="proc~~flux_cell~~CalledByGraph_edge8" class="edge">
+<title>proc~solver_multilayer_rk_stage_nz1&#45;&gt;proc~solver_compute_barotropic_flux</title>
+<path fill="none" stroke="#ff0000" d="M774.95,-51.31C808.9,-60.85 856.44,-74.21 892.71,-84.41"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="892.05,-87.86 902.62,-87.19 893.94,-81.12 892.05,-87.86"/>
+</g>
+<!-- proc~solver_nh_rk_stage -->
+<g id="proc~~flux_cell~~CalledByGraph_node9" class="node">
+<title>proc~solver_nh_rk_stage</title>
+<g id="a_proc~~flux_cell~~CalledByGraph_node9"><a xlink:href="../proc/solver_nh_rk_stage.html" xlink:title="solver_nh_rk_stage">
+<polygon fill="#d9534f" stroke="#d9534f" points="788,-131.24 674,-131.24 674,-107.24 788,-107.24 788,-131.24"/>
+<text text-anchor="middle" x="731" y="-116.84" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_nh_rk_stage</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_nh_rk_stage&#45;&gt;proc~solver_compute_barotropic_flux -->
+<g id="proc~~flux_cell~~CalledByGraph_edge9" class="edge">
+<title>proc~solver_nh_rk_stage&#45;&gt;proc~solver_compute_barotropic_flux</title>
+<path fill="none" stroke="#ff0000" d="M788.09,-113.99C805.85,-112.32 826.04,-110.43 845.9,-108.57"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="846.29,-112.05 855.92,-107.63 845.64,-105.08 846.29,-112.05"/>
+</g>
+<!-- proc~solver_step_impl -->
+<g id="proc~~flux_cell~~CalledByGraph_node10" class="node">
+<title>proc~solver_step_impl</title>
+<g id="a_proc~~flux_cell~~CalledByGraph_node10"><a xlink:href="../proc/solver_step_impl.html" xlink:title="solver_step_impl">
+<polygon fill="#d9534f" stroke="#d9534f" points="579.5,-136.24 478.5,-136.24 478.5,-112.24 579.5,-112.24 579.5,-136.24"/>
+<text text-anchor="middle" x="529" y="-121.84" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_step_impl</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_step_impl&#45;&gt;proc~solver_compute_barotropic_flux -->
+<g id="proc~~flux_cell~~CalledByGraph_edge10" class="edge">
+<title>proc~solver_step_impl&#45;&gt;proc~solver_compute_barotropic_flux</title>
+<path fill="none" stroke="#ff0000" d="M546.81,-136.25C567.87,-150.48 605.62,-173.38 642,-182.24 718.86,-200.96 744.24,-205.03 820,-182.24 861.62,-169.72 902.15,-138.42 925.43,-118.03"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="927.8,-120.61 932.92,-111.33 923.13,-115.39 927.8,-120.61"/>
+</g>
+<!-- proc~solver_step_impl&#45;&gt;proc~solver_advance_2d_generic -->
+<g id="proc~~flux_cell~~CalledByGraph_edge11" class="edge">
+<title>proc~solver_step_impl&#45;&gt;proc~solver_advance_2d_generic</title>
+<path fill="none" stroke="#ff0000" d="M579.7,-133.44C602.47,-137.65 629.95,-142.73 655.16,-147.4"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="654.59,-150.85 665.06,-149.23 655.86,-143.97 654.59,-150.85"/>
+</g>
+<!-- proc~solver_step_impl&#45;&gt;proc~solver_nh_rk_stage -->
+<g id="proc~~flux_cell~~CalledByGraph_edge15" class="edge">
+<title>proc~solver_step_impl&#45;&gt;proc~solver_nh_rk_stage</title>
+<path fill="none" stroke="#0000ff" d="M579.7,-123C605.03,-122.37 636.2,-121.59 663.57,-120.9"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="663.94,-124.39 673.85,-120.65 663.77,-117.4 663.94,-124.39"/>
+</g>
+<!-- proc~solver_step -->
+<g id="proc~~flux_cell~~CalledByGraph_node11" class="node">
+<title>proc~solver_step</title>
+<g id="a_proc~~flux_cell~~CalledByGraph_node11"><a xlink:href="../proc/solver_step.html" xlink:title="solver_step">
+<polygon fill="#d9534f" stroke="#d9534f" points="220,-85.24 147,-85.24 147,-61.24 220,-61.24 220,-85.24"/>
+<text text-anchor="middle" x="183.5" y="-70.84" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_step</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_step&#45;&gt;proc~solver_step_impl -->
+<g id="proc~~flux_cell~~CalledByGraph_edge16" class="edge">
+<title>proc~solver_step&#45;&gt;proc~solver_step_impl</title>
+<path fill="none" stroke="#ff00ff" d="M220.2,-85.07C231.54,-88.46 244.2,-91.88 256,-94.24 328.36,-108.74 413.05,-116.69 468.47,-120.7"/>
+<polygon fill="#ff00ff" stroke="#ff00ff" points="468.24,-124.19 478.46,-121.4 468.73,-117.21 468.24,-124.19"/>
+</g>
+<!-- proc~solver_step_multilayer_impl -->
+<g id="proc~~flux_cell~~CalledByGraph_node12" class="node">
+<title>proc~solver_step_multilayer_impl</title>
+<g id="a_proc~~flux_cell~~CalledByGraph_node12"><a xlink:href="../proc/solver_step_multilayer_impl.html" xlink:title="solver_step_multilayer_impl">
+<polygon fill="#d9534f" stroke="#d9534f" points="416,-85.24 256,-85.24 256,-61.24 416,-61.24 416,-85.24"/>
+<text text-anchor="middle" x="336" y="-70.84" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_step_multilayer_impl</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_step&#45;&gt;proc~solver_step_multilayer_impl -->
+<g id="proc~~flux_cell~~CalledByGraph_edge20" class="edge">
+<title>proc~solver_step&#45;&gt;proc~solver_step_multilayer_impl</title>
+<path fill="none" stroke="#00ff00" d="M220.17,-73.24C228.06,-73.24 236.77,-73.24 245.75,-73.24"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="245.98,-76.74 255.98,-73.24 245.98,-69.74 245.98,-76.74"/>
+</g>
+<!-- proc~solver_step_split_impl -->
+<g id="proc~~flux_cell~~CalledByGraph_node13" class="node">
+<title>proc~solver_step_split_impl</title>
+<g id="a_proc~~flux_cell~~CalledByGraph_node13"><a xlink:href="../proc/solver_step_split_impl.html" xlink:title="solver_step_split_impl">
+<polygon fill="#d9534f" stroke="#d9534f" points="400,-25.24 272,-25.24 272,-1.24 400,-1.24 400,-25.24"/>
+<text text-anchor="middle" x="336" y="-10.84" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_step_split_impl</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_step&#45;&gt;proc~solver_step_split_impl -->
+<g id="proc~~flux_cell~~CalledByGraph_edge21" class="edge">
+<title>proc~solver_step&#45;&gt;proc~solver_step_split_impl</title>
+<path fill="none" stroke="#0000ff" d="M214.96,-61.1C238.08,-51.88 270.09,-39.12 295.23,-29.1"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="296.85,-32.22 304.85,-25.26 294.26,-25.72 296.85,-32.22"/>
+</g>
+<!-- proc~solver_step_multilayer_impl&#45;&gt;proc~solver_multilayer_rk_stage -->
+<g id="proc~~flux_cell~~CalledByGraph_edge13" class="edge">
+<title>proc~solver_step_multilayer_impl&#45;&gt;proc~solver_multilayer_rk_stage</title>
+<path fill="none" stroke="#00ff00" d="M416.07,-73.24C424.46,-73.24 433.02,-73.24 441.49,-73.24"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="441.76,-76.74 451.76,-73.24 441.76,-69.74 441.76,-76.74"/>
+</g>
+<!-- proc~solver_step_split_impl&#45;&gt;proc~solver_barotropic_rk_stage -->
+<g id="proc~~flux_cell~~CalledByGraph_edge12" class="edge">
+<title>proc~solver_step_split_impl&#45;&gt;proc~solver_barotropic_rk_stage</title>
+<path fill="none" stroke="#ffff00" d="M400.07,-13.24C413.36,-13.24 427.6,-13.24 441.58,-13.24"/>
+<polygon fill="#ffff00" stroke="#ffff00" points="441.7,-16.74 451.7,-13.24 441.7,-9.74 441.7,-16.74"/>
+</g>
+<!-- proc~driver_run_coastal -->
+<g id="proc~~flux_cell~~CalledByGraph_node14" class="node">
+<title>proc~driver_run_coastal</title>
+<g id="a_proc~~flux_cell~~CalledByGraph_node14"><a xlink:href="../proc/driver_run_coastal.html" xlink:title="driver_run_coastal">
+<polygon fill="#d9534f" stroke="#d9534f" points="111,-127.24 0,-127.24 0,-103.24 111,-103.24 111,-127.24"/>
+<text text-anchor="middle" x="55.5" y="-112.84" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">driver_run_coastal</text>
+</a>
+</g>
+</g>
+<!-- proc~driver_run_coastal&#45;&gt;proc~solver_step -->
+<g id="proc~~flux_cell~~CalledByGraph_edge17" class="edge">
+<title>proc~driver_run_coastal&#45;&gt;proc~solver_step</title>
+<path fill="none" stroke="#ff0000" d="M92.61,-103.21C106.43,-98.6 122.39,-93.28 136.98,-88.42"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="138.44,-91.62 146.82,-85.13 136.23,-84.98 138.44,-91.62"/>
+</g>
+<!-- proc~rki_advance -->
+<g id="proc~~flux_cell~~CalledByGraph_node15" class="node">
+<title>proc~rki_advance</title>
+<g id="a_proc~~flux_cell~~CalledByGraph_node15"><a xlink:href="../proc/rki_advance.html" xlink:title="rki_advance">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="94,-85.24 17,-85.24 17,-61.24 94,-61.24 94,-85.24"/>
+<text text-anchor="middle" x="55.5" y="-70.84" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_advance</text>
+</a>
+</g>
+</g>
+<!-- proc~rki_advance&#45;&gt;proc~solver_step -->
+<g id="proc~~flux_cell~~CalledByGraph_edge18" class="edge">
+<title>proc~rki_advance&#45;&gt;proc~solver_step</title>
+<path fill="none" stroke="#ff0000" d="M94.3,-73.24C107.59,-73.24 122.67,-73.24 136.55,-73.24"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="136.88,-76.74 146.88,-73.24 136.88,-69.74 136.88,-76.74"/>
+</g>
+<!-- proc~rki_step -->
+<g id="proc~~flux_cell~~CalledByGraph_node16" class="node">
+<title>proc~rki_step</title>
+<g id="a_proc~~flux_cell~~CalledByGraph_node16"><a xlink:href="../proc/rki_step.html" xlink:title="rki_step">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="82.5,-43.24 28.5,-43.24 28.5,-19.24 82.5,-19.24 82.5,-43.24"/>
+<text text-anchor="middle" x="55.5" y="-28.84" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_step</text>
+</a>
+</g>
+</g>
+<!-- proc~rki_step&#45;&gt;proc~solver_step -->
+<g id="proc~~flux_cell~~CalledByGraph_edge19" class="edge">
+<title>proc~rki_step&#45;&gt;proc~solver_step</title>
+<path fill="none" stroke="#ff0000" d="M82.61,-39.94C98.37,-45.2 118.89,-52.04 137.23,-58.15"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="136.28,-61.52 146.87,-61.37 138.49,-54.88 136.28,-61.52"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var panprocflux_cellCalledByGraph = svgPanZoom('#procflux_cellCalledByGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CalledByGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CalledByGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+
+
+    <section>    
+      <h2>Variables</h2>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Visibility</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+<th></th><th scope="col">Initial</th>        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-b_max"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>b_max</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-eta_l"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>eta_L</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-eta_r"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>eta_R</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-eta_c"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>eta_c</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-eta_im1"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>eta_im1</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-eta_im2"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>eta_im2</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-eta_ip1"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>eta_ip1</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-eta_ip2"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>eta_ip2</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-eta_jm1"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>eta_jm1</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-eta_jm2"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>eta_jm2</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-eta_jp1"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>eta_jp1</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-eta_jp2"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>eta_jp2</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-fx_h_l"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>fx_h_l</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-fx_h_r"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>fx_h_r</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-fx_hu_l"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>fx_hu_l</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-fx_hu_r"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>fx_hu_r</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-fx_hv_l"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>fx_hv_l</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-fx_hv_r"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>fx_hv_r</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-fy_h_b"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>fy_h_b</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-fy_h_t"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>fy_h_t</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-fy_hu_b"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>fy_hu_b</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-fy_hu_t"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>fy_hu_t</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-fy_hv_b"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>fy_hv_b</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-fy_hv_t"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>fy_hv_t</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-h_l"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>h_L</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-h_r"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>h_R</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-h_hyd_bottom"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>h_hyd_bottom</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-h_hyd_l"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>h_hyd_l</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-h_hyd_left"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>h_hyd_left</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-h_hyd_r"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>h_hyd_r</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-h_hyd_right"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>h_hyd_right</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-h_hyd_top"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>h_hyd_top</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-h_pre_bottom"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>h_pre_bottom</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-h_pre_left"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>h_pre_left</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-h_pre_right"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>h_pre_right</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-h_pre_top"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>h_pre_top</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-half_g"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>half_g</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-hu_l"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>hu_L</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-hu_r"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>hu_R</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-hv_l"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>hv_L</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-hv_r"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>hv_R</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-seta_x"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>seta_x</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-seta_x_nb"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>seta_x_nb</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-seta_y"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>seta_y</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-seta_y_nb"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>seta_y_nb</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-shu_x"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>shu_x</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-shu_x_nb"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>shu_x_nb</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-shu_y"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>shu_y</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-shu_y_nb"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>shu_y_nb</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-shv_x"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>shv_x</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-shv_x_nb"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>shv_x_nb</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-shv_y"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>shv_y</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-shv_y_nb"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>shv_y_nb</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-u_l"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>u_l</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-u_r"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>u_r</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-v_l"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>v_l</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-v_r"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>v_r</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    </section>
+    <br>
+    
+    
+
+    
+    
+
+
+
+    
+    <section>
+    <h2><span class="anchor" id="src"></span>Source Code</h2>
+    <div class="hl codehilite"><pre><span></span><span class="w">   </span><span class="k">pure subroutine </span><span class="n">flux_cell</span><span class="p">(</span><span class="n">h</span><span class="p">,</span><span class="w"> </span><span class="n">hu</span><span class="p">,</span><span class="w"> </span><span class="n">hv</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="n">nx</span><span class="p">,</span><span class="w"> </span><span class="n">ny</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">,</span><span class="w"> </span><span class="n">dx</span><span class="p">,</span><span class="w"> </span><span class="n">dy</span><span class="p">,</span><span class="w"> </span><span class="n">use_hllc</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                             </span><span class="n">out_fh</span><span class="p">,</span><span class="w"> </span><span class="n">out_fhu</span><span class="p">,</span><span class="w"> </span><span class="n">out_fhv</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                             </span><span class="n">out_fmass_xL</span><span class="p">,</span><span class="w"> </span><span class="n">out_fmass_xR</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                             </span><span class="n">out_fmass_yB</span><span class="p">,</span><span class="w"> </span><span class="n">out_fmass_yT</span><span class="p">)</span>
+<span class="w">      </span><span class="c">!! Net flux divergence for a single cell (i, j). Also returns the</span>
+<span class="w">      </span><span class="c">!! four per-face HLL h-fluxes for the multilayer tracer kernels' CWC.</span>
+<span class="w">      </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">nx</span><span class="p">,</span><span class="w"> </span><span class="n">ny</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">h</span><span class="p">(</span><span class="n">nx</span><span class="p">,</span><span class="w"> </span><span class="n">ny</span><span class="p">),</span><span class="w"> </span><span class="n">hu</span><span class="p">(</span><span class="n">nx</span><span class="p">,</span><span class="w"> </span><span class="n">ny</span><span class="p">),</span><span class="w"> </span><span class="n">hv</span><span class="p">(</span><span class="n">nx</span><span class="p">,</span><span class="w"> </span><span class="n">ny</span><span class="p">),</span><span class="w"> </span><span class="n">b</span><span class="p">(</span><span class="n">nx</span><span class="p">,</span><span class="w"> </span><span class="n">ny</span><span class="p">)</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">dx</span><span class="p">,</span><span class="w"> </span><span class="n">dy</span>
+<span class="w">      </span><span class="kt">logical</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">use_hllc</span>
+<span class="w">         </span><span class="c">!! Selects the Riemann solver. Passed as a literal constant from</span>
+<span class="w">         </span><span class="c">!! the two entry points, so the in-kernel branch constant-folds.</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">out_fh</span><span class="p">,</span><span class="w"> </span><span class="n">out_fhu</span><span class="p">,</span><span class="w"> </span><span class="n">out_fhv</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">out_fmass_xL</span>
+<span class="w">         </span><span class="c">!! HLL h-flux at left face (i-1/2).</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">out_fmass_xR</span>
+<span class="w">         </span><span class="c">!! HLL h-flux at right face (i+1/2).</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">out_fmass_yB</span>
+<span class="w">         </span><span class="c">!! HLL h-flux at bottom face (j-1/2).</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">out_fmass_yT</span>
+<span class="w">         </span><span class="c">!! HLL h-flux at top face (j+1/2).</span>
+
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">eta_c</span><span class="p">,</span><span class="w"> </span><span class="n">eta_im1</span><span class="p">,</span><span class="w"> </span><span class="n">eta_ip1</span><span class="p">,</span><span class="w"> </span><span class="n">eta_im2</span><span class="p">,</span><span class="w"> </span><span class="n">eta_ip2</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">eta_jm1</span><span class="p">,</span><span class="w"> </span><span class="n">eta_jp1</span><span class="p">,</span><span class="w"> </span><span class="n">eta_jm2</span><span class="p">,</span><span class="w"> </span><span class="n">eta_jp2</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">seta_x</span><span class="p">,</span><span class="w"> </span><span class="n">shu_x</span><span class="p">,</span><span class="w"> </span><span class="n">shv_x</span><span class="p">,</span><span class="w"> </span><span class="n">seta_y</span><span class="p">,</span><span class="w"> </span><span class="n">shu_y</span><span class="p">,</span><span class="w"> </span><span class="n">shv_y</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">seta_x_nb</span><span class="p">,</span><span class="w"> </span><span class="n">shu_x_nb</span><span class="p">,</span><span class="w"> </span><span class="n">shv_x_nb</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">seta_y_nb</span><span class="p">,</span><span class="w"> </span><span class="n">shu_y_nb</span><span class="p">,</span><span class="w"> </span><span class="n">shv_y_nb</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">eta_L</span><span class="p">,</span><span class="w"> </span><span class="n">eta_R</span><span class="p">,</span><span class="w"> </span><span class="n">hu_L</span><span class="p">,</span><span class="w"> </span><span class="n">hv_L</span><span class="p">,</span><span class="w"> </span><span class="n">hu_R</span><span class="p">,</span><span class="w"> </span><span class="n">hv_R</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">h_L</span><span class="p">,</span><span class="w"> </span><span class="n">h_R</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">b_max</span><span class="p">,</span><span class="w"> </span><span class="n">h_hyd_l</span><span class="p">,</span><span class="w"> </span><span class="n">h_hyd_r</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">u_l</span><span class="p">,</span><span class="w"> </span><span class="n">v_l</span><span class="p">,</span><span class="w"> </span><span class="n">u_r</span><span class="p">,</span><span class="w"> </span><span class="n">v_r</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">fx_h_l</span><span class="p">,</span><span class="w"> </span><span class="n">fx_hu_l</span><span class="p">,</span><span class="w"> </span><span class="n">fx_hv_l</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">fx_h_r</span><span class="p">,</span><span class="w"> </span><span class="n">fx_hu_r</span><span class="p">,</span><span class="w"> </span><span class="n">fx_hv_r</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">fy_h_b</span><span class="p">,</span><span class="w"> </span><span class="n">fy_hu_b</span><span class="p">,</span><span class="w"> </span><span class="n">fy_hv_b</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">fy_h_t</span><span class="p">,</span><span class="w"> </span><span class="n">fy_hu_t</span><span class="p">,</span><span class="w"> </span><span class="n">fy_hv_t</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">h_hyd_left</span><span class="p">,</span><span class="w"> </span><span class="n">h_pre_left</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">h_hyd_right</span><span class="p">,</span><span class="w"> </span><span class="n">h_pre_right</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">h_hyd_bottom</span><span class="p">,</span><span class="w"> </span><span class="n">h_pre_bottom</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">h_hyd_top</span><span class="p">,</span><span class="w"> </span><span class="n">h_pre_top</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">half_g</span>
+
+<span class="w">      </span><span class="n">half_g</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.5_wp</span><span class="o">*</span><span class="n">GRAVITY</span>
+
+<span class="w">      </span><span class="c">! Precompute free surface eta = h + B</span>
+<span class="w">      </span><span class="n">eta_c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">h</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span>
+<span class="w">      </span><span class="n">eta_im1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">h</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span>
+<span class="w">      </span><span class="n">eta_ip1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">h</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span>
+<span class="w">      </span><span class="n">eta_im2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">h</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span>
+<span class="w">      </span><span class="n">eta_ip2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">h</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span>
+<span class="w">      </span><span class="n">eta_jm1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">h</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="w">      </span><span class="n">eta_jp1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">h</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="w">      </span><span class="n">eta_jm2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">h</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span>
+<span class="w">      </span><span class="n">eta_jp2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">h</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span>
+
+<span class="w">      </span><span class="c">! Fall back to first-order (zero slopes) near wet/dry fronts.</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">h</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">THIN_LAYER_THRESHOLD</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">          </span><span class="p">.</span><span class="nb">or</span><span class="p">.</span><span class="w"> </span><span class="n">h</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">DRY_TOLERANCE</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">          </span><span class="p">.</span><span class="nb">or</span><span class="p">.</span><span class="w"> </span><span class="n">h</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">DRY_TOLERANCE</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">         </span><span class="n">seta_x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">         </span><span class="n">shu_x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">         </span><span class="n">shv_x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">      </span><span class="k">else</span>
+<span class="k">         </span><span class="n">seta_x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">minmod</span><span class="p">(</span><span class="n">eta_c</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">eta_im1</span><span class="p">,</span><span class="w"> </span><span class="n">eta_ip1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">eta_c</span><span class="p">)</span>
+<span class="w">         </span><span class="n">shu_x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">minmod</span><span class="p">(</span><span class="n">hu</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">hu</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">),</span><span class="w"> </span><span class="n">hu</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">hu</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">))</span>
+<span class="w">         </span><span class="n">shv_x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">minmod</span><span class="p">(</span><span class="n">hv</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">hv</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">),</span><span class="w"> </span><span class="n">hv</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">hv</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">))</span>
+<span class="w">      </span><span class="k">end if</span>
+
+<span class="k">      if</span><span class="w"> </span><span class="p">(</span><span class="n">h</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">THIN_LAYER_THRESHOLD</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">          </span><span class="p">.</span><span class="nb">or</span><span class="p">.</span><span class="w"> </span><span class="n">h</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">DRY_TOLERANCE</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">          </span><span class="p">.</span><span class="nb">or</span><span class="p">.</span><span class="w"> </span><span class="n">h</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">DRY_TOLERANCE</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">         </span><span class="n">seta_y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">         </span><span class="n">shu_y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">         </span><span class="n">shv_y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">      </span><span class="k">else</span>
+<span class="k">         </span><span class="n">seta_y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">minmod</span><span class="p">(</span><span class="n">eta_c</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">eta_jm1</span><span class="p">,</span><span class="w"> </span><span class="n">eta_jp1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">eta_c</span><span class="p">)</span>
+<span class="w">         </span><span class="n">shu_y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">minmod</span><span class="p">(</span><span class="n">hu</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">hu</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">),</span><span class="w"> </span><span class="n">hu</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">hu</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">))</span>
+<span class="w">         </span><span class="n">shv_y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">minmod</span><span class="p">(</span><span class="n">hv</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">hv</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">),</span><span class="w"> </span><span class="n">hv</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">hv</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">))</span>
+<span class="w">      </span><span class="k">end if</span>
+
+<span class="w">      </span><span class="c">! ============================================================</span>
+<span class="w">      </span><span class="c">! x-direction: LEFT interface (i-1/2)</span>
+<span class="w">      </span><span class="c">! ============================================================</span>
+<span class="w">      </span><span class="n">eta_R</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">eta_c</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mf">0.5_wp</span><span class="o">*</span><span class="n">seta_x</span>
+<span class="w">      </span><span class="n">hu_R</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hu</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mf">0.5_wp</span><span class="o">*</span><span class="n">shu_x</span>
+<span class="w">      </span><span class="n">hv_R</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hv</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mf">0.5_wp</span><span class="o">*</span><span class="n">shv_x</span>
+<span class="w">      </span><span class="n">h_R</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">max</span><span class="p">(</span><span class="mf">0.0_wp</span><span class="p">,</span><span class="w"> </span><span class="n">eta_R</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">b</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">))</span>
+<span class="w">      </span><span class="n">h_pre_left</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">h_R</span>
+
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">h</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">THIN_LAYER_THRESHOLD</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">          </span><span class="p">.</span><span class="nb">or</span><span class="p">.</span><span class="w"> </span><span class="n">h</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">DRY_TOLERANCE</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">          </span><span class="p">.</span><span class="nb">or</span><span class="p">.</span><span class="w"> </span><span class="n">h</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">DRY_TOLERANCE</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">         </span><span class="n">seta_x_nb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">         </span><span class="n">shu_x_nb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">         </span><span class="n">shv_x_nb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">      </span><span class="k">else</span>
+<span class="k">         </span><span class="n">seta_x_nb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">minmod</span><span class="p">(</span><span class="n">eta_im1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">eta_im2</span><span class="p">,</span><span class="w"> </span><span class="n">eta_c</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">eta_im1</span><span class="p">)</span>
+<span class="w">         </span><span class="n">shu_x_nb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">minmod</span><span class="p">(</span><span class="n">hu</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">hu</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">),</span><span class="w"> </span><span class="n">hu</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">hu</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">))</span>
+<span class="w">         </span><span class="n">shv_x_nb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">minmod</span><span class="p">(</span><span class="n">hv</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">hv</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">),</span><span class="w"> </span><span class="n">hv</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">hv</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">))</span>
+<span class="w">      </span><span class="k">end if</span>
+<span class="k">      </span><span class="n">eta_L</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">eta_im1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mf">0.5_wp</span><span class="o">*</span><span class="n">seta_x_nb</span>
+<span class="w">      </span><span class="n">hu_L</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hu</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mf">0.5_wp</span><span class="o">*</span><span class="n">shu_x_nb</span>
+<span class="w">      </span><span class="n">hv_L</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hv</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mf">0.5_wp</span><span class="o">*</span><span class="n">shv_x_nb</span>
+<span class="w">      </span><span class="n">h_L</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">max</span><span class="p">(</span><span class="mf">0.0_wp</span><span class="p">,</span><span class="w"> </span><span class="n">eta_L</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">b</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">))</span>
+
+<span class="w">      </span><span class="n">b_max</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">max</span><span class="p">(</span><span class="n">b</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">),</span><span class="w"> </span><span class="n">b</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">))</span>
+<span class="w">      </span><span class="n">h_hyd_l</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">max</span><span class="p">(</span><span class="mf">0.0_wp</span><span class="p">,</span><span class="w"> </span><span class="n">h_L</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">b_max</span><span class="p">)</span>
+<span class="w">      </span><span class="n">h_hyd_r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">max</span><span class="p">(</span><span class="mf">0.0_wp</span><span class="p">,</span><span class="w"> </span><span class="n">h_R</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">b_max</span><span class="p">)</span>
+<span class="w">      </span><span class="n">h_hyd_left</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">h_hyd_r</span>
+
+<span class="w">      </span><span class="k">call </span><span class="n">extract_velocity</span><span class="p">(</span><span class="n">h_L</span><span class="p">,</span><span class="w"> </span><span class="n">hu_L</span><span class="p">,</span><span class="w"> </span><span class="n">hv_L</span><span class="p">,</span><span class="w"> </span><span class="n">u_l</span><span class="p">,</span><span class="w"> </span><span class="n">v_l</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">extract_velocity</span><span class="p">(</span><span class="n">h_R</span><span class="p">,</span><span class="w"> </span><span class="n">hu_R</span><span class="p">,</span><span class="w"> </span><span class="n">hv_R</span><span class="p">,</span><span class="w"> </span><span class="n">u_r</span><span class="p">,</span><span class="w"> </span><span class="n">v_r</span><span class="p">)</span>
+
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">use_hllc</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">         call </span><span class="n">hllc_flux_x</span><span class="p">(</span><span class="n">h_hyd_l</span><span class="p">,</span><span class="w"> </span><span class="n">h_hyd_l</span><span class="o">*</span><span class="n">u_l</span><span class="p">,</span><span class="w"> </span><span class="n">h_hyd_l</span><span class="o">*</span><span class="n">v_l</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                          </span><span class="n">h_hyd_r</span><span class="p">,</span><span class="w"> </span><span class="n">h_hyd_r</span><span class="o">*</span><span class="n">u_r</span><span class="p">,</span><span class="w"> </span><span class="n">h_hyd_r</span><span class="o">*</span><span class="n">v_r</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                          </span><span class="n">fx_h_l</span><span class="p">,</span><span class="w"> </span><span class="n">fx_hu_l</span><span class="p">,</span><span class="w"> </span><span class="n">fx_hv_l</span><span class="p">)</span>
+<span class="w">      </span><span class="k">else</span>
+<span class="k">         call </span><span class="n">hll_flux_x</span><span class="p">(</span><span class="n">h_hyd_l</span><span class="p">,</span><span class="w"> </span><span class="n">h_hyd_l</span><span class="o">*</span><span class="n">u_l</span><span class="p">,</span><span class="w"> </span><span class="n">h_hyd_l</span><span class="o">*</span><span class="n">v_l</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                         </span><span class="n">h_hyd_r</span><span class="p">,</span><span class="w"> </span><span class="n">h_hyd_r</span><span class="o">*</span><span class="n">u_r</span><span class="p">,</span><span class="w"> </span><span class="n">h_hyd_r</span><span class="o">*</span><span class="n">v_r</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                         </span><span class="n">fx_h_l</span><span class="p">,</span><span class="w"> </span><span class="n">fx_hu_l</span><span class="p">,</span><span class="w"> </span><span class="n">fx_hv_l</span><span class="p">)</span>
+<span class="w">      </span><span class="k">end if</span>
+
+<span class="w">      </span><span class="c">! ============================================================</span>
+<span class="w">      </span><span class="c">! x-direction: RIGHT interface (i+1/2)</span>
+<span class="w">      </span><span class="c">! ============================================================</span>
+<span class="w">      </span><span class="n">eta_L</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">eta_c</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mf">0.5_wp</span><span class="o">*</span><span class="n">seta_x</span>
+<span class="w">      </span><span class="n">hu_L</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hu</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mf">0.5_wp</span><span class="o">*</span><span class="n">shu_x</span>
+<span class="w">      </span><span class="n">hv_L</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hv</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mf">0.5_wp</span><span class="o">*</span><span class="n">shv_x</span>
+<span class="w">      </span><span class="n">h_L</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">max</span><span class="p">(</span><span class="mf">0.0_wp</span><span class="p">,</span><span class="w"> </span><span class="n">eta_L</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">b</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">))</span>
+<span class="w">      </span><span class="n">h_pre_right</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">h_L</span>
+
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">h</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">THIN_LAYER_THRESHOLD</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">          </span><span class="p">.</span><span class="nb">or</span><span class="p">.</span><span class="w"> </span><span class="n">h</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">DRY_TOLERANCE</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">          </span><span class="p">.</span><span class="nb">or</span><span class="p">.</span><span class="w"> </span><span class="n">h</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">DRY_TOLERANCE</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">         </span><span class="n">seta_x_nb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">         </span><span class="n">shu_x_nb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">         </span><span class="n">shv_x_nb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">      </span><span class="k">else</span>
+<span class="k">         </span><span class="n">seta_x_nb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">minmod</span><span class="p">(</span><span class="n">eta_ip1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">eta_c</span><span class="p">,</span><span class="w"> </span><span class="n">eta_ip2</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">eta_ip1</span><span class="p">)</span>
+<span class="w">         </span><span class="n">shu_x_nb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">minmod</span><span class="p">(</span><span class="n">hu</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">hu</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">),</span><span class="w"> </span><span class="n">hu</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">hu</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">))</span>
+<span class="w">         </span><span class="n">shv_x_nb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">minmod</span><span class="p">(</span><span class="n">hv</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">hv</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">),</span><span class="w"> </span><span class="n">hv</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">hv</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">))</span>
+<span class="w">      </span><span class="k">end if</span>
+<span class="k">      </span><span class="n">eta_R</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">eta_ip1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mf">0.5_wp</span><span class="o">*</span><span class="n">seta_x_nb</span>
+<span class="w">      </span><span class="n">hu_R</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hu</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mf">0.5_wp</span><span class="o">*</span><span class="n">shu_x_nb</span>
+<span class="w">      </span><span class="n">hv_R</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hv</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mf">0.5_wp</span><span class="o">*</span><span class="n">shv_x_nb</span>
+<span class="w">      </span><span class="n">h_R</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">max</span><span class="p">(</span><span class="mf">0.0_wp</span><span class="p">,</span><span class="w"> </span><span class="n">eta_R</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">b</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">))</span>
+
+<span class="w">      </span><span class="n">b_max</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">max</span><span class="p">(</span><span class="n">b</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">),</span><span class="w"> </span><span class="n">b</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">))</span>
+<span class="w">      </span><span class="n">h_hyd_l</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">max</span><span class="p">(</span><span class="mf">0.0_wp</span><span class="p">,</span><span class="w"> </span><span class="n">h_L</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">b_max</span><span class="p">)</span>
+<span class="w">      </span><span class="n">h_hyd_r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">max</span><span class="p">(</span><span class="mf">0.0_wp</span><span class="p">,</span><span class="w"> </span><span class="n">h_R</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">b_max</span><span class="p">)</span>
+<span class="w">      </span><span class="n">h_hyd_right</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">h_hyd_l</span>
+
+<span class="w">      </span><span class="k">call </span><span class="n">extract_velocity</span><span class="p">(</span><span class="n">h_L</span><span class="p">,</span><span class="w"> </span><span class="n">hu_L</span><span class="p">,</span><span class="w"> </span><span class="n">hv_L</span><span class="p">,</span><span class="w"> </span><span class="n">u_l</span><span class="p">,</span><span class="w"> </span><span class="n">v_l</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">extract_velocity</span><span class="p">(</span><span class="n">h_R</span><span class="p">,</span><span class="w"> </span><span class="n">hu_R</span><span class="p">,</span><span class="w"> </span><span class="n">hv_R</span><span class="p">,</span><span class="w"> </span><span class="n">u_r</span><span class="p">,</span><span class="w"> </span><span class="n">v_r</span><span class="p">)</span>
+
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">use_hllc</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">         call </span><span class="n">hllc_flux_x</span><span class="p">(</span><span class="n">h_hyd_l</span><span class="p">,</span><span class="w"> </span><span class="n">h_hyd_l</span><span class="o">*</span><span class="n">u_l</span><span class="p">,</span><span class="w"> </span><span class="n">h_hyd_l</span><span class="o">*</span><span class="n">v_l</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                          </span><span class="n">h_hyd_r</span><span class="p">,</span><span class="w"> </span><span class="n">h_hyd_r</span><span class="o">*</span><span class="n">u_r</span><span class="p">,</span><span class="w"> </span><span class="n">h_hyd_r</span><span class="o">*</span><span class="n">v_r</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                          </span><span class="n">fx_h_r</span><span class="p">,</span><span class="w"> </span><span class="n">fx_hu_r</span><span class="p">,</span><span class="w"> </span><span class="n">fx_hv_r</span><span class="p">)</span>
+<span class="w">      </span><span class="k">else</span>
+<span class="k">         call </span><span class="n">hll_flux_x</span><span class="p">(</span><span class="n">h_hyd_l</span><span class="p">,</span><span class="w"> </span><span class="n">h_hyd_l</span><span class="o">*</span><span class="n">u_l</span><span class="p">,</span><span class="w"> </span><span class="n">h_hyd_l</span><span class="o">*</span><span class="n">v_l</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                         </span><span class="n">h_hyd_r</span><span class="p">,</span><span class="w"> </span><span class="n">h_hyd_r</span><span class="o">*</span><span class="n">u_r</span><span class="p">,</span><span class="w"> </span><span class="n">h_hyd_r</span><span class="o">*</span><span class="n">v_r</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                         </span><span class="n">fx_h_r</span><span class="p">,</span><span class="w"> </span><span class="n">fx_hu_r</span><span class="p">,</span><span class="w"> </span><span class="n">fx_hv_r</span><span class="p">)</span>
+<span class="w">      </span><span class="k">end if</span>
+
+<span class="w">      </span><span class="c">! ============================================================</span>
+<span class="w">      </span><span class="c">! y-direction: BOTTOM interface (j-1/2)</span>
+<span class="w">      </span><span class="c">! ============================================================</span>
+<span class="w">      </span><span class="n">eta_R</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">eta_c</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mf">0.5_wp</span><span class="o">*</span><span class="n">seta_y</span>
+<span class="w">      </span><span class="n">hu_R</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hu</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mf">0.5_wp</span><span class="o">*</span><span class="n">shu_y</span>
+<span class="w">      </span><span class="n">hv_R</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hv</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mf">0.5_wp</span><span class="o">*</span><span class="n">shv_y</span>
+<span class="w">      </span><span class="n">h_R</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">max</span><span class="p">(</span><span class="mf">0.0_wp</span><span class="p">,</span><span class="w"> </span><span class="n">eta_R</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">b</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">))</span>
+<span class="w">      </span><span class="n">h_pre_bottom</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">h_R</span>
+
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">h</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">THIN_LAYER_THRESHOLD</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">          </span><span class="p">.</span><span class="nb">or</span><span class="p">.</span><span class="w"> </span><span class="n">h</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">DRY_TOLERANCE</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">          </span><span class="p">.</span><span class="nb">or</span><span class="p">.</span><span class="w"> </span><span class="n">h</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">DRY_TOLERANCE</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">         </span><span class="n">seta_y_nb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">         </span><span class="n">shu_y_nb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">         </span><span class="n">shv_y_nb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">      </span><span class="k">else</span>
+<span class="k">         </span><span class="n">seta_y_nb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">minmod</span><span class="p">(</span><span class="n">eta_jm1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">eta_jm2</span><span class="p">,</span><span class="w"> </span><span class="n">eta_c</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">eta_jm1</span><span class="p">)</span>
+<span class="w">         </span><span class="n">shu_y_nb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">minmod</span><span class="p">(</span><span class="n">hu</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">hu</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">2</span><span class="p">),</span><span class="w"> </span><span class="n">hu</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">hu</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">))</span>
+<span class="w">         </span><span class="n">shv_y_nb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">minmod</span><span class="p">(</span><span class="n">hv</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">hv</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">2</span><span class="p">),</span><span class="w"> </span><span class="n">hv</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">hv</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">))</span>
+<span class="w">      </span><span class="k">end if</span>
+<span class="k">      </span><span class="n">eta_L</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">eta_jm1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mf">0.5_wp</span><span class="o">*</span><span class="n">seta_y_nb</span>
+<span class="w">      </span><span class="n">hu_L</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hu</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mf">0.5_wp</span><span class="o">*</span><span class="n">shu_y_nb</span>
+<span class="w">      </span><span class="n">hv_L</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hv</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mf">0.5_wp</span><span class="o">*</span><span class="n">shv_y_nb</span>
+<span class="w">      </span><span class="n">h_L</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">max</span><span class="p">(</span><span class="mf">0.0_wp</span><span class="p">,</span><span class="w"> </span><span class="n">eta_L</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">b</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">))</span>
+
+<span class="w">      </span><span class="n">b_max</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">max</span><span class="p">(</span><span class="n">b</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">),</span><span class="w"> </span><span class="n">b</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">))</span>
+<span class="w">      </span><span class="n">h_hyd_l</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">max</span><span class="p">(</span><span class="mf">0.0_wp</span><span class="p">,</span><span class="w"> </span><span class="n">h_L</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">b_max</span><span class="p">)</span>
+<span class="w">      </span><span class="n">h_hyd_r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">max</span><span class="p">(</span><span class="mf">0.0_wp</span><span class="p">,</span><span class="w"> </span><span class="n">h_R</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">b_max</span><span class="p">)</span>
+<span class="w">      </span><span class="n">h_hyd_bottom</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">h_hyd_r</span>
+
+<span class="w">      </span><span class="k">call </span><span class="n">extract_velocity</span><span class="p">(</span><span class="n">h_L</span><span class="p">,</span><span class="w"> </span><span class="n">hu_L</span><span class="p">,</span><span class="w"> </span><span class="n">hv_L</span><span class="p">,</span><span class="w"> </span><span class="n">u_l</span><span class="p">,</span><span class="w"> </span><span class="n">v_l</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">extract_velocity</span><span class="p">(</span><span class="n">h_R</span><span class="p">,</span><span class="w"> </span><span class="n">hu_R</span><span class="p">,</span><span class="w"> </span><span class="n">hv_R</span><span class="p">,</span><span class="w"> </span><span class="n">u_r</span><span class="p">,</span><span class="w"> </span><span class="n">v_r</span><span class="p">)</span>
+
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">use_hllc</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">         call </span><span class="n">hllc_flux_y</span><span class="p">(</span><span class="n">h_hyd_l</span><span class="p">,</span><span class="w"> </span><span class="n">h_hyd_l</span><span class="o">*</span><span class="n">u_l</span><span class="p">,</span><span class="w"> </span><span class="n">h_hyd_l</span><span class="o">*</span><span class="n">v_l</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                          </span><span class="n">h_hyd_r</span><span class="p">,</span><span class="w"> </span><span class="n">h_hyd_r</span><span class="o">*</span><span class="n">u_r</span><span class="p">,</span><span class="w"> </span><span class="n">h_hyd_r</span><span class="o">*</span><span class="n">v_r</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                          </span><span class="n">fy_h_b</span><span class="p">,</span><span class="w"> </span><span class="n">fy_hu_b</span><span class="p">,</span><span class="w"> </span><span class="n">fy_hv_b</span><span class="p">)</span>
+<span class="w">      </span><span class="k">else</span>
+<span class="k">         call </span><span class="n">hll_flux_y</span><span class="p">(</span><span class="n">h_hyd_l</span><span class="p">,</span><span class="w"> </span><span class="n">h_hyd_l</span><span class="o">*</span><span class="n">u_l</span><span class="p">,</span><span class="w"> </span><span class="n">h_hyd_l</span><span class="o">*</span><span class="n">v_l</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                         </span><span class="n">h_hyd_r</span><span class="p">,</span><span class="w"> </span><span class="n">h_hyd_r</span><span class="o">*</span><span class="n">u_r</span><span class="p">,</span><span class="w"> </span><span class="n">h_hyd_r</span><span class="o">*</span><span class="n">v_r</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                         </span><span class="n">fy_h_b</span><span class="p">,</span><span class="w"> </span><span class="n">fy_hu_b</span><span class="p">,</span><span class="w"> </span><span class="n">fy_hv_b</span><span class="p">)</span>
+<span class="w">      </span><span class="k">end if</span>
+
+<span class="w">      </span><span class="c">! ============================================================</span>
+<span class="w">      </span><span class="c">! y-direction: TOP interface (j+1/2)</span>
+<span class="w">      </span><span class="c">! ============================================================</span>
+<span class="w">      </span><span class="n">eta_L</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">eta_c</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mf">0.5_wp</span><span class="o">*</span><span class="n">seta_y</span>
+<span class="w">      </span><span class="n">hu_L</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hu</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mf">0.5_wp</span><span class="o">*</span><span class="n">shu_y</span>
+<span class="w">      </span><span class="n">hv_L</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hv</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mf">0.5_wp</span><span class="o">*</span><span class="n">shv_y</span>
+<span class="w">      </span><span class="n">h_L</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">max</span><span class="p">(</span><span class="mf">0.0_wp</span><span class="p">,</span><span class="w"> </span><span class="n">eta_L</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">b</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">))</span>
+<span class="w">      </span><span class="n">h_pre_top</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">h_L</span>
+
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">h</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">THIN_LAYER_THRESHOLD</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">          </span><span class="p">.</span><span class="nb">or</span><span class="p">.</span><span class="w"> </span><span class="n">h</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">DRY_TOLERANCE</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">          </span><span class="p">.</span><span class="nb">or</span><span class="p">.</span><span class="w"> </span><span class="n">h</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">DRY_TOLERANCE</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">         </span><span class="n">seta_y_nb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">         </span><span class="n">shu_y_nb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">         </span><span class="n">shv_y_nb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">      </span><span class="k">else</span>
+<span class="k">         </span><span class="n">seta_y_nb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">minmod</span><span class="p">(</span><span class="n">eta_jp1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">eta_c</span><span class="p">,</span><span class="w"> </span><span class="n">eta_jp2</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">eta_jp1</span><span class="p">)</span>
+<span class="w">         </span><span class="n">shu_y_nb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">minmod</span><span class="p">(</span><span class="n">hu</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">hu</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">),</span><span class="w"> </span><span class="n">hu</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">hu</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">))</span>
+<span class="w">         </span><span class="n">shv_y_nb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">minmod</span><span class="p">(</span><span class="n">hv</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">hv</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">),</span><span class="w"> </span><span class="n">hv</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">hv</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">))</span>
+<span class="w">      </span><span class="k">end if</span>
+<span class="k">      </span><span class="n">eta_R</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">eta_jp1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mf">0.5_wp</span><span class="o">*</span><span class="n">seta_y_nb</span>
+<span class="w">      </span><span class="n">hu_R</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hu</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mf">0.5_wp</span><span class="o">*</span><span class="n">shu_y_nb</span>
+<span class="w">      </span><span class="n">hv_R</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hv</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mf">0.5_wp</span><span class="o">*</span><span class="n">shv_y_nb</span>
+<span class="w">      </span><span class="n">h_R</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">max</span><span class="p">(</span><span class="mf">0.0_wp</span><span class="p">,</span><span class="w"> </span><span class="n">eta_R</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">b</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">))</span>
+
+<span class="w">      </span><span class="n">b_max</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">max</span><span class="p">(</span><span class="n">b</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">),</span><span class="w"> </span><span class="n">b</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">))</span>
+<span class="w">      </span><span class="n">h_hyd_l</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">max</span><span class="p">(</span><span class="mf">0.0_wp</span><span class="p">,</span><span class="w"> </span><span class="n">h_L</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">b_max</span><span class="p">)</span>
+<span class="w">      </span><span class="n">h_hyd_r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">max</span><span class="p">(</span><span class="mf">0.0_wp</span><span class="p">,</span><span class="w"> </span><span class="n">h_R</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">b_max</span><span class="p">)</span>
+<span class="w">      </span><span class="n">h_hyd_top</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">h_hyd_l</span>
+
+<span class="w">      </span><span class="k">call </span><span class="n">extract_velocity</span><span class="p">(</span><span class="n">h_L</span><span class="p">,</span><span class="w"> </span><span class="n">hu_L</span><span class="p">,</span><span class="w"> </span><span class="n">hv_L</span><span class="p">,</span><span class="w"> </span><span class="n">u_l</span><span class="p">,</span><span class="w"> </span><span class="n">v_l</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">extract_velocity</span><span class="p">(</span><span class="n">h_R</span><span class="p">,</span><span class="w"> </span><span class="n">hu_R</span><span class="p">,</span><span class="w"> </span><span class="n">hv_R</span><span class="p">,</span><span class="w"> </span><span class="n">u_r</span><span class="p">,</span><span class="w"> </span><span class="n">v_r</span><span class="p">)</span>
+
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">use_hllc</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">         call </span><span class="n">hllc_flux_y</span><span class="p">(</span><span class="n">h_hyd_l</span><span class="p">,</span><span class="w"> </span><span class="n">h_hyd_l</span><span class="o">*</span><span class="n">u_l</span><span class="p">,</span><span class="w"> </span><span class="n">h_hyd_l</span><span class="o">*</span><span class="n">v_l</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                          </span><span class="n">h_hyd_r</span><span class="p">,</span><span class="w"> </span><span class="n">h_hyd_r</span><span class="o">*</span><span class="n">u_r</span><span class="p">,</span><span class="w"> </span><span class="n">h_hyd_r</span><span class="o">*</span><span class="n">v_r</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                          </span><span class="n">fy_h_t</span><span class="p">,</span><span class="w"> </span><span class="n">fy_hu_t</span><span class="p">,</span><span class="w"> </span><span class="n">fy_hv_t</span><span class="p">)</span>
+<span class="w">      </span><span class="k">else</span>
+<span class="k">         call </span><span class="n">hll_flux_y</span><span class="p">(</span><span class="n">h_hyd_l</span><span class="p">,</span><span class="w"> </span><span class="n">h_hyd_l</span><span class="o">*</span><span class="n">u_l</span><span class="p">,</span><span class="w"> </span><span class="n">h_hyd_l</span><span class="o">*</span><span class="n">v_l</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                         </span><span class="n">h_hyd_r</span><span class="p">,</span><span class="w"> </span><span class="n">h_hyd_r</span><span class="o">*</span><span class="n">u_r</span><span class="p">,</span><span class="w"> </span><span class="n">h_hyd_r</span><span class="o">*</span><span class="n">v_r</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                         </span><span class="n">fy_h_t</span><span class="p">,</span><span class="w"> </span><span class="n">fy_hu_t</span><span class="p">,</span><span class="w"> </span><span class="n">fy_hv_t</span><span class="p">)</span>
+<span class="w">      </span><span class="k">end if</span>
+
+<span class="w">      </span><span class="c">! ============================================================</span>
+<span class="w">      </span><span class="c">! Net flux divergence with well-balanced correction</span>
+<span class="w">      </span><span class="c">! ============================================================</span>
+<span class="w">      </span><span class="n">out_fh</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">-</span><span class="p">(</span><span class="n">fx_h_r</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">fx_h_l</span><span class="p">)</span><span class="o">/</span><span class="n">dx</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">               </span><span class="o">-</span><span class="w"> </span><span class="p">(</span><span class="n">fy_h_t</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">fy_h_b</span><span class="p">)</span><span class="o">/</span><span class="n">dy</span>
+
+<span class="w">      </span><span class="n">out_fhu</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">-</span><span class="p">(</span><span class="n">fx_hu_r</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">fx_hu_l</span><span class="p">)</span><span class="o">/</span><span class="n">dx</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                </span><span class="o">-</span><span class="w"> </span><span class="p">(</span><span class="n">fy_hu_t</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">fy_hu_b</span><span class="p">)</span><span class="o">/</span><span class="n">dy</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                </span><span class="o">-</span><span class="w"> </span><span class="n">half_g</span><span class="o">*</span><span class="p">(</span><span class="n">h_hyd_left</span><span class="o">**</span><span class="mi">2</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">h_pre_left</span><span class="o">**</span><span class="mi">2</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                          </span><span class="o">-</span><span class="w"> </span><span class="n">h_hyd_right</span><span class="o">**</span><span class="mi">2</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">h_pre_right</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="n">dx</span>
+
+<span class="w">      </span><span class="n">out_fhv</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">-</span><span class="p">(</span><span class="n">fx_hv_r</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">fx_hv_l</span><span class="p">)</span><span class="o">/</span><span class="n">dx</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                </span><span class="o">-</span><span class="w"> </span><span class="p">(</span><span class="n">fy_hv_t</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">fy_hv_b</span><span class="p">)</span><span class="o">/</span><span class="n">dy</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                </span><span class="o">-</span><span class="w"> </span><span class="n">half_g</span><span class="o">*</span><span class="p">(</span><span class="n">h_hyd_bottom</span><span class="o">**</span><span class="mi">2</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">h_pre_bottom</span><span class="o">**</span><span class="mi">2</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                          </span><span class="o">-</span><span class="w"> </span><span class="n">h_hyd_top</span><span class="o">**</span><span class="mi">2</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">h_pre_top</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="n">dy</span>
+
+<span class="w">      </span><span class="c">! Per-face HLL mass fluxes (each interior face computed twice but</span>
+<span class="w">      </span><span class="c">! symmetric, so values match exactly).</span>
+<span class="w">      </span><span class="n">out_fmass_xL</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fx_h_l</span>
+<span class="w">      </span><span class="n">out_fmass_xR</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fx_h_r</span>
+<span class="w">      </span><span class="n">out_fmass_yB</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fy_h_b</span>
+<span class="w">      </span><span class="n">out_fmass_yT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fy_h_t</span>
+
+<span class="w">   </span><span class="k">end subroutine </span><span class="n">flux_cell</span>
+</pre></div>
+
+    </section>
+    <br>
+    
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Rakali
+ was developed by Jorge Luis Galvez Vallejo<br>              &copy; 2026 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+ on 2026-10-08 12:55 +0000             </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>

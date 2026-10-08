@@ -1,0 +1,1221 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="GPU-native coastal solver — structured Cartesian and unstructured triangular grids, hydrostatic multilayer + non-hydrostatic, portable across NVHPC/gfortran/ifx.">
+    <meta name="author" content="Jorge Luis Galvez Vallejo" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>rki_boundary_unstr.F90 &ndash; Rakali</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">Rakali </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/absint.html">Abstract Interfaces</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>rki_boundary_unstr.F90
+      <small>Source File</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.1% of total for source files.">28 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/rki_boundary_unstr.F90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+            <li class="breadcrumb-item active" aria-current="page">rki_boundary_unstr.F90</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+        <div id="sidebar">
+      <h3>Contents</h3>
+  
+  
+  
+  
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#mods-0"
+         aria-expanded="false" aria-controls="mods-0">
+         <h4 class="card-header bg-primary text-white">Modules</h4>
+      </a>
+      <div id="mods-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../module/rki_boundary_unstr.html">rki_boundary_unstr</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../sourcefile/rki_boundary_unstr.f90.html#src">rki_boundary_unstr.F90</a>
+      </div>
+    </div>
+
+
+  </div>
+
+    </div>
+    <div class="col-md-9" id='text'>
+      <p>Boundary condition type constants for the unstructured solver</p>
+      <br>
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Files dependent on this one</h3>
+          </div>
+          <div class="card-body">
+            <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: sourcefile~~rki_boundary_unstr.f90~~AfferentGraph Pages: 1 -->
+<svg id="sourcefilerki_boundary_unstrf90AfferentGraph" width="641pt" height="377pt"
+ viewBox="0.00 0.00 641.00 376.76" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph" class="graph" transform="scale(0.39 0.39) rotate(0) translate(4 956.42)">
+<title>sourcefile~~rki_boundary_unstr.f90~~AfferentGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-956.42 1630,-956.42 1630,4 -4,4"/>
+<!-- sourcefile~rki_boundary_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node1" class="node">
+<title>sourcefile~rki_boundary_unstr.f90</title>
+<polygon fill="none" stroke="black" points="136,-302 0,-302 0,-278 136,-278 136,-302"/>
+<text text-anchor="middle" x="68" y="-287.6" font-family="Helvetica,sans-Serif" font-size="10.50">rki_boundary_unstr.F90</text>
+</g>
+<!-- sourcefile~rki_api_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node2" class="node">
+<title>sourcefile~rki_api_unstr.f90</title>
+<g id="a_sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node2"><a xlink:href="../sourcefile/rki_api_unstr.f90.html" xlink:title="rki_api_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1626,-783 1525,-783 1525,-759 1626,-759 1626,-783"/>
+<text text-anchor="middle" x="1575.5" y="-768.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_api_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_api_unstr.f90&#45;&gt;sourcefile~rki_boundary_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge1" class="edge">
+<title>sourcefile~rki_api_unstr.f90&#45;&gt;sourcefile~rki_boundary_unstr.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M1558.3,-783.27C1548.34,-791.09 1535.5,-801.67 1525,-812 1507.47,-829.24 1509.56,-840.52 1489,-854 1391.59,-917.85 1354.97,-931 1238.5,-931 1238.5,-931 1238.5,-931 769,-931 609.89,-931 560.9,-877.64 411,-931"/>
+</g>
+<!-- sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node9" class="node">
+<title>sourcefile~rki_state_unstr.f90</title>
+<g id="a_sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node9"><a xlink:href="../sourcefile/rki_state_unstr.f90.html" xlink:title="rki_state_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="642,-340 531,-340 531,-316 642,-316 642,-340"/>
+<text text-anchor="middle" x="586.5" y="-325.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_state_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_api_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge18" class="edge">
+<title>sourcefile~rki_api_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90</title>
+<path fill="none" stroke="#aa00ff" stroke-dasharray="5,2" d="M1428.5,-771C1239.43,-781.06 1190.22,-795.66 1002.5,-771"/>
+</g>
+<!-- sourcefile~rki_gauges_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node12" class="node">
+<title>sourcefile~rki_gauges_unstr.f90</title>
+<g id="a_sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node12"><a xlink:href="../sourcefile/rki_gauges_unstr.f90.html" xlink:title="rki_gauges_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1299.5,-823 1175.5,-823 1175.5,-799 1299.5,-799 1299.5,-823"/>
+<text text-anchor="middle" x="1237.5" y="-808.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_gauges_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_api_unstr.f90&#45;&gt;sourcefile~rki_gauges_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge46" class="edge">
+<title>sourcefile~rki_api_unstr.f90&#45;&gt;sourcefile~rki_gauges_unstr.f90</title>
+<path fill="none" stroke="#ff4200" stroke-dasharray="5,2" d="M1428.5,-771C1403.41,-772.34 1343.12,-785.68 1297.13,-796.59"/>
+<polygon fill="#ff4200" stroke="#ff4200" points="1296.17,-793.22 1287.26,-798.95 1297.8,-800.03 1296.17,-793.22"/>
+</g>
+<!-- sourcefile~rki_handle.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node13" class="node">
+<title>sourcefile~rki_handle.f90</title>
+<g id="a_sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node13"><a xlink:href="../sourcefile/rki_handle.f90.html" xlink:title="rki_handle.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1475,-845 1384,-845 1384,-821 1475,-821 1475,-845"/>
+<text text-anchor="middle" x="1429.5" y="-830.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_handle.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_api_unstr.f90&#45;&gt;sourcefile~rki_handle.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge49" class="edge">
+<title>sourcefile~rki_api_unstr.f90&#45;&gt;sourcefile~rki_handle.f90</title>
+<path fill="none" stroke="#ff8500" stroke-dasharray="5,2" d="M1546.39,-783.1C1523.99,-792.75 1492.43,-806.34 1467.9,-816.9"/>
+<polygon fill="#ff8500" stroke="#ff8500" points="1466.34,-813.76 1458.54,-820.93 1469.1,-820.19 1466.34,-813.76"/>
+</g>
+<!-- sourcefile~rki_kernel_timestep_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node18" class="node">
+<title>sourcefile~rki_kernel_timestep_unstr.f90</title>
+<g id="a_sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node18"><a xlink:href="../sourcefile/rki_kernel_timestep_unstr.f90.html" xlink:title="rki_kernel_timestep_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1322.5,-743 1152.5,-743 1152.5,-719 1322.5,-719 1322.5,-743"/>
+<text text-anchor="middle" x="1237.5" y="-728.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_kernel_timestep_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_api_unstr.f90&#45;&gt;sourcefile~rki_kernel_timestep_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge54" class="edge">
+<title>sourcefile~rki_api_unstr.f90&#45;&gt;sourcefile~rki_kernel_timestep_unstr.f90</title>
+<path fill="none" stroke="#2cff00" stroke-dasharray="5,2" d="M1524.82,-769.7C1497.05,-769.3 1461.83,-769.33 1430.5,-771"/>
+<path fill="none" stroke="#2cff00" stroke-dasharray="5,2" d="M1428.5,-771C1402.55,-772.38 1338.93,-757.59 1292.44,-745.6"/>
+<polygon fill="#2cff00" stroke="#2cff00" points="1293.06,-742.15 1282.5,-743.02 1291.3,-748.92 1293.06,-742.15"/>
+</g>
+<!-- sourcefile~rki_output_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node30" class="node">
+<title>sourcefile~rki_output_unstr.f90</title>
+<g id="a_sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node30"><a xlink:href="../sourcefile/rki_output_unstr.f90.html" xlink:title="rki_output_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1297,-865 1178,-865 1178,-841 1297,-841 1297,-865"/>
+<text text-anchor="middle" x="1237.5" y="-850.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_output_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_api_unstr.f90&#45;&gt;sourcefile~rki_output_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge76" class="edge">
+<title>sourcefile~rki_api_unstr.f90&#45;&gt;sourcefile~rki_output_unstr.f90</title>
+<path fill="none" stroke="#f300ff" stroke-dasharray="5,2" d="M1428.5,-771C1378.58,-773.66 1380.14,-812.77 1334,-832 1325.48,-835.55 1316.28,-838.54 1307.06,-841.04"/>
+<polygon fill="#f300ff" stroke="#f300ff" points="1305.92,-837.72 1297.09,-843.58 1307.65,-844.51 1305.92,-837.72"/>
+</g>
+<!-- sourcefile~rki_restart_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node31" class="node">
+<title>sourcefile~rki_restart_unstr.f90</title>
+<g id="a_sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node31"><a xlink:href="../sourcefile/rki_restart_unstr.f90.html" xlink:title="rki_restart_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1489,-723 1370,-723 1370,-699 1489,-699 1489,-723"/>
+<text text-anchor="middle" x="1429.5" y="-708.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_restart_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_api_unstr.f90&#45;&gt;sourcefile~rki_restart_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge78" class="edge">
+<title>sourcefile~rki_api_unstr.f90&#45;&gt;sourcefile~rki_restart_unstr.f90</title>
+<path fill="none" stroke="#ff00c7" stroke-dasharray="5,2" d="M1545.36,-758.86C1523.4,-749.71 1493.08,-737.08 1469.11,-727.09"/>
+<polygon fill="#ff00c7" stroke="#ff00c7" points="1470.17,-723.74 1459.6,-723.12 1467.48,-730.2 1470.17,-723.74"/>
+</g>
+<!-- sourcefile~rki_solver_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node33" class="node">
+<title>sourcefile~rki_solver_unstr.f90</title>
+<g id="a_sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node33"><a xlink:href="../sourcefile/rki_solver_unstr.f90.html" xlink:title="rki_solver_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1488,-503 1371,-503 1371,-479 1488,-479 1488,-503"/>
+<text text-anchor="middle" x="1429.5" y="-488.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_solver_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_api_unstr.f90&#45;&gt;sourcefile~rki_solver_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge81" class="edge">
+<title>sourcefile~rki_api_unstr.f90&#45;&gt;sourcefile~rki_solver_unstr.f90</title>
+<path fill="none" stroke="#ff0042" stroke-dasharray="5,2" d="M1568.31,-758.97C1546.07,-715.72 1469.97,-567.75 1441.43,-512.26"/>
+<polygon fill="#ff0042" stroke="#ff0042" points="1444.51,-510.59 1436.83,-503.3 1438.29,-513.8 1444.51,-510.59"/>
+</g>
+<!-- sourcefile~rki_kernel_flux_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node3" class="node">
+<title>sourcefile~rki_kernel_flux_unstr.f90</title>
+<g id="a_sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node3"><a xlink:href="../sourcefile/rki_kernel_flux_unstr.f90.html" xlink:title="rki_kernel_flux_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="841.5,-178 698.5,-178 698.5,-154 841.5,-154 841.5,-178"/>
+<text text-anchor="middle" x="770" y="-163.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_kernel_flux_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_kernel_flux_unstr.f90&#45;&gt;sourcefile~rki_boundary_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge2" class="edge">
+<title>sourcefile~rki_kernel_flux_unstr.f90&#45;&gt;sourcefile~rki_boundary_unstr.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M702.9,-178.1C694.36,-180.57 685.86,-183.52 678,-187 633.2,-206.87 635.95,-242.62 587.5,-250"/>
+</g>
+<!-- sourcefile~rki_kernel_flux_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge23" class="edge">
+<title>sourcefile~rki_kernel_flux_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90</title>
+<path fill="none" stroke="#aa00ff" stroke-dasharray="5,2" d="M698.38,-175.37C691.03,-178.31 684.05,-182.11 678,-187 648.63,-210.76 662.43,-232.22 642,-264 631.77,-279.91 617.93,-296.12 606.76,-308.24"/>
+<polygon fill="#aa00ff" stroke="#aa00ff" points="604.16,-305.89 599.86,-315.57 609.26,-310.68 604.16,-305.89"/>
+</g>
+<!-- sourcefile~rki_kernel_sponge_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node4" class="node">
+<title>sourcefile~rki_kernel_sponge_unstr.f90</title>
+<g id="a_sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node4"><a xlink:href="../sourcefile/rki_kernel_sponge_unstr.f90.html" xlink:title="rki_kernel_sponge_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="851.5,-24 688.5,-24 688.5,0 851.5,0 851.5,-24"/>
+<text text-anchor="middle" x="770" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_kernel_sponge_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_kernel_sponge_unstr.f90&#45;&gt;sourcefile~rki_boundary_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge3" class="edge">
+<title>sourcefile~rki_kernel_sponge_unstr.f90&#45;&gt;sourcefile~rki_boundary_unstr.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M700.87,-24.05C692.55,-27.58 684.65,-32.13 678,-38 601.17,-105.77 688.78,-234.58 587.5,-250"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M585.5,-250C429.96,-273.68 388.5,-239.75 231.5,-250"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M229.5,-250C188.76,-252.44 143.79,-264.49 111.84,-274.74"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="110.36,-271.54 101.95,-277.99 112.54,-278.2 110.36,-271.54"/>
+</g>
+<!-- sourcefile~rki_kernel_sponge_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge27" class="edge">
+<title>sourcefile~rki_kernel_sponge_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90</title>
+<path fill="none" stroke="#aa00ff" stroke-dasharray="5,2" d="M696.32,-24.14C689.43,-27.69 683.12,-32.22 678,-38 610.53,-114.11 684.56,-171.62 642,-264 634.19,-280.96 620.57,-296.96 608.9,-308.72"/>
+<polygon fill="#aa00ff" stroke="#aa00ff" points="606.34,-306.32 601.59,-315.8 611.21,-311.35 606.34,-306.32"/>
+</g>
+<!-- sourcefile~rki_multilayer_state_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node5" class="node">
+<title>sourcefile~rki_multilayer_state_unstr.f90</title>
+<g id="a_sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node5"><a xlink:href="../sourcefile/rki_multilayer_state_unstr.f90.html" xlink:title="rki_multilayer_state_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="495,-302 325,-302 325,-278 495,-278 495,-302"/>
+<text text-anchor="middle" x="410" y="-287.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_multilayer_state_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_multilayer_state_unstr.f90&#45;&gt;sourcefile~rki_boundary_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge4" class="edge">
+<title>sourcefile~rki_multilayer_state_unstr.f90&#45;&gt;sourcefile~rki_boundary_unstr.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M367.92,-277.9C324.13,-265.51 257.58,-248.3 231.5,-250"/>
+</g>
+<!-- sourcefile~rki_tracer_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node10" class="node">
+<title>sourcefile~rki_tracer_unstr.f90</title>
+<g id="a_sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node10"><a xlink:href="../sourcefile/rki_tracer_unstr.f90.html" xlink:title="rki_tracer_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="289,-302 172,-302 172,-278 289,-278 289,-302"/>
+<text text-anchor="middle" x="230.5" y="-287.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_tracer_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_multilayer_state_unstr.f90&#45;&gt;sourcefile~rki_tracer_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge45" class="edge">
+<title>sourcefile~rki_multilayer_state_unstr.f90&#45;&gt;sourcefile~rki_tracer_unstr.f90</title>
+<path fill="none" stroke="#ff00aa" stroke-dasharray="5,2" d="M324.93,-290C316.33,-290 307.67,-290 299.28,-290"/>
+<polygon fill="#ff00aa" stroke="#ff00aa" points="299.19,-286.5 289.19,-290 299.19,-293.5 299.19,-286.5"/>
+</g>
+<!-- sourcefile~rki_si_unstr_helmholtz.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node6" class="node">
+<title>sourcefile~rki_si_unstr_helmholtz.f90</title>
+<g id="a_sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node6"><a xlink:href="../sourcefile/rki_si_unstr_helmholtz.f90.html" xlink:title="rki_si_unstr_helmholtz.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="846,-262 694,-262 694,-238 846,-238 846,-262"/>
+<text text-anchor="middle" x="770" y="-247.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_si_unstr_helmholtz.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_si_unstr_helmholtz.f90&#45;&gt;sourcefile~rki_boundary_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge5" class="edge">
+<title>sourcefile~rki_si_unstr_helmholtz.f90&#45;&gt;sourcefile~rki_boundary_unstr.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M694,-244.95C661.14,-244.03 622.23,-244.71 587.5,-250"/>
+</g>
+<!-- sourcefile~rki_si_unstr_step_ml.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node7" class="node">
+<title>sourcefile~rki_si_unstr_step_ml.f90</title>
+<g id="a_sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node7"><a xlink:href="../sourcefile/rki_si_unstr_step_ml.f90.html" xlink:title="rki_si_unstr_step_ml.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1308,-360 1167,-360 1167,-336 1308,-336 1308,-360"/>
+<text text-anchor="middle" x="1237.5" y="-345.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_si_unstr_step_ml.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_si_unstr_step_ml.f90&#45;&gt;sourcefile~rki_boundary_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge6" class="edge">
+<title>sourcefile~rki_si_unstr_step_ml.f90&#45;&gt;sourcefile~rki_boundary_unstr.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M1166.96,-337.77C1120.46,-332.06 1057.88,-326.54 1002.5,-329"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M1000.5,-329C898.6,-333.52 872.42,-338.88 771,-328"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M769,-328C681.7,-318.63 674.14,-235.8 587.5,-250"/>
+</g>
+<!-- sourcefile~rki_si_unstr_step_ml.f90&#45;&gt;sourcefile~rki_si_unstr_helmholtz.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge14" class="edge">
+<title>sourcefile~rki_si_unstr_step_ml.f90&#45;&gt;sourcefile~rki_si_unstr_helmholtz.f90</title>
+<path fill="none" stroke="#00ffa9" stroke-dasharray="5,2" d="M1228.43,-335.92C1210.15,-309.8 1162.69,-248.64 1105,-226 1019.36,-192.39 989.6,-217.42 898,-226 876.5,-228.01 853.21,-231.91 832.52,-235.98"/>
+<polygon fill="#00ffa9" stroke="#00ffa9" points="831.7,-232.57 822.59,-237.99 833.09,-239.44 831.7,-232.57"/>
+</g>
+<!-- sourcefile~rki_si_unstr_wetdry.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node8" class="node">
+<title>sourcefile~rki_si_unstr_wetdry.f90</title>
+<g id="a_sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node8"><a xlink:href="../sourcefile/rki_si_unstr_wetdry.f90.html" xlink:title="rki_si_unstr_wetdry.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="837,-220 703,-220 703,-196 837,-196 837,-220"/>
+<text text-anchor="middle" x="770" y="-205.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_si_unstr_wetdry.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_si_unstr_step_ml.f90&#45;&gt;sourcefile~rki_si_unstr_wetdry.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge17" class="edge">
+<title>sourcefile~rki_si_unstr_step_ml.f90&#45;&gt;sourcefile~rki_si_unstr_wetdry.f90</title>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M1230.5,-335.77C1210.42,-295.35 1144.54,-167.44 1105,-146 1024.12,-102.15 981.81,-108.06 898,-146 875.91,-156 882.82,-174.56 862,-187 857.22,-189.86 852.07,-192.33 846.76,-194.46"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="845.27,-191.28 837.05,-197.95 847.64,-197.86 845.27,-191.28"/>
+</g>
+<!-- sourcefile~rki_si_unstr_step_ml.f90&#45;&gt;sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge43" class="edge">
+<title>sourcefile~rki_si_unstr_step_ml.f90&#45;&gt;sourcefile~rki_state_unstr.f90</title>
+<path fill="none" stroke="#aa00ff" stroke-dasharray="5,2" d="M769,-328C730.36,-323.85 686.83,-323.7 652.08,-324.66"/>
+<polygon fill="#aa00ff" stroke="#aa00ff" points="651.95,-321.16 642.07,-324.97 652.17,-328.16 651.95,-321.16"/>
+</g>
+<!-- sourcefile~rki_ml_dynamics_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node20" class="node">
+<title>sourcefile~rki_ml_dynamics_unstr.f90</title>
+<g id="a_sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node20"><a xlink:href="../sourcefile/rki_ml_dynamics_unstr.f90.html" xlink:title="rki_ml_dynamics_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1078.5,-423 924.5,-423 924.5,-399 1078.5,-399 1078.5,-423"/>
+<text text-anchor="middle" x="1001.5" y="-408.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_dynamics_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_si_unstr_step_ml.f90&#45;&gt;sourcefile~rki_ml_dynamics_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge57" class="edge">
+<title>sourcefile~rki_si_unstr_step_ml.f90&#45;&gt;sourcefile~rki_ml_dynamics_unstr.f90</title>
+<path fill="none" stroke="#00ff58" stroke-dasharray="5,2" d="M1202.19,-360.07C1175.82,-369.08 1138.39,-381.27 1105,-390 1095.87,-392.39 1086.22,-394.67 1076.65,-396.79"/>
+<polygon fill="#00ff58" stroke="#00ff58" points="1075.75,-393.4 1066.72,-398.94 1077.23,-400.25 1075.75,-393.4"/>
+</g>
+<!-- sourcefile~rki_ml_eos_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node21" class="node">
+<title>sourcefile~rki_ml_eos_unstr.f90</title>
+<g id="a_sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node21"><a xlink:href="../sourcefile/rki_ml_eos_unstr.f90.html" xlink:title="rki_ml_eos_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="831,-421 709,-421 709,-397 831,-397 831,-421"/>
+<text text-anchor="middle" x="770" y="-406.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_eos_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_si_unstr_step_ml.f90&#45;&gt;sourcefile~rki_ml_eos_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge60" class="edge">
+<title>sourcefile~rki_si_unstr_step_ml.f90&#45;&gt;sourcefile~rki_ml_eos_unstr.f90</title>
+<path fill="none" stroke="#00ff9b" stroke-dasharray="5,2" d="M1000.5,-329C954.21,-331.05 939.15,-326.72 898,-348 878.18,-358.25 881.31,-371.82 862,-383 854.92,-387.1 847.16,-390.58 839.24,-393.54"/>
+<polygon fill="#00ff9b" stroke="#00ff9b" points="837.85,-390.32 829.55,-396.9 840.14,-396.94 837.85,-390.32"/>
+</g>
+<!-- sourcefile~rki_ml_friction_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node22" class="node">
+<title>sourcefile~rki_ml_friction_unstr.f90</title>
+<g id="a_sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node22"><a xlink:href="../sourcefile/rki_ml_friction_unstr.f90.html" xlink:title="rki_ml_friction_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1072,-381 931,-381 931,-357 1072,-357 1072,-381"/>
+<text text-anchor="middle" x="1001.5" y="-366.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_friction_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_si_unstr_step_ml.f90&#45;&gt;sourcefile~rki_ml_friction_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge62" class="edge">
+<title>sourcefile~rki_si_unstr_step_ml.f90&#45;&gt;sourcefile~rki_ml_friction_unstr.f90</title>
+<path fill="none" stroke="#00ffdd" stroke-dasharray="5,2" d="M1166.93,-354.24C1140.29,-356.63 1109.7,-359.38 1082.19,-361.85"/>
+<polygon fill="#00ffdd" stroke="#00ffdd" points="1081.86,-358.36 1072.21,-362.74 1082.48,-365.34 1081.86,-358.36"/>
+</g>
+<!-- sourcefile~rki_ml_horizontal_viscosity_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node23" class="node">
+<title>sourcefile~rki_ml_horizontal_viscosity_unstr.f90</title>
+<g id="a_sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node23"><a xlink:href="../sourcefile/rki_ml_horizontal_viscosity_unstr.f90.html" xlink:title="rki_ml_horizontal_viscosity_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1105,-301 898,-301 898,-277 1105,-277 1105,-301"/>
+<text text-anchor="middle" x="1001.5" y="-286.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_horizontal_viscosity_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_si_unstr_step_ml.f90&#45;&gt;sourcefile~rki_ml_horizontal_viscosity_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge64" class="edge">
+<title>sourcefile~rki_si_unstr_step_ml.f90&#45;&gt;sourcefile~rki_ml_horizontal_viscosity_unstr.f90</title>
+<path fill="none" stroke="#00ddff" stroke-dasharray="5,2" d="M1188.86,-335.99C1151.66,-326.61 1099.81,-313.54 1060.25,-303.56"/>
+<polygon fill="#00ddff" stroke="#00ddff" points="1061.02,-300.15 1050.47,-301.09 1059.31,-306.93 1061.02,-300.15"/>
+</g>
+<!-- sourcefile~rki_ml_keps_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node24" class="node">
+<title>sourcefile~rki_ml_keps_unstr.f90</title>
+<g id="a_sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node24"><a xlink:href="../sourcefile/rki_ml_keps_unstr.f90.html" xlink:title="rki_ml_keps_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1065.5,-259 937.5,-259 937.5,-235 1065.5,-235 1065.5,-259"/>
+<text text-anchor="middle" x="1001.5" y="-244.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_keps_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_si_unstr_step_ml.f90&#45;&gt;sourcefile~rki_ml_keps_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge66" class="edge">
+<title>sourcefile~rki_si_unstr_step_ml.f90&#45;&gt;sourcefile~rki_ml_keps_unstr.f90</title>
+<path fill="none" stroke="#009bff" stroke-dasharray="5,2" d="M1220.85,-335.98C1197.11,-318.35 1150.02,-285.69 1105,-268 1095.68,-264.34 1085.62,-261.28 1075.57,-258.74"/>
+<polygon fill="#009bff" stroke="#009bff" points="1076.1,-255.26 1065.56,-256.36 1074.48,-262.07 1076.1,-255.26"/>
+</g>
+<!-- sourcefile~rki_ml_kpp_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node25" class="node">
+<title>sourcefile~rki_ml_kpp_unstr.f90</title>
+<g id="a_sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node25"><a xlink:href="../sourcefile/rki_ml_kpp_unstr.f90.html" xlink:title="rki_ml_kpp_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1063,-663 940,-663 940,-639 1063,-639 1063,-663"/>
+<text text-anchor="middle" x="1001.5" y="-648.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_kpp_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_si_unstr_step_ml.f90&#45;&gt;sourcefile~rki_ml_kpp_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge68" class="edge">
+<title>sourcefile~rki_si_unstr_step_ml.f90&#45;&gt;sourcefile~rki_ml_kpp_unstr.f90</title>
+<path fill="none" stroke="#0058ff" stroke-dasharray="5,2" d="M1192.18,-360.02C1173.67,-367.23 1153.59,-378.34 1141,-395 1087.34,-466.01 1156.33,-519.28 1105,-592 1091.19,-611.57 1068.69,-625.55 1048.28,-634.98"/>
+<polygon fill="#0058ff" stroke="#0058ff" points="1046.85,-631.78 1039.09,-638.99 1049.65,-638.2 1046.85,-631.78"/>
+</g>
+<!-- sourcefile~rki_ml_pressure_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node26" class="node">
+<title>sourcefile~rki_ml_pressure_unstr.f90</title>
+<g id="a_sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node26"><a xlink:href="../sourcefile/rki_ml_pressure_unstr.f90.html" xlink:title="rki_ml_pressure_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1075.5,-503 927.5,-503 927.5,-479 1075.5,-479 1075.5,-503"/>
+<text text-anchor="middle" x="1001.5" y="-488.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_pressure_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_si_unstr_step_ml.f90&#45;&gt;sourcefile~rki_ml_pressure_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge70" class="edge">
+<title>sourcefile~rki_si_unstr_step_ml.f90&#45;&gt;sourcefile~rki_ml_pressure_unstr.f90</title>
+<path fill="none" stroke="#0016ff" stroke-dasharray="5,2" d="M1205.32,-360.12C1185.88,-368.43 1160.88,-380.56 1141,-395 1122.44,-408.48 1123.12,-417.92 1105,-432 1083.77,-448.5 1057.44,-463.56 1036.78,-474.33"/>
+<polygon fill="#0016ff" stroke="#0016ff" points="1035.03,-471.29 1027.73,-478.97 1038.23,-477.52 1035.03,-471.29"/>
+</g>
+<!-- sourcefile~rki_ml_tracers_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node27" class="node">
+<title>sourcefile~rki_ml_tracers_unstr.f90</title>
+<g id="a_sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node27"><a xlink:href="../sourcefile/rki_ml_tracers_unstr.f90.html" xlink:title="rki_ml_tracers_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1072,-583 931,-583 931,-559 1072,-559 1072,-583"/>
+<text text-anchor="middle" x="1001.5" y="-568.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_tracers_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_si_unstr_step_ml.f90&#45;&gt;sourcefile~rki_ml_tracers_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge72" class="edge">
+<title>sourcefile~rki_si_unstr_step_ml.f90&#45;&gt;sourcefile~rki_ml_tracers_unstr.f90</title>
+<path fill="none" stroke="#2c00ff" stroke-dasharray="5,2" d="M1193.09,-360.15C1174.53,-367.43 1154.16,-378.55 1141,-395 1098.18,-448.55 1153.17,-496.21 1105,-545 1098.42,-551.67 1090.38,-556.71 1081.74,-560.51"/>
+<polygon fill="#2c00ff" stroke="#2c00ff" points="1080.26,-557.33 1072.17,-564.17 1082.76,-563.87 1080.26,-557.33"/>
+</g>
+<!-- sourcefile~rki_si_unstr_step.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node32" class="node">
+<title>sourcefile~rki_si_unstr_step.f90</title>
+<g id="a_sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node32"><a xlink:href="../sourcefile/rki_si_unstr_step.f90.html" xlink:title="rki_si_unstr_step.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1062.5,-179 940.5,-179 940.5,-155 1062.5,-155 1062.5,-179"/>
+<text text-anchor="middle" x="1001.5" y="-164.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_si_unstr_step.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_si_unstr_step_ml.f90&#45;&gt;sourcefile~rki_si_unstr_step.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge79" class="edge">
+<title>sourcefile~rki_si_unstr_step_ml.f90&#45;&gt;sourcefile~rki_si_unstr_step.f90</title>
+<path fill="none" stroke="#ff0085" stroke-dasharray="5,2" d="M1229.74,-335.7C1212.85,-306.17 1165.78,-230.92 1105,-193 1095.18,-186.87 1083.98,-182.19 1072.68,-178.61"/>
+<polygon fill="#ff0085" stroke="#ff0085" points="1073.33,-175.15 1062.75,-175.73 1071.39,-181.87 1073.33,-175.15"/>
+</g>
+<!-- sourcefile~rki_si_unstr_wetdry.f90&#45;&gt;sourcefile~rki_boundary_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge7" class="edge">
+<title>sourcefile~rki_si_unstr_wetdry.f90&#45;&gt;sourcefile~rki_boundary_unstr.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M716.55,-220.09C703.92,-223.01 690.48,-226.11 678,-229 637.77,-238.31 628.32,-243.79 587.5,-250"/>
+</g>
+<!-- sourcefile~rki_state_unstr.f90&#45;&gt;sourcefile~rki_boundary_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge8" class="edge">
+<title>sourcefile~rki_state_unstr.f90&#45;&gt;sourcefile~rki_boundary_unstr.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M584.19,-340.2C575.34,-420.14 521.15,-867.85 411,-931"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M409,-931C157.32,-1075.3 83.31,-441.22 70.98,-312.45"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="74.44,-311.84 70.03,-302.2 67.47,-312.49 74.44,-311.84"/>
+</g>
+<!-- sourcefile~rki_state_unstr.f90&#45;&gt;sourcefile~rki_multilayer_state_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge12" class="edge">
+<title>sourcefile~rki_state_unstr.f90&#45;&gt;sourcefile~rki_multilayer_state_unstr.f90</title>
+<path fill="none" stroke="#00ff00" stroke-dasharray="5,2" d="M530.77,-316.08C513.39,-312.3 494.01,-308.08 475.99,-304.15"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="476.66,-300.72 466.14,-302.01 475.17,-307.56 476.66,-300.72"/>
+</g>
+<!-- sourcefile~rki_tracer_unstr.f90&#45;&gt;sourcefile~rki_boundary_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge9" class="edge">
+<title>sourcefile~rki_tracer_unstr.f90&#45;&gt;sourcefile~rki_boundary_unstr.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M171.56,-290C163.38,-290 154.88,-290 146.41,-290"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="146.14,-286.5 136.14,-290 146.14,-293.5 146.14,-286.5"/>
+</g>
+<!-- sourcefile~rki_driver.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node11" class="node">
+<title>sourcefile~rki_driver.f90</title>
+<g id="a_sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node11"><a xlink:href="../sourcefile/rki_driver.f90.html" xlink:title="rki_driver.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1617.5,-284 1533.5,-284 1533.5,-260 1617.5,-260 1617.5,-284"/>
+<text text-anchor="middle" x="1575.5" y="-269.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_driver.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_driver.f90&#45;&gt;sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge19" class="edge">
+<title>sourcefile~rki_driver.f90&#45;&gt;sourcefile~rki_state_unstr.f90</title>
+<path fill="none" stroke="#aa00ff" stroke-dasharray="5,2" d="M1553.92,-259.98C1513.15,-236.59 1418.71,-184.48 1334,-153 1150.7,-84.88 1092.28,-71.78 898,-94 798.28,-105.41 751.27,-76.41 678,-145 637.66,-182.76 668.47,-215.5 642,-264 632.94,-280.6 619.08,-296.8 607.61,-308.74"/>
+<polygon fill="#aa00ff" stroke="#aa00ff" points="605.03,-306.37 600.49,-315.94 610.01,-311.3 605.03,-306.37"/>
+</g>
+<!-- sourcefile~rki_driver.f90&#45;&gt;sourcefile~rki_solver_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge82" class="edge">
+<title>sourcefile~rki_driver.f90&#45;&gt;sourcefile~rki_solver_unstr.f90</title>
+<path fill="none" stroke="#ff0042" stroke-dasharray="5,2" d="M1566.55,-284.09C1543.05,-319.83 1473.67,-425.35 1444.1,-470.32"/>
+<polygon fill="#ff0042" stroke="#ff0042" points="1440.99,-468.67 1438.42,-478.95 1446.84,-472.52 1440.99,-468.67"/>
+</g>
+<!-- sourcefile~rki_gauges_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge20" class="edge">
+<title>sourcefile~rki_gauges_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90</title>
+<path fill="none" stroke="#aa00ff" stroke-dasharray="5,2" d="M1175.12,-799.12C1128.04,-790.35 1061.35,-778.65 1002.5,-771"/>
+</g>
+<!-- sourcefile~rki_handle.f90&#45;&gt;sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge21" class="edge">
+<title>sourcefile~rki_handle.f90&#45;&gt;sourcefile~rki_state_unstr.f90</title>
+<path fill="none" stroke="#aa00ff" stroke-dasharray="5,2" d="M1407.56,-845.07C1388.94,-855.06 1360.62,-868.47 1334,-874 1250.01,-891.43 1222.43,-900.96 1141,-874 1068.18,-849.89 1078.52,-781.28 1002.5,-771"/>
+</g>
+<!-- sourcefile~rki_handle.f90&#45;&gt;sourcefile~rki_gauges_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge47" class="edge">
+<title>sourcefile~rki_handle.f90&#45;&gt;sourcefile~rki_gauges_unstr.f90</title>
+<path fill="none" stroke="#ff4200" stroke-dasharray="5,2" d="M1383.95,-827.84C1361.88,-825.29 1334.68,-822.14 1309.8,-819.26"/>
+<polygon fill="#ff4200" stroke="#ff4200" points="1310,-815.76 1299.67,-818.08 1309.2,-822.71 1310,-815.76"/>
+</g>
+<!-- sourcefile~rki_handle.f90&#45;&gt;sourcefile~rki_output_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge77" class="edge">
+<title>sourcefile~rki_handle.f90&#45;&gt;sourcefile~rki_output_unstr.f90</title>
+<path fill="none" stroke="#f300ff" stroke-dasharray="5,2" d="M1383.95,-837.69C1361.1,-840.09 1332.76,-843.08 1307.19,-845.77"/>
+<polygon fill="#f300ff" stroke="#f300ff" points="1306.74,-842.3 1297.17,-846.82 1307.48,-849.26 1306.74,-842.3"/>
+</g>
+<!-- sourcefile~rki_kernel_extrapolate_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node14" class="node">
+<title>sourcefile~rki_kernel_extrapolate_unstr.f90</title>
+<g id="a_sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node14"><a xlink:href="../sourcefile/rki_kernel_extrapolate_unstr.f90.html" xlink:title="rki_kernel_extrapolate_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="862,-703 678,-703 678,-679 862,-679 862,-703"/>
+<text text-anchor="middle" x="770" y="-688.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_kernel_extrapolate_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_kernel_extrapolate_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge22" class="edge">
+<title>sourcefile~rki_kernel_extrapolate_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90</title>
+<path fill="none" stroke="#aa00ff" stroke-dasharray="5,2" d="M690.05,-678.95C685.68,-676.46 681.61,-673.5 678,-670 631.09,-624.56 599.67,-418.61 590.37,-350.18"/>
+<polygon fill="#aa00ff" stroke="#aa00ff" points="593.81,-349.53 589.02,-340.08 586.88,-350.46 593.81,-349.53"/>
+</g>
+<!-- sourcefile~rki_kernel_friction_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node15" class="node">
+<title>sourcefile~rki_kernel_friction_unstr.f90</title>
+<g id="a_sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node15"><a xlink:href="../sourcefile/rki_kernel_friction_unstr.f90.html" xlink:title="rki_kernel_friction_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="850.5,-661 689.5,-661 689.5,-637 850.5,-637 850.5,-661"/>
+<text text-anchor="middle" x="770" y="-646.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_kernel_friction_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_kernel_friction_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge24" class="edge">
+<title>sourcefile~rki_kernel_friction_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90</title>
+<path fill="none" stroke="#aa00ff" stroke-dasharray="5,2" d="M690.18,-636.81C685.79,-634.35 681.67,-631.43 678,-628 596.81,-552.01 587.58,-406.09 587.15,-350.38"/>
+<polygon fill="#aa00ff" stroke="#aa00ff" points="590.65,-350.2 587.17,-340.2 583.65,-350.19 590.65,-350.2"/>
+</g>
+<!-- sourcefile~rki_kernel_fused_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node16" class="node">
+<title>sourcefile~rki_kernel_fused_unstr.f90</title>
+<g id="a_sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node16"><a xlink:href="../sourcefile/rki_kernel_fused_unstr.f90.html" xlink:title="rki_kernel_fused_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="846.5,-619 693.5,-619 693.5,-595 846.5,-595 846.5,-619"/>
+<text text-anchor="middle" x="770" y="-604.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_kernel_fused_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_kernel_fused_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge25" class="edge">
+<title>sourcefile~rki_kernel_fused_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90</title>
+<path fill="none" stroke="#aa00ff" stroke-dasharray="5,2" d="M699.62,-594.91C691.69,-591.38 684.24,-586.84 678,-581 610.09,-517.39 593.07,-399.31 588.86,-350.26"/>
+<polygon fill="#aa00ff" stroke="#aa00ff" points="592.33,-349.82 588.09,-340.11 585.35,-350.35 592.33,-349.82"/>
+</g>
+<!-- sourcefile~rki_kernel_protect_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node17" class="node">
+<title>sourcefile~rki_kernel_protect_unstr.f90</title>
+<g id="a_sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node17"><a xlink:href="../sourcefile/rki_kernel_protect_unstr.f90.html" xlink:title="rki_kernel_protect_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1318,-625 1157,-625 1157,-601 1318,-601 1318,-625"/>
+<text text-anchor="middle" x="1237.5" y="-610.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_kernel_protect_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_kernel_protect_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge26" class="edge">
+<title>sourcefile~rki_kernel_protect_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90</title>
+<path fill="none" stroke="#aa00ff" stroke-dasharray="5,2" d="M1156.88,-611.03C1088.1,-608.63 986.18,-603.36 898,-592 890.87,-591.08 777.42,-570.24 771,-567"/>
+</g>
+<!-- sourcefile~rki_kernel_timestep_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge28" class="edge">
+<title>sourcefile~rki_kernel_timestep_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90</title>
+<path fill="none" stroke="#aa00ff" stroke-dasharray="5,2" d="M1186.78,-743.04C1129.03,-756.39 1037.24,-775.51 1002.5,-771"/>
+</g>
+<!-- sourcefile~rki_kernel_update_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node19" class="node">
+<title>sourcefile~rki_kernel_update_unstr.f90</title>
+<g id="a_sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node19"><a xlink:href="../sourcefile/rki_kernel_update_unstr.f90.html" xlink:title="rki_kernel_update_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1318,-545 1157,-545 1157,-521 1318,-521 1318,-545"/>
+<text text-anchor="middle" x="1237.5" y="-530.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_kernel_update_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_kernel_update_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge29" class="edge">
+<title>sourcefile~rki_kernel_update_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90</title>
+<path fill="none" stroke="#aa00ff" stroke-dasharray="5,2" d="M1156.92,-525.68C1111.42,-523.15 1053.43,-522.72 1002.5,-531"/>
+</g>
+<!-- sourcefile~rki_ml_dynamics_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge30" class="edge">
+<title>sourcefile~rki_ml_dynamics_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90</title>
+<path fill="none" stroke="#aa00ff" stroke-dasharray="5,2" d="M939.76,-399C893.58,-390.09 828.43,-377.98 771,-369"/>
+</g>
+<!-- sourcefile~rki_ml_eos_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge31" class="edge">
+<title>sourcefile~rki_ml_eos_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90</title>
+<path fill="none" stroke="#aa00ff" stroke-dasharray="5,2" d="M717.61,-396.91C704.45,-393.12 690.5,-388.46 678,-383 654.9,-372.9 630.59,-357.84 612.99,-346.04"/>
+<polygon fill="#aa00ff" stroke="#aa00ff" points="614.67,-342.95 604.43,-340.2 610.72,-348.73 614.67,-342.95"/>
+</g>
+<!-- sourcefile~rki_ml_friction_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge32" class="edge">
+<title>sourcefile~rki_ml_friction_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90</title>
+<path fill="none" stroke="#aa00ff" stroke-dasharray="5,2" d="M930.77,-374.57C885.06,-376.86 824.14,-377.31 771,-369"/>
+<path fill="none" stroke="#aa00ff" stroke-dasharray="5,2" d="M769,-369C726.26,-362.32 678.57,-351.41 642.81,-342.52"/>
+<polygon fill="#aa00ff" stroke="#aa00ff" points="643.6,-339.11 633.05,-340.07 641.9,-345.9 643.6,-339.11"/>
+</g>
+<!-- sourcefile~rki_ml_horizontal_viscosity_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge33" class="edge">
+<title>sourcefile~rki_ml_horizontal_viscosity_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90</title>
+<path fill="none" stroke="#aa00ff" stroke-dasharray="5,2" d="M897.77,-280.1C857.77,-279.06 811.83,-280.87 771,-290"/>
+</g>
+<!-- sourcefile~rki_ml_keps_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge34" class="edge">
+<title>sourcefile~rki_ml_keps_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90</title>
+<path fill="none" stroke="#aa00ff" stroke-dasharray="5,2" d="M937.43,-257.6C891.19,-265.66 826.98,-277.48 771,-290"/>
+</g>
+<!-- sourcefile~rki_ml_kpp_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge35" class="edge">
+<title>sourcefile~rki_ml_kpp_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90</title>
+<path fill="none" stroke="#aa00ff" stroke-dasharray="5,2" d="M939.94,-641.75C925.55,-637.93 910.7,-632.56 898,-625 877.73,-612.93 882.52,-597.63 862,-586 826.05,-565.63 807.9,-585.59 771,-567"/>
+</g>
+<!-- sourcefile~rki_ml_pressure_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge36" class="edge">
+<title>sourcefile~rki_ml_pressure_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90</title>
+<path fill="none" stroke="#aa00ff" stroke-dasharray="5,2" d="M947.73,-503.03C931.64,-507.06 913.99,-511.85 898,-517 840.26,-535.61 825.18,-594.29 771,-567"/>
+<path fill="none" stroke="#aa00ff" stroke-dasharray="5,2" d="M769,-567C675.38,-519.84 616.81,-399.19 596.02,-349.69"/>
+<polygon fill="#aa00ff" stroke="#aa00ff" points="599.19,-348.19 592.16,-340.26 592.71,-350.84 599.19,-348.19"/>
+</g>
+<!-- sourcefile~rki_ml_pressure_unstr.f90&#45;&gt;sourcefile~rki_ml_eos_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge59" class="edge">
+<title>sourcefile~rki_ml_pressure_unstr.f90&#45;&gt;sourcefile~rki_ml_eos_unstr.f90</title>
+<path fill="none" stroke="#00ff9b" stroke-dasharray="5,2" d="M946.01,-478.97C930.35,-475.03 913.36,-470.29 898,-465 865.48,-453.79 829.73,-437.67 804.47,-425.6"/>
+<polygon fill="#00ff9b" stroke="#00ff9b" points="805.86,-422.38 795.33,-421.19 802.82,-428.69 805.86,-422.38"/>
+</g>
+<!-- sourcefile~rki_ml_tracers_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge37" class="edge">
+<title>sourcefile~rki_ml_tracers_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90</title>
+<path fill="none" stroke="#aa00ff" stroke-dasharray="5,2" d="M930.75,-576.32C873.63,-579.48 798,-580.6 771,-567"/>
+</g>
+<!-- sourcefile~rki_ml_truncate_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node28" class="node">
+<title>sourcefile~rki_ml_truncate_unstr.f90</title>
+<g id="a_sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node28"><a xlink:href="../sourcefile/rki_ml_truncate_unstr.f90.html" xlink:title="rki_ml_truncate_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1311.5,-503 1163.5,-503 1163.5,-479 1311.5,-479 1311.5,-503"/>
+<text text-anchor="middle" x="1237.5" y="-488.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_truncate_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_ml_truncate_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge38" class="edge">
+<title>sourcefile~rki_ml_truncate_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90</title>
+<path fill="none" stroke="#aa00ff" stroke-dasharray="5,2" d="M1167.95,-503.02C1121.33,-511.12 1058.23,-521.94 1002.5,-531"/>
+</g>
+<!-- sourcefile~rki_ml_vertical_viscosity_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node29" class="node">
+<title>sourcefile~rki_ml_vertical_viscosity_unstr.f90</title>
+<g id="a_sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node29"><a xlink:href="../sourcefile/rki_ml_vertical_viscosity_unstr.f90.html" xlink:title="rki_ml_vertical_viscosity_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1334,-461 1141,-461 1141,-437 1334,-437 1334,-461"/>
+<text text-anchor="middle" x="1237.5" y="-446.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_vertical_viscosity_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_ml_vertical_viscosity_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge39" class="edge">
+<title>sourcefile~rki_ml_vertical_viscosity_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90</title>
+<path fill="none" stroke="#aa00ff" stroke-dasharray="5,2" d="M1159.71,-461.17C1153.16,-463.6 1146.83,-466.51 1141,-470 1119.9,-482.63 1126.3,-499.73 1105,-512 1064.86,-535.13 1048.23,-523.57 1002.5,-531"/>
+<path fill="none" stroke="#aa00ff" stroke-dasharray="5,2" d="M1000.5,-531C987.76,-533.07 782.53,-572.81 771,-567"/>
+</g>
+<!-- sourcefile~rki_output_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge40" class="edge">
+<title>sourcefile~rki_output_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90</title>
+<path fill="none" stroke="#aa00ff" stroke-dasharray="5,2" d="M1177.93,-842.05C1165.61,-839.21 1152.78,-835.85 1141,-832 1077.06,-811.12 1069.2,-779.67 1002.5,-771"/>
+</g>
+<!-- sourcefile~rki_restart_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge41" class="edge">
+<title>sourcefile~rki_restart_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90</title>
+<path fill="none" stroke="#aa00ff" stroke-dasharray="5,2" d="M1369.77,-710.28C1357.93,-710.16 1345.57,-710.06 1334,-710 1248.22,-709.55 1224.94,-692.33 1141,-710 1075.18,-723.85 1069.2,-779.67 1002.5,-771"/>
+<path fill="none" stroke="#aa00ff" stroke-dasharray="5,2" d="M1000.5,-771C897.9,-757.12 858.07,-787.03 771,-731"/>
+</g>
+<!-- sourcefile~rki_si_unstr_step.f90&#45;&gt;sourcefile~rki_si_unstr_helmholtz.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge13" class="edge">
+<title>sourcefile~rki_si_unstr_step.f90&#45;&gt;sourcefile~rki_si_unstr_helmholtz.f90</title>
+<path fill="none" stroke="#00ffa9" stroke-dasharray="5,2" d="M940.41,-176.54C925.94,-180.35 910.93,-185.65 898,-193 878.33,-204.18 881.79,-218.03 862,-229 858.51,-230.93 854.85,-232.69 851.09,-234.29"/>
+<polygon fill="#00ffa9" stroke="#00ffa9" points="849.64,-231.09 841.55,-237.93 852.14,-237.63 849.64,-231.09"/>
+</g>
+<!-- sourcefile~rki_si_unstr_step.f90&#45;&gt;sourcefile~rki_si_unstr_wetdry.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge16" class="edge">
+<title>sourcefile~rki_si_unstr_step.f90&#45;&gt;sourcefile~rki_si_unstr_wetdry.f90</title>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M940.2,-177.77C911.8,-182.85 877.61,-188.95 847.42,-194.35"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="846.58,-190.94 837.35,-196.15 847.81,-197.83 846.58,-190.94"/>
+</g>
+<!-- sourcefile~rki_si_unstr_step.f90&#45;&gt;sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge42" class="edge">
+<title>sourcefile~rki_si_unstr_step.f90&#45;&gt;sourcefile~rki_state_unstr.f90</title>
+<path fill="none" stroke="#aa00ff" stroke-dasharray="5,2" d="M973.48,-179.08C951.72,-189.58 921.06,-206.21 898,-226 878.56,-242.68 883.82,-257.59 862,-271 826.8,-292.63 811.32,-280.98 771,-290"/>
+<path fill="none" stroke="#aa00ff" stroke-dasharray="5,2" d="M769,-290C730.4,-298.64 687.04,-307.74 652.38,-314.86"/>
+<polygon fill="#aa00ff" stroke="#aa00ff" points="651.48,-311.48 642.39,-316.92 652.89,-318.33 651.48,-311.48"/>
+</g>
+<!-- sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_kernel_flux_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge10" class="edge">
+<title>sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_kernel_flux_unstr.f90</title>
+<path fill="none" stroke="#ffaa00" stroke-dasharray="5,2" d="M1426.23,-478.72C1415.96,-427.47 1368.69,-230.31 1238.5,-167"/>
+<path fill="none" stroke="#ffaa00" stroke-dasharray="5,2" d="M1236.5,-167C1099.43,-100.34 1047.35,-81.57 898,-112 863.24,-119.08 826.2,-136.04 801.14,-149.08"/>
+<polygon fill="#ffaa00" stroke="#ffaa00" points="799.35,-146.07 792.16,-153.85 802.63,-152.25 799.35,-146.07"/>
+</g>
+<!-- sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_kernel_sponge_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge11" class="edge">
+<title>sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_kernel_sponge_unstr.f90</title>
+<path fill="none" stroke="#aaff00" stroke-dasharray="5,2" d="M1429.09,-478.73C1430.72,-429.83 1429.97,-247.02 1334,-153 1206.41,-28 985.57,-8.5 861.8,-8.34"/>
+<polygon fill="#aaff00" stroke="#aaff00" points="861.58,-4.84 851.59,-8.37 861.6,-11.84 861.58,-4.84"/>
+</g>
+<!-- sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_si_unstr_step_ml.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge15" class="edge">
+<title>sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_si_unstr_step_ml.f90</title>
+<path fill="none" stroke="#00a9ff" stroke-dasharray="5,2" d="M1418.82,-478.79C1402.81,-459.18 1369.08,-420.33 1334,-395 1317.19,-382.86 1296.76,-372.33 1279.13,-364.34"/>
+<polygon fill="#00a9ff" stroke="#00a9ff" points="1280.22,-360.99 1269.65,-360.16 1277.39,-367.4 1280.22,-360.99"/>
+</g>
+<!-- sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge44" class="edge">
+<title>sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90</title>
+<path fill="none" stroke="#aa00ff" stroke-dasharray="5,2" d="M1000.5,-691C897.02,-694.47 858.07,-787.03 771,-731"/>
+<path fill="none" stroke="#aa00ff" stroke-dasharray="5,2" d="M769,-731C734.25,-708.64 707.59,-740.84 678,-712 625.28,-660.62 597.29,-424.77 589.67,-350.48"/>
+<polygon fill="#aa00ff" stroke="#aa00ff" points="593.13,-349.96 588.65,-340.36 586.17,-350.66 593.13,-349.96"/>
+</g>
+<!-- sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_kernel_extrapolate_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge50" class="edge">
+<title>sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_kernel_extrapolate_unstr.f90</title>
+<path fill="none" stroke="#ffc700" stroke-dasharray="5,2" d="M1000.5,-691C958.47,-692.41 912.08,-692.66 872.07,-692.46"/>
+<polygon fill="#ffc700" stroke="#ffc700" points="872.07,-688.96 862.05,-692.4 872.03,-695.96 872.07,-688.96"/>
+</g>
+<!-- sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_kernel_friction_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge51" class="edge">
+<title>sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_kernel_friction_unstr.f90</title>
+<path fill="none" stroke="#f3ff00" stroke-dasharray="5,2" d="M1000.5,-691C968.56,-692.07 888.82,-675.87 832.33,-663.28"/>
+<polygon fill="#f3ff00" stroke="#f3ff00" points="832.94,-659.83 822.42,-661.05 831.41,-666.66 832.94,-659.83"/>
+</g>
+<!-- sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_kernel_fused_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge52" class="edge">
+<title>sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_kernel_fused_unstr.f90</title>
+<path fill="none" stroke="#b1ff00" stroke-dasharray="5,2" d="M1236.5,-653C1187.74,-672.96 1055.15,-689.23 1002.5,-691"/>
+<path fill="none" stroke="#b1ff00" stroke-dasharray="5,2" d="M1000.5,-691C954.19,-692.55 937.88,-695.59 898,-672 876.25,-659.14 883.46,-641.33 862,-628 859.18,-626.25 856.22,-624.64 853.18,-623.16"/>
+<polygon fill="#b1ff00" stroke="#b1ff00" points="854.37,-619.87 843.8,-619.13 851.6,-626.3 854.37,-619.87"/>
+</g>
+<!-- sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_kernel_protect_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge53" class="edge">
+<title>sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_kernel_protect_unstr.f90</title>
+<path fill="none" stroke="#6eff00" stroke-dasharray="5,2" d="M1420.07,-503.02C1405.12,-523.43 1371.95,-564.79 1334,-587 1326.81,-591.21 1318.91,-594.76 1310.83,-597.75"/>
+<polygon fill="#6eff00" stroke="#6eff00" points="1309.63,-594.46 1301.3,-601 1311.9,-601.08 1309.63,-594.46"/>
+</g>
+<!-- sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_kernel_timestep_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge55" class="edge">
+<title>sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_kernel_timestep_unstr.f90</title>
+<path fill="none" stroke="#2cff00" stroke-dasharray="5,2" d="M1424.27,-503.35C1413.32,-533.95 1381.53,-614.59 1334,-667 1316.52,-686.27 1292.08,-702.51 1272.3,-713.81"/>
+<polygon fill="#2cff00" stroke="#2cff00" points="1270.35,-710.89 1263.3,-718.8 1273.74,-717.01 1270.35,-710.89"/>
+</g>
+<!-- sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_kernel_update_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge56" class="edge">
+<title>sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_kernel_update_unstr.f90</title>
+<path fill="none" stroke="#00ff16" stroke-dasharray="5,2" d="M1374.53,-503.01C1361.28,-505.96 1347.13,-509.1 1334,-512 1324.01,-514.21 1313.44,-516.54 1303.1,-518.81"/>
+<polygon fill="#00ff16" stroke="#00ff16" points="1302.31,-515.4 1293.3,-520.97 1303.82,-522.24 1302.31,-515.4"/>
+</g>
+<!-- sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_ml_dynamics_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge58" class="edge">
+<title>sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_ml_dynamics_unstr.f90</title>
+<path fill="none" stroke="#00ff58" stroke-dasharray="5,2" d="M1236.5,-409C1188.01,-401.35 1133.16,-401.37 1088.76,-403.52"/>
+<polygon fill="#00ff58" stroke="#00ff58" points="1088.38,-400.04 1078.58,-404.06 1088.75,-407.03 1088.38,-400.04"/>
+</g>
+<!-- sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_ml_eos_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge61" class="edge">
+<title>sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_ml_eos_unstr.f90</title>
+<path fill="none" stroke="#00ff9b" stroke-dasharray="5,2" d="M1236.5,-409C1177.89,-399.76 1164.11,-426.87 1105,-432 1013.34,-439.96 989.63,-440.23 898,-432 877.38,-430.15 855.1,-426.64 835.05,-422.91"/>
+<polygon fill="#00ff9b" stroke="#00ff9b" points="835.57,-419.44 825.09,-421 834.26,-426.32 835.57,-419.44"/>
+</g>
+<!-- sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_ml_friction_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge63" class="edge">
+<title>sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_ml_friction_unstr.f90</title>
+<path fill="none" stroke="#00ffdd" stroke-dasharray="5,2" d="M1414.16,-478.79C1396.48,-464.39 1364.98,-440.81 1334,-428 1294.01,-411.46 1281.25,-415.74 1238.5,-409"/>
+<path fill="none" stroke="#00ffdd" stroke-dasharray="5,2" d="M1236.5,-409C1184.27,-400.76 1125.62,-390.74 1080.1,-382.78"/>
+<polygon fill="#00ffdd" stroke="#00ffdd" points="1080.46,-379.29 1070.01,-381.01 1079.25,-386.19 1080.46,-379.29"/>
+</g>
+<!-- sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_ml_horizontal_viscosity_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge65" class="edge">
+<title>sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_ml_horizontal_viscosity_unstr.f90</title>
+<path fill="none" stroke="#00ddff" stroke-dasharray="5,2" d="M1236.5,-167C1170.23,-134.77 1172.03,-237.38 1105,-268 1100.27,-270.16 1095.31,-272.1 1090.24,-273.85"/>
+<polygon fill="#00ddff" stroke="#00ddff" points="1088.86,-270.61 1080.38,-276.96 1090.97,-277.29 1088.86,-270.61"/>
+</g>
+<!-- sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_ml_keps_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge67" class="edge">
+<title>sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_ml_keps_unstr.f90</title>
+<path fill="none" stroke="#009bff" stroke-dasharray="5,2" d="M1236.5,-167C1199.82,-149.16 1088.68,-201.87 1033.82,-230.24"/>
+<polygon fill="#009bff" stroke="#009bff" points="1032.14,-227.17 1024.89,-234.9 1035.37,-233.37 1032.14,-227.17"/>
+</g>
+<!-- sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_ml_kpp_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge69" class="edge">
+<title>sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_ml_kpp_unstr.f90</title>
+<path fill="none" stroke="#0058ff" stroke-dasharray="5,2" d="M1424.16,-503.35C1413.59,-531.51 1383.65,-600.64 1334,-634 1298.08,-658.14 1278.55,-636.61 1238.5,-653"/>
+<path fill="none" stroke="#0058ff" stroke-dasharray="5,2" d="M1236.5,-653C1182.62,-675.05 1115.73,-671.79 1067.29,-664.64"/>
+<polygon fill="#0058ff" stroke="#0058ff" points="1067.66,-661.16 1057.24,-663.07 1066.58,-668.07 1067.66,-661.16"/>
+</g>
+<!-- sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_ml_pressure_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge71" class="edge">
+<title>sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_ml_pressure_unstr.f90</title>
+<path fill="none" stroke="#0016ff" stroke-dasharray="5,2" d="M1236.5,-409C1193.75,-402.26 1179.03,-407.34 1141,-428 1120.84,-438.95 1124.87,-453.52 1105,-465 1097.69,-469.22 1089.69,-472.77 1081.5,-475.74"/>
+<polygon fill="#0016ff" stroke="#0016ff" points="1080.19,-472.49 1071.81,-478.98 1082.41,-479.13 1080.19,-472.49"/>
+</g>
+<!-- sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_ml_tracers_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge73" class="edge">
+<title>sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_ml_tracers_unstr.f90</title>
+<path fill="none" stroke="#2c00ff" stroke-dasharray="5,2" d="M1415.35,-503.19C1398.16,-518.28 1366.38,-543.28 1334,-554 1251.39,-581.34 1150.9,-582.34 1082.37,-578.57"/>
+<polygon fill="#2c00ff" stroke="#2c00ff" points="1082.26,-575.05 1072.07,-577.95 1081.84,-582.04 1082.26,-575.05"/>
+</g>
+<!-- sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_ml_truncate_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge74" class="edge">
+<title>sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_ml_truncate_unstr.f90</title>
+<path fill="none" stroke="#6e00ff" stroke-dasharray="5,2" d="M1370.98,-491C1355.51,-491 1338.47,-491 1321.9,-491"/>
+<polygon fill="#6e00ff" stroke="#6e00ff" points="1321.66,-487.5 1311.66,-491 1321.66,-494.5 1321.66,-487.5"/>
+</g>
+<!-- sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_ml_vertical_viscosity_unstr.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge75" class="edge">
+<title>sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_ml_vertical_viscosity_unstr.f90</title>
+<path fill="none" stroke="#b100ff" stroke-dasharray="5,2" d="M1374.53,-478.99C1361.28,-476.04 1347.13,-472.9 1334,-470 1324.01,-467.79 1313.44,-465.46 1303.1,-463.19"/>
+<polygon fill="#b100ff" stroke="#b100ff" points="1303.82,-459.76 1293.3,-461.03 1302.31,-466.6 1303.82,-459.76"/>
+</g>
+<!-- sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_si_unstr_step.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge80" class="edge">
+<title>sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_si_unstr_step.f90</title>
+<path fill="none" stroke="#ff0085" stroke-dasharray="5,2" d="M1236.5,-167C1181.98,-140.49 1111.52,-144.88 1062.22,-153.16"/>
+<polygon fill="#ff0085" stroke="#ff0085" points="1061.57,-149.72 1052.34,-154.92 1062.8,-156.61 1061.57,-149.72"/>
+</g>
+<!-- sourcefile~rki_api.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node34" class="node">
+<title>sourcefile~rki_api.f90</title>
+<g id="a_sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_node34"><a xlink:href="../sourcefile/rki_api.f90.html" xlink:title="rki_api.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1610.5,-845 1540.5,-845 1540.5,-821 1610.5,-821 1610.5,-845"/>
+<text text-anchor="middle" x="1575.5" y="-830.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_api.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_api.f90&#45;&gt;sourcefile~rki_handle.f90 -->
+<g id="sourcefile~~rki_boundary_unstr.f90~~AfferentGraph_edge48" class="edge">
+<title>sourcefile~rki_api.f90&#45;&gt;sourcefile~rki_handle.f90</title>
+<path fill="none" stroke="#ff8500" stroke-dasharray="5,2" d="M1540.37,-833C1523.88,-833 1503.69,-833 1485.13,-833"/>
+<polygon fill="#ff8500" stroke="#ff8500" points="1485.02,-829.5 1475.02,-833 1485.02,-836.5 1485.02,-829.5"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var pansourcefilerki_boundary_unstrf90AfferentGraph = svgPanZoom('#sourcefilerki_boundary_unstrf90AfferentGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#AfferentGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="AfferentGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="202pt" height="32pt"
+ viewBox="0.00 0.00 201.50 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 197.5,-28 197.5,4 -4,4"/>
+<!-- Source File -->
+<g id="node1" class="node">
+<title>Source File</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Source File</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node2" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="193.5,-24 88.5,-24 88.5,0 193.5,0 193.5,-24"/>
+<text text-anchor="middle" x="141" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a file to a file which it depends on. A file
+is dependent upon another if the latter must be compiled before the former
+can be.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+          </div>
+        </div>
+<br>
+      <section>
+        <h2><span class="anchor" id="src"></span>Source Code</h2>
+        <div class="hl codehilite"><pre><span></span><a id="ln-1" name="ln-1" href="#ln-1"></a><span class="c">!! Boundary condition type constants for the unstructured solver</span>
+<a id="ln-2" name="ln-2" href="#ln-2"></a><span class="k">module </span><span class="n">rki_boundary_unstr</span>
+<a id="ln-3" name="ln-3" href="#ln-3"></a><span class="w">   </span><span class="c">!! Integer constants identifying the boundary condition type for</span>
+<a id="ln-4" name="ln-4" href="#ln-4"></a><span class="w">   </span><span class="c">!! each boundary edge group, plus a fixed maximum on the number of</span>
+<a id="ln-5" name="ln-5" href="#ln-5"></a><span class="w">   </span><span class="c">!! groups a single mesh can carry. Mirrors the role of</span>
+<a id="ln-6" name="ln-6" href="#ln-6"></a><span class="w">   </span><span class="c">!! `rki_boundary_types` on the structured side. Seven BC types are</span>
+<a id="ln-7" name="ln-7" href="#ln-7"></a><span class="w">   </span><span class="c">!! fully dispatched inside `compute_boundary_state_impl`</span>
+<a id="ln-8" name="ln-8" href="#ln-8"></a><span class="w">   </span><span class="c">!! (inlined into `rki_kernel_flux_unstr`): `BC_WALL`, `BC_OPEN`, `BC_INFLOW`,</span>
+<a id="ln-9" name="ln-9" href="#ln-9"></a><span class="w">   </span><span class="c">!! `BC_DISCHARGE`, `BC_OUTFLOW`, `BC_TIDAL`, `BC_CLAMPED`. `BC_CHAPMAN`</span>
+<a id="ln-10" name="ln-10" href="#ln-10"></a><span class="w">   </span><span class="c">!! is dispatched one level higher in the flux kernel</span>
+<a id="ln-11" name="ln-11" href="#ln-11"></a><span class="w">   </span><span class="c">!! (`rki_kernel_flux_unstr`) because it needs per-edge mesh access to</span>
+<a id="ln-12" name="ln-12" href="#ln-12"></a><span class="w">   </span><span class="c">!! compute the radiating ghost target before falling through into the</span>
+<a id="ln-13" name="ln-13" href="#ln-13"></a><span class="w">   </span><span class="c">!! Flather/`BC_TIDAL` algebra. The multilayer tracer advection kernel</span>
+<a id="ln-14" name="ln-14" href="#ln-14"></a><span class="w">   </span><span class="c">!! (`ml_advect_tracer_unstr`) honours `bc_S_ext` / `bc_T_ext` at</span>
+<a id="ln-15" name="ln-15" href="#ln-15"></a><span class="w">   </span><span class="c">!! inflow edges, so freshwater / clamped-tracer river inflows work</span>
+<a id="ln-16" name="ln-16" href="#ln-16"></a><span class="w">   </span><span class="c">!! end-to-end. Types that live on the structured side but are not yet</span>
+<a id="ln-17" name="ln-17" href="#ln-17"></a><span class="w">   </span><span class="c">!! ported: `BC_NESTED`, `BC_SPONGE`.</span>
+<a id="ln-18" name="ln-18" href="#ln-18"></a><span class="w">   </span><span class="c">!!</span>
+<a id="ln-19" name="ln-19" href="#ln-19"></a><span class="w">   </span><span class="c">!! `BC_TIDAL` is a Flather radiating boundary that clamps the ghost</span>
+<a id="ln-20" name="ln-20" href="#ln-20"></a><span class="w">   </span><span class="c">!! stage to `bc_eta_ext(g)` and reconstructs the ghost outward-normal</span>
+<a id="ln-21" name="ln-21" href="#ln-21"></a><span class="w">   </span><span class="c">!! velocity from the outgoing Riemann invariant. `BC_CLAMPED` does</span>
+<a id="ln-22" name="ln-22" href="#ln-22"></a><span class="w">   </span><span class="c">!! the same stage clamp but copies momentum transmissively (no</span>
+<a id="ln-23" name="ln-23" href="#ln-23"></a><span class="w">   </span><span class="c">!! radiation term) -- pick it when you want a pure Dirichlet stage</span>
+<a id="ln-24" name="ln-24" href="#ln-24"></a><span class="w">   </span><span class="c">!! without the wave-radiation coupling.</span>
+<a id="ln-25" name="ln-25" href="#ln-25"></a><span class="w">   </span><span class="c">!!</span>
+<a id="ln-26" name="ln-26" href="#ln-26"></a><span class="w">   </span><span class="c">!! How a mesh wires up its boundary edges:</span>
+<a id="ln-27" name="ln-27" href="#ln-27"></a><span class="w">   </span><span class="c">!!</span>
+<a id="ln-28" name="ln-28" href="#ln-28"></a><span class="w">   </span><span class="c">!!   * Every boundary edge of a triangle has `mesh%neighbours(i, k) == -1`</span>
+<a id="ln-29" name="ln-29" href="#ln-29"></a><span class="w">   </span><span class="c">!!     and `mesh%bc_group(i, k) &gt;= 0`. Group 0 means "no group set</span>
+<a id="ln-30" name="ln-30" href="#ln-30"></a><span class="w">   </span><span class="c">!!     -- treat as default wall".</span>
+<a id="ln-31" name="ln-31" href="#ln-31"></a><span class="w">   </span><span class="c">!!   * `state%bc_type(g)` for `g = 1..MAX_BC_GROUPS` says what BC</span>
+<a id="ln-32" name="ln-32" href="#ln-32"></a><span class="w">   </span><span class="c">!!     type group `g` represents. Defaults to `BC_WALL` so a fresh</span>
+<a id="ln-33" name="ln-33" href="#ln-33"></a><span class="w">   </span><span class="c">!!     state with no explicit BC setup behaves like an all-walls</span>
+<a id="ln-34" name="ln-34" href="#ln-34"></a><span class="w">   </span><span class="c">!!     domain (which is what we want for lake-at-rest tests).</span>
+<a id="ln-35" name="ln-35" href="#ln-35"></a><span class="w">   </span><span class="c">!!   * The flux kernel reads the bc_type via this lookup and</span>
+<a id="ln-36" name="ln-36" href="#ln-36"></a><span class="w">   </span><span class="c">!!     dispatches inside `compute_boundary_state_impl` (inlined in</span>
+<a id="ln-37" name="ln-37" href="#ln-37"></a><span class="w">   </span><span class="c">!!     `rki_kernel_flux_unstr`) to build the right-side ghost state.</span>
+<a id="ln-38" name="ln-38" href="#ln-38"></a><span class="w">   </span><span class="c">!!   * Tracer inflow values live in `state%bc_S_ext(g)` /</span>
+<a id="ln-39" name="ln-39" href="#ln-39"></a><span class="w">   </span><span class="c">!!     `state%bc_T_ext(g)` and are consumed by</span>
+<a id="ln-40" name="ln-40" href="#ln-40"></a><span class="w">   </span><span class="c">!!     `ml_advect_tracer_unstr` on edges whose mass flux is into</span>
+<a id="ln-41" name="ln-41" href="#ln-41"></a><span class="w">   </span><span class="c">!!     the domain.</span>
+<a id="ln-42" name="ln-42" href="#ln-42"></a><span class="w">   </span><span class="c">!!</span>
+<a id="ln-43" name="ln-43" href="#ln-43"></a><span class="w">   </span><span class="c">!! Integer values match the structured side</span>
+<a id="ln-44" name="ln-44" href="#ln-44"></a><span class="w">   </span><span class="c">!! (`rki_boundary_types`): WALL=1, OPEN=2, TIDAL=3, NESTED=4,</span>
+<a id="ln-45" name="ln-45" href="#ln-45"></a><span class="w">   </span><span class="c">!! INFLOW=5, DISCHARGE=6, CLAMPED=7, SPONGE=8, CHAPMAN=9. Only the</span>
+<a id="ln-46" name="ln-46" href="#ln-46"></a><span class="w">   </span><span class="c">!! types actually dispatched here are re-declared; the rest of that</span>
+<a id="ln-47" name="ln-47" href="#ln-47"></a><span class="w">   </span><span class="c">!! range is reserved. `BC_OUTFLOW = 10` is unstructured-only and</span>
+<a id="ln-48" name="ln-48" href="#ln-48"></a><span class="w">   </span><span class="c">!! sits past the structured range to avoid future collisions.</span>
+<a id="ln-49" name="ln-49" href="#ln-49"></a><span class="w">   </span><span class="k">implicit none</span>
+<a id="ln-50" name="ln-50" href="#ln-50"></a><span class="k">   private</span>
+<a id="ln-51" name="ln-51" href="#ln-51"></a>
+<a id="ln-52" name="ln-52" href="#ln-52"></a><span class="k">   public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">BC_INTERIOR</span>
+<a id="ln-53" name="ln-53" href="#ln-53"></a><span class="w">   </span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">BC_WALL</span>
+<a id="ln-54" name="ln-54" href="#ln-54"></a><span class="w">   </span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">BC_OPEN</span>
+<a id="ln-55" name="ln-55" href="#ln-55"></a><span class="w">   </span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">BC_NESTED</span>
+<a id="ln-56" name="ln-56" href="#ln-56"></a><span class="w">   </span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">BC_INFLOW</span>
+<a id="ln-57" name="ln-57" href="#ln-57"></a><span class="w">   </span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">BC_DISCHARGE</span>
+<a id="ln-58" name="ln-58" href="#ln-58"></a><span class="w">   </span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">BC_OUTFLOW</span>
+<a id="ln-59" name="ln-59" href="#ln-59"></a><span class="w">   </span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">BC_TIDAL</span>
+<a id="ln-60" name="ln-60" href="#ln-60"></a><span class="w">   </span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">BC_CLAMPED</span>
+<a id="ln-61" name="ln-61" href="#ln-61"></a><span class="w">   </span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">BC_SPONGE</span>
+<a id="ln-62" name="ln-62" href="#ln-62"></a><span class="w">   </span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">BC_CHAPMAN</span>
+<a id="ln-63" name="ln-63" href="#ln-63"></a><span class="w">   </span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">MAX_BC_GROUPS</span>
+<a id="ln-64" name="ln-64" href="#ln-64"></a>
+<a id="ln-65" name="ln-65" href="#ln-65"></a><span class="w">   </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">parameter</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">BC_INTERIOR</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+<a id="ln-66" name="ln-66" href="#ln-66"></a><span class="w">      </span><span class="c">!! Sentinel for interior edges. Never appears in `state%bc_type(:)`</span>
+<a id="ln-67" name="ln-67" href="#ln-67"></a><span class="w">      </span><span class="c">!! itself -- it's the value of `bc_group(i, k)` on edges that</span>
+<a id="ln-68" name="ln-68" href="#ln-68"></a><span class="w">      </span><span class="c">!! were not assigned to a group at mesh-build time.</span>
+<a id="ln-69" name="ln-69" href="#ln-69"></a><span class="w">   </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">parameter</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">BC_WALL</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span>
+<a id="ln-70" name="ln-70" href="#ln-70"></a><span class="w">      </span><span class="c">!! Reflective wall. The right-side ghost state mirrors the left</span>
+<a id="ln-71" name="ln-71" href="#ln-71"></a><span class="w">      </span><span class="c">!! state across the edge normal: stage / depth / bed are the</span>
+<a id="ln-72" name="ln-72" href="#ln-72"></a><span class="w">      </span><span class="c">!! same, momentum has its normal component negated. Implemented</span>
+<a id="ln-73" name="ln-73" href="#ln-73"></a><span class="w">      </span><span class="c">!! in `compute_boundary_state`.</span>
+<a id="ln-74" name="ln-74" href="#ln-74"></a><span class="w">   </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">parameter</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">BC_OPEN</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span>
+<a id="ln-75" name="ln-75" href="#ln-75"></a><span class="w">      </span><span class="c">!! Transmissive (zero-gradient) radiation. The right-side ghost</span>
+<a id="ln-76" name="ln-76" href="#ln-76"></a><span class="w">      </span><span class="c">!! state copies the left state, so the central-upwind solver</span>
+<a id="ln-77" name="ln-77" href="#ln-77"></a><span class="w">      </span><span class="c">!! emits the physical flux of the interior with no reflection.</span>
+<a id="ln-78" name="ln-78" href="#ln-78"></a><span class="w">      </span><span class="c">!! Stateless: uses no per-group parameters.</span>
+<a id="ln-79" name="ln-79" href="#ln-79"></a><span class="w">   </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">parameter</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">BC_NESTED</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">4</span>
+<a id="ln-80" name="ln-80" href="#ln-80"></a><span class="w">      </span><span class="c">!! Nested boundary: Flather radiation driven by a parent-model</span>
+<a id="ln-81" name="ln-81" href="#ln-81"></a><span class="w">      </span><span class="c">!! prescribed elevation per BC group.  At smoke level this is</span>
+<a id="ln-82" name="ln-82" href="#ln-82"></a><span class="w">      </span><span class="c">!! identical to `BC_TIDAL` — per-group `bc_eta_ext(g)` supplies</span>
+<a id="ln-83" name="ln-83" href="#ln-83"></a><span class="w">      </span><span class="c">!! the external stage and the outward-normal ghost velocity is</span>
+<a id="ln-84" name="ln-84" href="#ln-84"></a><span class="w">      </span><span class="c">!! reconstructed from the Riemann invariant.  Full parent-model</span>
+<a id="ln-85" name="ln-85" href="#ln-85"></a><span class="w">      </span><span class="c">!! coupling (live eta from a coarser grid) is deferred. Matches</span>
+<a id="ln-86" name="ln-86" href="#ln-86"></a><span class="w">      </span><span class="c">!! structured `BC_NESTED = 4`.</span>
+<a id="ln-87" name="ln-87" href="#ln-87"></a><span class="w">   </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">parameter</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">BC_TIDAL</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span>
+<a id="ln-88" name="ln-88" href="#ln-88"></a><span class="w">      </span><span class="c">!! Prescribed free-surface elevation with Flather radiation.</span>
+<a id="ln-89" name="ln-89" href="#ln-89"></a><span class="w">      </span><span class="c">!! The per-group parameter `state%bc_eta_ext(g)` is the absolute</span>
+<a id="ln-90" name="ln-90" href="#ln-90"></a><span class="w">      </span><span class="c">!! stage (m, in the same datum as the bed) the kernel clamps the</span>
+<a id="ln-91" name="ln-91" href="#ln-91"></a><span class="w">      </span><span class="c">!! ghost stage to. Ghost outward-normal velocity is rebuilt as</span>
+<a id="ln-92" name="ln-92" href="#ln-92"></a><span class="w">      </span><span class="c">!!   u_n_ghost = u_n_int + sqrt(g/h_int)*(eta_int - eta_ext)</span>
+<a id="ln-93" name="ln-93" href="#ln-93"></a><span class="w">      </span><span class="c">!! so interior-going waves enter driven by the stage anomaly and</span>
+<a id="ln-94" name="ln-94" href="#ln-94"></a><span class="w">      </span><span class="c">!! outgoing waves leave cleanly. Update the value between steps</span>
+<a id="ln-95" name="ln-95" href="#ln-95"></a><span class="w">      </span><span class="c">!! to drive a tide. Matches structured `BC_TIDAL` semantics.</span>
+<a id="ln-96" name="ln-96" href="#ln-96"></a><span class="w">   </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">parameter</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">BC_INFLOW</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">5</span>
+<a id="ln-97" name="ln-97" href="#ln-97"></a><span class="w">      </span><span class="c">!! Prescribed normal velocity. The per-group parameter</span>
+<a id="ln-98" name="ln-98" href="#ln-98"></a><span class="w">      </span><span class="c">!! `state%bc_un_ext(g)` is the velocity component along the</span>
+<a id="ln-99" name="ln-99" href="#ln-99"></a><span class="w">      </span><span class="c">!! outward normal -- so a value of -2.0 means flow into the</span>
+<a id="ln-100" name="ln-100" href="#ln-100"></a><span class="w">      </span><span class="c">!! domain at 2 m/s on a boundary whose outward normal points</span>
+<a id="ln-101" name="ln-101" href="#ln-101"></a><span class="w">      </span><span class="c">!! out of the domain. The Python wrapper exposes</span>
+<a id="ln-102" name="ln-102" href="#ln-102"></a><span class="w">      </span><span class="c">!! `set_bc_inflow_speed(g, v)` which negates internally so</span>
+<a id="ln-103" name="ln-103" href="#ln-103"></a><span class="w">      </span><span class="c">!! positive `v` always means inflow. Depth at the ghost state</span>
+<a id="ln-104" name="ln-104" href="#ln-104"></a><span class="w">      </span><span class="c">!! is the extrapolated interior depth.</span>
+<a id="ln-105" name="ln-105" href="#ln-105"></a><span class="w">   </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">parameter</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">BC_DISCHARGE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">6</span>
+<a id="ln-106" name="ln-106" href="#ln-106"></a><span class="w">      </span><span class="c">!! Prescribed momentum flux per unit width (m^2/s) along the</span>
+<a id="ln-107" name="ln-107" href="#ln-107"></a><span class="w">      </span><span class="c">!! outward normal. The per-group parameter `state%bc_Qn_ext(g)`</span>
+<a id="ln-108" name="ln-108" href="#ln-108"></a><span class="w">      </span><span class="c">!! carries the specific discharge; positive means *out of* the</span>
+<a id="ln-109" name="ln-109" href="#ln-109"></a><span class="w">      </span><span class="c">!! domain (along the outward normal). Ghost momentum is rebuilt</span>
+<a id="ln-110" name="ln-110" href="#ln-110"></a><span class="w">      </span><span class="c">!! from `(-bc_Qn_ext * n1, -bc_Qn_ext * n2)` so a negative Qn</span>
+<a id="ln-111" name="ln-111" href="#ln-111"></a><span class="w">      </span><span class="c">!! pumps mass in without a separate sign flip at the call site.</span>
+<a id="ln-112" name="ln-112" href="#ln-112"></a><span class="w">      </span><span class="c">!! Depth at the ghost follows the interior extrapolation. Useful</span>
+<a id="ln-113" name="ln-113" href="#ln-113"></a><span class="w">      </span><span class="c">!! when the driving quantity is a measured river flow per unit</span>
+<a id="ln-114" name="ln-114" href="#ln-114"></a><span class="w">      </span><span class="c">!! width rather than a velocity. Matches structured BC_DISCHARGE.</span>
+<a id="ln-115" name="ln-115" href="#ln-115"></a><span class="w">   </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">parameter</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">BC_CLAMPED</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">7</span>
+<a id="ln-116" name="ln-116" href="#ln-116"></a><span class="w">      </span><span class="c">!! Prescribed free-surface elevation with transmissive momentum</span>
+<a id="ln-117" name="ln-117" href="#ln-117"></a><span class="w">      </span><span class="c">!! (no Flather radiation term). The per-group parameter</span>
+<a id="ln-118" name="ln-118" href="#ln-118"></a><span class="w">      </span><span class="c">!! `state%bc_eta_ext(g)` is the absolute stage (m); the kernel</span>
+<a id="ln-119" name="ln-119" href="#ln-119"></a><span class="w">      </span><span class="c">!! clamps the ghost stage to it and copies interior momentum</span>
+<a id="ln-120" name="ln-120" href="#ln-120"></a><span class="w">      </span><span class="c">!! across unchanged. Pick this when you need a Dirichlet stage</span>
+<a id="ln-121" name="ln-121" href="#ln-121"></a><span class="w">      </span><span class="c">!! without wave-radiation coupling. Matches structured</span>
+<a id="ln-122" name="ln-122" href="#ln-122"></a><span class="w">      </span><span class="c">!! `BC_CLAMPED=7`.</span>
+<a id="ln-123" name="ln-123" href="#ln-123"></a><span class="w">   </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">parameter</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">BC_CHAPMAN</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">9</span>
+<a id="ln-124" name="ln-124" href="#ln-124"></a><span class="w">      </span><span class="c">!! Chapman / Orlanski radiating boundary. No per-group external</span>
+<a id="ln-125" name="ln-125" href="#ln-125"></a><span class="w">      </span><span class="c">!! parameter; instead the kernel keeps a per-boundary-edge</span>
+<a id="ln-126" name="ln-126" href="#ln-126"></a><span class="w">      </span><span class="c">!! persistent state `state%chapman_eta_old(i, k)` (the previous</span>
+<a id="ln-127" name="ln-127" href="#ln-127"></a><span class="w">      </span><span class="c">!! step's eta at edge `i` of cell `k`) and reconstructs the ghost</span>
+<a id="ln-128" name="ln-128" href="#ln-128"></a><span class="w">      </span><span class="c">!! stage each call from a phase-speed estimate</span>
+<a id="ln-129" name="ln-129" href="#ln-129"></a><span class="w">      </span><span class="c">!!   c = -(deta/dt) / (deta/dn_inward)</span>
+<a id="ln-130" name="ln-130" href="#ln-130"></a><span class="w">      </span><span class="c">!! clamped to `[0, sqrt(g*h_int)]`. Spatial gradient is</span>
+<a id="ln-131" name="ln-131" href="#ln-131"></a><span class="w">      </span><span class="c">!! approximated from the cell's centroid stage and the extrapolated</span>
+<a id="ln-132" name="ln-132" href="#ln-132"></a><span class="w">      </span><span class="c">!! edge-midpoint stage; temporal gradient uses `state%dt`. The</span>
+<a id="ln-133" name="ln-133" href="#ln-133"></a><span class="w">      </span><span class="c">!! computed ghost target is then dispatched through the</span>
+<a id="ln-134" name="ln-134" href="#ln-134"></a><span class="w">      </span><span class="c">!! Flather/`BC_TIDAL` algebra in `compute_boundary_state` so the</span>
+<a id="ln-135" name="ln-135" href="#ln-135"></a><span class="w">      </span><span class="c">!! ghost momentum reconstruction matches `BC_TIDAL`. Matches</span>
+<a id="ln-136" name="ln-136" href="#ln-136"></a><span class="w">      </span><span class="c">!! structured `BC_CHAPMAN=9` semantics.</span>
+<a id="ln-137" name="ln-137" href="#ln-137"></a><span class="w">   </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">parameter</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">BC_SPONGE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">8</span>
+<a id="ln-138" name="ln-138" href="#ln-138"></a><span class="w">      </span><span class="c">!! Sponge layer: explicit relaxation of h and momentum toward a</span>
+<a id="ln-139" name="ln-139" href="#ln-139"></a><span class="w">      </span><span class="c">!! prescribed reference state.  Per-group parameters</span>
+<a id="ln-140" name="ln-140" href="#ln-140"></a><span class="w">      </span><span class="c">!! `state%bc_sponge_strength(g)` [1/s] and `state%bc_sponge_h_ref(g)`</span>
+<a id="ln-141" name="ln-141" href="#ln-141"></a><span class="w">      </span><span class="c">!! [m] are consumed by `apply_sponge_unstr` (separate kernel, not</span>
+<a id="ln-142" name="ln-142" href="#ln-142"></a><span class="w">      </span><span class="c">!! the flux kernel): the sponge falls through to `BC_WALL` ghost</span>
+<a id="ln-143" name="ln-143" href="#ln-143"></a><span class="w">      </span><span class="c">!! state in the flux pass, and relaxation is applied after each</span>
+<a id="ln-144" name="ln-144" href="#ln-144"></a><span class="w">      </span><span class="c">!! RK2 stage update.  Matches structured `BC_SPONGE = 8`.</span>
+<a id="ln-145" name="ln-145" href="#ln-145"></a><span class="w">   </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">parameter</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">BC_OUTFLOW</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">10</span>
+<a id="ln-146" name="ln-146" href="#ln-146"></a><span class="w">      </span><span class="c">!! Prescribed depth at the boundary. The per-group parameter</span>
+<a id="ln-147" name="ln-147" href="#ln-147"></a><span class="w">      </span><span class="c">!! `state%bc_h_ext(g)` is the depth (m) the kernel clamps to;</span>
+<a id="ln-148" name="ln-148" href="#ln-148"></a><span class="w">      </span><span class="c">!! momentum is transmissive. Useful as a downstream water level</span>
+<a id="ln-149" name="ln-149" href="#ln-149"></a><span class="w">      </span><span class="c">!! condition for steady-state channel runs. Unstructured-only;</span>
+<a id="ln-150" name="ln-150" href="#ln-150"></a><span class="w">      </span><span class="c">!! no structured analog, numbered past the structured range.</span>
+<a id="ln-151" name="ln-151" href="#ln-151"></a>
+<a id="ln-152" name="ln-152" href="#ln-152"></a><span class="w">   </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">parameter</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">MAX_BC_GROUPS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">32</span>
+<a id="ln-153" name="ln-153" href="#ln-153"></a><span class="w">      </span><span class="c">!! Maximum number of boundary groups per mesh. Plenty for any</span>
+<a id="ln-154" name="ln-154" href="#ln-154"></a><span class="w">      </span><span class="c">!! realistic coastal case (most have 2-5: open ocean, river</span>
+<a id="ln-155" name="ln-155" href="#ln-155"></a><span class="w">      </span><span class="c">!! mouths, walls). Fixed-size so the table lives inside the</span>
+<a id="ln-156" name="ln-156" href="#ln-156"></a><span class="w">      </span><span class="c">!! state struct without needing a separate `map(to:)`.</span>
+<a id="ln-157" name="ln-157" href="#ln-157"></a>
+<a id="ln-158" name="ln-158" href="#ln-158"></a><span class="k">end module </span><span class="n">rki_boundary_unstr</span>
+</pre></div>
+
+      </section>
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Rakali
+ was developed by Jorge Luis Galvez Vallejo<br>              &copy; 2026 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+ on 2026-10-08 12:55 +0000             </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>

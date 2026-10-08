@@ -1,0 +1,1292 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="GPU-native coastal solver — structured Cartesian and unstructured triangular grids, hydrostatic multilayer + non-hydrostatic, portable across NVHPC/gfortran/ifx.">
+    <meta name="author" content="Jorge Luis Galvez Vallejo" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>compute_flux_hll &ndash; Rakali</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">Rakali </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/absint.html">Abstract Interfaces</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>compute_flux_hll
+      <small>Subroutine</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.1% of total for procedures.">25 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/rki_kernel_flux.F90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/rki_kernel_flux.f90.html'>rki_kernel_flux.F90</a></li>
+                <li class="breadcrumb-item"><a href='../module/rki_kernel_flux.html'>rki_kernel_flux</a></li>
+            <li class="breadcrumb-item active" aria-current="page">compute_flux_hll</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+  
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#vars-0"
+         aria-expanded="false" aria-controls="vars-0">
+         <h4 class="card-header bg-primary text-white">Variables</h4>
+      </a>
+      <div id="vars-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../proc/compute_flux_hll.html#variable-dx~6">dx</a>
+            <a class="list-group-item" href="../proc/compute_flux_hll.html#variable-dy~6">dy</a>
+            <a class="list-group-item" href="../proc/compute_flux_hll.html#variable-fh">fh</a>
+            <a class="list-group-item" href="../proc/compute_flux_hll.html#variable-fhu">fhu</a>
+            <a class="list-group-item" href="../proc/compute_flux_hll.html#variable-fhv">fhv</a>
+            <a class="list-group-item" href="../proc/compute_flux_hll.html#variable-fmxl">fmxL</a>
+            <a class="list-group-item" href="../proc/compute_flux_hll.html#variable-fmxr">fmxR</a>
+            <a class="list-group-item" href="../proc/compute_flux_hll.html#variable-fmyb">fmyB</a>
+            <a class="list-group-item" href="../proc/compute_flux_hll.html#variable-fmyt">fmyT</a>
+            <a class="list-group-item" href="../proc/compute_flux_hll.html#variable-i~16">i</a>
+            <a class="list-group-item" href="../proc/compute_flux_hll.html#variable-j~16">j</a>
+            <a class="list-group-item" href="../proc/compute_flux_hll.html#variable-nghost~15">nghost</a>
+            <a class="list-group-item" href="../proc/compute_flux_hll.html#variable-nx~18">nx</a>
+            <a class="list-group-item" href="../proc/compute_flux_hll.html#variable-ny~18">ny</a>
+            <a class="list-group-item" href="../proc/compute_flux_hll.html#variable-use_hllc">use_hllc</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../proc/compute_flux_hll.html#src">compute_flux_hll</a>
+      </div>
+    </div>
+
+
+  </div>
+
+    </div>
+    
+    <div class="col-md-9" id='text'>
+    <h2>public pure subroutine compute_flux_hll(h, hu, hv, b, flux_h, flux_hu, flux_hv, mass_flux_x, mass_flux_y, grid)  
+</h2>
+    
+
+    <p>Net flux divergence at each interior cell (HLL Riemann solver).
+Also writes the per-face HLL h-flux at the right face
+<code>mass_flux_x(i, j)</code> and top face <code>mass_flux_y(i, j)</code>, reused by
+the multilayer tracer kernels for consistency-with-continuity (CWC).</p>
+
+
+    <h3>Arguments</h3>
+        <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-h"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>h</strong>(grid%nx_total,grid%ny_total)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-hu"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>hu</strong>(grid%nx_total,grid%ny_total)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-hv"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>hv</strong>(grid%nx_total,grid%ny_total)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-b"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>b</strong>(grid%nx_total,grid%ny_total)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-flux_h"></span>
+              real(kind=wp),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>flux_h</strong>(grid%nx_total,grid%ny_total)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-flux_hu"></span>
+              real(kind=wp),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>flux_hu</strong>(grid%nx_total,grid%ny_total)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-flux_hv"></span>
+              real(kind=wp),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>flux_hv</strong>(grid%nx_total,grid%ny_total)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mass_flux_x~3"></span>
+              real(kind=wp),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>mass_flux_x</strong>(grid%nx_total,grid%ny_total)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mass_flux_y~3"></span>
+              real(kind=wp),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>mass_flux_y</strong>(grid%nx_total,grid%ny_total)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-grid~17"></span>
+              type(<a href='../type/hgrid_t.html'>hgrid_t</a>),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>grid</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <br>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Calls</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~compute_flux_hll~~CallsGraph Pages: 1 -->
+<svg id="proccompute_flux_hllCallsGraph" width="335pt" height="242pt"
+ viewBox="0.00 0.00 335.00 242.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~compute_flux_hll~~CallsGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 238)">
+<title>proc~~compute_flux_hll~~CallsGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-238 331,-238 331,4 -4,4"/>
+<!-- proc~compute_flux_hll -->
+<g id="proc~~compute_flux_hll~~CallsGraph_node1" class="node">
+<title>proc~compute_flux_hll</title>
+<polygon fill="none" stroke="black" points="103,-150 0,-150 0,-126 103,-126 103,-150"/>
+<text text-anchor="middle" x="51.5" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50">compute_flux_hll</text>
+</g>
+<!-- local -->
+<g id="proc~~compute_flux_hll~~CallsGraph_node2" class="node">
+<title>local</title>
+<polygon fill="#777777" stroke="#777777" points="194,-171 140,-171 140,-147 194,-147 194,-171"/>
+<text text-anchor="middle" x="167" y="-156.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">local</text>
+</g>
+<!-- proc~compute_flux_hll&#45;&gt;local -->
+<g id="proc~~compute_flux_hll~~CallsGraph_edge1" class="edge">
+<title>proc~compute_flux_hll&#45;&gt;local</title>
+<path fill="none" stroke="#ff0000" d="M103.27,-147.39C112.25,-149.06 121.44,-150.75 129.91,-152.32"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="129.36,-155.78 139.82,-154.16 130.63,-148.9 129.36,-155.78"/>
+</g>
+<!-- proc~flux_cell -->
+<g id="proc~~compute_flux_hll~~CallsGraph_node3" class="node">
+<title>proc~flux_cell</title>
+<g id="a_proc~~compute_flux_hll~~CallsGraph_node3"><a xlink:href="../proc/flux_cell.html" xlink:title="flux_cell">
+<polygon fill="#d9534f" stroke="#d9534f" points="195,-129 139,-129 139,-105 195,-105 195,-129"/>
+<text text-anchor="middle" x="167" y="-114.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">flux_cell</text>
+</a>
+</g>
+</g>
+<!-- proc~compute_flux_hll&#45;&gt;proc~flux_cell -->
+<g id="proc~~compute_flux_hll~~CallsGraph_edge2" class="edge">
+<title>proc~compute_flux_hll&#45;&gt;proc~flux_cell</title>
+<path fill="none" stroke="#ff0000" d="M103.27,-128.61C111.91,-127.01 120.73,-125.38 128.92,-123.86"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="129.71,-127.27 138.9,-122.01 128.43,-120.39 129.71,-127.27"/>
+</g>
+<!-- proc~extract_velocity -->
+<g id="proc~~compute_flux_hll~~CallsGraph_node4" class="node">
+<title>proc~extract_velocity</title>
+<g id="a_proc~~compute_flux_hll~~CallsGraph_node4"><a xlink:href="../proc/extract_velocity.html" xlink:title="extract_velocity">
+<polygon fill="#d9534f" stroke="#d9534f" points="327,-234 231,-234 231,-210 327,-210 327,-234"/>
+<text text-anchor="middle" x="279" y="-219.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">extract_velocity</text>
+</a>
+</g>
+</g>
+<!-- proc~flux_cell&#45;&gt;proc~extract_velocity -->
+<g id="proc~~compute_flux_hll~~CallsGraph_edge3" class="edge">
+<title>proc~flux_cell&#45;&gt;proc~extract_velocity</title>
+<path fill="none" stroke="#00ffff" d="M185.73,-129.17C189.02,-131.87 192.28,-134.86 195,-138 216.13,-162.36 207.1,-179.35 231,-201 232.32,-202.2 233.72,-203.33 235.18,-204.41"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="233.71,-207.63 244.04,-209.99 237.44,-201.7 233.71,-207.63"/>
+</g>
+<!-- proc~hll_flux_x -->
+<g id="proc~~compute_flux_hll~~CallsGraph_node5" class="node">
+<title>proc~hll_flux_x</title>
+<g id="a_proc~~compute_flux_hll~~CallsGraph_node5"><a xlink:href="../proc/hll_flux_x.html" xlink:title="hll_flux_x">
+<polygon fill="#d9534f" stroke="#d9534f" points="309.5,-192 248.5,-192 248.5,-168 309.5,-168 309.5,-192"/>
+<text text-anchor="middle" x="279" y="-177.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">hll_flux_x</text>
+</a>
+</g>
+</g>
+<!-- proc~flux_cell&#45;&gt;proc~hll_flux_x -->
+<g id="proc~~compute_flux_hll~~CallsGraph_edge4" class="edge">
+<title>proc~flux_cell&#45;&gt;proc~hll_flux_x</title>
+<path fill="none" stroke="#00ffff" d="M184.37,-129.02C196.81,-137.88 214.54,-149.92 231,-159 233.73,-160.51 236.59,-161.99 239.49,-163.43"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="238.26,-166.73 248.79,-167.87 241.27,-160.41 238.26,-166.73"/>
+</g>
+<!-- proc~hll_flux_y -->
+<g id="proc~~compute_flux_hll~~CallsGraph_node6" class="node">
+<title>proc~hll_flux_y</title>
+<g id="a_proc~~compute_flux_hll~~CallsGraph_node6"><a xlink:href="../proc/hll_flux_y.html" xlink:title="hll_flux_y">
+<polygon fill="#d9534f" stroke="#d9534f" points="309.5,-150 248.5,-150 248.5,-126 309.5,-126 309.5,-150"/>
+<text text-anchor="middle" x="279" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">hll_flux_y</text>
+</a>
+</g>
+</g>
+<!-- proc~flux_cell&#45;&gt;proc~hll_flux_y -->
+<g id="proc~~compute_flux_hll~~CallsGraph_edge5" class="edge">
+<title>proc~flux_cell&#45;&gt;proc~hll_flux_y</title>
+<path fill="none" stroke="#00ffff" d="M195.19,-122.19C208.19,-124.67 224.01,-127.69 238.33,-130.43"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="237.94,-133.92 248.42,-132.35 239.25,-127.04 237.94,-133.92"/>
+</g>
+<!-- proc~hllc_flux_x -->
+<g id="proc~~compute_flux_hll~~CallsGraph_node7" class="node">
+<title>proc~hllc_flux_x</title>
+<g id="a_proc~~compute_flux_hll~~CallsGraph_node7"><a xlink:href="../proc/hllc_flux_x.html" xlink:title="hllc_flux_x">
+<polygon fill="#d9534f" stroke="#d9534f" points="312.5,-108 245.5,-108 245.5,-84 312.5,-84 312.5,-108"/>
+<text text-anchor="middle" x="279" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">hllc_flux_x</text>
+</a>
+</g>
+</g>
+<!-- proc~flux_cell&#45;&gt;proc~hllc_flux_x -->
+<g id="proc~~compute_flux_hll~~CallsGraph_edge6" class="edge">
+<title>proc~flux_cell&#45;&gt;proc~hllc_flux_x</title>
+<path fill="none" stroke="#00ffff" d="M195.19,-111.81C207.26,-109.51 221.75,-106.74 235.21,-104.17"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="236.08,-107.57 245.25,-102.25 234.77,-100.69 236.08,-107.57"/>
+</g>
+<!-- proc~hllc_flux_y -->
+<g id="proc~~compute_flux_hll~~CallsGraph_node8" class="node">
+<title>proc~hllc_flux_y</title>
+<g id="a_proc~~compute_flux_hll~~CallsGraph_node8"><a xlink:href="../proc/hllc_flux_y.html" xlink:title="hllc_flux_y">
+<polygon fill="#d9534f" stroke="#d9534f" points="312.5,-66 245.5,-66 245.5,-42 312.5,-42 312.5,-66"/>
+<text text-anchor="middle" x="279" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">hllc_flux_y</text>
+</a>
+</g>
+</g>
+<!-- proc~flux_cell&#45;&gt;proc~hllc_flux_y -->
+<g id="proc~~compute_flux_hll~~CallsGraph_edge7" class="edge">
+<title>proc~flux_cell&#45;&gt;proc~hllc_flux_y</title>
+<path fill="none" stroke="#00ffff" d="M184.37,-104.98C196.81,-96.12 214.54,-84.08 231,-75 233.73,-73.49 236.59,-72.01 239.49,-70.57"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="241.27,-73.59 248.79,-66.13 238.26,-67.27 241.27,-73.59"/>
+</g>
+<!-- proc~minmod -->
+<g id="proc~~compute_flux_hll~~CallsGraph_node9" class="node">
+<title>proc~minmod</title>
+<g id="a_proc~~compute_flux_hll~~CallsGraph_node9"><a xlink:href="../proc/minmod.html" xlink:title="minmod">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="307.5,-24 250.5,-24 250.5,0 307.5,0 307.5,-24"/>
+<text text-anchor="middle" x="279" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">minmod</text>
+</a>
+</g>
+</g>
+<!-- proc~flux_cell&#45;&gt;proc~minmod -->
+<g id="proc~~compute_flux_hll~~CallsGraph_edge8" class="edge">
+<title>proc~flux_cell&#45;&gt;proc~minmod</title>
+<path fill="none" stroke="#00ffff" d="M174.41,-104.9C184.4,-87.05 205.21,-53.59 231,-33 234.13,-30.5 237.61,-28.23 241.21,-26.19"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="242.98,-29.22 250.31,-21.58 239.81,-22.98 242.98,-29.22"/>
+</g>
+</g>
+</svg>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CallsGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CallsGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Called by</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~compute_flux_hll~~CalledByGraph Pages: 1 -->
+<svg id="proccompute_flux_hllCalledByGraph" width="641pt" height="103pt"
+ viewBox="0.00 0.00 641.00 102.63" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~compute_flux_hll~~CalledByGraph" class="graph" transform="scale(0.5 0.5) rotate(0) translate(4 202.06)">
+<title>proc~~compute_flux_hll~~CalledByGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-202.06 1283,-202.06 1283,4 -4,4"/>
+<!-- proc~compute_flux_hll -->
+<g id="proc~~compute_flux_hll~~CalledByGraph_node1" class="node">
+<title>proc~compute_flux_hll</title>
+<polygon fill="none" stroke="black" points="1279,-111.24 1176,-111.24 1176,-87.24 1279,-87.24 1279,-111.24"/>
+<text text-anchor="middle" x="1227.5" y="-96.84" font-family="Helvetica,sans-Serif" font-size="10.50">compute_flux_hll</text>
+</g>
+<!-- proc~solver_compute_barotropic_flux -->
+<g id="proc~~compute_flux_hll~~CalledByGraph_node2" class="node">
+<title>proc~solver_compute_barotropic_flux</title>
+<g id="a_proc~~compute_flux_hll~~CalledByGraph_node2"><a xlink:href="../proc/solver_compute_barotropic_flux.html" xlink:title="solver_compute_barotropic_flux">
+<polygon fill="#d9534f" stroke="#d9534f" points="1140,-111.24 959,-111.24 959,-87.24 1140,-87.24 1140,-111.24"/>
+<text text-anchor="middle" x="1049.5" y="-96.84" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_compute_barotropic_flux</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_compute_barotropic_flux&#45;&gt;proc~compute_flux_hll -->
+<g id="proc~~compute_flux_hll~~CalledByGraph_edge1" class="edge">
+<title>proc~solver_compute_barotropic_flux&#45;&gt;proc~compute_flux_hll</title>
+<path fill="none" stroke="#ff0000" d="M1140.05,-99.24C1148.64,-99.24 1157.22,-99.24 1165.45,-99.24"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="1165.67,-102.74 1175.67,-99.24 1165.67,-95.74 1165.67,-102.74"/>
+</g>
+<!-- proc~solver_advance_2d_generic -->
+<g id="proc~~compute_flux_hll~~CalledByGraph_node3" class="node">
+<title>proc~solver_advance_2d_generic</title>
+<g id="a_proc~~compute_flux_hll~~CalledByGraph_node3"><a xlink:href="../proc/solver_advance_2d_generic.html" xlink:title="solver_advance_2d_generic">
+<polygon fill="#d9534f" stroke="#d9534f" points="914,-173.24 754,-173.24 754,-149.24 914,-149.24 914,-173.24"/>
+<text text-anchor="middle" x="834" y="-158.84" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_advance_2d_generic</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_advance_2d_generic&#45;&gt;proc~solver_compute_barotropic_flux -->
+<g id="proc~~compute_flux_hll~~CalledByGraph_edge2" class="edge">
+<title>proc~solver_advance_2d_generic&#45;&gt;proc~solver_compute_barotropic_flux</title>
+<path fill="none" stroke="#ff0000" d="M888.7,-149.16C900.07,-146.4 911.96,-143.36 923,-140.24 950.34,-132.53 980.62,-122.68 1004.58,-114.56"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="1005.77,-117.85 1014.11,-111.32 1003.51,-111.23 1005.77,-117.85"/>
+</g>
+<!-- proc~solver_barotropic_rk_stage -->
+<g id="proc~~compute_flux_hll~~CalledByGraph_node4" class="node">
+<title>proc~solver_barotropic_rk_stage</title>
+<g id="a_proc~~compute_flux_hll~~CalledByGraph_node4"><a xlink:href="../proc/solver_barotropic_rk_stage.html" xlink:title="solver_barotropic_rk_stage">
+<polygon fill="#d9534f" stroke="#d9534f" points="709,-25.24 555,-25.24 555,-1.24 709,-1.24 709,-25.24"/>
+<text text-anchor="middle" x="632" y="-10.84" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_barotropic_rk_stage</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_barotropic_rk_stage&#45;&gt;proc~solver_compute_barotropic_flux -->
+<g id="proc~~compute_flux_hll~~CalledByGraph_edge3" class="edge">
+<title>proc~solver_barotropic_rk_stage&#45;&gt;proc~solver_compute_barotropic_flux</title>
+<path fill="none" stroke="#ff0000" d="M709.27,-3.32C768.81,1.77 852.9,3.07 923,-18.24 963.88,-30.67 1004.12,-60.66 1027.62,-80.45"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="1025.63,-83.35 1035.49,-87.23 1030.2,-78.05 1025.63,-83.35"/>
+</g>
+<!-- proc~solver_multilayer_rk_stage -->
+<g id="proc~~compute_flux_hll~~CalledByGraph_node5" class="node">
+<title>proc~solver_multilayer_rk_stage</title>
+<g id="a_proc~~compute_flux_hll~~CalledByGraph_node5"><a xlink:href="../proc/solver_multilayer_rk_stage.html" xlink:title="solver_multilayer_rk_stage">
+<polygon fill="#d9534f" stroke="#d9534f" points="709,-85.24 555,-85.24 555,-61.24 709,-61.24 709,-85.24"/>
+<text text-anchor="middle" x="632" y="-70.84" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_multilayer_rk_stage</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_multilayer_rk_stage&#45;&gt;proc~solver_compute_barotropic_flux -->
+<g id="proc~~compute_flux_hll~~CalledByGraph_edge4" class="edge">
+<title>proc~solver_multilayer_rk_stage&#45;&gt;proc~solver_compute_barotropic_flux</title>
+<path fill="none" stroke="#ff0000" d="M709.21,-78.01C776.45,-82.22 874.92,-88.38 948.47,-92.98"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="948.48,-96.49 958.68,-93.62 948.92,-89.5 948.48,-96.49"/>
+</g>
+<!-- proc~solver_multilayer_rk_stage_nz1 -->
+<g id="proc~~compute_flux_hll~~CalledByGraph_node6" class="node">
+<title>proc~solver_multilayer_rk_stage_nz1</title>
+<g id="a_proc~~compute_flux_hll~~CalledByGraph_node6"><a xlink:href="../proc/solver_multilayer_rk_stage_nz1.html" xlink:title="solver_multilayer_rk_stage_nz1">
+<polygon fill="#d9534f" stroke="#d9534f" points="923,-51.24 745,-51.24 745,-27.24 923,-27.24 923,-51.24"/>
+<text text-anchor="middle" x="834" y="-36.84" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_multilayer_rk_stage_nz1</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_multilayer_rk_stage&#45;&gt;proc~solver_multilayer_rk_stage_nz1 -->
+<g id="proc~~compute_flux_hll~~CalledByGraph_edge11" class="edge">
+<title>proc~solver_multilayer_rk_stage&#45;&gt;proc~solver_multilayer_rk_stage_nz1</title>
+<path fill="none" stroke="#00ffff" d="M703.79,-61.21C719.52,-58.53 736.3,-55.68 752.39,-52.95"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="753.03,-56.39 762.3,-51.26 751.86,-49.49 753.03,-56.39"/>
+</g>
+<!-- proc~solver_multilayer_rk_stage_nz1&#45;&gt;proc~solver_compute_barotropic_flux -->
+<g id="proc~~compute_flux_hll~~CalledByGraph_edge5" class="edge">
+<title>proc~solver_multilayer_rk_stage_nz1&#45;&gt;proc~solver_compute_barotropic_flux</title>
+<path fill="none" stroke="#ff0000" d="M877.95,-51.31C911.9,-60.85 959.44,-74.21 995.71,-84.41"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="995.05,-87.86 1005.62,-87.19 996.94,-81.12 995.05,-87.86"/>
+</g>
+<!-- proc~solver_nh_rk_stage -->
+<g id="proc~~compute_flux_hll~~CalledByGraph_node7" class="node">
+<title>proc~solver_nh_rk_stage</title>
+<g id="a_proc~~compute_flux_hll~~CalledByGraph_node7"><a xlink:href="../proc/solver_nh_rk_stage.html" xlink:title="solver_nh_rk_stage">
+<polygon fill="#d9534f" stroke="#d9534f" points="891,-131.24 777,-131.24 777,-107.24 891,-107.24 891,-131.24"/>
+<text text-anchor="middle" x="834" y="-116.84" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_nh_rk_stage</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_nh_rk_stage&#45;&gt;proc~solver_compute_barotropic_flux -->
+<g id="proc~~compute_flux_hll~~CalledByGraph_edge6" class="edge">
+<title>proc~solver_nh_rk_stage&#45;&gt;proc~solver_compute_barotropic_flux</title>
+<path fill="none" stroke="#ff0000" d="M891.09,-113.99C908.85,-112.32 929.04,-110.43 948.9,-108.57"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="949.29,-112.05 958.92,-107.63 948.64,-105.08 949.29,-112.05"/>
+</g>
+<!-- proc~solver_step_impl -->
+<g id="proc~~compute_flux_hll~~CalledByGraph_node8" class="node">
+<title>proc~solver_step_impl</title>
+<g id="a_proc~~compute_flux_hll~~CalledByGraph_node8"><a xlink:href="../proc/solver_step_impl.html" xlink:title="solver_step_impl">
+<polygon fill="#d9534f" stroke="#d9534f" points="682.5,-136.24 581.5,-136.24 581.5,-112.24 682.5,-112.24 682.5,-136.24"/>
+<text text-anchor="middle" x="632" y="-121.84" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_step_impl</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_step_impl&#45;&gt;proc~solver_compute_barotropic_flux -->
+<g id="proc~~compute_flux_hll~~CalledByGraph_edge7" class="edge">
+<title>proc~solver_step_impl&#45;&gt;proc~solver_compute_barotropic_flux</title>
+<path fill="none" stroke="#ff0000" d="M649.81,-136.25C670.87,-150.48 708.62,-173.38 745,-182.24 821.86,-200.96 847.24,-205.03 923,-182.24 964.62,-169.72 1005.15,-138.42 1028.43,-118.03"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="1030.8,-120.61 1035.92,-111.33 1026.13,-115.39 1030.8,-120.61"/>
+</g>
+<!-- proc~solver_step_impl&#45;&gt;proc~solver_advance_2d_generic -->
+<g id="proc~~compute_flux_hll~~CalledByGraph_edge8" class="edge">
+<title>proc~solver_step_impl&#45;&gt;proc~solver_advance_2d_generic</title>
+<path fill="none" stroke="#ff0000" d="M682.7,-133.44C705.47,-137.65 732.95,-142.73 758.16,-147.4"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="757.59,-150.85 768.06,-149.23 758.86,-143.97 757.59,-150.85"/>
+</g>
+<!-- proc~solver_step_impl&#45;&gt;proc~solver_nh_rk_stage -->
+<g id="proc~~compute_flux_hll~~CalledByGraph_edge12" class="edge">
+<title>proc~solver_step_impl&#45;&gt;proc~solver_nh_rk_stage</title>
+<path fill="none" stroke="#0000ff" d="M682.7,-123C708.03,-122.37 739.2,-121.59 766.57,-120.9"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="766.94,-124.39 776.85,-120.65 766.77,-117.4 766.94,-124.39"/>
+</g>
+<!-- proc~solver_step -->
+<g id="proc~~compute_flux_hll~~CalledByGraph_node9" class="node">
+<title>proc~solver_step</title>
+<g id="a_proc~~compute_flux_hll~~CalledByGraph_node9"><a xlink:href="../proc/solver_step.html" xlink:title="solver_step">
+<polygon fill="#d9534f" stroke="#d9534f" points="323,-85.24 250,-85.24 250,-61.24 323,-61.24 323,-85.24"/>
+<text text-anchor="middle" x="286.5" y="-70.84" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_step</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_step&#45;&gt;proc~solver_step_impl -->
+<g id="proc~~compute_flux_hll~~CalledByGraph_edge13" class="edge">
+<title>proc~solver_step&#45;&gt;proc~solver_step_impl</title>
+<path fill="none" stroke="#ff00ff" d="M323.2,-85.07C334.54,-88.46 347.2,-91.88 359,-94.24 431.36,-108.74 516.05,-116.69 571.47,-120.7"/>
+<polygon fill="#ff00ff" stroke="#ff00ff" points="571.24,-124.19 581.46,-121.4 571.73,-117.21 571.24,-124.19"/>
+</g>
+<!-- proc~solver_step_multilayer_impl -->
+<g id="proc~~compute_flux_hll~~CalledByGraph_node10" class="node">
+<title>proc~solver_step_multilayer_impl</title>
+<g id="a_proc~~compute_flux_hll~~CalledByGraph_node10"><a xlink:href="../proc/solver_step_multilayer_impl.html" xlink:title="solver_step_multilayer_impl">
+<polygon fill="#d9534f" stroke="#d9534f" points="519,-85.24 359,-85.24 359,-61.24 519,-61.24 519,-85.24"/>
+<text text-anchor="middle" x="439" y="-70.84" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_step_multilayer_impl</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_step&#45;&gt;proc~solver_step_multilayer_impl -->
+<g id="proc~~compute_flux_hll~~CalledByGraph_edge17" class="edge">
+<title>proc~solver_step&#45;&gt;proc~solver_step_multilayer_impl</title>
+<path fill="none" stroke="#00ff00" d="M323.17,-73.24C331.06,-73.24 339.77,-73.24 348.75,-73.24"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="348.98,-76.74 358.98,-73.24 348.98,-69.74 348.98,-76.74"/>
+</g>
+<!-- proc~solver_step_split_impl -->
+<g id="proc~~compute_flux_hll~~CalledByGraph_node11" class="node">
+<title>proc~solver_step_split_impl</title>
+<g id="a_proc~~compute_flux_hll~~CalledByGraph_node11"><a xlink:href="../proc/solver_step_split_impl.html" xlink:title="solver_step_split_impl">
+<polygon fill="#d9534f" stroke="#d9534f" points="503,-25.24 375,-25.24 375,-1.24 503,-1.24 503,-25.24"/>
+<text text-anchor="middle" x="439" y="-10.84" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_step_split_impl</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_step&#45;&gt;proc~solver_step_split_impl -->
+<g id="proc~~compute_flux_hll~~CalledByGraph_edge18" class="edge">
+<title>proc~solver_step&#45;&gt;proc~solver_step_split_impl</title>
+<path fill="none" stroke="#0000ff" d="M317.96,-61.1C341.08,-51.88 373.09,-39.12 398.23,-29.1"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="399.85,-32.22 407.85,-25.26 397.26,-25.72 399.85,-32.22"/>
+</g>
+<!-- proc~solver_step_multilayer_impl&#45;&gt;proc~solver_multilayer_rk_stage -->
+<g id="proc~~compute_flux_hll~~CalledByGraph_edge10" class="edge">
+<title>proc~solver_step_multilayer_impl&#45;&gt;proc~solver_multilayer_rk_stage</title>
+<path fill="none" stroke="#00ff00" d="M519.07,-73.24C527.46,-73.24 536.02,-73.24 544.49,-73.24"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="544.76,-76.74 554.76,-73.24 544.76,-69.74 544.76,-76.74"/>
+</g>
+<!-- proc~solver_step_split_impl&#45;&gt;proc~solver_barotropic_rk_stage -->
+<g id="proc~~compute_flux_hll~~CalledByGraph_edge9" class="edge">
+<title>proc~solver_step_split_impl&#45;&gt;proc~solver_barotropic_rk_stage</title>
+<path fill="none" stroke="#ffff00" d="M503.07,-13.24C516.36,-13.24 530.6,-13.24 544.58,-13.24"/>
+<polygon fill="#ffff00" stroke="#ffff00" points="544.7,-16.74 554.7,-13.24 544.7,-9.74 544.7,-16.74"/>
+</g>
+<!-- proc~driver_run_coastal -->
+<g id="proc~~compute_flux_hll~~CalledByGraph_node12" class="node">
+<title>proc~driver_run_coastal</title>
+<g id="a_proc~~compute_flux_hll~~CalledByGraph_node12"><a xlink:href="../proc/driver_run_coastal.html" xlink:title="driver_run_coastal">
+<polygon fill="#d9534f" stroke="#d9534f" points="214,-127.24 103,-127.24 103,-103.24 214,-103.24 214,-127.24"/>
+<text text-anchor="middle" x="158.5" y="-112.84" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">driver_run_coastal</text>
+</a>
+</g>
+</g>
+<!-- proc~driver_run_coastal&#45;&gt;proc~solver_step -->
+<g id="proc~~compute_flux_hll~~CalledByGraph_edge14" class="edge">
+<title>proc~driver_run_coastal&#45;&gt;proc~solver_step</title>
+<path fill="none" stroke="#ff0000" d="M195.61,-103.21C209.43,-98.6 225.39,-93.28 239.98,-88.42"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="241.44,-91.62 249.82,-85.13 239.23,-84.98 241.44,-91.62"/>
+</g>
+<!-- proc~rki_advance -->
+<g id="proc~~compute_flux_hll~~CalledByGraph_node13" class="node">
+<title>proc~rki_advance</title>
+<g id="a_proc~~compute_flux_hll~~CalledByGraph_node13"><a xlink:href="../proc/rki_advance.html" xlink:title="rki_advance">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="197,-85.24 120,-85.24 120,-61.24 197,-61.24 197,-85.24"/>
+<text text-anchor="middle" x="158.5" y="-70.84" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_advance</text>
+</a>
+</g>
+</g>
+<!-- proc~rki_advance&#45;&gt;proc~solver_step -->
+<g id="proc~~compute_flux_hll~~CalledByGraph_edge15" class="edge">
+<title>proc~rki_advance&#45;&gt;proc~solver_step</title>
+<path fill="none" stroke="#ff0000" d="M197.3,-73.24C210.59,-73.24 225.67,-73.24 239.55,-73.24"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="239.88,-76.74 249.88,-73.24 239.88,-69.74 239.88,-76.74"/>
+</g>
+<!-- proc~rki_step -->
+<g id="proc~~compute_flux_hll~~CalledByGraph_node14" class="node">
+<title>proc~rki_step</title>
+<g id="a_proc~~compute_flux_hll~~CalledByGraph_node14"><a xlink:href="../proc/rki_step.html" xlink:title="rki_step">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="185.5,-43.24 131.5,-43.24 131.5,-19.24 185.5,-19.24 185.5,-43.24"/>
+<text text-anchor="middle" x="158.5" y="-28.84" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_step</text>
+</a>
+</g>
+</g>
+<!-- proc~rki_step&#45;&gt;proc~solver_step -->
+<g id="proc~~compute_flux_hll~~CalledByGraph_edge16" class="edge">
+<title>proc~rki_step&#45;&gt;proc~solver_step</title>
+<path fill="none" stroke="#ff0000" d="M185.61,-39.94C201.37,-45.2 221.89,-52.04 240.23,-58.15"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="239.28,-61.52 249.87,-61.37 241.49,-54.88 239.28,-61.52"/>
+</g>
+<!-- proc~driver_run -->
+<g id="proc~~compute_flux_hll~~CalledByGraph_node15" class="node">
+<title>proc~driver_run</title>
+<g id="a_proc~~compute_flux_hll~~CalledByGraph_node15"><a xlink:href="../proc/driver_run.html" xlink:title="driver_run">
+<polygon fill="#d9534f" stroke="#d9534f" points="67,-127.24 0,-127.24 0,-103.24 67,-103.24 67,-127.24"/>
+<text text-anchor="middle" x="33.5" y="-112.84" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">driver_run</text>
+</a>
+</g>
+</g>
+<!-- proc~driver_run&#45;&gt;proc~driver_run_coastal -->
+<g id="proc~~compute_flux_hll~~CalledByGraph_edge19" class="edge">
+<title>proc~driver_run&#45;&gt;proc~driver_run_coastal</title>
+<path fill="none" stroke="#ff0000" d="M67.14,-115.24C75.1,-115.24 83.9,-115.24 92.79,-115.24"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="92.82,-118.74 102.82,-115.24 92.82,-111.74 92.82,-118.74"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var panproccompute_flux_hllCalledByGraph = svgPanZoom('#proccompute_flux_hllCalledByGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CalledByGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CalledByGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+
+
+    <section>    
+      <h2>Variables</h2>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Visibility</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+<th></th><th scope="col">Initial</th>        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-dx~6"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>dx</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-dy~6"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>dy</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-fh"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>fh</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-fhu"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>fhu</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-fhv"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>fhv</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-fmxl"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>fmxL</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-fmxr"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>fmxR</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-fmyb"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>fmyB</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-fmyt"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>fmyT</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-i~16"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>i</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-j~16"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>j</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nghost~15"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nghost</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nx~18"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nx</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ny~18"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>ny</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-use_hllc"></span>
+              logical,
+            </td>
+              <td>private,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>use_hllc</strong></td>
+<td> =</td>
+                <td>.false.</td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    </section>
+    <br>
+    
+    
+
+    
+    
+
+
+
+    
+    <section>
+    <h2><span class="anchor" id="src"></span>Source Code</h2>
+    <div class="hl codehilite"><pre><span></span><span class="w">   </span><span class="k">pure subroutine </span><span class="n">compute_flux_hll</span><span class="p">(</span><span class="n">h</span><span class="p">,</span><span class="w"> </span><span class="n">hu</span><span class="p">,</span><span class="w"> </span><span class="n">hv</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="n">flux_h</span><span class="p">,</span><span class="w"> </span><span class="n">flux_hu</span><span class="p">,</span><span class="w"> </span><span class="n">flux_hv</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                    </span><span class="n">mass_flux_x</span><span class="p">,</span><span class="w"> </span><span class="n">mass_flux_y</span><span class="p">,</span><span class="w"> </span><span class="n">grid</span><span class="p">)</span>
+<span class="w">      </span><span class="c">!! Net flux divergence at each interior cell (HLL Riemann solver).</span>
+<span class="w">      </span><span class="c">!! Also writes the per-face HLL h-flux at the right face</span>
+<span class="w">      </span><span class="c">!! `mass_flux_x(i, j)` and top face `mass_flux_y(i, j)`, reused by</span>
+<span class="w">      </span><span class="c">!! the multilayer tracer kernels for consistency-with-continuity (CWC).</span>
+<span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="n">hgrid_t</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">grid</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">h</span><span class="p">(</span><span class="n">grid</span><span class="p">%</span><span class="n">nx_total</span><span class="p">,</span><span class="w"> </span><span class="n">grid</span><span class="p">%</span><span class="n">ny_total</span><span class="p">),</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                              </span><span class="n">hu</span><span class="p">(</span><span class="n">grid</span><span class="p">%</span><span class="n">nx_total</span><span class="p">,</span><span class="w"> </span><span class="n">grid</span><span class="p">%</span><span class="n">ny_total</span><span class="p">),</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                              </span><span class="n">hv</span><span class="p">(</span><span class="n">grid</span><span class="p">%</span><span class="n">nx_total</span><span class="p">,</span><span class="w"> </span><span class="n">grid</span><span class="p">%</span><span class="n">ny_total</span><span class="p">),</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                              </span><span class="n">b</span><span class="p">(</span><span class="n">grid</span><span class="p">%</span><span class="n">nx_total</span><span class="p">,</span><span class="w"> </span><span class="n">grid</span><span class="p">%</span><span class="n">ny_total</span><span class="p">)</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">flux_h</span><span class="p">(</span><span class="n">grid</span><span class="p">%</span><span class="n">nx_total</span><span class="p">,</span><span class="w"> </span><span class="n">grid</span><span class="p">%</span><span class="n">ny_total</span><span class="p">),</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                               </span><span class="n">flux_hu</span><span class="p">(</span><span class="n">grid</span><span class="p">%</span><span class="n">nx_total</span><span class="p">,</span><span class="w"> </span><span class="n">grid</span><span class="p">%</span><span class="n">ny_total</span><span class="p">),</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                               </span><span class="n">flux_hv</span><span class="p">(</span><span class="n">grid</span><span class="p">%</span><span class="n">nx_total</span><span class="p">,</span><span class="w"> </span><span class="n">grid</span><span class="p">%</span><span class="n">ny_total</span><span class="p">)</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">mass_flux_x</span><span class="p">(</span><span class="n">grid</span><span class="p">%</span><span class="n">nx_total</span><span class="p">,</span><span class="w"> </span><span class="n">grid</span><span class="p">%</span><span class="n">ny_total</span><span class="p">),</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                               </span><span class="n">mass_flux_y</span><span class="p">(</span><span class="n">grid</span><span class="p">%</span><span class="n">nx_total</span><span class="p">,</span><span class="w"> </span><span class="n">grid</span><span class="p">%</span><span class="n">ny_total</span><span class="p">)</span>
+
+<span class="w">      </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">,</span><span class="w"> </span><span class="n">nx</span><span class="p">,</span><span class="w"> </span><span class="n">ny</span><span class="p">,</span><span class="w"> </span><span class="n">nghost</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">dx</span><span class="p">,</span><span class="w"> </span><span class="n">dy</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">fh</span><span class="p">,</span><span class="w"> </span><span class="n">fhu</span><span class="p">,</span><span class="w"> </span><span class="n">fhv</span><span class="p">,</span><span class="w"> </span><span class="n">fmxL</span><span class="p">,</span><span class="w"> </span><span class="n">fmxR</span><span class="p">,</span><span class="w"> </span><span class="n">fmyB</span><span class="p">,</span><span class="w"> </span><span class="n">fmyT</span>
+<span class="w">      </span><span class="kt">logical</span><span class="p">,</span><span class="w"> </span><span class="k">parameter</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">use_hllc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">false</span><span class="p">.</span>
+
+<span class="w">      </span><span class="n">nx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">grid</span><span class="p">%</span><span class="n">nx_total</span>
+<span class="w">      </span><span class="n">ny</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">grid</span><span class="p">%</span><span class="n">ny_total</span>
+<span class="w">      </span><span class="n">nghost</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">grid</span><span class="p">%</span><span class="n">nghost</span>
+<span class="w">      </span><span class="n">dx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">grid</span><span class="p">%</span><span class="n">dx</span>
+<span class="w">      </span><span class="n">dy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">grid</span><span class="p">%</span><span class="n">dy</span>
+
+<span class="w">      </span><span class="k">do</span><span class="w"> </span><span class="k">concurrent</span><span class="p">(</span><span class="n">j</span><span class="o">=</span><span class="n">nghost</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="n">ny</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">nghost</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="o">=</span><span class="n">nghost</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="n">nx</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">nghost</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">         </span><span class="n">local</span><span class="p">(</span><span class="n">fh</span><span class="p">,</span><span class="w"> </span><span class="n">fhu</span><span class="p">,</span><span class="w"> </span><span class="n">fhv</span><span class="p">,</span><span class="w"> </span><span class="n">fmxL</span><span class="p">,</span><span class="w"> </span><span class="n">fmxR</span><span class="p">,</span><span class="w"> </span><span class="n">fmyB</span><span class="p">,</span><span class="w"> </span><span class="n">fmyT</span><span class="p">)</span>
+<span class="w">         </span><span class="k">call </span><span class="n">flux_cell</span><span class="p">(</span><span class="n">h</span><span class="p">,</span><span class="w"> </span><span class="n">hu</span><span class="p">,</span><span class="w"> </span><span class="n">hv</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="n">nx</span><span class="p">,</span><span class="w"> </span><span class="n">ny</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">,</span><span class="w"> </span><span class="n">dx</span><span class="p">,</span><span class="w"> </span><span class="n">dy</span><span class="p">,</span><span class="w"> </span><span class="n">use_hllc</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                        </span><span class="n">fh</span><span class="p">,</span><span class="w"> </span><span class="n">fhu</span><span class="p">,</span><span class="w"> </span><span class="n">fhv</span><span class="p">,</span><span class="w"> </span><span class="n">fmxL</span><span class="p">,</span><span class="w"> </span><span class="n">fmxR</span><span class="p">,</span><span class="w"> </span><span class="n">fmyB</span><span class="p">,</span><span class="w"> </span><span class="n">fmyT</span><span class="p">)</span>
+<span class="w">         </span><span class="n">flux_h</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fh</span>
+<span class="w">         </span><span class="n">flux_hu</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fhu</span>
+<span class="w">         </span><span class="n">flux_hv</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fhv</span>
+<span class="w">         </span><span class="c">! mass_flux_x(i, j) = right face of cell i (face i+1/2); the</span>
+<span class="w">         </span><span class="c">! leftmost interior cell also writes its left face into (i-1, j).</span>
+<span class="w">         </span><span class="n">mass_flux_x</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fmxR</span>
+<span class="w">         </span><span class="n">mass_flux_y</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fmyT</span>
+<span class="w">         </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">nghost</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="n">mass_flux_x</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fmxL</span>
+<span class="w">         </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">j</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">nghost</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="n">mass_flux_y</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fmyB</span>
+<span class="w">      </span><span class="k">end do</span>
+
+<span class="k">   end subroutine </span><span class="n">compute_flux_hll</span>
+</pre></div>
+
+    </section>
+    <br>
+    
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Rakali
+ was developed by Jorge Luis Galvez Vallejo<br>              &copy; 2026 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+ on 2026-10-08 12:55 +0000             </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>

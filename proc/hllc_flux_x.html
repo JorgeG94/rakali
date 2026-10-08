@@ -1,0 +1,1126 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="GPU-native coastal solver — structured Cartesian and unstructured triangular grids, hydrostatic multilayer + non-hydrostatic, portable across NVHPC/gfortran/ifx.">
+    <meta name="author" content="Jorge Luis Galvez Vallejo" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>hllc_flux_x &ndash; Rakali</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">Rakali </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/absint.html">Abstract Interfaces</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>hllc_flux_x
+      <small>Subroutine</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.3% of total for procedures.">65 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/rki_kernel_flux.F90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/rki_kernel_flux.f90.html'>rki_kernel_flux.F90</a></li>
+                <li class="breadcrumb-item"><a href='../module/rki_kernel_flux.html'>rki_kernel_flux</a></li>
+            <li class="breadcrumb-item active" aria-current="page">hllc_flux_x</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+  
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#vars-0"
+         aria-expanded="false" aria-controls="vars-0">
+         <h4 class="card-header bg-primary text-white">Variables</h4>
+      </a>
+      <div id="vars-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../proc/hllc_flux_x.html#variable-a_l~2">a_l</a>
+            <a class="list-group-item" href="../proc/hllc_flux_x.html#variable-a_r~2">a_r</a>
+            <a class="list-group-item" href="../proc/hllc_flux_x.html#variable-denom~5">denom</a>
+            <a class="list-group-item" href="../proc/hllc_flux_x.html#variable-denom_star">denom_star</a>
+            <a class="list-group-item" href="../proc/hllc_flux_x.html#variable-fl_h~2">fl_h</a>
+            <a class="list-group-item" href="../proc/hllc_flux_x.html#variable-fl_hu~2">fl_hu</a>
+            <a class="list-group-item" href="../proc/hllc_flux_x.html#variable-fl_hv~2">fl_hv</a>
+            <a class="list-group-item" href="../proc/hllc_flux_x.html#variable-fr_h~2">fr_h</a>
+            <a class="list-group-item" href="../proc/hllc_flux_x.html#variable-fr_hu~2">fr_hu</a>
+            <a class="list-group-item" href="../proc/hllc_flux_x.html#variable-fr_hv~2">fr_hv</a>
+            <a class="list-group-item" href="../proc/hllc_flux_x.html#variable-s_l~3">s_l</a>
+            <a class="list-group-item" href="../proc/hllc_flux_x.html#variable-s_r~3">s_r</a>
+            <a class="list-group-item" href="../proc/hllc_flux_x.html#variable-s_star">s_star</a>
+            <a class="list-group-item" href="../proc/hllc_flux_x.html#variable-u_l~3">u_l</a>
+            <a class="list-group-item" href="../proc/hllc_flux_x.html#variable-u_r~3">u_r</a>
+            <a class="list-group-item" href="../proc/hllc_flux_x.html#variable-v_l~3">v_l</a>
+            <a class="list-group-item" href="../proc/hllc_flux_x.html#variable-v_r~3">v_r</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../proc/hllc_flux_x.html#src">hllc_flux_x</a>
+      </div>
+    </div>
+
+
+  </div>
+
+    </div>
+    
+    <div class="col-md-9" id='text'>
+    <h2>private pure subroutine hllc_flux_x(h_l, hu_l, hv_l, h_r, hu_r, hv_r, f_h, f_hu, f_hv)  
+</h2>
+    
+
+    <p>HLLC numerical flux in x-direction. Transverse momentum hv is
+upwinded across the contact wave: f_hv = f_h * v_upwind
+(v_l if s_star &gt;= 0, else v_r); h and hu match HLL.</p>
+
+
+    <h3>Arguments</h3>
+        <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-h_l~2"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>h_l</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-hu_l~2"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>hu_l</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-hv_l~2"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>hv_l</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-h_r~2"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>h_r</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-hu_r~2"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>hu_r</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-hv_r~2"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>hv_r</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-f_h~2"></span>
+              real(kind=wp),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>f_h</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-f_hu~2"></span>
+              real(kind=wp),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>f_hu</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-f_hv~2"></span>
+              real(kind=wp),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>f_hv</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <br>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Called by</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~hllc_flux_x~~CalledByGraph Pages: 1 -->
+<svg id="prochllc_flux_xCalledByGraph" width="641pt" height="124pt"
+ viewBox="0.00 0.00 641.00 123.89" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~hllc_flux_x~~CalledByGraph" class="graph" transform="scale(0.57 0.57) rotate(0) translate(4 214.21)">
+<title>proc~~hllc_flux_x~~CalledByGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-214.21 1125,-214.21 1125,4 -4,4"/>
+<!-- proc~hllc_flux_x -->
+<g id="proc~~hllc_flux_x~~CalledByGraph_node1" class="node">
+<title>proc~hllc_flux_x</title>
+<polygon fill="none" stroke="black" points="1121,-125 1054,-125 1054,-101 1121,-101 1121,-125"/>
+<text text-anchor="middle" x="1087.5" y="-110.6" font-family="Helvetica,sans-Serif" font-size="10.50">hllc_flux_x</text>
+</g>
+<!-- proc~flux_cell -->
+<g id="proc~~hllc_flux_x~~CalledByGraph_node2" class="node">
+<title>proc~flux_cell</title>
+<g id="a_proc~~hllc_flux_x~~CalledByGraph_node2"><a xlink:href="../proc/flux_cell.html" xlink:title="flux_cell">
+<polygon fill="#d9534f" stroke="#d9534f" points="1018,-125 962,-125 962,-101 1018,-101 1018,-125"/>
+<text text-anchor="middle" x="990" y="-110.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">flux_cell</text>
+</a>
+</g>
+</g>
+<!-- proc~flux_cell&#45;&gt;proc~hllc_flux_x -->
+<g id="proc~~hllc_flux_x~~CalledByGraph_edge1" class="edge">
+<title>proc~flux_cell&#45;&gt;proc~hllc_flux_x</title>
+<path fill="none" stroke="#ff0000" d="M1018.11,-113C1026.12,-113 1035.08,-113 1043.82,-113"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="1043.9,-116.5 1053.9,-113 1043.9,-109.5 1043.9,-116.5"/>
+</g>
+<!-- proc~compute_flux_hll -->
+<g id="proc~~hllc_flux_x~~CalledByGraph_node3" class="node">
+<title>proc~compute_flux_hll</title>
+<g id="a_proc~~hllc_flux_x~~CalledByGraph_node3"><a xlink:href="../proc/compute_flux_hll.html" xlink:title="compute_flux_hll">
+<polygon fill="#d9534f" stroke="#d9534f" points="923,-146 820,-146 820,-122 923,-122 923,-146"/>
+<text text-anchor="middle" x="871.5" y="-131.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_flux_hll</text>
+</a>
+</g>
+</g>
+<!-- proc~compute_flux_hll&#45;&gt;proc~flux_cell -->
+<g id="proc~~hllc_flux_x~~CalledByGraph_edge2" class="edge">
+<title>proc~compute_flux_hll&#45;&gt;proc~flux_cell</title>
+<path fill="none" stroke="#ff0000" d="M923.26,-124.85C932.88,-123.12 942.78,-121.33 951.89,-119.69"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="952.55,-123.13 961.77,-117.91 951.31,-116.24 952.55,-123.13"/>
+</g>
+<!-- proc~compute_flux_hllc -->
+<g id="proc~~hllc_flux_x~~CalledByGraph_node4" class="node">
+<title>proc~compute_flux_hllc</title>
+<g id="a_proc~~hllc_flux_x~~CalledByGraph_node4"><a xlink:href="../proc/compute_flux_hllc.html" xlink:title="compute_flux_hllc">
+<polygon fill="#d9534f" stroke="#d9534f" points="926,-104 817,-104 817,-80 926,-80 926,-104"/>
+<text text-anchor="middle" x="871.5" y="-89.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_flux_hllc</text>
+</a>
+</g>
+</g>
+<!-- proc~compute_flux_hllc&#45;&gt;proc~flux_cell -->
+<g id="proc~~hllc_flux_x~~CalledByGraph_edge3" class="edge">
+<title>proc~compute_flux_hllc&#45;&gt;proc~flux_cell</title>
+<path fill="none" stroke="#ff0000" d="M926.32,-101.7C934.95,-103.26 943.72,-104.84 951.85,-106.3"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="951.29,-109.76 961.75,-108.09 952.53,-102.87 951.29,-109.76"/>
+</g>
+<!-- proc~solver_compute_barotropic_flux -->
+<g id="proc~~hllc_flux_x~~CalledByGraph_node5" class="node">
+<title>proc~solver_compute_barotropic_flux</title>
+<g id="a_proc~~hllc_flux_x~~CalledByGraph_node5"><a xlink:href="../proc/solver_compute_barotropic_flux.html" xlink:title="solver_compute_barotropic_flux">
+<polygon fill="#d9534f" stroke="#d9534f" points="781,-125 600,-125 600,-101 781,-101 781,-125"/>
+<text text-anchor="middle" x="690.5" y="-110.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_compute_barotropic_flux</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_compute_barotropic_flux&#45;&gt;proc~compute_flux_hll -->
+<g id="proc~~hllc_flux_x~~CalledByGraph_edge4" class="edge">
+<title>proc~solver_compute_barotropic_flux&#45;&gt;proc~compute_flux_hll</title>
+<path fill="none" stroke="#ff0000" d="M781.26,-123.53C790.9,-124.66 800.53,-125.79 809.7,-126.87"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="809.51,-130.37 819.85,-128.06 810.33,-123.42 809.51,-130.37"/>
+</g>
+<!-- proc~solver_compute_barotropic_flux&#45;&gt;proc~compute_flux_hllc -->
+<g id="proc~~hllc_flux_x~~CalledByGraph_edge5" class="edge">
+<title>proc~solver_compute_barotropic_flux&#45;&gt;proc~compute_flux_hllc</title>
+<path fill="none" stroke="#00ffff" d="M781.26,-102.47C789.94,-101.45 798.62,-100.43 806.97,-99.45"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="807.45,-102.92 816.97,-98.28 806.63,-95.97 807.45,-102.92"/>
+</g>
+<!-- proc~solver_advance_2d_generic -->
+<g id="proc~~hllc_flux_x~~CalledByGraph_node6" class="node">
+<title>proc~solver_advance_2d_generic</title>
+<g id="a_proc~~hllc_flux_x~~CalledByGraph_node6"><a xlink:href="../proc/solver_advance_2d_generic.html" xlink:title="solver_advance_2d_generic">
+<polygon fill="#d9534f" stroke="#d9534f" points="555,-188 395,-188 395,-164 555,-164 555,-188"/>
+<text text-anchor="middle" x="475" y="-173.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_advance_2d_generic</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_advance_2d_generic&#45;&gt;proc~solver_compute_barotropic_flux -->
+<g id="proc~~hllc_flux_x~~CalledByGraph_edge6" class="edge">
+<title>proc~solver_advance_2d_generic&#45;&gt;proc~solver_compute_barotropic_flux</title>
+<path fill="none" stroke="#ff0000" d="M529.71,-163.98C541.08,-161.22 552.98,-158.15 564,-155 591.76,-147.06 622.52,-136.79 646.63,-128.4"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="647.91,-131.65 656.19,-125.04 645.6,-125.05 647.91,-131.65"/>
+</g>
+<!-- proc~solver_barotropic_rk_stage -->
+<g id="proc~~hllc_flux_x~~CalledByGraph_node7" class="node">
+<title>proc~solver_barotropic_rk_stage</title>
+<g id="a_proc~~hllc_flux_x~~CalledByGraph_node7"><a xlink:href="../proc/solver_barotropic_rk_stage.html" xlink:title="solver_barotropic_rk_stage">
+<polygon fill="#d9534f" stroke="#d9534f" points="552,-104 398,-104 398,-80 552,-80 552,-104"/>
+<text text-anchor="middle" x="475" y="-89.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_barotropic_rk_stage</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_barotropic_rk_stage&#45;&gt;proc~solver_compute_barotropic_flux -->
+<g id="proc~~hllc_flux_x~~CalledByGraph_edge7" class="edge">
+<title>proc~solver_barotropic_rk_stage&#45;&gt;proc~solver_compute_barotropic_flux</title>
+<path fill="none" stroke="#ff0000" d="M552.17,-99.49C564.36,-100.69 577.13,-101.95 589.77,-103.19"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="589.57,-106.69 599.87,-104.18 590.26,-99.72 589.57,-106.69"/>
+</g>
+<!-- proc~solver_multilayer_rk_stage -->
+<g id="proc~~hllc_flux_x~~CalledByGraph_node8" class="node">
+<title>proc~solver_multilayer_rk_stage</title>
+<g id="a_proc~~hllc_flux_x~~CalledByGraph_node8"><a xlink:href="../proc/solver_multilayer_rk_stage.html" xlink:title="solver_multilayer_rk_stage">
+<polygon fill="#d9534f" stroke="#d9534f" points="350,-43 196,-43 196,-19 350,-19 350,-43"/>
+<text text-anchor="middle" x="273" y="-28.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_multilayer_rk_stage</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_multilayer_rk_stage&#45;&gt;proc~solver_compute_barotropic_flux -->
+<g id="proc~~hllc_flux_x~~CalledByGraph_edge8" class="edge">
+<title>proc~solver_multilayer_rk_stage&#45;&gt;proc~solver_compute_barotropic_flux</title>
+<path fill="none" stroke="#ff0000" d="M350.12,-37.59C409.03,-43.63 492.37,-54.23 564,-71 593,-77.79 624.81,-88.47 649.15,-97.37"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="648.17,-100.73 658.76,-100.93 650.6,-94.17 648.17,-100.73"/>
+</g>
+<!-- proc~solver_multilayer_rk_stage_nz1 -->
+<g id="proc~~hllc_flux_x~~CalledByGraph_node9" class="node">
+<title>proc~solver_multilayer_rk_stage_nz1</title>
+<g id="a_proc~~hllc_flux_x~~CalledByGraph_node9"><a xlink:href="../proc/solver_multilayer_rk_stage_nz1.html" xlink:title="solver_multilayer_rk_stage_nz1">
+<polygon fill="#d9534f" stroke="#d9534f" points="564,-24 386,-24 386,0 564,0 564,-24"/>
+<text text-anchor="middle" x="475" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_multilayer_rk_stage_nz1</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_multilayer_rk_stage&#45;&gt;proc~solver_multilayer_rk_stage_nz1 -->
+<g id="proc~~hllc_flux_x~~CalledByGraph_edge15" class="edge">
+<title>proc~solver_multilayer_rk_stage&#45;&gt;proc~solver_multilayer_rk_stage_nz1</title>
+<path fill="none" stroke="#00ffff" d="M350.18,-23.76C358.59,-22.96 367.24,-22.14 375.87,-21.32"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="376.36,-24.79 385.98,-20.36 375.69,-17.82 376.36,-24.79"/>
+</g>
+<!-- proc~solver_multilayer_rk_stage_nz1&#45;&gt;proc~solver_compute_barotropic_flux -->
+<g id="proc~~hllc_flux_x~~CalledByGraph_edge9" class="edge">
+<title>proc~solver_multilayer_rk_stage_nz1&#45;&gt;proc~solver_compute_barotropic_flux</title>
+<path fill="none" stroke="#ff0000" d="M524.74,-24.03C537.73,-27.87 551.6,-32.57 564,-38 600.44,-53.97 639.31,-78.5 663.97,-95.12"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="662.15,-98.12 672.38,-100.86 666.09,-92.33 662.15,-98.12"/>
+</g>
+<!-- proc~solver_nh_rk_stage -->
+<g id="proc~~hllc_flux_x~~CalledByGraph_node10" class="node">
+<title>proc~solver_nh_rk_stage</title>
+<g id="a_proc~~hllc_flux_x~~CalledByGraph_node10"><a xlink:href="../proc/solver_nh_rk_stage.html" xlink:title="solver_nh_rk_stage">
+<polygon fill="#d9534f" stroke="#d9534f" points="532,-146 418,-146 418,-122 532,-122 532,-146"/>
+<text text-anchor="middle" x="475" y="-131.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_nh_rk_stage</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_nh_rk_stage&#45;&gt;proc~solver_compute_barotropic_flux -->
+<g id="proc~~hllc_flux_x~~CalledByGraph_edge10" class="edge">
+<title>proc~solver_nh_rk_stage&#45;&gt;proc~solver_compute_barotropic_flux</title>
+<path fill="none" stroke="#ff0000" d="M532.09,-128.48C549.85,-126.74 570.04,-124.75 589.9,-122.8"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="590.31,-126.27 599.92,-121.81 589.63,-119.31 590.31,-126.27"/>
+</g>
+<!-- proc~solver_step_impl -->
+<g id="proc~~hllc_flux_x~~CalledByGraph_node11" class="node">
+<title>proc~solver_step_impl</title>
+<g id="a_proc~~hllc_flux_x~~CalledByGraph_node11"><a xlink:href="../proc/solver_step_impl.html" xlink:title="solver_step_impl">
+<polygon fill="#d9534f" stroke="#d9534f" points="323.5,-188 222.5,-188 222.5,-164 323.5,-164 323.5,-188"/>
+<text text-anchor="middle" x="273" y="-173.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_step_impl</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_step_impl&#45;&gt;proc~solver_compute_barotropic_flux -->
+<g id="proc~~hllc_flux_x~~CalledByGraph_edge11" class="edge">
+<title>proc~solver_step_impl&#45;&gt;proc~solver_compute_barotropic_flux</title>
+<path fill="none" stroke="#ff0000" d="M314.9,-188.06C372.01,-202.88 478.27,-223.04 564,-197 605.74,-184.32 646.24,-152.64 669.47,-132.01"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="671.9,-134.54 676.95,-125.23 667.19,-129.36 671.9,-134.54"/>
+</g>
+<!-- proc~solver_step_impl&#45;&gt;proc~solver_advance_2d_generic -->
+<g id="proc~~hllc_flux_x~~CalledByGraph_edge12" class="edge">
+<title>proc~solver_step_impl&#45;&gt;proc~solver_advance_2d_generic</title>
+<path fill="none" stroke="#ff0000" d="M323.7,-176C342.19,-176 363.78,-176 384.74,-176"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="384.96,-179.5 394.96,-176 384.96,-172.5 384.96,-179.5"/>
+</g>
+<!-- proc~solver_step_impl&#45;&gt;proc~solver_nh_rk_stage -->
+<g id="proc~~hllc_flux_x~~CalledByGraph_edge16" class="edge">
+<title>proc~solver_step_impl&#45;&gt;proc~solver_nh_rk_stage</title>
+<path fill="none" stroke="#0000ff" d="M323.7,-165.56C349.14,-160.22 380.47,-153.64 407.93,-147.88"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="408.78,-151.27 417.85,-145.79 407.34,-144.42 408.78,-151.27"/>
+</g>
+<!-- proc~solver_step -->
+<g id="proc~~hllc_flux_x~~CalledByGraph_node12" class="node">
+<title>proc~solver_step</title>
+<g id="a_proc~~hllc_flux_x~~CalledByGraph_node12"><a xlink:href="../proc/solver_step.html" xlink:title="solver_step">
+<polygon fill="#d9534f" stroke="#d9534f" points="116.5,-188 43.5,-188 43.5,-164 116.5,-164 116.5,-188"/>
+<text text-anchor="middle" x="80" y="-173.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_step</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_step&#45;&gt;proc~solver_step_impl -->
+<g id="proc~~hllc_flux_x~~CalledByGraph_edge17" class="edge">
+<title>proc~solver_step&#45;&gt;proc~solver_step_impl</title>
+<path fill="none" stroke="#ff00ff" d="M116.93,-176C143.62,-176 180.67,-176 211.85,-176"/>
+<polygon fill="#ff00ff" stroke="#ff00ff" points="212.18,-179.5 222.18,-176 212.18,-172.5 212.18,-179.5"/>
+</g>
+<!-- proc~solver_step_multilayer_impl -->
+<g id="proc~~hllc_flux_x~~CalledByGraph_node13" class="node">
+<title>proc~solver_step_multilayer_impl</title>
+<g id="a_proc~~hllc_flux_x~~CalledByGraph_node13"><a xlink:href="../proc/solver_step_multilayer_impl.html" xlink:title="solver_step_multilayer_impl">
+<polygon fill="#d9534f" stroke="#d9534f" points="160,-43 0,-43 0,-19 160,-19 160,-43"/>
+<text text-anchor="middle" x="80" y="-28.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_step_multilayer_impl</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_step_multilayer_impl&#45;&gt;proc~solver_multilayer_rk_stage -->
+<g id="proc~~hllc_flux_x~~CalledByGraph_edge14" class="edge">
+<title>proc~solver_step_multilayer_impl&#45;&gt;proc~solver_multilayer_rk_stage</title>
+<path fill="none" stroke="#00ff00" d="M160.07,-31C168.46,-31 177.02,-31 185.49,-31"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="185.76,-34.5 195.76,-31 185.76,-27.5 185.76,-34.5"/>
+</g>
+<!-- proc~solver_step_split_impl -->
+<g id="proc~~hllc_flux_x~~CalledByGraph_node14" class="node">
+<title>proc~solver_step_split_impl</title>
+<g id="a_proc~~hllc_flux_x~~CalledByGraph_node14"><a xlink:href="../proc/solver_step_split_impl.html" xlink:title="solver_step_split_impl">
+<polygon fill="#d9534f" stroke="#d9534f" points="337,-104 209,-104 209,-80 337,-80 337,-104"/>
+<text text-anchor="middle" x="273" y="-89.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_step_split_impl</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_step_split_impl&#45;&gt;proc~solver_barotropic_rk_stage -->
+<g id="proc~~hllc_flux_x~~CalledByGraph_edge13" class="edge">
+<title>proc~solver_step_split_impl&#45;&gt;proc~solver_barotropic_rk_stage</title>
+<path fill="none" stroke="#ffff00" d="M337.01,-92C353.18,-92 370.86,-92 387.98,-92"/>
+<polygon fill="#ffff00" stroke="#ffff00" points="387.98,-95.5 397.98,-92 387.98,-88.5 387.98,-95.5"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var panprochllc_flux_xCalledByGraph = svgPanZoom('#prochllc_flux_xCalledByGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CalledByGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CalledByGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+
+
+    <section>    
+      <h2>Variables</h2>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Visibility</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+<th></th><th scope="col">Initial</th>        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-a_l~2"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>a_l</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-a_r~2"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>a_r</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-denom~5"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>denom</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-denom_star"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>denom_star</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-fl_h~2"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>fl_h</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-fl_hu~2"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>fl_hu</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-fl_hv~2"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>fl_hv</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-fr_h~2"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>fr_h</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-fr_hu~2"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>fr_hu</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-fr_hv~2"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>fr_hv</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-s_l~3"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>s_l</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-s_r~3"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>s_r</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-s_star"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>s_star</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-u_l~3"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>u_l</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-u_r~3"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>u_r</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-v_l~3"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>v_l</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-v_r~3"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>v_r</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    </section>
+    <br>
+    
+    
+
+    
+    
+
+
+
+    
+    <section>
+    <h2><span class="anchor" id="src"></span>Source Code</h2>
+    <div class="hl codehilite"><pre><span></span><span class="w">   </span><span class="k">pure subroutine </span><span class="n">hllc_flux_x</span><span class="p">(</span><span class="n">h_l</span><span class="p">,</span><span class="w"> </span><span class="n">hu_l</span><span class="p">,</span><span class="w"> </span><span class="n">hv_l</span><span class="p">,</span><span class="w"> </span><span class="n">h_r</span><span class="p">,</span><span class="w"> </span><span class="n">hu_r</span><span class="p">,</span><span class="w"> </span><span class="n">hv_r</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                               </span><span class="n">f_h</span><span class="p">,</span><span class="w"> </span><span class="n">f_hu</span><span class="p">,</span><span class="w"> </span><span class="n">f_hv</span><span class="p">)</span>
+<span class="w">      </span><span class="c">!! HLLC numerical flux in x-direction. Transverse momentum hv is</span>
+<span class="w">      </span><span class="c">!! upwinded across the contact wave: f_hv = f_h * v_upwind</span>
+<span class="w">      </span><span class="c">!! (v_l if s_star &gt;= 0, else v_r); h and hu match HLL.</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">h_l</span><span class="p">,</span><span class="w"> </span><span class="n">hu_l</span><span class="p">,</span><span class="w"> </span><span class="n">hv_l</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">h_r</span><span class="p">,</span><span class="w"> </span><span class="n">hu_r</span><span class="p">,</span><span class="w"> </span><span class="n">hv_r</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">f_h</span><span class="p">,</span><span class="w"> </span><span class="n">f_hu</span><span class="p">,</span><span class="w"> </span><span class="n">f_hv</span>
+
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">u_l</span><span class="p">,</span><span class="w"> </span><span class="n">u_r</span><span class="p">,</span><span class="w"> </span><span class="n">v_l</span><span class="p">,</span><span class="w"> </span><span class="n">v_r</span><span class="p">,</span><span class="w"> </span><span class="n">a_l</span><span class="p">,</span><span class="w"> </span><span class="n">a_r</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">s_l</span><span class="p">,</span><span class="w"> </span><span class="n">s_r</span><span class="p">,</span><span class="w"> </span><span class="n">denom</span><span class="p">,</span><span class="w"> </span><span class="n">denom_star</span><span class="p">,</span><span class="w"> </span><span class="n">s_star</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">fl_h</span><span class="p">,</span><span class="w"> </span><span class="n">fl_hu</span><span class="p">,</span><span class="w"> </span><span class="n">fl_hv</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">fr_h</span><span class="p">,</span><span class="w"> </span><span class="n">fr_hu</span><span class="p">,</span><span class="w"> </span><span class="n">fr_hv</span>
+
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">h_l</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">DRY_TOLERANCE</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">         </span><span class="n">u_l</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hu_l</span><span class="o">/</span><span class="n">h_l</span>
+<span class="w">         </span><span class="n">v_l</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hv_l</span><span class="o">/</span><span class="n">h_l</span>
+<span class="w">      </span><span class="k">else</span>
+<span class="k">         </span><span class="n">u_l</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">         </span><span class="n">v_l</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">      </span><span class="k">end if</span>
+
+<span class="k">      if</span><span class="w"> </span><span class="p">(</span><span class="n">h_r</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">DRY_TOLERANCE</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">         </span><span class="n">u_r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hu_r</span><span class="o">/</span><span class="n">h_r</span>
+<span class="w">         </span><span class="n">v_r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hv_r</span><span class="o">/</span><span class="n">h_r</span>
+<span class="w">      </span><span class="k">else</span>
+<span class="k">         </span><span class="n">u_r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">         </span><span class="n">v_r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">      </span><span class="k">end if</span>
+
+<span class="k">      </span><span class="n">a_l</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">sqrt</span><span class="p">(</span><span class="n">GRAVITY</span><span class="o">*</span><span class="nb">max</span><span class="p">(</span><span class="n">h_l</span><span class="p">,</span><span class="w"> </span><span class="mf">0.0_wp</span><span class="p">))</span>
+<span class="w">      </span><span class="n">a_r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">sqrt</span><span class="p">(</span><span class="n">GRAVITY</span><span class="o">*</span><span class="nb">max</span><span class="p">(</span><span class="n">h_r</span><span class="p">,</span><span class="w"> </span><span class="mf">0.0_wp</span><span class="p">))</span>
+<span class="w">      </span><span class="c">! Wave-speed estimate.  Davis (min/max of the one-sided speeds) is right</span>
+<span class="w">      </span><span class="c">! for a genuine two-sided WET Riemann problem, but wrong at a wet/dry</span>
+<span class="w">      </span><span class="c">! front and must be replaced there.</span>
+<span class="w">      </span><span class="c">!</span>
+<span class="w">      </span><span class="c">! With the right state dry, `a_R = 0` and `u_R = 0`, so Davis returns</span>
+<span class="w">      </span><span class="c">! `s_r = u_L + a_L`.  The exact dry-front speed is `u_L + 2 a_L` — the</span>
+<span class="w">      </span><span class="c">! Ritter (1892) result — so Davis underestimates the right-going wave by</span>
+<span class="w">      </span><span class="c">! up to a factor of two and the front cannot advance at the right rate.</span>
+<span class="w">      </span><span class="c">! The dry-state speeds below are the standard fix (Toro, "Riemann</span>
+<span class="w">      </span><span class="c">! Solvers and Numerical Methods for Fluid Dynamics", 3rd ed. S10.4;</span>
+<span class="w">      </span><span class="c">! Einfeldt et al. 1991).</span>
+<span class="w">      </span><span class="c">!</span>
+<span class="w">      </span><span class="c">! Measured consequence before this branch existed: the Ritter dry-bed</span>
+<span class="w">      </span><span class="c">! tip advanced at 1.49 c0 rather than 2 c0, the leading tongue below</span>
+<span class="w">      </span><span class="c">! ~1 % of the upstream depth was absent, and on a sloping beach a thin</span>
+<span class="w">      </span><span class="c">! film would not recede at all (validation phases 4 and 5).</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">h_r</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">DRY_TOLERANCE</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="w">         </span><span class="c">! Dry on the RIGHT: the right-going wave IS the dry front.</span>
+<span class="w">         </span><span class="n">s_l</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">u_l</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">a_l</span>
+<span class="w">         </span><span class="n">s_r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">u_l</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mf">2.0_wp</span><span class="o">*</span><span class="n">a_l</span>
+<span class="w">      </span><span class="k">else if</span><span class="w"> </span><span class="p">(</span><span class="n">h_l</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">DRY_TOLERANCE</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="w">         </span><span class="c">! Dry on the LEFT: mirror image.</span>
+<span class="w">         </span><span class="n">s_l</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">u_r</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mf">2.0_wp</span><span class="o">*</span><span class="n">a_r</span>
+<span class="w">         </span><span class="n">s_r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">u_r</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">a_r</span>
+<span class="w">      </span><span class="k">else</span>
+<span class="k">         </span><span class="n">s_l</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">min</span><span class="p">(</span><span class="n">u_l</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">a_l</span><span class="p">,</span><span class="w"> </span><span class="n">u_r</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">a_r</span><span class="p">)</span>
+<span class="w">         </span><span class="n">s_r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">max</span><span class="p">(</span><span class="n">u_l</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">a_l</span><span class="p">,</span><span class="w"> </span><span class="n">u_r</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">a_r</span><span class="p">)</span>
+<span class="w">      </span><span class="k">end if</span>
+
+<span class="k">      </span><span class="n">fl_h</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hu_l</span>
+<span class="w">      </span><span class="n">fl_hu</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hu_l</span><span class="o">*</span><span class="n">u_l</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mf">0.5_wp</span><span class="o">*</span><span class="n">GRAVITY</span><span class="o">*</span><span class="n">h_l</span><span class="o">*</span><span class="n">h_l</span>
+<span class="w">      </span><span class="n">fl_hv</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hu_l</span><span class="o">*</span><span class="n">v_l</span>
+
+<span class="w">      </span><span class="n">fr_h</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hu_r</span>
+<span class="w">      </span><span class="n">fr_hu</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hu_r</span><span class="o">*</span><span class="n">u_r</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mf">0.5_wp</span><span class="o">*</span><span class="n">GRAVITY</span><span class="o">*</span><span class="n">h_r</span><span class="o">*</span><span class="n">h_r</span>
+<span class="w">      </span><span class="n">fr_hv</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hu_r</span><span class="o">*</span><span class="n">v_r</span>
+
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">s_l</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mf">0.0_wp</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">         </span><span class="n">f_h</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fl_h</span>
+<span class="w">         </span><span class="n">f_hu</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fl_hu</span>
+<span class="w">         </span><span class="n">f_hv</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fl_hv</span>
+<span class="w">      </span><span class="k">else if</span><span class="w"> </span><span class="p">(</span><span class="n">s_r</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mf">0.0_wp</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">         </span><span class="n">f_h</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fr_h</span>
+<span class="w">         </span><span class="n">f_hu</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fr_hu</span>
+<span class="w">         </span><span class="n">f_hv</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fr_hv</span>
+<span class="w">      </span><span class="k">else</span>
+<span class="k">         </span><span class="n">denom</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0_wp</span><span class="o">/</span><span class="p">(</span><span class="n">s_r</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">s_l</span><span class="p">)</span>
+<span class="w">         </span><span class="n">f_h</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">s_r</span><span class="o">*</span><span class="n">fl_h</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">s_l</span><span class="o">*</span><span class="n">fr_h</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                </span><span class="o">+</span><span class="w"> </span><span class="n">s_l</span><span class="o">*</span><span class="n">s_r</span><span class="o">*</span><span class="p">(</span><span class="n">h_r</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">h_l</span><span class="p">))</span><span class="o">*</span><span class="n">denom</span>
+<span class="w">         </span><span class="n">f_hu</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">s_r</span><span class="o">*</span><span class="n">fl_hu</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">s_l</span><span class="o">*</span><span class="n">fr_hu</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                 </span><span class="o">+</span><span class="w"> </span><span class="n">s_l</span><span class="o">*</span><span class="n">s_r</span><span class="o">*</span><span class="p">(</span><span class="n">hu_r</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">hu_l</span><span class="p">))</span><span class="o">*</span><span class="n">denom</span>
+
+<span class="w">         </span><span class="c">! Contact-wave speed (Toro). Fall back to the arithmetic mean</span>
+<span class="w">         </span><span class="c">! when the denominator vanishes.</span>
+<span class="w">         </span><span class="n">denom_star</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">h_r</span><span class="o">*</span><span class="p">(</span><span class="n">u_r</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">s_r</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">h_l</span><span class="o">*</span><span class="p">(</span><span class="n">u_l</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">s_l</span><span class="p">)</span>
+<span class="w">         </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">denom_star</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">DRY_TOLERANCE</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            </span><span class="n">s_star</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">s_l</span><span class="o">*</span><span class="n">h_r</span><span class="o">*</span><span class="p">(</span><span class="n">u_r</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">s_r</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">s_r</span><span class="o">*</span><span class="n">h_l</span><span class="o">*</span><span class="p">(</span><span class="n">u_l</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">s_l</span><span class="p">))</span><span class="o">/</span><span class="n">denom_star</span>
+<span class="w">         </span><span class="k">else</span>
+<span class="k">            </span><span class="n">s_star</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.5_wp</span><span class="o">*</span><span class="p">(</span><span class="n">u_l</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">u_r</span><span class="p">)</span>
+<span class="w">         </span><span class="k">end if</span>
+
+<span class="k">         if</span><span class="w"> </span><span class="p">(</span><span class="n">s_star</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mf">0.0_wp</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            </span><span class="n">f_hv</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">f_h</span><span class="o">*</span><span class="n">v_l</span>
+<span class="w">         </span><span class="k">else</span>
+<span class="k">            </span><span class="n">f_hv</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">f_h</span><span class="o">*</span><span class="n">v_r</span>
+<span class="w">         </span><span class="k">end if</span>
+<span class="k">      end if</span>
+
+<span class="k">   end subroutine </span><span class="n">hllc_flux_x</span>
+</pre></div>
+
+    </section>
+    <br>
+    
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Rakali
+ was developed by Jorge Luis Galvez Vallejo<br>              &copy; 2026 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+ on 2026-10-08 12:55 +0000             </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,2031 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="GPU-native coastal solver — structured Cartesian and unstructured triangular grids, hydrostatic multilayer + non-hydrostatic, portable across NVHPC/gfortran/ifx.">
+    <meta name="author" content="Jorge Luis Galvez Vallejo" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>init_local_state &ndash; Rakali</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">Rakali </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/absint.html">Abstract Interfaces</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>init_local_state
+      <small>Subroutine</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.1% of total for procedures.">30 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/rki_driver.F90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/rki_driver.f90.html'>rki_driver.F90</a></li>
+                <li class="breadcrumb-item"><a href='../module/rki_driver.html'>rki_driver</a></li>
+            <li class="breadcrumb-item active" aria-current="page">init_local_state</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+  
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#vars-0"
+         aria-expanded="false" aria-controls="vars-0">
+         <h4 class="card-header bg-primary text-white">Variables</h4>
+      </a>
+      <div id="vars-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../proc/init_local_state.html#variable-loaded_ml~2">loaded_ml</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../proc/init_local_state.html#src">init_local_state</a>
+      </div>
+    </div>
+
+
+  </div>
+
+    </div>
+    
+    <div class="col-md-9" id='text'>
+    <h2>private  subroutine init_local_state(cfg, state, t_current, total_mass_initial)  
+</h2>
+    
+
+    <p>Build the ready-to-run state: allocate, load bathymetry, read a
+restart or set the initial conditions, log the run header and the
+bathymetry diagnostics, and fill the ghost bathymetry.</p>
+
+
+    <h3>Arguments</h3>
+        <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-cfg~14"></span>
+              type(<a href='../type/config_t.html'>config_t</a>),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>cfg</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-state~62"></span>
+              type(<a href='../type/state_t.html'>state_t</a>),
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>state</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-t_current~3"></span>
+              real(kind=wp),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>t_current</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-total_mass_initial~3"></span>
+              real(kind=wp),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>total_mass_initial</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <br>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Calls</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~init_local_state~~CallsGraph Pages: 1 -->
+<svg id="procinit_local_stateCallsGraph" width="641pt" height="640pt"
+ viewBox="0.00 0.00 641.00 640.21" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~init_local_state~~CallsGraph" class="graph" transform="scale(0.4 0.4) rotate(0) translate(4 1615)">
+<title>proc~~init_local_state~~CallsGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-1615 1617,-1615 1617,4 -4,4"/>
+<!-- proc~init_local_state -->
+<g id="proc~~init_local_state~~CallsGraph_node1" class="node">
+<title>proc~init_local_state</title>
+<polygon fill="none" stroke="black" points="91,-962 0,-962 0,-938 91,-938 91,-962"/>
+<text text-anchor="middle" x="45.5" y="-947.6" font-family="Helvetica,sans-Serif" font-size="10.50">init_local_state</text>
+</g>
+<!-- info -->
+<g id="proc~~init_local_state~~CallsGraph_node2" class="node">
+<title>info</title>
+<polygon fill="#777777" stroke="#777777" points="821,-1166 767,-1166 767,-1142 821,-1142 821,-1166"/>
+<text text-anchor="middle" x="794" y="-1151.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">info</text>
+</g>
+<!-- proc~init_local_state&#45;&gt;info -->
+<g id="proc~~init_local_state~~CallsGraph_edge1" class="edge">
+<title>proc~init_local_state&#45;&gt;info</title>
+<path fill="none" stroke="#ff0000" d="M48.31,-962.3C53.8,-995.09 73.27,-1085.3 127,-1133 199.96,-1197.78 240.49,-1182.62 337,-1197 468.44,-1216.58 504.3,-1214.71 636,-1197 678.46,-1191.29 725.69,-1177.26 757.15,-1166.77"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="758.43,-1170.03 766.78,-1163.51 756.19,-1163.4 758.43,-1170.03"/>
+</g>
+<!-- proc~compute_total_mass -->
+<g id="proc~~init_local_state~~CallsGraph_node3" class="node">
+<title>proc~compute_total_mass</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node3"><a xlink:href="../proc/compute_total_mass.html" xlink:title="compute_total_mass">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="275,-922 153,-922 153,-898 275,-898 275,-922"/>
+<text text-anchor="middle" x="214" y="-907.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_total_mass</text>
+</a>
+</g>
+</g>
+<!-- proc~init_local_state&#45;&gt;proc~compute_total_mass -->
+<g id="proc~~init_local_state~~CallsGraph_edge2" class="edge">
+<title>proc~init_local_state&#45;&gt;proc~compute_total_mass</title>
+<path fill="none" stroke="#ff0000" d="M91.12,-939.28C110.16,-934.71 132.66,-929.3 153.12,-924.39"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="154.06,-927.76 162.97,-922.02 152.43,-920.95 154.06,-927.76"/>
+</g>
+<!-- proc~diagnose_bathymetry -->
+<g id="proc~~init_local_state~~CallsGraph_node4" class="node">
+<title>proc~diagnose_bathymetry</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node4"><a xlink:href="../proc/diagnose_bathymetry.html" xlink:title="diagnose_bathymetry">
+<polygon fill="#d9534f" stroke="#d9534f" points="550.5,-1284 422.5,-1284 422.5,-1260 550.5,-1260 550.5,-1284"/>
+<text text-anchor="middle" x="486.5" y="-1269.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">diagnose_bathymetry</text>
+</a>
+</g>
+</g>
+<!-- proc~init_local_state&#45;&gt;proc~diagnose_bathymetry -->
+<g id="proc~~init_local_state~~CallsGraph_edge3" class="edge">
+<title>proc~init_local_state&#45;&gt;proc~diagnose_bathymetry</title>
+<path fill="none" stroke="#ff0000" d="M47.97,-962.29C54.34,-1013.42 81.36,-1208.43 127,-1246 212.29,-1316.23 351.08,-1301.75 428.58,-1286.14"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="429.56,-1289.51 438.63,-1284.04 428.13,-1282.66 429.56,-1289.51"/>
+</g>
+<!-- proc~fill_bathymetry_ghosts -->
+<g id="proc~~init_local_state~~CallsGraph_node5" class="node">
+<title>proc~fill_bathymetry_ghosts</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node5"><a xlink:href="../proc/fill_bathymetry_ghosts.html" xlink:title="fill_bathymetry_ghosts">
+<polygon fill="#d9534f" stroke="#d9534f" points="280,-590 148,-590 148,-566 280,-566 280,-590"/>
+<text text-anchor="middle" x="214" y="-575.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">fill_bathymetry_ghosts</text>
+</a>
+</g>
+</g>
+<!-- proc~init_local_state&#45;&gt;proc~fill_bathymetry_ghosts -->
+<g id="proc~~init_local_state~~CallsGraph_edge4" class="edge">
+<title>proc~init_local_state&#45;&gt;proc~fill_bathymetry_ghosts</title>
+<path fill="none" stroke="#ff0000" d="M49.38,-937.78C58.17,-901.64 86.47,-792.55 127,-709 147.2,-667.36 178.53,-623.22 197.27,-598.28"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="200.3,-600.08 203.57,-590.01 194.73,-595.85 200.3,-600.08"/>
+</g>
+<!-- proc~init_multilayer_from_barotropic -->
+<g id="proc~~init_local_state~~CallsGraph_node6" class="node">
+<title>proc~init_multilayer_from_barotropic</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node6"><a xlink:href="../proc/init_multilayer_from_barotropic.html" xlink:title="init_multilayer_from_barotropic">
+<polygon fill="#d9534f" stroke="#d9534f" points="575.5,-1406 397.5,-1406 397.5,-1382 575.5,-1382 575.5,-1406"/>
+<text text-anchor="middle" x="486.5" y="-1391.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">init_multilayer_from_barotropic</text>
+</a>
+</g>
+</g>
+<!-- proc~init_local_state&#45;&gt;proc~init_multilayer_from_barotropic -->
+<g id="proc~~init_local_state~~CallsGraph_edge5" class="edge">
+<title>proc~init_local_state&#45;&gt;proc~init_multilayer_from_barotropic</title>
+<path fill="none" stroke="#ff0000" d="M47.91,-962.04C54.46,-1015.98 83.38,-1234.9 127,-1286 191.01,-1360.99 305.01,-1385.03 387.3,-1392.17"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="387.18,-1395.67 397.43,-1392.98 387.74,-1388.69 387.18,-1395.67"/>
+</g>
+<!-- proc~load_bathymetry -->
+<g id="proc~~init_local_state~~CallsGraph_node7" class="node">
+<title>proc~load_bathymetry</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node7"><a xlink:href="../proc/load_bathymetry.html" xlink:title="load_bathymetry">
+<polygon fill="#d9534f" stroke="#d9534f" points="265.5,-742 162.5,-742 162.5,-718 265.5,-718 265.5,-742"/>
+<text text-anchor="middle" x="214" y="-727.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">load_bathymetry</text>
+</a>
+</g>
+</g>
+<!-- proc~init_local_state&#45;&gt;proc~load_bathymetry -->
+<g id="proc~~init_local_state~~CallsGraph_edge6" class="edge">
+<title>proc~init_local_state&#45;&gt;proc~load_bathymetry</title>
+<path fill="none" stroke="#ff0000" d="M54.7,-937.83C68.98,-916.77 99.5,-872.31 127,-836 150.14,-805.45 178.36,-771.2 196.01,-750.11"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="198.92,-752.1 202.67,-742.19 193.55,-747.6 198.92,-752.1"/>
+</g>
+<!-- proc~log_run_header -->
+<g id="proc~~init_local_state~~CallsGraph_node8" class="node">
+<title>proc~log_run_header</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node8"><a xlink:href="../proc/log_run_header.html" xlink:title="log_run_header">
+<polygon fill="#d9534f" stroke="#d9534f" points="262,-1124 166,-1124 166,-1100 262,-1100 262,-1124"/>
+<text text-anchor="middle" x="214" y="-1109.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">log_run_header</text>
+</a>
+</g>
+</g>
+<!-- proc~init_local_state&#45;&gt;proc~log_run_header -->
+<g id="proc~~init_local_state~~CallsGraph_edge7" class="edge">
+<title>proc~init_local_state&#45;&gt;proc~log_run_header</title>
+<path fill="none" stroke="#ff0000" d="M59.01,-962.18C87.7,-990.09 158.4,-1058.87 193.11,-1092.65"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="190.73,-1095.22 200.34,-1099.68 195.61,-1090.2 190.73,-1095.22"/>
+</g>
+<!-- proc~restart_read -->
+<g id="proc~~init_local_state~~CallsGraph_node9" class="node">
+<title>proc~restart_read</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node9"><a xlink:href="../proc/restart_read.html" xlink:title="restart_read">
+<polygon fill="#d9534f" stroke="#d9534f" points="524.5,-842 448.5,-842 448.5,-818 524.5,-818 524.5,-842"/>
+<text text-anchor="middle" x="486.5" y="-827.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">restart_read</text>
+</a>
+</g>
+</g>
+<!-- proc~init_local_state&#45;&gt;proc~restart_read -->
+<g id="proc~~init_local_state~~CallsGraph_edge8" class="edge">
+<title>proc~init_local_state&#45;&gt;proc~restart_read</title>
+<path fill="none" stroke="#ff0000" d="M58.67,-937.78C73.48,-923.68 99.87,-900.91 127,-889 231.51,-843.11 367.4,-832.62 438.09,-830.41"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="438.54,-833.9 448.45,-830.13 438.36,-826.9 438.54,-833.9"/>
+</g>
+<!-- proc~restore_multilayer_after_restart -->
+<g id="proc~~init_local_state~~CallsGraph_node10" class="node">
+<title>proc~restore_multilayer_after_restart</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node10"><a xlink:href="../proc/restore_multilayer_after_restart.html" xlink:title="restore_multilayer_after_restart">
+<polygon fill="#d9534f" stroke="#d9534f" points="576,-1448 397,-1448 397,-1424 576,-1424 576,-1448"/>
+<text text-anchor="middle" x="486.5" y="-1433.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">restore_multilayer_after_restart</text>
+</a>
+</g>
+</g>
+<!-- proc~init_local_state&#45;&gt;proc~restore_multilayer_after_restart -->
+<g id="proc~~init_local_state~~CallsGraph_edge9" class="edge">
+<title>proc~init_local_state&#45;&gt;proc~restore_multilayer_after_restart</title>
+<path fill="none" stroke="#ff0000" d="M47.36,-962.2C51.81,-1022.32 74.2,-1286.63 127,-1346 191.48,-1418.5 304.84,-1436.75 386.86,-1439.55"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="386.86,-1443.05 396.95,-1439.82 387.05,-1436.05 386.86,-1443.05"/>
+</g>
+<!-- proc~state_init_from_config -->
+<g id="proc~~init_local_state~~CallsGraph_node11" class="node">
+<title>proc~state_init_from_config</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node11"><a xlink:href="../proc/state_init_from_config.html" xlink:title="state_t%state_init_from_config">
+<polygon fill="#d9534f" stroke="#d9534f" points="301,-213 127,-213 127,-189 301,-189 301,-213"/>
+<text text-anchor="middle" x="214" y="-198.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">state_t%state_init_from_config</text>
+</a>
+</g>
+</g>
+<!-- proc~init_local_state&#45;&gt;proc~state_init_from_config -->
+<g id="proc~~init_local_state~~CallsGraph_edge10" class="edge">
+<title>proc~init_local_state&#45;&gt;proc~state_init_from_config</title>
+<path fill="none" stroke="#ff0000" d="M48.85,-937.74C58.16,-889.3 93.63,-706.54 127,-557 155.3,-430.17 193.23,-278.95 207.37,-223.12"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="210.81,-223.81 209.87,-213.26 204.02,-222.09 210.81,-223.81"/>
+</g>
+<!-- to_string -->
+<g id="proc~~init_local_state~~CallsGraph_node12" class="node">
+<title>to_string</title>
+<polygon fill="#777777" stroke="#777777" points="823,-1040 765,-1040 765,-1016 823,-1016 823,-1040"/>
+<text text-anchor="middle" x="794" y="-1025.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">to_string</text>
+</g>
+<!-- proc~init_local_state&#45;&gt;to_string -->
+<g id="proc~~init_local_state~~CallsGraph_edge11" class="edge">
+<title>proc~init_local_state&#45;&gt;to_string</title>
+<path fill="none" stroke="#ff0000" d="M91.05,-944.96C191.15,-935.18 440.43,-919.57 636,-980 653.92,-985.54 654.59,-995.04 672,-1002 698.71,-1012.67 730.58,-1019.29 754.9,-1023.18"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="754.41,-1026.65 764.82,-1024.68 755.46,-1019.73 754.41,-1026.65"/>
+</g>
+<!-- local -->
+<g id="proc~~init_local_state~~CallsGraph_node14" class="node">
+<title>local</title>
+<polygon fill="#777777" stroke="#777777" points="1392,-1006 1338,-1006 1338,-982 1392,-982 1392,-1006"/>
+<text text-anchor="middle" x="1365" y="-991.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">local</text>
+</g>
+<!-- proc~compute_total_mass&#45;&gt;local -->
+<g id="proc~~init_local_state~~CallsGraph_edge12" class="edge">
+<title>proc~compute_total_mass&#45;&gt;local</title>
+<path fill="none" stroke="#ff8b00" d="M275.13,-908.75C357.3,-908.06 508.97,-910.47 636,-933 652.47,-935.92 655.55,-940.93 672,-944 919.6,-990.17 1224.39,-994.27 1327.76,-994.23"/>
+<polygon fill="#ff8b00" stroke="#ff8b00" points="1327.98,-997.73 1337.97,-994.21 1327.96,-990.73 1327.98,-997.73"/>
+</g>
+<!-- reduce -->
+<g id="proc~~init_local_state~~CallsGraph_node43" class="node">
+<title>reduce</title>
+<polygon fill="#777777" stroke="#777777" points="513.5,-884 459.5,-884 459.5,-860 513.5,-860 513.5,-884"/>
+<text text-anchor="middle" x="486.5" y="-869.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">reduce</text>
+</g>
+<!-- proc~compute_total_mass&#45;&gt;reduce -->
+<g id="proc~~init_local_state~~CallsGraph_edge13" class="edge">
+<title>proc~compute_total_mass&#45;&gt;reduce</title>
+<path fill="none" stroke="#ff8b00" d="M275.03,-901.57C328.35,-894.08 404.53,-883.37 449.12,-877.11"/>
+<polygon fill="#ff8b00" stroke="#ff8b00" points="449.79,-880.55 459.2,-875.69 448.81,-873.62 449.79,-880.55"/>
+</g>
+<!-- proc~diagnose_bathymetry&#45;&gt;info -->
+<g id="proc~~init_local_state~~CallsGraph_edge14" class="edge">
+<title>proc~diagnose_bathymetry&#45;&gt;info</title>
+<path fill="none" stroke="#e7ff00" d="M550.57,-1266.01C577.47,-1262.17 608.85,-1255.96 636,-1246 686.26,-1227.56 738.78,-1193.22 768.54,-1172.11"/>
+<polygon fill="#e7ff00" stroke="#e7ff00" points="770.94,-1174.69 777.02,-1166.01 766.86,-1169.01 770.94,-1174.69"/>
+</g>
+<!-- proc~diagnose_bathymetry&#45;&gt;to_string -->
+<g id="proc~~init_local_state~~CallsGraph_edge15" class="edge">
+<title>proc~diagnose_bathymetry&#45;&gt;to_string</title>
+<path fill="none" stroke="#e7ff00" d="M517.8,-1259.99C551.59,-1245.06 605.49,-1216.39 636,-1175 670.56,-1128.12 628.68,-1087.93 672,-1049 694.26,-1028.99 728.49,-1024.61 754.86,-1024.74"/>
+<polygon fill="#e7ff00" stroke="#e7ff00" points="754.82,-1028.24 764.91,-1025 755,-1021.24 754.82,-1028.24"/>
+</g>
+<!-- warning -->
+<g id="proc~~init_local_state~~CallsGraph_node45" class="node">
+<title>warning</title>
+<polygon fill="#777777" stroke="#777777" points="821.5,-1282 766.5,-1282 766.5,-1258 821.5,-1258 821.5,-1282"/>
+<text text-anchor="middle" x="794" y="-1267.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">warning</text>
+</g>
+<!-- proc~diagnose_bathymetry&#45;&gt;warning -->
+<g id="proc~~init_local_state~~CallsGraph_edge16" class="edge">
+<title>proc~diagnose_bathymetry&#45;&gt;warning</title>
+<path fill="none" stroke="#e7ff00" d="M550.8,-1271.59C612.8,-1271.18 705.17,-1270.58 756.05,-1270.24"/>
+<polygon fill="#e7ff00" stroke="#e7ff00" points="756.27,-1273.74 766.25,-1270.18 756.23,-1266.74 756.27,-1273.74"/>
+</g>
+<!-- proc~fill_bathymetry_ghosts_array -->
+<g id="proc~~init_local_state~~CallsGraph_node17" class="node">
+<title>proc~fill_bathymetry_ghosts_array</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node17"><a xlink:href="../proc/fill_bathymetry_ghosts_array.html" xlink:title="fill_bathymetry_ghosts_array">
+<polygon fill="#d9534f" stroke="#d9534f" points="877,-400 711,-400 711,-376 877,-376 877,-400"/>
+<text text-anchor="middle" x="794" y="-385.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">fill_bathymetry_ghosts_array</text>
+</a>
+</g>
+</g>
+<!-- proc~fill_bathymetry_ghosts&#45;&gt;proc~fill_bathymetry_ghosts_array -->
+<g id="proc~~init_local_state~~CallsGraph_edge17" class="edge">
+<title>proc~fill_bathymetry_ghosts&#45;&gt;proc~fill_bathymetry_ghosts_array</title>
+<path fill="none" stroke="#5cff00" d="M244.23,-565.97C316.04,-536.76 507.25,-461.04 672,-414 687.08,-409.69 703.41,-405.73 719.03,-402.26"/>
+<polygon fill="#5cff00" stroke="#5cff00" points="720.15,-405.6 729.18,-400.06 718.67,-398.76 720.15,-405.6"/>
+</g>
+<!-- proc~init_multilayer_from_barotropic&#45;&gt;info -->
+<g id="proc~~init_local_state~~CallsGraph_edge18" class="edge">
+<title>proc~init_multilayer_from_barotropic&#45;&gt;info</title>
+<path fill="none" stroke="#00ff2e" d="M575.76,-1397.76C597.55,-1394.6 619.38,-1387.41 636,-1373 679.36,-1335.4 639.89,-1296.56 672,-1249 694.83,-1215.19 733.49,-1187.91 760.96,-1171.4"/>
+<polygon fill="#00ff2e" stroke="#00ff2e" points="762.95,-1174.29 769.81,-1166.22 759.41,-1168.25 762.95,-1174.29"/>
+</g>
+<!-- proc~init_multilayer_from_barotropic&#45;&gt;to_string -->
+<g id="proc~~init_local_state~~CallsGraph_edge23" class="edge">
+<title>proc~init_multilayer_from_barotropic&#45;&gt;to_string</title>
+<path fill="none" stroke="#00ff2e" d="M575.58,-1399.88C598.02,-1396.89 620.22,-1389.26 636,-1373 736.91,-1269.03 572.73,-1154.54 672,-1049 692.7,-1026.99 727.55,-1022.92 754.55,-1023.66"/>
+<polygon fill="#00ff2e" stroke="#00ff2e" points="754.67,-1027.17 764.84,-1024.18 755.03,-1020.18 754.67,-1027.17"/>
+</g>
+<!-- proc~ml_set_min_depth -->
+<g id="proc~~init_local_state~~CallsGraph_node22" class="node">
+<title>proc~ml_set_min_depth</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node22"><a xlink:href="../proc/ml_set_min_depth.html" xlink:title="ml_set_min_depth">
+<polygon fill="#d9534f" stroke="#d9534f" points="848.5,-1488 739.5,-1488 739.5,-1464 848.5,-1464 848.5,-1488"/>
+<text text-anchor="middle" x="794" y="-1473.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">ml_set_min_depth</text>
+</a>
+</g>
+</g>
+<!-- proc~init_multilayer_from_barotropic&#45;&gt;proc~ml_set_min_depth -->
+<g id="proc~~init_local_state~~CallsGraph_edge19" class="edge">
+<title>proc~init_multilayer_from_barotropic&#45;&gt;proc~ml_set_min_depth</title>
+<path fill="none" stroke="#00ff2e" d="M575.87,-1396.31C596.48,-1399.56 617.73,-1405.27 636,-1415 657.11,-1426.24 651.07,-1443.43 672,-1455 689.32,-1464.57 709.99,-1469.96 729.3,-1472.95"/>
+<polygon fill="#00ff2e" stroke="#00ff2e" points="728.87,-1476.42 739.25,-1474.3 729.81,-1469.49 728.87,-1476.42"/>
+</g>
+<!-- proc~multilayer_init_layers -->
+<g id="proc~~init_local_state~~CallsGraph_node24" class="node">
+<title>proc~multilayer_init_layers</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node24"><a xlink:href="../proc/multilayer_init_layers.html" xlink:title="multilayer_state_t%multilayer_init_layers">
+<polygon fill="#d9534f" stroke="#d9534f" points="909,-1446 679,-1446 679,-1422 909,-1422 909,-1446"/>
+<text text-anchor="middle" x="794" y="-1431.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">multilayer_state_t%multilayer_init_layers</text>
+</a>
+</g>
+</g>
+<!-- proc~init_multilayer_from_barotropic&#45;&gt;proc~multilayer_init_layers -->
+<g id="proc~~init_local_state~~CallsGraph_edge20" class="edge">
+<title>proc~init_multilayer_from_barotropic&#45;&gt;proc~multilayer_init_layers</title>
+<path fill="none" stroke="#00ff2e" d="M575.86,-1405.57C611.78,-1410.27 653.52,-1415.74 690.75,-1420.61"/>
+<polygon fill="#00ff2e" stroke="#00ff2e" points="690.75,-1424.14 701.12,-1421.97 691.66,-1417.2 690.75,-1424.14"/>
+</g>
+<!-- proc~multilayer_seed_tracers -->
+<g id="proc~~init_local_state~~CallsGraph_node26" class="node">
+<title>proc~multilayer_seed_tracers</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node26"><a xlink:href="../proc/multilayer_seed_tracers.html" xlink:title="multilayer_state_t%multilayer_seed_tracers">
+<polygon fill="#d9534f" stroke="#d9534f" points="916,-1569 672,-1569 672,-1545 916,-1545 916,-1569"/>
+<text text-anchor="middle" x="794" y="-1554.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">multilayer_state_t%multilayer_seed_tracers</text>
+</a>
+</g>
+</g>
+<!-- proc~init_multilayer_from_barotropic&#45;&gt;proc~multilayer_seed_tracers -->
+<g id="proc~~init_local_state~~CallsGraph_edge21" class="edge">
+<title>proc~init_multilayer_from_barotropic&#45;&gt;proc~multilayer_seed_tracers</title>
+<path fill="none" stroke="#00ff2e" d="M575.7,-1391.92C597.12,-1395.14 618.78,-1401.94 636,-1415 667.71,-1439.05 644.52,-1468.21 672,-1497 691.28,-1517.2 718.81,-1531.59 742.74,-1541.21"/>
+<polygon fill="#00ff2e" stroke="#00ff2e" points="741.8,-1544.6 752.39,-1544.91 744.31,-1538.06 741.8,-1544.6"/>
+</g>
+<!-- proc~refresh_multilayer_derived -->
+<g id="proc~~init_local_state~~CallsGraph_node39" class="node">
+<title>proc~refresh_multilayer_derived</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node39"><a xlink:href="../proc/refresh_multilayer_derived.html" xlink:title="refresh_multilayer_derived">
+<polygon fill="#d9534f" stroke="#d9534f" points="871,-1404 717,-1404 717,-1380 871,-1380 871,-1404"/>
+<text text-anchor="middle" x="794" y="-1389.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">refresh_multilayer_derived</text>
+</a>
+</g>
+</g>
+<!-- proc~init_multilayer_from_barotropic&#45;&gt;proc~refresh_multilayer_derived -->
+<g id="proc~~init_local_state~~CallsGraph_edge22" class="edge">
+<title>proc~init_multilayer_from_barotropic&#45;&gt;proc~refresh_multilayer_derived</title>
+<path fill="none" stroke="#00ff2e" d="M575.86,-1393.42C616.96,-1393.15 665.68,-1392.83 706.54,-1392.57"/>
+<polygon fill="#00ff2e" stroke="#00ff2e" points="706.77,-1396.06 716.75,-1392.5 706.73,-1389.06 706.77,-1396.06"/>
+</g>
+<!-- proc~init_multilayer_from_barotropic&#45;&gt;warning -->
+<g id="proc~~init_local_state~~CallsGraph_edge24" class="edge">
+<title>proc~init_multilayer_from_barotropic&#45;&gt;warning</title>
+<path fill="none" stroke="#00ff2e" d="M575.7,-1396.08C597.12,-1392.86 618.78,-1386.06 636,-1373 667.71,-1348.95 640.67,-1315.54 672,-1291 695.6,-1272.51 729.79,-1268 755.8,-1267.69"/>
+<polygon fill="#00ff2e" stroke="#00ff2e" points="756.02,-1271.19 766.04,-1267.77 756.07,-1264.19 756.02,-1271.19"/>
+</g>
+<!-- proc~load_bathymetry_into_array -->
+<g id="proc~~init_local_state~~CallsGraph_node18" class="node">
+<title>proc~load_bathymetry_into_array</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node18"><a xlink:href="../proc/load_bathymetry_into_array.html" xlink:title="load_bathymetry_into_array">
+<polygon fill="#d9534f" stroke="#d9534f" points="567.5,-640 405.5,-640 405.5,-616 567.5,-616 567.5,-640"/>
+<text text-anchor="middle" x="486.5" y="-625.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">load_bathymetry_into_array</text>
+</a>
+</g>
+</g>
+<!-- proc~load_bathymetry&#45;&gt;proc~load_bathymetry_into_array -->
+<g id="proc~~init_local_state~~CallsGraph_edge25" class="edge">
+<title>proc~load_bathymetry&#45;&gt;proc~load_bathymetry_into_array</title>
+<path fill="none" stroke="#00ffb9" d="M246.83,-718C295.73,-699.56 389.4,-664.24 443.71,-643.76"/>
+<polygon fill="#00ffb9" stroke="#00ffb9" points="445.25,-646.92 453.38,-640.11 442.78,-640.37 445.25,-646.92"/>
+</g>
+<!-- proc~log_run_header&#45;&gt;info -->
+<g id="proc~~init_local_state~~CallsGraph_edge26" class="edge">
+<title>proc~log_run_header&#45;&gt;info</title>
+<path fill="none" stroke="#00b9ff" d="M232.13,-1124.24C254.82,-1139.62 296.69,-1165.21 337,-1175 489.56,-1212.07 679.08,-1179.19 756.99,-1162.42"/>
+<polygon fill="#00b9ff" stroke="#00b9ff" points="757.78,-1165.83 766.8,-1160.27 756.28,-1159 757.78,-1165.83"/>
+</g>
+<!-- proc~log_run_header&#45;&gt;to_string -->
+<g id="proc~~init_local_state~~CallsGraph_edge32" class="edge">
+<title>proc~log_run_header&#45;&gt;to_string</title>
+<path fill="none" stroke="#00b9ff" d="M224.06,-1099.83C242.32,-1076.43 286.17,-1025.86 337,-1007 461.59,-960.77 503.4,-998.17 636,-1007 676.68,-1009.71 722.89,-1016.32 754.59,-1021.41"/>
+<polygon fill="#00b9ff" stroke="#00b9ff" points="754.32,-1024.91 764.75,-1023.07 755.45,-1018 754.32,-1024.91"/>
+</g>
+<!-- proc~mem_log_computed_budget -->
+<g id="proc~~init_local_state~~CallsGraph_node19" class="node">
+<title>proc~mem_log_computed_budget</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node19"><a xlink:href="../proc/mem_log_computed_budget.html" xlink:title="mem_log_computed_budget">
+<polygon fill="#d9534f" stroke="#d9534f" points="568.5,-1040 404.5,-1040 404.5,-1016 568.5,-1016 568.5,-1040"/>
+<text text-anchor="middle" x="486.5" y="-1025.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">mem_log_computed_budget</text>
+</a>
+</g>
+</g>
+<!-- proc~log_run_header&#45;&gt;proc~mem_log_computed_budget -->
+<g id="proc~~init_local_state~~CallsGraph_edge27" class="edge">
+<title>proc~log_run_header&#45;&gt;proc~mem_log_computed_budget</title>
+<path fill="none" stroke="#00b9ff" d="M233.57,-1099.87C256.78,-1085.33 298.16,-1061.38 337,-1049 355.17,-1043.21 375.09,-1039.01 394.29,-1035.97"/>
+<polygon fill="#00b9ff" stroke="#00b9ff" points="394.87,-1039.42 404.24,-1034.49 393.83,-1032.5 394.87,-1039.42"/>
+</g>
+<!-- proc~mem_log_computed_line -->
+<g id="proc~~init_local_state~~CallsGraph_node20" class="node">
+<title>proc~mem_log_computed_line</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node20"><a xlink:href="../proc/mem_log_computed_line.html" xlink:title="mem_log_computed_line">
+<polygon fill="#d9534f" stroke="#d9534f" points="559.5,-1082 413.5,-1082 413.5,-1058 559.5,-1058 559.5,-1082"/>
+<text text-anchor="middle" x="486.5" y="-1067.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">mem_log_computed_line</text>
+</a>
+</g>
+</g>
+<!-- proc~log_run_header&#45;&gt;proc~mem_log_computed_line -->
+<g id="proc~~init_local_state~~CallsGraph_edge28" class="edge">
+<title>proc~log_run_header&#45;&gt;proc~mem_log_computed_line</title>
+<path fill="none" stroke="#00b9ff" d="M262.16,-1103.54C284.78,-1099.57 312.26,-1094.88 337,-1091 358.43,-1087.64 381.64,-1084.24 403.2,-1081.19"/>
+<polygon fill="#00b9ff" stroke="#00b9ff" points="403.89,-1084.63 413.3,-1079.77 402.91,-1077.7 403.89,-1084.63"/>
+</g>
+<!-- proc~print_banner -->
+<g id="proc~~init_local_state~~CallsGraph_node38" class="node">
+<title>proc~print_banner</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node38"><a xlink:href="../proc/print_banner.html" xlink:title="print_banner">
+<polygon fill="#d9534f" stroke="#d9534f" points="527,-1124 446,-1124 446,-1100 527,-1100 527,-1124"/>
+<text text-anchor="middle" x="486.5" y="-1109.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">print_banner</text>
+</a>
+</g>
+</g>
+<!-- proc~log_run_header&#45;&gt;proc~print_banner -->
+<g id="proc~~init_local_state~~CallsGraph_edge29" class="edge">
+<title>proc~log_run_header&#45;&gt;proc~print_banner</title>
+<path fill="none" stroke="#00b9ff" d="M262.12,-1112C310.73,-1112 386.25,-1112 435.79,-1112"/>
+<polygon fill="#00b9ff" stroke="#00b9ff" points="435.95,-1115.5 445.95,-1112 435.95,-1108.5 435.95,-1115.5"/>
+</g>
+<!-- proc~state_bytes -->
+<g id="proc~~init_local_state~~CallsGraph_node41" class="node">
+<title>proc~state_bytes</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node41"><a xlink:href="../proc/state_bytes.html" xlink:title="state_t%state_bytes">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="545.5,-1364 427.5,-1364 427.5,-1340 545.5,-1340 545.5,-1364"/>
+<text text-anchor="middle" x="486.5" y="-1349.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">state_t%state_bytes</text>
+</a>
+</g>
+</g>
+<!-- proc~log_run_header&#45;&gt;proc~state_bytes -->
+<g id="proc~~init_local_state~~CallsGraph_edge30" class="edge">
+<title>proc~log_run_header&#45;&gt;proc~state_bytes</title>
+<path fill="none" stroke="#00b9ff" d="M218,-1124.17C227.84,-1161.31 262.84,-1273.84 337,-1326 360.06,-1342.22 390.02,-1349.4 416.97,-1352.26"/>
+<polygon fill="#00b9ff" stroke="#00b9ff" points="416.87,-1355.77 427.14,-1353.16 417.49,-1348.79 416.87,-1355.77"/>
+</g>
+<!-- to_char_count -->
+<g id="proc~~init_local_state~~CallsGraph_node44" class="node">
+<title>to_char_count</title>
+<polygon fill="#777777" stroke="#777777" points="530.5,-1166 442.5,-1166 442.5,-1142 530.5,-1142 530.5,-1166"/>
+<text text-anchor="middle" x="486.5" y="-1151.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">to_char_count</text>
+</g>
+<!-- proc~log_run_header&#45;&gt;to_char_count -->
+<g id="proc~~init_local_state~~CallsGraph_edge31" class="edge">
+<title>proc~log_run_header&#45;&gt;to_char_count</title>
+<path fill="none" stroke="#00b9ff" d="M262.16,-1120.46C284.78,-1124.43 312.26,-1129.12 337,-1133 368.5,-1137.94 403.85,-1142.96 432.15,-1146.85"/>
+<polygon fill="#00b9ff" stroke="#00b9ff" points="431.85,-1150.34 442.24,-1148.23 432.8,-1143.41 431.85,-1150.34"/>
+</g>
+<!-- proc~log_run_header&#45;&gt;warning -->
+<g id="proc~~init_local_state~~CallsGraph_edge33" class="edge">
+<title>proc~log_run_header&#45;&gt;warning</title>
+<path fill="none" stroke="#00b9ff" d="M218.76,-1124.3C230.01,-1158.7 267.08,-1255.81 337,-1293 409.18,-1331.39 661.08,-1292.98 756.23,-1276.61"/>
+<polygon fill="#00b9ff" stroke="#00b9ff" points="757,-1280.03 766.25,-1274.87 755.8,-1273.14 757,-1280.03"/>
+</g>
+<!-- proc~restart_read&#45;&gt;info -->
+<g id="proc~~init_local_state~~CallsGraph_edge35" class="edge">
+<title>proc~restart_read&#45;&gt;info</title>
+<path fill="none" stroke="#002eff" d="M524.72,-823.87C558.57,-820.61 607.47,-822.08 636,-851 724.74,-940.94 584.68,-1041.67 672,-1133 693.4,-1155.38 729.46,-1159.13 756.66,-1158.18"/>
+<polygon fill="#002eff" stroke="#002eff" points="757.18,-1161.65 766.97,-1157.59 756.78,-1154.67 757.18,-1161.65"/>
+</g>
+<!-- proc~restart_read&#45;&gt;to_string -->
+<g id="proc~~init_local_state~~CallsGraph_edge44" class="edge">
+<title>proc~restart_read&#45;&gt;to_string</title>
+<path fill="none" stroke="#002eff" d="M524.53,-825.04C557.54,-822.77 605.27,-825.04 636,-851 676.27,-885.01 638.19,-923.56 672,-964 693.65,-989.9 728.53,-1006.76 755.29,-1016.64"/>
+<polygon fill="#002eff" stroke="#002eff" points="754.15,-1019.95 764.75,-1019.97 756.48,-1013.35 754.15,-1019.95"/>
+</g>
+<!-- error -->
+<g id="proc~~init_local_state~~CallsGraph_node13" class="node">
+<title>error</title>
+<polygon fill="#777777" stroke="#777777" points="1392,-640 1338,-640 1338,-616 1392,-616 1392,-640"/>
+<text text-anchor="middle" x="1365" y="-625.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">error</text>
+</g>
+<!-- proc~restart_read&#45;&gt;error -->
+<g id="proc~~init_local_state~~CallsGraph_edge34" class="edge">
+<title>proc~restart_read&#45;&gt;error</title>
+<path fill="none" stroke="#002eff" d="M524.7,-827.36C556.51,-826.86 602.34,-830.44 636,-851 659.68,-865.46 647.64,-888.71 672,-902 785.36,-963.85 1153.26,-996.03 1253,-914 1317.02,-861.35 1255.82,-806.96 1289,-731 1302.95,-699.07 1328.12,-667.44 1345.43,-647.83"/>
+<polygon fill="#002eff" stroke="#002eff" points="1348.21,-649.97 1352.31,-640.2 1343.01,-645.28 1348.21,-649.97"/>
+</g>
+<!-- nf90_get_var -->
+<g id="proc~~init_local_state~~CallsGraph_node15" class="node">
+<title>nf90_get_var</title>
+<polygon fill="#777777" stroke="#777777" points="1143.5,-905 1061.5,-905 1061.5,-881 1143.5,-881 1143.5,-905"/>
+<text text-anchor="middle" x="1102.5" y="-890.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nf90_get_var</text>
+</g>
+<!-- proc~restart_read&#45;&gt;nf90_get_var -->
+<g id="proc~~init_local_state~~CallsGraph_edge36" class="edge">
+<title>proc~restart_read&#45;&gt;nf90_get_var</title>
+<path fill="none" stroke="#002eff" d="M524.74,-831.29C555.36,-833.28 599.47,-838.31 636,-851 653.5,-857.08 654.24,-866.73 672,-872 804.47,-911.31 969.89,-904.75 1051.38,-898.11"/>
+<polygon fill="#002eff" stroke="#002eff" points="1051.7,-901.59 1061.36,-897.26 1051.1,-894.62 1051.7,-901.59"/>
+</g>
+<!-- nf90_inq_varid -->
+<g id="proc~~init_local_state~~CallsGraph_node16" class="node">
+<title>nf90_inq_varid</title>
+<polygon fill="#777777" stroke="#777777" points="1148,-846 1057,-846 1057,-822 1148,-822 1148,-846"/>
+<text text-anchor="middle" x="1102.5" y="-831.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nf90_inq_varid</text>
+</g>
+<!-- proc~restart_read&#45;&gt;nf90_inq_varid -->
+<g id="proc~~init_local_state~~CallsGraph_edge37" class="edge">
+<title>proc~restart_read&#45;&gt;nf90_inq_varid</title>
+<path fill="none" stroke="#002eff" d="M524.87,-835.34C574.53,-842.39 657.69,-854.03 672,-855 780.2,-862.3 807.73,-861.11 916,-855 960.07,-852.51 1009.75,-846.73 1046.6,-841.86"/>
+<polygon fill="#002eff" stroke="#002eff" points="1047.19,-845.31 1056.64,-840.51 1046.26,-838.37 1047.19,-845.31"/>
+</g>
+<!-- proc~nc_check -->
+<g id="proc~~init_local_state~~CallsGraph_node27" class="node">
+<title>proc~nc_check</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node27"><a xlink:href="../proc/nc_check.html" xlink:title="nc_check">
+<polygon fill="#d9534f" stroke="#d9534f" points="1133.5,-764 1071.5,-764 1071.5,-740 1133.5,-740 1133.5,-764"/>
+<text text-anchor="middle" x="1102.5" y="-749.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nc_check</text>
+</a>
+</g>
+</g>
+<!-- proc~restart_read&#45;&gt;proc~nc_check -->
+<g id="proc~~init_local_state~~CallsGraph_edge38" class="edge">
+<title>proc~restart_read&#45;&gt;proc~nc_check</title>
+<path fill="none" stroke="#002eff" d="M516.92,-817.9C552.83,-803.78 615.72,-781.06 672,-771 813.23,-745.76 984.5,-747.71 1061.09,-750.25"/>
+<polygon fill="#002eff" stroke="#002eff" points="1061.14,-753.75 1071.26,-750.61 1061.39,-746.76 1061.14,-753.75"/>
+</g>
+<!-- proc~nc_close -->
+<g id="proc~~init_local_state~~CallsGraph_node28" class="node">
+<title>proc~nc_close</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node28"><a xlink:href="../proc/nc_close.html" xlink:title="nc_close">
+<polygon fill="#d9534f" stroke="#d9534f" points="823,-724 765,-724 765,-700 823,-700 823,-724"/>
+<text text-anchor="middle" x="794" y="-709.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nc_close</text>
+</a>
+</g>
+</g>
+<!-- proc~restart_read&#45;&gt;proc~nc_close -->
+<g id="proc~~init_local_state~~CallsGraph_edge39" class="edge">
+<title>proc~restart_read&#45;&gt;proc~nc_close</title>
+<path fill="none" stroke="#002eff" d="M507.51,-817.91C540.62,-798.4 609.34,-759.96 672,-738 698.85,-728.59 730.29,-721.96 754.4,-717.75"/>
+<polygon fill="#002eff" stroke="#002eff" points="755.29,-721.15 764.58,-716.04 754.13,-714.24 755.29,-721.15"/>
+</g>
+<!-- proc~nc_get_dim_len -->
+<g id="proc~~init_local_state~~CallsGraph_node29" class="node">
+<title>proc~nc_get_dim_len</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node29"><a xlink:href="../proc/nc_get_dim_len.html" xlink:title="nc_get_dim_len">
+<polygon fill="#d9534f" stroke="#d9534f" points="841.5,-560 746.5,-560 746.5,-536 841.5,-536 841.5,-560"/>
+<text text-anchor="middle" x="794" y="-545.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nc_get_dim_len</text>
+</a>
+</g>
+</g>
+<!-- proc~restart_read&#45;&gt;proc~nc_get_dim_len -->
+<g id="proc~~init_local_state~~CallsGraph_edge40" class="edge">
+<title>proc~restart_read&#45;&gt;proc~nc_get_dim_len</title>
+<path fill="none" stroke="#002eff" d="M497.35,-817.95C534.82,-772.16 666.58,-611.26 672,-607 695.35,-588.63 725.35,-573.95 749.63,-563.83"/>
+<polygon fill="#002eff" stroke="#002eff" points="751.02,-567.05 758.97,-560.05 748.39,-560.56 751.02,-567.05"/>
+</g>
+<!-- proc~nc_get_var_2d -->
+<g id="proc~~init_local_state~~CallsGraph_node30" class="node">
+<title>proc~nc_get_var_2d</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node30"><a xlink:href="../proc/nc_get_var_2d.html" xlink:title="nc_get_var_2d">
+<polygon fill="#d9534f" stroke="#d9534f" points="838.5,-804 749.5,-804 749.5,-780 838.5,-780 838.5,-804"/>
+<text text-anchor="middle" x="794" y="-789.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nc_get_var_2d</text>
+</a>
+</g>
+</g>
+<!-- proc~restart_read&#45;&gt;proc~nc_get_var_2d -->
+<g id="proc~~init_local_state~~CallsGraph_edge41" class="edge">
+<title>proc~restart_read&#45;&gt;proc~nc_get_var_2d</title>
+<path fill="none" stroke="#002eff" d="M524.65,-825.38C578.24,-818.71 677.55,-806.36 739.17,-798.7"/>
+<polygon fill="#002eff" stroke="#002eff" points="739.97,-802.12 749.47,-797.42 739.11,-795.18 739.97,-802.12"/>
+</g>
+<!-- proc~nc_get_varid -->
+<g id="proc~~init_local_state~~CallsGraph_node31" class="node">
+<title>proc~nc_get_varid</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node31"><a xlink:href="../proc/nc_get_varid.html" xlink:title="nc_get_varid">
+<polygon fill="#d9534f" stroke="#d9534f" points="834,-846 754,-846 754,-822 834,-822 834,-846"/>
+<text text-anchor="middle" x="794" y="-831.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nc_get_varid</text>
+</a>
+</g>
+</g>
+<!-- proc~restart_read&#45;&gt;proc~nc_get_varid -->
+<g id="proc~~init_local_state~~CallsGraph_edge42" class="edge">
+<title>proc~restart_read&#45;&gt;proc~nc_get_varid</title>
+<path fill="none" stroke="#002eff" d="M524.65,-830.49C579.52,-831.2 682.31,-832.55 743.51,-833.35"/>
+<polygon fill="#002eff" stroke="#002eff" points="743.65,-836.85 753.69,-833.49 743.74,-829.85 743.65,-836.85"/>
+</g>
+<!-- proc~nc_open_read -->
+<g id="proc~~init_local_state~~CallsGraph_node32" class="node">
+<title>proc~nc_open_read</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node32"><a xlink:href="../proc/nc_open_read.html" xlink:title="nc_open_read">
+<polygon fill="#d9534f" stroke="#d9534f" points="837.5,-682 750.5,-682 750.5,-658 837.5,-658 837.5,-682"/>
+<text text-anchor="middle" x="794" y="-667.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nc_open_read</text>
+</a>
+</g>
+</g>
+<!-- proc~restart_read&#45;&gt;proc~nc_open_read -->
+<g id="proc~~init_local_state~~CallsGraph_edge43" class="edge">
+<title>proc~restart_read&#45;&gt;proc~nc_open_read</title>
+<path fill="none" stroke="#002eff" d="M499.15,-817.95C526.48,-790.46 598.03,-723.04 672,-691 693.37,-681.75 718.52,-676.57 740.35,-673.67"/>
+<polygon fill="#002eff" stroke="#002eff" points="740.92,-677.12 750.44,-672.45 740.09,-670.17 740.92,-677.12"/>
+</g>
+<!-- proc~restart_read&#45;&gt;warning -->
+<g id="proc~~init_local_state~~CallsGraph_edge45" class="edge">
+<title>proc~restart_read&#45;&gt;warning</title>
+<path fill="none" stroke="#002eff" d="M524.83,-823.77C558.75,-820.43 607.71,-821.85 636,-851 686.46,-902.98 636.77,-1111.7 672,-1175 691.69,-1210.38 730.49,-1237.17 758.86,-1253.14"/>
+<polygon fill="#002eff" stroke="#002eff" points="757.22,-1256.23 767.67,-1257.94 760.57,-1250.08 757.22,-1256.23"/>
+</g>
+<!-- proc~multilayer_build_vcoord_reference -->
+<g id="proc~~init_local_state~~CallsGraph_node23" class="node">
+<title>proc~multilayer_build_vcoord_reference</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node23"><a xlink:href="../proc/multilayer_build_vcoord_reference.html" xlink:title="multilayer_state_t%multilayer_build_vcoord_reference">
+<polygon fill="#d9534f" stroke="#d9534f" points="1253,-1527 952,-1527 952,-1503 1253,-1503 1253,-1527"/>
+<text text-anchor="middle" x="1102.5" y="-1512.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">multilayer_state_t%multilayer_build_vcoord_reference</text>
+</a>
+</g>
+</g>
+<!-- proc~restore_multilayer_after_restart&#45;&gt;proc~multilayer_build_vcoord_reference -->
+<g id="proc~~init_local_state~~CallsGraph_edge46" class="edge">
+<title>proc~restore_multilayer_after_restart&#45;&gt;proc~multilayer_build_vcoord_reference</title>
+<path fill="none" stroke="#5c00ff" d="M515.62,-1448.03C551.25,-1462.62 614.92,-1486.58 672,-1497 760.18,-1513.1 860.17,-1518.06 941.47,-1518.78"/>
+<polygon fill="#5c00ff" stroke="#5c00ff" points="941.77,-1522.28 951.79,-1518.85 941.82,-1515.28 941.77,-1522.28"/>
+</g>
+<!-- proc~restore_multilayer_after_restart&#45;&gt;proc~refresh_multilayer_derived -->
+<g id="proc~~init_local_state~~CallsGraph_edge47" class="edge">
+<title>proc~restore_multilayer_after_restart&#45;&gt;proc~refresh_multilayer_derived</title>
+<path fill="none" stroke="#5c00ff" d="M573.1,-1423.97C593.7,-1421.05 615.64,-1417.93 636,-1415 658.92,-1411.7 683.72,-1408.09 706.69,-1404.72"/>
+<polygon fill="#5c00ff" stroke="#5c00ff" points="707.36,-1408.16 716.75,-1403.25 706.35,-1401.24 707.36,-1408.16"/>
+</g>
+<!-- proc~ml_parse_eos_form -->
+<g id="proc~~init_local_state~~CallsGraph_node21" class="node">
+<title>proc~ml_parse_eos_form</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node21"><a xlink:href="../proc/ml_parse_eos_form.html" xlink:title="ml_parse_eos_form">
+<polygon fill="#d9534f" stroke="#d9534f" points="544.5,-318 428.5,-318 428.5,-294 544.5,-294 544.5,-318"/>
+<text text-anchor="middle" x="486.5" y="-303.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">ml_parse_eos_form</text>
+</a>
+</g>
+</g>
+<!-- proc~state_init_from_config&#45;&gt;proc~ml_parse_eos_form -->
+<g id="proc~~init_local_state~~CallsGraph_edge48" class="edge">
+<title>proc~state_init_from_config&#45;&gt;proc~ml_parse_eos_form</title>
+<path fill="none" stroke="#e700ff" d="M228.06,-213.12C249.18,-231.94 292.92,-267.81 337,-285 362.49,-294.94 392.06,-300.25 418.08,-303.07"/>
+<polygon fill="#e700ff" stroke="#e700ff" points="417.94,-306.57 428.24,-304.06 418.62,-299.61 417.94,-306.57"/>
+</g>
+<!-- proc~multilayer_register_passive_tracer -->
+<g id="proc~~init_local_state~~CallsGraph_node25" class="node">
+<title>proc~multilayer_register_passive_tracer</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node25"><a xlink:href="../proc/multilayer_register_passive_tracer.html" xlink:title="multilayer_state_t%multilayer_register_passive_tracer">
+<polygon fill="#d9534f" stroke="#d9534f" points="636,-360 337,-360 337,-336 636,-336 636,-360"/>
+<text text-anchor="middle" x="486.5" y="-345.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">multilayer_state_t%multilayer_register_passive_tracer</text>
+</a>
+</g>
+</g>
+<!-- proc~state_init_from_config&#45;&gt;proc~multilayer_register_passive_tracer -->
+<g id="proc~~init_local_state~~CallsGraph_edge49" class="edge">
+<title>proc~state_init_from_config&#45;&gt;proc~multilayer_register_passive_tracer</title>
+<path fill="none" stroke="#e700ff" d="M222.68,-213.26C239.68,-239.23 283.28,-299.64 337,-327 340.85,-328.96 344.83,-330.76 348.89,-332.4"/>
+<polygon fill="#e700ff" stroke="#e700ff" points="347.94,-335.78 358.54,-335.96 350.37,-329.21 347.94,-335.78"/>
+</g>
+<!-- proc~parse_remap_method -->
+<g id="proc~~init_local_state~~CallsGraph_node33" class="node">
+<title>proc~parse_remap_method</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node33"><a xlink:href="../proc/parse_remap_method.html" xlink:title="parse_remap_method">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="551,-276 422,-276 422,-252 551,-252 551,-276"/>
+<text text-anchor="middle" x="486.5" y="-261.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">parse_remap_method</text>
+</a>
+</g>
+</g>
+<!-- proc~state_init_from_config&#45;&gt;proc~parse_remap_method -->
+<g id="proc~~init_local_state~~CallsGraph_edge50" class="edge">
+<title>proc~state_init_from_config&#45;&gt;proc~parse_remap_method</title>
+<path fill="none" stroke="#e700ff" d="M245.11,-213.17C269.51,-222.59 304.98,-235.3 337,-243 361.03,-248.78 387.67,-253.16 411.66,-256.39"/>
+<polygon fill="#e700ff" stroke="#e700ff" points="411.4,-259.88 421.77,-257.7 412.3,-252.94 411.4,-259.88"/>
+</g>
+<!-- proc~parse_stretching_mode -->
+<g id="proc~~init_local_state~~CallsGraph_node34" class="node">
+<title>proc~parse_stretching_mode</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node34"><a xlink:href="../proc/parse_stretching_mode.html" xlink:title="parse_stretching_mode">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="554.5,-234 418.5,-234 418.5,-210 554.5,-210 554.5,-234"/>
+<text text-anchor="middle" x="486.5" y="-219.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">parse_stretching_mode</text>
+</a>
+</g>
+</g>
+<!-- proc~state_init_from_config&#45;&gt;proc~parse_stretching_mode -->
+<g id="proc~~init_local_state~~CallsGraph_edge51" class="edge">
+<title>proc~state_init_from_config&#45;&gt;proc~parse_stretching_mode</title>
+<path fill="none" stroke="#e700ff" d="M301.33,-207.7C335.66,-210.37 374.85,-213.41 408.23,-216"/>
+<polygon fill="#e700ff" stroke="#e700ff" points="408.15,-219.51 418.39,-216.79 408.69,-212.53 408.15,-219.51"/>
+</g>
+<!-- proc~parse_time_scheme -->
+<g id="proc~~init_local_state~~CallsGraph_node35" class="node">
+<title>proc~parse_time_scheme</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node35"><a xlink:href="../proc/parse_time_scheme.html" xlink:title="parse_time_scheme">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="546,-192 427,-192 427,-168 546,-168 546,-192"/>
+<text text-anchor="middle" x="486.5" y="-177.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">parse_time_scheme</text>
+</a>
+</g>
+</g>
+<!-- proc~state_init_from_config&#45;&gt;proc~parse_time_scheme -->
+<g id="proc~~init_local_state~~CallsGraph_edge52" class="edge">
+<title>proc~state_init_from_config&#45;&gt;proc~parse_time_scheme</title>
+<path fill="none" stroke="#e700ff" d="M301.33,-194.3C338.62,-191.4 381.65,-188.06 416.73,-185.34"/>
+<polygon fill="#e700ff" stroke="#e700ff" points="417.18,-188.81 426.88,-184.55 416.64,-181.84 417.18,-188.81"/>
+</g>
+<!-- proc~parse_tracer_recon -->
+<g id="proc~~init_local_state~~CallsGraph_node36" class="node">
+<title>proc~parse_tracer_recon</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node36"><a xlink:href="../proc/parse_tracer_recon.html" xlink:title="parse_tracer_recon">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="544,-150 429,-150 429,-126 544,-126 544,-150"/>
+<text text-anchor="middle" x="486.5" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">parse_tracer_recon</text>
+</a>
+</g>
+</g>
+<!-- proc~state_init_from_config&#45;&gt;proc~parse_tracer_recon -->
+<g id="proc~~init_local_state~~CallsGraph_edge53" class="edge">
+<title>proc~state_init_from_config&#45;&gt;proc~parse_tracer_recon</title>
+<path fill="none" stroke="#e700ff" d="M245.11,-188.83C269.51,-179.41 304.98,-166.7 337,-159 363.48,-152.63 393.12,-147.96 418.91,-144.66"/>
+<polygon fill="#e700ff" stroke="#e700ff" points="419.47,-148.12 428.96,-143.42 418.61,-141.17 419.47,-148.12"/>
+</g>
+<!-- proc~parse_vcoord_type -->
+<g id="proc~~init_local_state~~CallsGraph_node37" class="node">
+<title>proc~parse_vcoord_type</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node37"><a xlink:href="../proc/parse_vcoord_type.html" xlink:title="parse_vcoord_type">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="543,-108 430,-108 430,-84 543,-84 543,-108"/>
+<text text-anchor="middle" x="486.5" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">parse_vcoord_type</text>
+</a>
+</g>
+</g>
+<!-- proc~state_init_from_config&#45;&gt;proc~parse_vcoord_type -->
+<g id="proc~~init_local_state~~CallsGraph_edge54" class="edge">
+<title>proc~state_init_from_config&#45;&gt;proc~parse_vcoord_type</title>
+<path fill="none" stroke="#e700ff" d="M228.06,-188.88C249.18,-170.06 292.92,-134.19 337,-117 362.91,-106.9 393.06,-101.57 419.39,-98.79"/>
+<polygon fill="#e700ff" stroke="#e700ff" points="420.03,-102.25 429.65,-97.81 419.37,-95.28 420.03,-102.25"/>
+</g>
+<!-- proc~register_default_tracers -->
+<g id="proc~~init_local_state~~CallsGraph_node40" class="node">
+<title>proc~register_default_tracers</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node40"><a xlink:href="../proc/register_default_tracers.html" xlink:title="register_default_tracers">
+<polygon fill="#d9534f" stroke="#d9534f" points="556,-66 417,-66 417,-42 556,-42 556,-66"/>
+<text text-anchor="middle" x="486.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">register_default_tracers</text>
+</a>
+</g>
+</g>
+<!-- proc~state_init_from_config&#45;&gt;proc~register_default_tracers -->
+<g id="proc~~init_local_state~~CallsGraph_edge55" class="edge">
+<title>proc~state_init_from_config&#45;&gt;proc~register_default_tracers</title>
+<path fill="none" stroke="#e700ff" d="M222.68,-188.74C239.68,-162.77 283.28,-102.36 337,-75 358.32,-64.14 383.46,-58.38 406.94,-55.44"/>
+<polygon fill="#e700ff" stroke="#e700ff" points="407.32,-58.92 416.88,-54.35 406.56,-51.96 407.32,-58.92"/>
+</g>
+<!-- proc~state_init -->
+<g id="proc~~init_local_state~~CallsGraph_node42" class="node">
+<title>proc~state_init</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node42"><a xlink:href="../proc/state_init.html" xlink:title="state_t%state_init">
+<polygon fill="#d9534f" stroke="#d9534f" points="539.5,-24 433.5,-24 433.5,0 539.5,0 539.5,-24"/>
+<text text-anchor="middle" x="486.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">state_t%state_init</text>
+</a>
+</g>
+</g>
+<!-- proc~state_init_from_config&#45;&gt;proc~state_init -->
+<g id="proc~~init_local_state~~CallsGraph_edge56" class="edge">
+<title>proc~state_init_from_config&#45;&gt;proc~state_init</title>
+<path fill="none" stroke="#e700ff" d="M219.86,-188.66C233.15,-156.74 273.37,-71.28 337,-33 362.63,-17.58 395.17,-11.77 423.25,-10.05"/>
+<polygon fill="#e700ff" stroke="#e700ff" points="423.54,-13.54 433.37,-9.59 423.22,-6.55 423.54,-13.54"/>
+</g>
+<!-- proc~load_bathymetry_into_array&#45;&gt;info -->
+<g id="proc~~init_local_state~~CallsGraph_edge58" class="edge">
+<title>proc~load_bathymetry_into_array&#45;&gt;info</title>
+<path fill="none" stroke="#ffe700" d="M502.1,-640.24C533,-667.12 604.74,-734.84 636,-809 664.14,-875.76 622.37,-1080.23 672,-1133 693.21,-1155.55 729.3,-1159.28 756.55,-1158.28"/>
+<polygon fill="#ffe700" stroke="#ffe700" points="757.11,-1161.75 766.89,-1157.66 756.7,-1154.76 757.11,-1161.75"/>
+</g>
+<!-- proc~load_bathymetry_into_array&#45;&gt;to_string -->
+<g id="proc~~init_local_state~~CallsGraph_edge68" class="edge">
+<title>proc~load_bathymetry_into_array&#45;&gt;to_string</title>
+<path fill="none" stroke="#ffe700" d="M497.86,-640.07C522.45,-668.83 586.02,-743.86 636,-809 690.84,-880.47 752.01,-968.33 778.96,-1007.49"/>
+<polygon fill="#ffe700" stroke="#ffe700" points="776.21,-1009.67 784.76,-1015.93 781.98,-1005.71 776.21,-1009.67"/>
+</g>
+<!-- proc~load_bathymetry_into_array&#45;&gt;error -->
+<g id="proc~~init_local_state~~CallsGraph_edge57" class="edge">
+<title>proc~load_bathymetry_into_array&#45;&gt;error</title>
+<path fill="none" stroke="#ffe700" d="M500.7,-615.92C526.75,-592.04 586.51,-537.04 636,-490 652.17,-474.63 651.32,-463.39 672,-455 726.94,-432.7 1229.98,-453.38 1253,-466 1309.06,-496.72 1342.54,-569.34 1356.45,-606.01"/>
+<polygon fill="#ffe700" stroke="#ffe700" points="1353.29,-607.54 1360,-615.74 1359.86,-605.14 1353.29,-607.54"/>
+</g>
+<!-- proc~load_bathymetry_into_array&#45;&gt;proc~fill_bathymetry_ghosts_array -->
+<g id="proc~~init_local_state~~CallsGraph_edge61" class="edge">
+<title>proc~load_bathymetry_into_array&#45;&gt;proc~fill_bathymetry_ghosts_array</title>
+<path fill="none" stroke="#ffe700" d="M506.95,-615.98C538.07,-595.88 599.26,-552.63 636,-502 660.82,-467.8 639.6,-441.13 672,-414 680.51,-406.87 690.52,-401.56 701.07,-397.63"/>
+<polygon fill="#ffe700" stroke="#ffe700" points="702.49,-400.84 710.89,-394.39 700.29,-394.2 702.49,-400.84"/>
+</g>
+<!-- proc~load_bathymetry_into_array&#45;&gt;proc~nc_check -->
+<g id="proc~~init_local_state~~CallsGraph_edge62" class="edge">
+<title>proc~load_bathymetry_into_array&#45;&gt;proc~nc_check</title>
+<path fill="none" stroke="#ffe700" d="M547.39,-615.98C651.34,-596.57 859.49,-564.57 916,-607 961.89,-641.46 908.63,-693.42 952,-731 981.67,-756.71 1027.8,-759.52 1060.98,-757.43"/>
+<polygon fill="#ffe700" stroke="#ffe700" points="1061.57,-760.89 1071.25,-756.6 1061,-753.92 1061.57,-760.89"/>
+</g>
+<!-- proc~load_bathymetry_into_array&#45;&gt;proc~nc_close -->
+<g id="proc~~init_local_state~~CallsGraph_edge63" class="edge">
+<title>proc~load_bathymetry_into_array&#45;&gt;proc~nc_close</title>
+<path fill="none" stroke="#ffe700" d="M518.06,-640.09C554.3,-654.04 616.75,-676.87 672,-691 699.35,-698 730.78,-703.37 754.75,-706.93"/>
+<polygon fill="#ffe700" stroke="#ffe700" points="754.46,-710.43 764.86,-708.4 755.46,-703.5 754.46,-710.43"/>
+</g>
+<!-- proc~load_bathymetry_into_array&#45;&gt;proc~nc_get_dim_len -->
+<g id="proc~~init_local_state~~CallsGraph_edge64" class="edge">
+<title>proc~load_bathymetry_into_array&#45;&gt;proc~nc_get_dim_len</title>
+<path fill="none" stroke="#ffe700" d="M525.79,-615.9C562.95,-604.38 621.05,-586.91 672,-574 692.85,-568.72 715.89,-563.59 736.22,-559.31"/>
+<polygon fill="#ffe700" stroke="#ffe700" points="737.2,-562.68 746.27,-557.21 735.77,-555.83 737.2,-562.68"/>
+</g>
+<!-- proc~load_bathymetry_into_array&#45;&gt;proc~nc_get_var_2d -->
+<g id="proc~~init_local_state~~CallsGraph_edge65" class="edge">
+<title>proc~load_bathymetry_into_array&#45;&gt;proc~nc_get_var_2d</title>
+<path fill="none" stroke="#ffe700" d="M507.74,-640.08C541.45,-660.08 611.37,-701.01 672,-733 700.47,-748.02 733.32,-763.96 757.61,-775.47"/>
+<polygon fill="#ffe700" stroke="#ffe700" points="756.26,-778.71 766.8,-779.81 759.25,-772.38 756.26,-778.71"/>
+</g>
+<!-- proc~load_bathymetry_into_array&#45;&gt;proc~nc_open_read -->
+<g id="proc~~init_local_state~~CallsGraph_edge66" class="edge">
+<title>proc~load_bathymetry_into_array&#45;&gt;proc~nc_open_read</title>
+<path fill="none" stroke="#ffe700" d="M567.77,-639.04C622.28,-646.53 692.83,-656.23 740.33,-662.76"/>
+<polygon fill="#ffe700" stroke="#ffe700" points="740.01,-666.25 750.4,-664.14 740.97,-659.31 740.01,-666.25"/>
+</g>
+<!-- nf90_inquire_dimension -->
+<g id="proc~~init_local_state~~CallsGraph_node50" class="node">
+<title>nf90_inquire_dimension</title>
+<polygon fill="#777777" stroke="#777777" points="1172,-499 1033,-499 1033,-475 1172,-475 1172,-499"/>
+<text text-anchor="middle" x="1102.5" y="-484.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nf90_inquire_dimension</text>
+</g>
+<!-- proc~load_bathymetry_into_array&#45;&gt;nf90_inquire_dimension -->
+<g id="proc~~init_local_state~~CallsGraph_edge59" class="edge">
+<title>proc~load_bathymetry_into_array&#45;&gt;nf90_inquire_dimension</title>
+<path fill="none" stroke="#ffe700" d="M500.83,-615.78C536.18,-583.69 632.31,-498.58 672,-485 793.82,-443.32 946.69,-458.77 1033.32,-473.25"/>
+<polygon fill="#ffe700" stroke="#ffe700" points="1032.84,-476.72 1043.29,-474.96 1034.02,-469.82 1032.84,-476.72"/>
+</g>
+<!-- nf90_inquire_variable -->
+<g id="proc~~init_local_state~~CallsGraph_node51" class="node">
+<title>nf90_inquire_variable</title>
+<polygon fill="#777777" stroke="#777777" points="857.5,-518 730.5,-518 730.5,-494 857.5,-494 857.5,-518"/>
+<text text-anchor="middle" x="794" y="-503.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nf90_inquire_variable</text>
+</g>
+<!-- proc~load_bathymetry_into_array&#45;&gt;nf90_inquire_variable -->
+<g id="proc~~init_local_state~~CallsGraph_edge60" class="edge">
+<title>proc~load_bathymetry_into_array&#45;&gt;nf90_inquire_variable</title>
+<path fill="none" stroke="#ffe700" d="M504.91,-615.89C536.6,-594.44 606.51,-549.9 672,-527 687.33,-521.64 704.26,-517.61 720.47,-514.59"/>
+<polygon fill="#ffe700" stroke="#ffe700" points="721.2,-518.02 730.45,-512.84 719.99,-511.12 721.2,-518.02"/>
+</g>
+<!-- proc~try_get_bathymetry_var -->
+<g id="proc~~init_local_state~~CallsGraph_node64" class="node">
+<title>proc~try_get_bathymetry_var</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node64"><a xlink:href="../proc/try_get_bathymetry_var.html" xlink:title="try_get_bathymetry_var">
+<polygon fill="#d9534f" stroke="#d9534f" points="863.5,-640 724.5,-640 724.5,-616 863.5,-616 863.5,-640"/>
+<text text-anchor="middle" x="794" y="-625.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">try_get_bathymetry_var</text>
+</a>
+</g>
+</g>
+<!-- proc~load_bathymetry_into_array&#45;&gt;proc~try_get_bathymetry_var -->
+<g id="proc~~init_local_state~~CallsGraph_edge67" class="edge">
+<title>proc~load_bathymetry_into_array&#45;&gt;proc~try_get_bathymetry_var</title>
+<path fill="none" stroke="#ffe700" d="M567.77,-628C613.05,-628 669.39,-628 714.39,-628"/>
+<polygon fill="#ffe700" stroke="#ffe700" points="714.4,-631.5 724.4,-628 714.4,-624.5 714.4,-631.5"/>
+</g>
+<!-- proc~mem_log_computed_budget&#45;&gt;info -->
+<g id="proc~~init_local_state~~CallsGraph_edge69" class="edge">
+<title>proc~mem_log_computed_budget&#45;&gt;info</title>
+<path fill="none" stroke="#e7ff00" d="M568.83,-1024.89C592.45,-1027.64 616.98,-1034.44 636,-1049 668.26,-1073.68 640.13,-1107.81 672,-1133 695.82,-1151.82 730.57,-1156.21 756.73,-1156.39"/>
+<polygon fill="#e7ff00" stroke="#e7ff00" points="757.05,-1159.88 767,-1156.25 756.95,-1152.88 757.05,-1159.88"/>
+</g>
+<!-- proc~mem_format_bytes -->
+<g id="proc~~init_local_state~~CallsGraph_node56" class="node">
+<title>proc~mem_format_bytes</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node56"><a xlink:href="../proc/mem_format_bytes.html" xlink:title="mem_format_bytes">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="851.5,-1082 736.5,-1082 736.5,-1058 851.5,-1058 851.5,-1082"/>
+<text text-anchor="middle" x="794" y="-1067.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">mem_format_bytes</text>
+</a>
+</g>
+</g>
+<!-- proc~mem_log_computed_budget&#45;&gt;proc~mem_format_bytes -->
+<g id="proc~~init_local_state~~CallsGraph_edge70" class="edge">
+<title>proc~mem_log_computed_budget&#45;&gt;proc~mem_format_bytes</title>
+<path fill="none" stroke="#e7ff00" d="M568.57,-1039.14C617.81,-1045.91 679.9,-1054.45 726.29,-1060.83"/>
+<polygon fill="#e7ff00" stroke="#e7ff00" points="725.85,-1064.3 736.23,-1062.2 726.8,-1057.37 725.85,-1064.3"/>
+</g>
+<!-- proc~mem_log_computed_line&#45;&gt;info -->
+<g id="proc~~init_local_state~~CallsGraph_edge71" class="edge">
+<title>proc~mem_log_computed_line&#45;&gt;info</title>
+<path fill="none" stroke="#b9ff00" d="M559.53,-1069.87C584.96,-1072.43 612.94,-1078.36 636,-1091 657.56,-1102.82 650.63,-1120.85 672,-1133 697.79,-1147.66 731.28,-1152.59 756.49,-1154.03"/>
+<polygon fill="#b9ff00" stroke="#b9ff00" points="756.61,-1157.54 766.74,-1154.46 756.89,-1150.55 756.61,-1157.54"/>
+</g>
+<!-- proc~mem_log_computed_line&#45;&gt;proc~mem_format_bytes -->
+<g id="proc~~init_local_state~~CallsGraph_edge72" class="edge">
+<title>proc~mem_log_computed_line&#45;&gt;proc~mem_format_bytes</title>
+<path fill="none" stroke="#b9ff00" d="M559.51,-1070C609.91,-1070 676.76,-1070 726.01,-1070"/>
+<polygon fill="#b9ff00" stroke="#b9ff00" points="726.24,-1073.5 736.24,-1070 726.24,-1066.5 726.24,-1073.5"/>
+</g>
+<!-- proc~ml_build_vcoord_zstar_full -->
+<g id="proc~~init_local_state~~CallsGraph_node57" class="node">
+<title>proc~ml_build_vcoord_zstar_full</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node57"><a xlink:href="../proc/ml_build_vcoord_zstar_full.html" xlink:title="ml_build_vcoord_zstar_full">
+<polygon fill="#d9534f" stroke="#d9534f" points="1441,-1527 1289,-1527 1289,-1503 1441,-1503 1441,-1527"/>
+<text text-anchor="middle" x="1365" y="-1512.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">ml_build_vcoord_zstar_full</text>
+</a>
+</g>
+</g>
+<!-- proc~multilayer_build_vcoord_reference&#45;&gt;proc~ml_build_vcoord_zstar_full -->
+<g id="proc~~init_local_state~~CallsGraph_edge73" class="edge">
+<title>proc~multilayer_build_vcoord_reference&#45;&gt;proc~ml_build_vcoord_zstar_full</title>
+<path fill="none" stroke="#2eff00" d="M1253.15,-1515C1261.76,-1515 1270.25,-1515 1278.48,-1515"/>
+<polygon fill="#2eff00" stroke="#2eff00" points="1278.74,-1518.5 1288.74,-1515 1278.74,-1511.5 1278.74,-1518.5"/>
+</g>
+<!-- proc~multilayer_init_layers&#45;&gt;proc~multilayer_build_vcoord_reference -->
+<g id="proc~~init_local_state~~CallsGraph_edge75" class="edge">
+<title>proc~multilayer_init_layers&#45;&gt;proc~multilayer_build_vcoord_reference</title>
+<path fill="none" stroke="#00ff00" d="M884.43,-1446.01C895.21,-1448.49 905.95,-1451.45 916,-1455 933.26,-1461.09 935.03,-1468.14 952,-1475 977.95,-1485.49 1007.54,-1494.07 1033.51,-1500.55"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="1032.73,-1503.97 1043.27,-1502.94 1034.39,-1497.17 1032.73,-1503.97"/>
+</g>
+<!-- proc~ml_init_layers_from_barotropic -->
+<g id="proc~~init_local_state~~CallsGraph_node61" class="node">
+<title>proc~ml_init_layers_from_barotropic</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node61"><a xlink:href="../proc/ml_init_layers_from_barotropic.html" xlink:title="ml_init_layers_from_barotropic">
+<polygon fill="#d9534f" stroke="#d9534f" points="1190,-1466 1015,-1466 1015,-1442 1190,-1442 1190,-1466"/>
+<text text-anchor="middle" x="1102.5" y="-1451.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">ml_init_layers_from_barotropic</text>
+</a>
+</g>
+</g>
+<!-- proc~multilayer_init_layers&#45;&gt;proc~ml_init_layers_from_barotropic -->
+<g id="proc~~init_local_state~~CallsGraph_edge74" class="edge">
+<title>proc~multilayer_init_layers&#45;&gt;proc~ml_init_layers_from_barotropic</title>
+<path fill="none" stroke="#00ff00" d="M909.13,-1441.45C940.48,-1443.49 974.16,-1445.69 1004.45,-1447.67"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="1004.38,-1451.17 1014.59,-1448.33 1004.83,-1444.18 1004.38,-1451.17"/>
+</g>
+<!-- proc~multilayer_register_passive_tracer&#45;&gt;error -->
+<g id="proc~~init_local_state~~CallsGraph_edge76" class="edge">
+<title>proc~multilayer_register_passive_tracer&#45;&gt;error</title>
+<path fill="none" stroke="#00ff2e" d="M636.24,-350C830.57,-355.39 1157.37,-374.81 1253,-444 1310.47,-485.58 1343.8,-566.89 1357.15,-605.98"/>
+<polygon fill="#00ff2e" stroke="#00ff2e" points="1353.94,-607.41 1360.39,-615.82 1360.58,-605.22 1353.94,-607.41"/>
+</g>
+<!-- proc~tracer_init -->
+<g id="proc~~init_local_state~~CallsGraph_node63" class="node">
+<title>proc~tracer_init</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node63"><a xlink:href="../proc/tracer_init.html" xlink:title="tracer_t%tracer_init">
+<polygon fill="#d9534f" stroke="#d9534f" points="853,-320 735,-320 735,-296 853,-296 853,-320"/>
+<text text-anchor="middle" x="794" y="-305.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">tracer_t%tracer_init</text>
+</a>
+</g>
+</g>
+<!-- proc~multilayer_register_passive_tracer&#45;&gt;proc~tracer_init -->
+<g id="proc~~init_local_state~~CallsGraph_edge77" class="edge">
+<title>proc~multilayer_register_passive_tracer&#45;&gt;proc~tracer_init</title>
+<path fill="none" stroke="#00ff2e" d="M579.16,-336C625.86,-329.88 681.68,-322.58 724.57,-316.96"/>
+<polygon fill="#00ff2e" stroke="#00ff2e" points="725.17,-320.41 734.63,-315.64 724.26,-313.47 725.17,-320.41"/>
+</g>
+<!-- proc~ml_seed_tracer -->
+<g id="proc~~init_local_state~~CallsGraph_node62" class="node">
+<title>proc~ml_seed_tracer</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node62"><a xlink:href="../proc/ml_seed_tracer.html" xlink:title="ml_seed_tracer">
+<polygon fill="#d9534f" stroke="#d9534f" points="1149.5,-1569 1055.5,-1569 1055.5,-1545 1149.5,-1545 1149.5,-1569"/>
+<text text-anchor="middle" x="1102.5" y="-1554.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">ml_seed_tracer</text>
+</a>
+</g>
+</g>
+<!-- proc~multilayer_seed_tracers&#45;&gt;proc~ml_seed_tracer -->
+<g id="proc~~init_local_state~~CallsGraph_edge78" class="edge">
+<title>proc~multilayer_seed_tracers&#45;&gt;proc~ml_seed_tracer</title>
+<path fill="none" stroke="#00ff5c" d="M916.14,-1557C960.61,-1557 1008.85,-1557 1044.98,-1557"/>
+<polygon fill="#00ff5c" stroke="#00ff5c" points="1045.3,-1560.5 1055.3,-1557 1045.3,-1553.5 1045.3,-1560.5"/>
+</g>
+<!-- proc~nc_check&#45;&gt;error -->
+<g id="proc~~init_local_state~~CallsGraph_edge79" class="edge">
+<title>proc~nc_check&#45;&gt;error</title>
+<path fill="none" stroke="#00ff8b" d="M1133.66,-752.96C1164.97,-752.8 1214.65,-749.23 1253,-731 1293.6,-711.7 1329.49,-672.23 1348.84,-648.14"/>
+<polygon fill="#00ff8b" stroke="#00ff8b" points="1351.79,-650.06 1355.2,-640.03 1346.28,-645.74 1351.79,-650.06"/>
+</g>
+<!-- nf90_strerror -->
+<g id="proc~~init_local_state~~CallsGraph_node53" class="node">
+<title>nf90_strerror</title>
+<polygon fill="#777777" stroke="#777777" points="1405.5,-764 1324.5,-764 1324.5,-740 1405.5,-740 1405.5,-764"/>
+<text text-anchor="middle" x="1365" y="-749.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nf90_strerror</text>
+</g>
+<!-- proc~nc_check&#45;&gt;nf90_strerror -->
+<g id="proc~~init_local_state~~CallsGraph_edge80" class="edge">
+<title>proc~nc_check&#45;&gt;nf90_strerror</title>
+<path fill="none" stroke="#00ff8b" d="M1133.64,-752C1177.83,-752 1260.76,-752 1314.12,-752"/>
+<polygon fill="#00ff8b" stroke="#00ff8b" points="1314.38,-755.5 1324.38,-752 1314.38,-748.5 1314.38,-755.5"/>
+</g>
+<!-- proc~nc_close&#45;&gt;proc~nc_check -->
+<g id="proc~~init_local_state~~CallsGraph_edge82" class="edge">
+<title>proc~nc_close&#45;&gt;proc~nc_check</title>
+<path fill="none" stroke="#00ffb9" d="M823.01,-715.66C877.61,-722.78 998.41,-738.55 1061.45,-746.77"/>
+<polygon fill="#00ffb9" stroke="#00ffb9" points="1061.05,-750.25 1071.42,-748.07 1061.95,-743.31 1061.05,-750.25"/>
+</g>
+<!-- nf90_close -->
+<g id="proc~~init_local_state~~CallsGraph_node48" class="node">
+<title>nf90_close</title>
+<polygon fill="#777777" stroke="#777777" points="1137.5,-722 1067.5,-722 1067.5,-698 1137.5,-698 1137.5,-722"/>
+<text text-anchor="middle" x="1102.5" y="-707.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nf90_close</text>
+</g>
+<!-- proc~nc_close&#45;&gt;nf90_close -->
+<g id="proc~~init_local_state~~CallsGraph_edge81" class="edge">
+<title>proc~nc_close&#45;&gt;nf90_close</title>
+<path fill="none" stroke="#00ffb9" d="M823.01,-711.82C876.35,-711.47 992.87,-710.71 1056.99,-710.29"/>
+<polygon fill="#00ffb9" stroke="#00ffb9" points="1057.22,-713.79 1067.19,-710.22 1057.17,-706.79 1057.22,-713.79"/>
+</g>
+<!-- proc~nc_get_dim_len&#45;&gt;proc~nc_check -->
+<g id="proc~~init_local_state~~CallsGraph_edge85" class="edge">
+<title>proc~nc_get_dim_len&#45;&gt;proc~nc_check</title>
+<path fill="none" stroke="#00ffe7" d="M841.71,-546.58C866.88,-548.34 896.65,-554.91 916,-574 966.97,-624.27 899.25,-682.6 952,-731 981.01,-757.62 1027.46,-760.23 1060.89,-757.84"/>
+<polygon fill="#00ffe7" stroke="#00ffe7" points="1061.6,-761.29 1071.25,-756.91 1060.98,-754.32 1061.6,-761.29"/>
+</g>
+<!-- nf90_inq_dimid -->
+<g id="proc~~init_local_state~~CallsGraph_node49" class="node">
+<title>nf90_inq_dimid</title>
+<polygon fill="#777777" stroke="#777777" points="1149.5,-560 1055.5,-560 1055.5,-536 1149.5,-536 1149.5,-560"/>
+<text text-anchor="middle" x="1102.5" y="-545.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nf90_inq_dimid</text>
+</g>
+<!-- proc~nc_get_dim_len&#45;&gt;nf90_inq_dimid -->
+<g id="proc~~init_local_state~~CallsGraph_edge83" class="edge">
+<title>proc~nc_get_dim_len&#45;&gt;nf90_inq_dimid</title>
+<path fill="none" stroke="#00ffe7" d="M841.55,-548C896.13,-548 986.56,-548 1045.08,-548"/>
+<polygon fill="#00ffe7" stroke="#00ffe7" points="1045.27,-551.5 1055.27,-548 1045.27,-544.5 1045.27,-551.5"/>
+</g>
+<!-- proc~nc_get_dim_len&#45;&gt;nf90_inquire_dimension -->
+<g id="proc~~init_local_state~~CallsGraph_edge84" class="edge">
+<title>proc~nc_get_dim_len&#45;&gt;nf90_inquire_dimension</title>
+<path fill="none" stroke="#00ffe7" d="M841.62,-540.36C864.13,-536.56 891.51,-531.76 916,-527 956.94,-519.04 1002.75,-509.17 1038.61,-501.22"/>
+<polygon fill="#00ffe7" stroke="#00ffe7" points="1039.44,-504.62 1048.44,-499.04 1037.92,-497.79 1039.44,-504.62"/>
+</g>
+<!-- proc~nc_get_var_2d&#45;&gt;nf90_get_var -->
+<g id="proc~~init_local_state~~CallsGraph_edge86" class="edge">
+<title>proc~nc_get_var_2d&#45;&gt;nf90_get_var</title>
+<path fill="none" stroke="#00e7ff" d="M838.56,-792.45C862.73,-794.38 892.55,-799.67 916,-813 937.37,-825.15 931.11,-842.03 952,-855 982.05,-873.65 1020.88,-883.17 1051.44,-888.02"/>
+<polygon fill="#00e7ff" stroke="#00e7ff" points="1051.06,-891.5 1061.46,-889.49 1052.08,-884.58 1051.06,-891.5"/>
+</g>
+<!-- proc~nc_get_var_2d&#45;&gt;proc~nc_check -->
+<g id="proc~~init_local_state~~CallsGraph_edge87" class="edge">
+<title>proc~nc_get_var_2d&#45;&gt;proc~nc_check</title>
+<path fill="none" stroke="#00e7ff" d="M838.59,-786.31C898.02,-778.55 1003.67,-764.77 1061.29,-757.25"/>
+<polygon fill="#00e7ff" stroke="#00e7ff" points="1062.01,-760.68 1071.47,-755.92 1061.1,-753.74 1062.01,-760.68"/>
+</g>
+<!-- proc~nc_get_varid&#45;&gt;nf90_inq_varid -->
+<g id="proc~~init_local_state~~CallsGraph_edge88" class="edge">
+<title>proc~nc_get_varid&#45;&gt;nf90_inq_varid</title>
+<path fill="none" stroke="#00b9ff" d="M834.13,-834C888.06,-834 985.49,-834 1046.66,-834"/>
+<polygon fill="#00b9ff" stroke="#00b9ff" points="1046.9,-837.5 1056.9,-834 1046.9,-830.5 1046.9,-837.5"/>
+</g>
+<!-- proc~nc_get_varid&#45;&gt;proc~nc_check -->
+<g id="proc~~init_local_state~~CallsGraph_edge89" class="edge">
+<title>proc~nc_get_varid&#45;&gt;proc~nc_check</title>
+<path fill="none" stroke="#00b9ff" d="M834.27,-828.67C858.09,-825.07 889.01,-819.74 916,-813 967.18,-800.22 1024.67,-780.44 1061.9,-766.89"/>
+<polygon fill="#00b9ff" stroke="#00b9ff" points="1063.19,-770.15 1071.37,-763.42 1060.78,-763.57 1063.19,-770.15"/>
+</g>
+<!-- proc~nc_open_read&#45;&gt;proc~nc_check -->
+<g id="proc~~init_local_state~~CallsGraph_edge91" class="edge">
+<title>proc~nc_open_read&#45;&gt;proc~nc_check</title>
+<path fill="none" stroke="#008bff" d="M837.59,-670.6C861.86,-672.55 892.11,-677.8 916,-691 936.93,-702.57 930.88,-719.77 952,-731 985.78,-748.97 1029.66,-753.27 1061.12,-753.65"/>
+<polygon fill="#008bff" stroke="#008bff" points="1061.29,-757.15 1071.29,-753.65 1061.29,-750.15 1061.29,-757.15"/>
+</g>
+<!-- nf90_open -->
+<g id="proc~~init_local_state~~CallsGraph_node52" class="node">
+<title>nf90_open</title>
+<polygon fill="#777777" stroke="#777777" points="1137,-680 1068,-680 1068,-656 1137,-656 1137,-680"/>
+<text text-anchor="middle" x="1102.5" y="-665.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nf90_open</text>
+</g>
+<!-- proc~nc_open_read&#45;&gt;nf90_open -->
+<g id="proc~~init_local_state~~CallsGraph_edge90" class="edge">
+<title>proc~nc_open_read&#45;&gt;nf90_open</title>
+<path fill="none" stroke="#008bff" d="M837.62,-669.72C895.65,-669.34 999.01,-668.67 1057.67,-668.29"/>
+<polygon fill="#008bff" stroke="#008bff" points="1057.75,-671.79 1067.73,-668.22 1057.71,-664.79 1057.75,-671.79"/>
+</g>
+<!-- proc~print_banner&#45;&gt;info -->
+<g id="proc~~init_local_state~~CallsGraph_edge93" class="edge">
+<title>proc~print_banner&#45;&gt;info</title>
+<path fill="none" stroke="#8b00ff" d="M527.13,-1117.45C586.86,-1125.66 699.09,-1141.09 756.76,-1149.02"/>
+<polygon fill="#8b00ff" stroke="#8b00ff" points="756.49,-1152.51 766.87,-1150.41 757.44,-1145.58 756.49,-1152.51"/>
+</g>
+<!-- get_knowledge -->
+<g id="proc~~init_local_state~~CallsGraph_node46" class="node">
+<title>get_knowledge</title>
+<polygon fill="#777777" stroke="#777777" points="840.5,-1124 747.5,-1124 747.5,-1100 840.5,-1100 840.5,-1124"/>
+<text text-anchor="middle" x="794" y="-1109.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">get_knowledge</text>
+</g>
+<!-- proc~print_banner&#45;&gt;get_knowledge -->
+<g id="proc~~init_local_state~~CallsGraph_edge92" class="edge">
+<title>proc~print_banner&#45;&gt;get_knowledge</title>
+<path fill="none" stroke="#8b00ff" d="M527.13,-1112C580.69,-1112 676.49,-1112 737.29,-1112"/>
+<polygon fill="#8b00ff" stroke="#8b00ff" points="737.47,-1115.5 747.47,-1112 737.47,-1108.5 737.47,-1115.5"/>
+</g>
+<!-- proc~ml_compute_reference_density -->
+<g id="proc~~init_local_state~~CallsGraph_node58" class="node">
+<title>proc~ml_compute_reference_density</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node58"><a xlink:href="../proc/ml_compute_reference_density.html" xlink:title="ml_compute_reference_density">
+<polygon fill="#d9534f" stroke="#d9534f" points="1191.5,-1424 1013.5,-1424 1013.5,-1400 1191.5,-1400 1191.5,-1424"/>
+<text text-anchor="middle" x="1102.5" y="-1409.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">ml_compute_reference_density</text>
+</a>
+</g>
+</g>
+<!-- proc~refresh_multilayer_derived&#45;&gt;proc~ml_compute_reference_density -->
+<g id="proc~~init_local_state~~CallsGraph_edge94" class="edge">
+<title>proc~refresh_multilayer_derived&#45;&gt;proc~ml_compute_reference_density</title>
+<path fill="none" stroke="#b900ff" d="M871.16,-1396.97C911.04,-1399.57 960.35,-1402.79 1003.09,-1405.58"/>
+<polygon fill="#b900ff" stroke="#b900ff" points="1003.03,-1409.08 1013.24,-1406.24 1003.49,-1402.1 1003.03,-1409.08"/>
+</g>
+<!-- proc~ml_equation_of_state -->
+<g id="proc~~init_local_state~~CallsGraph_node59" class="node">
+<title>proc~ml_equation_of_state</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node59"><a xlink:href="../proc/ml_equation_of_state.html" xlink:title="ml_equation_of_state">
+<polygon fill="#d9534f" stroke="#d9534f" points="1165.5,-1186 1039.5,-1186 1039.5,-1162 1165.5,-1162 1165.5,-1186"/>
+<text text-anchor="middle" x="1102.5" y="-1171.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">ml_equation_of_state</text>
+</a>
+</g>
+</g>
+<!-- proc~refresh_multilayer_derived&#45;&gt;proc~ml_equation_of_state -->
+<g id="proc~~init_local_state~~CallsGraph_edge95" class="edge">
+<title>proc~refresh_multilayer_derived&#45;&gt;proc~ml_equation_of_state</title>
+<path fill="none" stroke="#b900ff" d="M835.67,-1379.95C861.38,-1370.62 893.82,-1355.44 916,-1333 942.28,-1306.42 926.44,-1284.27 952,-1257 981.29,-1225.76 1025.04,-1203.37 1057.66,-1189.78"/>
+<polygon fill="#b900ff" stroke="#b900ff" points="1059.01,-1193.01 1066.97,-1186.01 1056.38,-1186.52 1059.01,-1193.01"/>
+</g>
+<!-- proc~ml_equation_of_state_shared -->
+<g id="proc~~init_local_state~~CallsGraph_node60" class="node">
+<title>proc~ml_equation_of_state_shared</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node60"><a xlink:href="../proc/ml_equation_of_state_shared.html" xlink:title="ml_equation_of_state_shared">
+<polygon fill="#d9534f" stroke="#d9534f" points="1186,-1382 1019,-1382 1019,-1358 1186,-1358 1186,-1382"/>
+<text text-anchor="middle" x="1102.5" y="-1367.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">ml_equation_of_state_shared</text>
+</a>
+</g>
+</g>
+<!-- proc~refresh_multilayer_derived&#45;&gt;proc~ml_equation_of_state_shared -->
+<g id="proc~~init_local_state~~CallsGraph_edge96" class="edge">
+<title>proc~refresh_multilayer_derived&#45;&gt;proc~ml_equation_of_state_shared</title>
+<path fill="none" stroke="#b900ff" d="M871.16,-1386.53C912.77,-1383.55 964.64,-1379.82 1008.61,-1376.67"/>
+<polygon fill="#b900ff" stroke="#b900ff" points="1009.02,-1380.15 1018.74,-1375.94 1008.51,-1373.17 1009.02,-1380.15"/>
+</g>
+<!-- interface~arr_bytes -->
+<g id="proc~~init_local_state~~CallsGraph_node47" class="node">
+<title>interface~arr_bytes</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node47"><a xlink:href="../interface/arr_bytes.html" xlink:title="arr_bytes">
+<polygon fill="#a7506f" stroke="#a7506f" points="1133.5,-1290 1071.5,-1290 1071.5,-1266 1133.5,-1266 1133.5,-1290"/>
+<text text-anchor="middle" x="1102.5" y="-1275.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">arr_bytes</text>
+</a>
+</g>
+</g>
+<!-- proc~state_bytes&#45;&gt;interface~arr_bytes -->
+<g id="proc~~init_local_state~~CallsGraph_edge97" class="edge">
+<title>proc~state_bytes&#45;&gt;interface~arr_bytes</title>
+<path fill="none" stroke="#ff00e7" d="M545.84,-1353.89C628.74,-1355.56 785.1,-1354.97 916,-1333 967.39,-1324.38 1024.62,-1306.01 1061.74,-1292.87"/>
+<polygon fill="#ff00e7" stroke="#ff00e7" points="1062.95,-1296.15 1071.19,-1289.48 1060.59,-1289.56 1062.95,-1296.15"/>
+</g>
+<!-- proc~barotropic_state_bytes -->
+<g id="proc~~init_local_state~~CallsGraph_node54" class="node">
+<title>proc~barotropic_state_bytes</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node54"><a xlink:href="../proc/barotropic_state_bytes.html" xlink:title="barotropic_state_t%barotropic_state_bytes">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="912,-1324 676,-1324 676,-1300 912,-1300 912,-1324"/>
+<text text-anchor="middle" x="794" y="-1309.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">barotropic_state_t%barotropic_state_bytes</text>
+</a>
+</g>
+</g>
+<!-- proc~state_bytes&#45;&gt;proc~barotropic_state_bytes -->
+<g id="proc~~init_local_state~~CallsGraph_edge98" class="edge">
+<title>proc~state_bytes&#45;&gt;proc~barotropic_state_bytes</title>
+<path fill="none" stroke="#ff00e7" d="M545.68,-1344.38C586.65,-1339.02 642.59,-1331.69 690.9,-1325.37"/>
+<polygon fill="#ff00e7" stroke="#ff00e7" points="691.63,-1328.8 701.09,-1324.03 690.72,-1321.86 691.63,-1328.8"/>
+</g>
+<!-- proc~grid_init -->
+<g id="proc~~init_local_state~~CallsGraph_node55" class="node">
+<title>proc~grid_init</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node55"><a xlink:href="../proc/grid_init.html" xlink:title="hgrid_t%grid_init">
+<polygon fill="#d9534f" stroke="#d9534f" points="845,-24 743,-24 743,0 845,0 845,-24"/>
+<text text-anchor="middle" x="794" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">hgrid_t%grid_init</text>
+</a>
+</g>
+</g>
+<!-- proc~state_init&#45;&gt;proc~grid_init -->
+<g id="proc~~init_local_state~~CallsGraph_edge99" class="edge">
+<title>proc~state_init&#45;&gt;proc~grid_init</title>
+<path fill="none" stroke="#ff00b9" d="M539.67,-12C593.17,-12 676.32,-12 732.63,-12"/>
+<polygon fill="#ff00b9" stroke="#ff00b9" points="732.82,-15.5 742.82,-12 732.82,-8.5 732.82,-15.5"/>
+</g>
+<!-- proc~arr_bytes_i1 -->
+<g id="proc~~init_local_state~~CallsGraph_node65" class="node">
+<title>proc~arr_bytes_i1</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node65"><a xlink:href="../proc/arr_bytes_i1.html" xlink:title="arr_bytes_i1">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1403.5,-1143 1326.5,-1143 1326.5,-1119 1403.5,-1119 1403.5,-1143"/>
+<text text-anchor="middle" x="1365" y="-1128.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">arr_bytes_i1</text>
+</a>
+</g>
+</g>
+<!-- interface~arr_bytes&#45;&gt;proc~arr_bytes_i1 -->
+<g id="proc~~init_local_state~~CallsGraph_edge100" class="edge">
+<title>interface~arr_bytes&#45;&gt;proc~arr_bytes_i1</title>
+<path fill="none" stroke="#ff5000" stroke-dasharray="5,2" d="M1132.14,-1265.94C1163.73,-1251.81 1215.12,-1226.29 1253,-1195 1272.22,-1179.13 1268.06,-1165.52 1289,-1152 1297.26,-1146.66 1306.88,-1142.67 1316.42,-1139.67"/>
+<polygon fill="#ff5000" stroke="#ff5000" points="1317.6,-1142.98 1326.28,-1136.91 1315.71,-1136.24 1317.6,-1142.98"/>
+</g>
+<!-- proc~arr_bytes_i2 -->
+<g id="proc~~init_local_state~~CallsGraph_node66" class="node">
+<title>proc~arr_bytes_i2</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node66"><a xlink:href="../proc/arr_bytes_i2.html" xlink:title="arr_bytes_i2">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1403.5,-1101 1326.5,-1101 1326.5,-1077 1403.5,-1077 1403.5,-1101"/>
+<text text-anchor="middle" x="1365" y="-1086.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">arr_bytes_i2</text>
+</a>
+</g>
+</g>
+<!-- interface~arr_bytes&#45;&gt;proc~arr_bytes_i2 -->
+<g id="proc~~init_local_state~~CallsGraph_edge101" class="edge">
+<title>interface~arr_bytes&#45;&gt;proc~arr_bytes_i2</title>
+<path fill="none" stroke="#ff5000" stroke-dasharray="5,2" d="M1133.72,-1268.03C1166.97,-1255.67 1220.05,-1231.65 1253,-1195 1280.43,-1164.49 1258.2,-1137.1 1289,-1110 1296.77,-1103.17 1306.59,-1098.54 1316.54,-1095.42"/>
+<polygon fill="#ff5000" stroke="#ff5000" points="1317.71,-1098.73 1326.47,-1092.76 1315.91,-1091.96 1317.71,-1098.73"/>
+</g>
+<!-- proc~arr_bytes_i3 -->
+<g id="proc~~init_local_state~~CallsGraph_node67" class="node">
+<title>proc~arr_bytes_i3</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node67"><a xlink:href="../proc/arr_bytes_i3.html" xlink:title="arr_bytes_i3">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1403.5,-1059 1326.5,-1059 1326.5,-1035 1403.5,-1035 1403.5,-1059"/>
+<text text-anchor="middle" x="1365" y="-1044.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">arr_bytes_i3</text>
+</a>
+</g>
+</g>
+<!-- interface~arr_bytes&#45;&gt;proc~arr_bytes_i3 -->
+<g id="proc~~init_local_state~~CallsGraph_edge102" class="edge">
+<title>interface~arr_bytes&#45;&gt;proc~arr_bytes_i3</title>
+<path fill="none" stroke="#ff5000" stroke-dasharray="5,2" d="M1133.67,-1269.07C1167.65,-1257.48 1222.12,-1233.97 1253,-1195 1289.44,-1149.02 1247.45,-1109.42 1289,-1068 1296.47,-1060.55 1306.36,-1055.69 1316.5,-1052.53"/>
+<polygon fill="#ff5000" stroke="#ff5000" points="1317.43,-1055.91 1326.22,-1050 1315.66,-1049.13 1317.43,-1055.91"/>
+</g>
+<!-- proc~arr_bytes_l1 -->
+<g id="proc~~init_local_state~~CallsGraph_node68" class="node">
+<title>proc~arr_bytes_l1</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node68"><a xlink:href="../proc/arr_bytes_l1.html" xlink:title="arr_bytes_l1">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1403.5,-1437 1326.5,-1437 1326.5,-1413 1403.5,-1413 1403.5,-1437"/>
+<text text-anchor="middle" x="1365" y="-1422.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">arr_bytes_l1</text>
+</a>
+</g>
+</g>
+<!-- interface~arr_bytes&#45;&gt;proc~arr_bytes_l1 -->
+<g id="proc~~init_local_state~~CallsGraph_edge103" class="edge">
+<title>interface~arr_bytes&#45;&gt;proc~arr_bytes_l1</title>
+<path fill="none" stroke="#ff5000" stroke-dasharray="5,2" d="M1133.79,-1286.92C1166.12,-1297.6 1217.49,-1318.02 1253,-1349 1275.02,-1368.2 1265.43,-1386.74 1289,-1404 1297.1,-1409.93 1306.81,-1414.19 1316.52,-1417.25"/>
+<polygon fill="#ff5000" stroke="#ff5000" points="1315.59,-1420.62 1326.16,-1419.92 1317.46,-1413.87 1315.59,-1420.62"/>
+</g>
+<!-- proc~arr_bytes_l2 -->
+<g id="proc~~init_local_state~~CallsGraph_node69" class="node">
+<title>proc~arr_bytes_l2</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node69"><a xlink:href="../proc/arr_bytes_l2.html" xlink:title="arr_bytes_l2">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1403.5,-1395 1326.5,-1395 1326.5,-1371 1403.5,-1371 1403.5,-1395"/>
+<text text-anchor="middle" x="1365" y="-1380.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">arr_bytes_l2</text>
+</a>
+</g>
+</g>
+<!-- interface~arr_bytes&#45;&gt;proc~arr_bytes_l2 -->
+<g id="proc~~init_local_state~~CallsGraph_edge104" class="edge">
+<title>interface~arr_bytes&#45;&gt;proc~arr_bytes_l2</title>
+<path fill="none" stroke="#ff5000" stroke-dasharray="5,2" d="M1127.03,-1290.06C1161.79,-1307.55 1229.2,-1340.23 1289,-1362 1297.77,-1365.19 1307.27,-1368.19 1316.45,-1370.87"/>
+<polygon fill="#ff5000" stroke="#ff5000" points="1315.68,-1374.29 1326.26,-1373.64 1317.59,-1367.55 1315.68,-1374.29"/>
+</g>
+<!-- proc~arr_bytes_l3 -->
+<g id="proc~~init_local_state~~CallsGraph_node70" class="node">
+<title>proc~arr_bytes_l3</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node70"><a xlink:href="../proc/arr_bytes_l3.html" xlink:title="arr_bytes_l3">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1403.5,-1353 1326.5,-1353 1326.5,-1329 1403.5,-1329 1403.5,-1353"/>
+<text text-anchor="middle" x="1365" y="-1338.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">arr_bytes_l3</text>
+</a>
+</g>
+</g>
+<!-- interface~arr_bytes&#45;&gt;proc~arr_bytes_l3 -->
+<g id="proc~~init_local_state~~CallsGraph_edge105" class="edge">
+<title>interface~arr_bytes&#45;&gt;proc~arr_bytes_l3</title>
+<path fill="none" stroke="#ff5000" stroke-dasharray="5,2" d="M1133.64,-1285.29C1178.43,-1296.12 1263,-1316.57 1316.26,-1329.46"/>
+<polygon fill="#ff5000" stroke="#ff5000" points="1315.61,-1332.9 1326.15,-1331.85 1317.26,-1326.09 1315.61,-1332.9"/>
+</g>
+<!-- proc~arr_bytes_r1 -->
+<g id="proc~~init_local_state~~CallsGraph_node71" class="node">
+<title>proc~arr_bytes_r1</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node71"><a xlink:href="../proc/arr_bytes_r1.html" xlink:title="arr_bytes_r1">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1404.5,-1311 1325.5,-1311 1325.5,-1287 1404.5,-1287 1404.5,-1311"/>
+<text text-anchor="middle" x="1365" y="-1296.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">arr_bytes_r1</text>
+</a>
+</g>
+</g>
+<!-- interface~arr_bytes&#45;&gt;proc~arr_bytes_r1 -->
+<g id="proc~~init_local_state~~CallsGraph_edge106" class="edge">
+<title>interface~arr_bytes&#45;&gt;proc~arr_bytes_r1</title>
+<path fill="none" stroke="#ff5000" stroke-dasharray="5,2" d="M1133.64,-1280.43C1178.08,-1284.01 1261.7,-1290.75 1315.03,-1295.05"/>
+<polygon fill="#ff5000" stroke="#ff5000" points="1315.02,-1298.56 1325.27,-1295.88 1315.59,-1291.59 1315.02,-1298.56"/>
+</g>
+<!-- proc~arr_bytes_r2 -->
+<g id="proc~~init_local_state~~CallsGraph_node72" class="node">
+<title>proc~arr_bytes_r2</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node72"><a xlink:href="../proc/arr_bytes_r2.html" xlink:title="arr_bytes_r2">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1404.5,-1269 1325.5,-1269 1325.5,-1245 1404.5,-1245 1404.5,-1269"/>
+<text text-anchor="middle" x="1365" y="-1254.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">arr_bytes_r2</text>
+</a>
+</g>
+</g>
+<!-- interface~arr_bytes&#45;&gt;proc~arr_bytes_r2 -->
+<g id="proc~~init_local_state~~CallsGraph_edge107" class="edge">
+<title>interface~arr_bytes&#45;&gt;proc~arr_bytes_r2</title>
+<path fill="none" stroke="#ff5000" stroke-dasharray="5,2" d="M1133.64,-1275.57C1178.08,-1271.99 1261.7,-1265.25 1315.03,-1260.95"/>
+<polygon fill="#ff5000" stroke="#ff5000" points="1315.59,-1264.41 1325.27,-1260.12 1315.02,-1257.44 1315.59,-1264.41"/>
+</g>
+<!-- proc~arr_bytes_r3 -->
+<g id="proc~~init_local_state~~CallsGraph_node73" class="node">
+<title>proc~arr_bytes_r3</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node73"><a xlink:href="../proc/arr_bytes_r3.html" xlink:title="arr_bytes_r3">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1404.5,-1227 1325.5,-1227 1325.5,-1203 1404.5,-1203 1404.5,-1227"/>
+<text text-anchor="middle" x="1365" y="-1212.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">arr_bytes_r3</text>
+</a>
+</g>
+</g>
+<!-- interface~arr_bytes&#45;&gt;proc~arr_bytes_r3 -->
+<g id="proc~~init_local_state~~CallsGraph_edge108" class="edge">
+<title>interface~arr_bytes&#45;&gt;proc~arr_bytes_r3</title>
+<path fill="none" stroke="#ff5000" stroke-dasharray="5,2" d="M1133.64,-1270.71C1178.18,-1259.94 1262.05,-1239.66 1315.36,-1226.76"/>
+<polygon fill="#ff5000" stroke="#ff5000" points="1316.37,-1230.12 1325.27,-1224.37 1314.73,-1223.31 1316.37,-1230.12"/>
+</g>
+<!-- proc~arr_bytes_r4 -->
+<g id="proc~~init_local_state~~CallsGraph_node74" class="node">
+<title>proc~arr_bytes_r4</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node74"><a xlink:href="../proc/arr_bytes_r4.html" xlink:title="arr_bytes_r4">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1404.5,-1185 1325.5,-1185 1325.5,-1161 1404.5,-1161 1404.5,-1185"/>
+<text text-anchor="middle" x="1365" y="-1170.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">arr_bytes_r4</text>
+</a>
+</g>
+</g>
+<!-- interface~arr_bytes&#45;&gt;proc~arr_bytes_r4 -->
+<g id="proc~~init_local_state~~CallsGraph_edge109" class="edge">
+<title>interface~arr_bytes&#45;&gt;proc~arr_bytes_r4</title>
+<path fill="none" stroke="#ff5000" stroke-dasharray="5,2" d="M1127.03,-1265.94C1161.79,-1248.45 1229.2,-1215.77 1289,-1194 1297.58,-1190.88 1306.86,-1187.94 1315.87,-1185.3"/>
+<polygon fill="#ff5000" stroke="#ff5000" points="1316.82,-1188.67 1325.49,-1182.57 1314.91,-1181.94 1316.82,-1188.67"/>
+</g>
+<!-- proc~barotropic_state_bytes&#45;&gt;interface~arr_bytes -->
+<g id="proc~~init_local_state~~CallsGraph_edge110" class="edge">
+<title>proc~barotropic_state_bytes&#45;&gt;interface~arr_bytes</title>
+<path fill="none" stroke="#00ff86" d="M903.49,-1299.97C958.19,-1293.9 1021.22,-1286.91 1061.2,-1282.47"/>
+<polygon fill="#00ff86" stroke="#00ff86" points="1061.79,-1285.93 1071.34,-1281.35 1061.02,-1278.97 1061.79,-1285.93"/>
+</g>
+<!-- proc~two_dp -->
+<g id="proc~~init_local_state~~CallsGraph_node78" class="node">
+<title>proc~two_dp</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node78"><a xlink:href="../proc/two_dp.html" xlink:title="two_dp">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1129.5,-1082 1075.5,-1082 1075.5,-1058 1129.5,-1058 1129.5,-1082"/>
+<text text-anchor="middle" x="1102.5" y="-1067.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">two_dp</text>
+</a>
+</g>
+</g>
+<!-- proc~mem_format_bytes&#45;&gt;proc~two_dp -->
+<g id="proc~~init_local_state~~CallsGraph_edge111" class="edge">
+<title>proc~mem_format_bytes&#45;&gt;proc~two_dp</title>
+<path fill="none" stroke="#00d6ff" d="M851.57,-1070C913.88,-1070 1012.21,-1070 1065.04,-1070"/>
+<polygon fill="#00d6ff" stroke="#00d6ff" points="1065.29,-1073.5 1075.29,-1070 1065.29,-1066.5 1065.29,-1073.5"/>
+</g>
+<!-- proc~zstar_full_build_column -->
+<g id="proc~~init_local_state~~CallsGraph_node79" class="node">
+<title>proc~zstar_full_build_column</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node79"><a xlink:href="../proc/zstar_full_build_column.html" xlink:title="zstar_full_build_column">
+<polygon fill="#d9534f" stroke="#d9534f" points="1613,-1545 1477,-1545 1477,-1521 1613,-1521 1613,-1545"/>
+<text text-anchor="middle" x="1545" y="-1530.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">zstar_full_build_column</text>
+</a>
+</g>
+</g>
+<!-- proc~ml_build_vcoord_zstar_full&#45;&gt;proc~zstar_full_build_column -->
+<g id="proc~~init_local_state~~CallsGraph_edge112" class="edge">
+<title>proc~ml_build_vcoord_zstar_full&#45;&gt;proc~zstar_full_build_column</title>
+<path fill="none" stroke="#0086ff" d="M1441.23,-1522.61C1449.66,-1523.46 1458.26,-1524.33 1466.72,-1525.19"/>
+<polygon fill="#0086ff" stroke="#0086ff" points="1466.64,-1528.7 1476.94,-1526.22 1467.35,-1521.73 1466.64,-1528.7"/>
+</g>
+<!-- proc~ml_equation_of_state&#45;&gt;local -->
+<g id="proc~~init_local_state~~CallsGraph_edge113" class="edge">
+<title>proc~ml_equation_of_state&#45;&gt;local</title>
+<path fill="none" stroke="#1a00ff" d="M1136.64,-1161.91C1169.42,-1148.62 1219.43,-1124.6 1253,-1091 1276.34,-1067.64 1264.48,-1048.12 1289,-1026 1300.08,-1016 1314.75,-1008.81 1328.18,-1003.81"/>
+<polygon fill="#1a00ff" stroke="#1a00ff" points="1329.35,-1007.11 1337.67,-1000.55 1327.07,-1000.49 1329.35,-1007.11"/>
+</g>
+<!-- proc~eos_compute_arrays -->
+<g id="proc~~init_local_state~~CallsGraph_node75" class="node">
+<title>proc~eos_compute_arrays</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node75"><a xlink:href="../proc/eos_compute_arrays.html" xlink:title="eos_compute_arrays">
+<polygon fill="#d9534f" stroke="#d9534f" points="1426.5,-1479 1303.5,-1479 1303.5,-1455 1426.5,-1455 1426.5,-1479"/>
+<text text-anchor="middle" x="1365" y="-1464.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">eos_compute_arrays</text>
+</a>
+</g>
+</g>
+<!-- proc~ml_equation_of_state_shared&#45;&gt;proc~eos_compute_arrays -->
+<g id="proc~~init_local_state~~CallsGraph_edge114" class="edge">
+<title>proc~ml_equation_of_state_shared&#45;&gt;proc~eos_compute_arrays</title>
+<path fill="none" stroke="#6b00ff" d="M1186.21,-1369.2C1209.23,-1372.16 1233.3,-1378.5 1253,-1391 1277.67,-1406.65 1265.43,-1428.74 1289,-1446 1291.1,-1447.54 1293.31,-1448.96 1295.6,-1450.28"/>
+<polygon fill="#6b00ff" stroke="#6b00ff" points="1294.25,-1453.53 1304.76,-1454.88 1297.39,-1447.27 1294.25,-1453.53"/>
+</g>
+<!-- proc~ml_init_tracer -->
+<g id="proc~~init_local_state~~CallsGraph_node76" class="node">
+<title>proc~ml_init_tracer</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node76"><a xlink:href="../proc/ml_init_tracer.html" xlink:title="ml_init_tracer">
+<polygon fill="#d9534f" stroke="#d9534f" points="1407.5,-1569 1322.5,-1569 1322.5,-1545 1407.5,-1545 1407.5,-1569"/>
+<text text-anchor="middle" x="1365" y="-1554.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">ml_init_tracer</text>
+</a>
+</g>
+</g>
+<!-- proc~ml_seed_tracer&#45;&gt;proc~ml_init_tracer -->
+<g id="proc~~init_local_state~~CallsGraph_edge115" class="edge">
+<title>proc~ml_seed_tracer&#45;&gt;proc~ml_init_tracer</title>
+<path fill="none" stroke="#ff00f1" d="M1149.77,-1557C1195.4,-1557 1265.01,-1557 1312.4,-1557"/>
+<polygon fill="#ff00f1" stroke="#ff00f1" points="1312.45,-1560.5 1322.45,-1557 1312.45,-1553.5 1312.45,-1560.5"/>
+</g>
+<!-- proc~ml_init_tracer_stratified -->
+<g id="proc~~init_local_state~~CallsGraph_node77" class="node">
+<title>proc~ml_init_tracer_stratified</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node77"><a xlink:href="../proc/ml_init_tracer_stratified.html" xlink:title="ml_init_tracer_stratified">
+<polygon fill="#d9534f" stroke="#d9534f" points="1434,-1611 1296,-1611 1296,-1587 1434,-1587 1434,-1611"/>
+<text text-anchor="middle" x="1365" y="-1596.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">ml_init_tracer_stratified</text>
+</a>
+</g>
+</g>
+<!-- proc~ml_seed_tracer&#45;&gt;proc~ml_init_tracer_stratified -->
+<g id="proc~~init_local_state~~CallsGraph_edge116" class="edge">
+<title>proc~ml_seed_tracer&#45;&gt;proc~ml_init_tracer_stratified</title>
+<path fill="none" stroke="#ff00f1" d="M1149.77,-1564.46C1187.42,-1570.53 1241.4,-1579.23 1285.75,-1586.38"/>
+<polygon fill="#ff00f1" stroke="#ff00f1" points="1285.2,-1589.84 1295.63,-1587.98 1286.32,-1582.93 1285.2,-1589.84"/>
+</g>
+<!-- proc~try_get_bathymetry_var&#45;&gt;error -->
+<g id="proc~~init_local_state~~CallsGraph_edge117" class="edge">
+<title>proc~try_get_bathymetry_var&#45;&gt;error</title>
+<path fill="none" stroke="#ff0050" d="M863.63,-628C985.31,-628 1234.76,-628 1327.88,-628"/>
+<polygon fill="#ff0050" stroke="#ff0050" points="1327.94,-631.5 1337.94,-628 1327.94,-624.5 1327.94,-631.5"/>
+</g>
+<!-- proc~try_get_bathymetry_var&#45;&gt;nf90_inq_varid -->
+<g id="proc~~init_local_state~~CallsGraph_edge118" class="edge">
+<title>proc~try_get_bathymetry_var&#45;&gt;nf90_inq_varid</title>
+<path fill="none" stroke="#ff0050" d="M863.61,-626.9C882.5,-629.81 901.7,-636.2 916,-649 958.76,-687.27 913.6,-730.35 952,-773 976.54,-800.26 1015.05,-815.59 1046.83,-824.06"/>
+<polygon fill="#ff0050" stroke="#ff0050" points="1046.34,-827.55 1056.89,-826.58 1048.04,-820.76 1046.34,-827.55"/>
+</g>
+<!-- proc~eos_linear_impl -->
+<g id="proc~~init_local_state~~CallsGraph_node80" class="node">
+<title>proc~eos_linear_impl</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node80"><a xlink:href="../proc/eos_linear_impl.html" xlink:title="eos_linear_impl">
+<polygon fill="#d9534f" stroke="#d9534f" points="1593,-1461 1497,-1461 1497,-1437 1593,-1437 1593,-1461"/>
+<text text-anchor="middle" x="1545" y="-1446.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">eos_linear_impl</text>
+</a>
+</g>
+</g>
+<!-- proc~eos_compute_arrays&#45;&gt;proc~eos_linear_impl -->
+<g id="proc~~init_local_state~~CallsGraph_edge119" class="edge">
+<title>proc~eos_compute_arrays&#45;&gt;proc~eos_linear_impl</title>
+<path fill="none" stroke="#0000ff" d="M1426.76,-1460.86C1446.22,-1458.89 1467.7,-1456.72 1486.89,-1454.77"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="1487.4,-1458.24 1497,-1453.75 1486.69,-1451.28 1487.4,-1458.24"/>
+</g>
+<!-- proc~eos_roquet_spv_impl -->
+<g id="proc~~init_local_state~~CallsGraph_node81" class="node">
+<title>proc~eos_roquet_spv_impl</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node81"><a xlink:href="../proc/eos_roquet_spv_impl.html" xlink:title="eos_roquet_spv_impl">
+<polygon fill="#d9534f" stroke="#d9534f" points="1606.5,-1419 1483.5,-1419 1483.5,-1395 1606.5,-1395 1606.5,-1419"/>
+<text text-anchor="middle" x="1545" y="-1404.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">eos_roquet_spv_impl</text>
+</a>
+</g>
+</g>
+<!-- proc~eos_compute_arrays&#45;&gt;proc~eos_roquet_spv_impl -->
+<g id="proc~~init_local_state~~CallsGraph_edge120" class="edge">
+<title>proc~eos_compute_arrays&#45;&gt;proc~eos_roquet_spv_impl</title>
+<path fill="none" stroke="#0000ff" d="M1414.46,-1454.9C1423.38,-1452.25 1432.55,-1449.26 1441,-1446 1457.69,-1439.56 1460.41,-1434.7 1477,-1428 1481.82,-1426.05 1486.9,-1424.17 1492.01,-1422.39"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="1493.46,-1425.59 1501.82,-1419.09 1491.23,-1418.96 1493.46,-1425.59"/>
+</g>
+<!-- proc~eos_wright_impl -->
+<g id="proc~~init_local_state~~CallsGraph_node82" class="node">
+<title>proc~eos_wright_impl</title>
+<g id="a_proc~~init_local_state~~CallsGraph_node82"><a xlink:href="../proc/eos_wright_impl.html" xlink:title="eos_wright_impl">
+<polygon fill="#d9534f" stroke="#d9534f" points="1594,-1503 1496,-1503 1496,-1479 1594,-1479 1594,-1503"/>
+<text text-anchor="middle" x="1545" y="-1488.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">eos_wright_impl</text>
+</a>
+</g>
+</g>
+<!-- proc~eos_compute_arrays&#45;&gt;proc~eos_wright_impl -->
+<g id="proc~~init_local_state~~CallsGraph_edge121" class="edge">
+<title>proc~eos_compute_arrays&#45;&gt;proc~eos_wright_impl</title>
+<path fill="none" stroke="#0000ff" d="M1426.76,-1475.19C1445.88,-1477.77 1466.95,-1480.61 1485.88,-1483.16"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="1485.48,-1486.64 1495.86,-1484.51 1486.42,-1479.7 1485.48,-1486.64"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var panprocinit_local_stateCallsGraph = svgPanZoom('#procinit_local_stateCallsGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CallsGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CallsGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Called by</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~init_local_state~~CalledByGraph Pages: 1 -->
+<svg id="procinit_local_stateCalledByGraph" width="349pt" height="32pt"
+ viewBox="0.00 0.00 349.00 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~init_local_state~~CalledByGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<title>proc~~init_local_state~~CalledByGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 345,-28 345,4 -4,4"/>
+<!-- proc~init_local_state -->
+<g id="proc~~init_local_state~~CalledByGraph_node1" class="node">
+<title>proc~init_local_state</title>
+<polygon fill="none" stroke="black" points="341,-24 250,-24 250,0 341,0 341,-24"/>
+<text text-anchor="middle" x="295.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">init_local_state</text>
+</g>
+<!-- proc~driver_run_coastal -->
+<g id="proc~~init_local_state~~CalledByGraph_node2" class="node">
+<title>proc~driver_run_coastal</title>
+<g id="a_proc~~init_local_state~~CalledByGraph_node2"><a xlink:href="../proc/driver_run_coastal.html" xlink:title="driver_run_coastal">
+<polygon fill="#d9534f" stroke="#d9534f" points="214,-24 103,-24 103,0 214,0 214,-24"/>
+<text text-anchor="middle" x="158.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">driver_run_coastal</text>
+</a>
+</g>
+</g>
+<!-- proc~driver_run_coastal&#45;&gt;proc~init_local_state -->
+<g id="proc~~init_local_state~~CalledByGraph_edge1" class="edge">
+<title>proc~driver_run_coastal&#45;&gt;proc~init_local_state</title>
+<path fill="none" stroke="#ff0000" d="M214.02,-12C222.45,-12 231.16,-12 239.59,-12"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="239.71,-15.5 249.71,-12 239.71,-8.5 239.71,-15.5"/>
+</g>
+<!-- proc~driver_run -->
+<g id="proc~~init_local_state~~CalledByGraph_node3" class="node">
+<title>proc~driver_run</title>
+<g id="a_proc~~init_local_state~~CalledByGraph_node3"><a xlink:href="../proc/driver_run.html" xlink:title="driver_run">
+<polygon fill="#d9534f" stroke="#d9534f" points="67,-24 0,-24 0,0 67,0 67,-24"/>
+<text text-anchor="middle" x="33.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">driver_run</text>
+</a>
+</g>
+</g>
+<!-- proc~driver_run&#45;&gt;proc~driver_run_coastal -->
+<g id="proc~~init_local_state~~CalledByGraph_edge2" class="edge">
+<title>proc~driver_run&#45;&gt;proc~driver_run_coastal</title>
+<path fill="none" stroke="#ff0000" d="M67.14,-12C75.1,-12 83.9,-12 92.79,-12"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="92.82,-15.5 102.82,-12 92.82,-8.5 92.82,-15.5"/>
+</g>
+</g>
+</svg>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CalledByGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CalledByGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+
+
+    <section>    
+      <h2>Variables</h2>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Visibility</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+<th></th><th scope="col">Initial</th>        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-loaded_ml~2"></span>
+              logical,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>loaded_ml</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    </section>
+    <br>
+    
+    
+
+    
+    
+
+
+
+    
+    <section>
+    <h2><span class="anchor" id="src"></span>Source Code</h2>
+    <div class="hl codehilite"><pre><span></span><span class="w">   </span><span class="k">subroutine </span><span class="n">init_local_state</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">,</span><span class="w"> </span><span class="n">t_current</span><span class="p">,</span><span class="w"> </span><span class="n">total_mass_initial</span><span class="p">)</span>
+<span class="w">      </span><span class="c">!! Build the ready-to-run state: allocate, load bathymetry, read a</span>
+<span class="w">      </span><span class="c">!! restart or set the initial conditions, log the run header and the</span>
+<span class="w">      </span><span class="c">!! bathymetry diagnostics, and fill the ghost bathymetry.</span>
+<span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="n">config_t</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">cfg</span>
+<span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="n">state_t</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">state</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">t_current</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">total_mass_initial</span>
+
+<span class="w">      </span><span class="kt">logical</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">loaded_ml</span>
+
+<span class="w">      </span><span class="n">t_current</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<span class="w">      </span><span class="n">total_mass_initial</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+
+<span class="w">      </span><span class="k">call </span><span class="n">state</span><span class="p">%</span><span class="n">init_from_config</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
+
+<span class="w">      </span><span class="c">! Load bathymetry from file or use flat bottom</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">len_trim</span><span class="p">(</span><span class="n">cfg</span><span class="p">%</span><span class="n">bathymetry_file</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">         call </span><span class="n">load_bathymetry</span><span class="p">(</span><span class="nb">trim</span><span class="p">(</span><span class="n">cfg</span><span class="p">%</span><span class="n">bathymetry_file</span><span class="p">),</span><span class="w"> </span><span class="n">state</span><span class="p">)</span>
+<span class="w">      </span><span class="k">end if</span>
+
+<span class="w">      </span><span class="c">! Load restart file or set up initial conditions</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">len_trim</span><span class="p">(</span><span class="n">cfg</span><span class="p">%</span><span class="n">restart_file</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">         call </span><span class="n">restart_read</span><span class="p">(</span><span class="nb">trim</span><span class="p">(</span><span class="n">cfg</span><span class="p">%</span><span class="n">restart_file</span><span class="p">),</span><span class="w"> </span><span class="n">state</span><span class="p">,</span><span class="w"> </span><span class="n">t_current</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                           </span><span class="n">loaded_multilayer</span><span class="o">=</span><span class="n">loaded_ml</span><span class="p">)</span>
+<span class="w">         </span><span class="k">call </span><span class="n">logger</span><span class="p">%</span><span class="n">info</span><span class="p">(</span><span class="s2">"Warm start from restart at t = "</span><span class="o">//</span><span class="n">to_string</span><span class="p">(</span><span class="n">t_current</span><span class="p">)</span><span class="o">//</span><span class="s2">" s"</span><span class="p">)</span>
+<span class="w">         </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">use_multilayer</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            if</span><span class="w"> </span><span class="p">(</span><span class="n">loaded_ml</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">               call </span><span class="n">restore_multilayer_after_restart</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+<span class="w">            </span><span class="k">else</span>
+<span class="w">               </span><span class="c">! Barotropic-only restart under a multilayer config: lay the</span>
+<span class="w">               </span><span class="c">! layers out from the restored barotropic state.</span>
+<span class="w">               </span><span class="k">call </span><span class="n">init_multilayer_from_barotropic</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="w"> </span><span class="n">cfg</span><span class="p">)</span>
+<span class="w">            </span><span class="k">end if</span>
+<span class="k">         end if</span>
+<span class="k">      else</span>
+<span class="k">         call </span><span class="n">init_from_config</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="w"> </span><span class="n">cfg</span><span class="p">)</span>
+<span class="w">      </span><span class="k">end if</span>
+
+<span class="k">      </span><span class="n">total_mass_initial</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">compute_total_mass</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">diagnose_bathymetry</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="w"> </span><span class="n">cfg</span><span class="p">)</span>
+<span class="w">      </span><span class="k">call </span><span class="n">log_run_header</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span><span class="w"> </span><span class="n">total_mass_initial</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span>
+
+<span class="w">      </span><span class="c">! Extrapolate domain-edge ghost bathymetry</span>
+<span class="w">      </span><span class="k">call </span><span class="n">fill_bathymetry_ghosts</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+<span class="w">   </span><span class="k">end subroutine </span><span class="n">init_local_state</span>
+</pre></div>
+
+    </section>
+    <br>
+    
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Rakali
+ was developed by Jorge Luis Galvez Vallejo<br>              &copy; 2026 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+ on 2026-10-08 12:55 +0000             </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>

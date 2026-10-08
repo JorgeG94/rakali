@@ -1,0 +1,890 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="GPU-native coastal solver — structured Cartesian and unstructured triangular grids, hydrostatic multilayer + non-hydrostatic, portable across NVHPC/gfortran/ifx.">
+    <meta name="author" content="Jorge Luis Galvez Vallejo" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>rki_ml_vertical_viscosity_unstr.F90 &ndash; Rakali</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">Rakali </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/absint.html">Abstract Interfaces</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>rki_ml_vertical_viscosity_unstr.F90
+      <small>Source File</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.2% of total for source files.">68 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/rki_ml_vertical_viscosity_unstr.F90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+            <li class="breadcrumb-item active" aria-current="page">rki_ml_vertical_viscosity_unstr.F90</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+        <div id="sidebar">
+      <h3>Contents</h3>
+  
+  
+  
+  
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#mods-0"
+         aria-expanded="false" aria-controls="mods-0">
+         <h4 class="card-header bg-primary text-white">Modules</h4>
+      </a>
+      <div id="mods-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../module/rki_ml_vertical_viscosity_unstr.html">rki_ml_vertical_viscosity_unstr</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../sourcefile/rki_ml_vertical_viscosity_unstr.f90.html#src">rki_ml_vertical_viscosity_unstr.F90</a>
+      </div>
+    </div>
+
+
+  </div>
+
+    </div>
+    <div class="col-md-9" id='text'>
+      <p>Vertical viscosity for layer momentum on the unstructured grid.</p>
+      <br>
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">This file depends on</h3>
+          </div>
+          <div class="card-body">
+            <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph Pages: 1 -->
+<svg id="sourcefilerki_ml_vertical_viscosity_unstrf90EfferentGraph" width="641pt" height="337pt"
+ viewBox="0.00 0.00 641.00 337.48" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph" class="graph" transform="scale(0.58 0.58) rotate(0) translate(4 581.97)">
+<title>sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-581.97 1109,-581.97 1109,4 -4,4"/>
+<!-- sourcefile~rki_ml_vertical_viscosity_unstr.f90 -->
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_node1" class="node">
+<title>sourcefile~rki_ml_vertical_viscosity_unstr.f90</title>
+<polygon fill="none" stroke="black" points="1105,-539.7 912,-539.7 912,-515.7 1105,-515.7 1105,-539.7"/>
+<text text-anchor="middle" x="1008.5" y="-525.3" font-family="Helvetica,sans-Serif" font-size="10.50">rki_ml_vertical_viscosity_unstr.F90</text>
+</g>
+<!-- sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_node2" class="node">
+<title>sourcefile~rki_constants.f90</title>
+<g id="a_sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_node2"><a xlink:href="../sourcefile/rki_constants.f90.html" xlink:title="rki_constants.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="105,-181.7 0,-181.7 0,-157.7 105,-157.7 105,-181.7"/>
+<text text-anchor="middle" x="52.5" y="-167.3" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_constants.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_ml_vertical_viscosity_unstr.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_edge1" class="edge">
+<title>sourcefile~rki_ml_vertical_viscosity_unstr.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M939.41,-539.75C919.06,-543.03 896.67,-546.33 876,-548.7 756.05,-562.45 725.57,-561.29 605,-567.7"/>
+</g>
+<!-- sourcefile~rki_ml_common_unstr.f90 -->
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_node3" class="node">
+<title>sourcefile~rki_ml_common_unstr.f90</title>
+<g id="a_sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_node3"><a xlink:href="../sourcefile/rki_ml_common_unstr.f90.html" xlink:title="rki_ml_common_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="876,-539.7 725,-539.7 725,-515.7 876,-515.7 876,-539.7"/>
+<text text-anchor="middle" x="800.5" y="-525.3" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_common_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_ml_vertical_viscosity_unstr.f90&#45;&gt;sourcefile~rki_ml_common_unstr.f90 -->
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_edge2" class="edge">
+<title>sourcefile~rki_ml_vertical_viscosity_unstr.f90&#45;&gt;sourcefile~rki_ml_common_unstr.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M911.74,-527.7C903.22,-527.7 894.64,-527.7 886.23,-527.7"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="886.06,-524.2 876.06,-527.7 886.06,-531.2 886.06,-524.2"/>
+</g>
+<!-- sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_node4" class="node">
+<title>sourcefile~rki_state_unstr.f90</title>
+<g id="a_sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_node4"><a xlink:href="../sourcefile/rki_state_unstr.f90.html" xlink:title="rki_state_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="856,-379.7 745,-379.7 745,-355.7 856,-355.7 856,-379.7"/>
+<text text-anchor="middle" x="800.5" y="-365.3" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_state_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_ml_vertical_viscosity_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90 -->
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_edge3" class="edge">
+<title>sourcefile~rki_ml_vertical_viscosity_unstr.f90&#45;&gt;sourcefile~rki_state_unstr.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M992.02,-515.67C956.3,-487.93 867.95,-419.31 825.3,-386.18"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="827.21,-383.23 817.16,-379.86 822.91,-388.76 827.21,-383.23"/>
+</g>
+<!-- sourcefile~rki_ml_common_unstr.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_edge4" class="edge">
+<title>sourcefile~rki_ml_common_unstr.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#00ff00" stroke-dasharray="5,2" d="M758.99,-539.79C719.96,-550.53 659.05,-564.95 605,-567.7"/>
+<path fill="none" stroke="#00ff00" stroke-dasharray="5,2" d="M603,-567.7C426.54,-576.66 359.02,-602.64 210,-507.7"/>
+</g>
+<!-- sourcefile~rki_state_unstr.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_edge7" class="edge">
+<title>sourcefile~rki_state_unstr.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M792.33,-355.6C757.51,-298.51 599.42,-58.27 399,-47.7"/>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M397,-47.7C287.31,-16.08 240.59,29.12 141,-26.7 94.49,-52.76 69.74,-114.74 59.42,-147.89"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="56.04,-146.98 56.57,-157.56 62.76,-148.96 56.04,-146.98"/>
+</g>
+<!-- sourcefile~rki_barotropic_state_unstr.f90 -->
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_node5" class="node">
+<title>sourcefile~rki_barotropic_state_unstr.f90</title>
+<g id="a_sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_node5"><a xlink:href="../sourcefile/rki_barotropic_state_unstr.f90.html" xlink:title="rki_barotropic_state_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="483,-539.7 313,-539.7 313,-515.7 483,-515.7 483,-539.7"/>
+<text text-anchor="middle" x="398" y="-525.3" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_barotropic_state_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_state_unstr.f90&#45;&gt;sourcefile~rki_barotropic_state_unstr.f90 -->
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_edge5" class="edge">
+<title>sourcefile~rki_state_unstr.f90&#45;&gt;sourcefile~rki_barotropic_state_unstr.f90</title>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M780.04,-379.72C758.35,-392.82 721.98,-413.87 689,-428.7 600.41,-468.53 575.19,-471.11 483,-501.7 472.02,-505.34 460.17,-509.11 448.94,-512.6"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="447.79,-509.3 439.27,-515.6 449.86,-515.98 447.79,-509.3"/>
+</g>
+<!-- sourcefile~rki_boundary_unstr.f90 -->
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_node6" class="node">
+<title>sourcefile~rki_boundary_unstr.f90</title>
+<g id="a_sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_node6"><a xlink:href="../sourcefile/rki_boundary_unstr.f90.html" xlink:title="rki_boundary_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="277,-261.7 141,-261.7 141,-237.7 277,-237.7 277,-261.7"/>
+<text text-anchor="middle" x="209" y="-247.3" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_boundary_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_state_unstr.f90&#45;&gt;sourcefile~rki_boundary_unstr.f90 -->
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_edge6" class="edge">
+<title>sourcefile~rki_state_unstr.f90&#45;&gt;sourcefile~rki_boundary_unstr.f90</title>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M744.94,-369.57C705.92,-370.45 652.18,-370.74 605,-367.7"/>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M603,-367.7C564.8,-365.24 548.53,-373.06 519,-348.7 488.3,-323.37 515.63,-289.49 483,-266.7 422.18,-224.22 333.94,-227.26 274.38,-236.07"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="273.68,-232.64 264.34,-237.65 274.77,-239.56 273.68,-232.64"/>
+</g>
+<!-- sourcefile~rki_mesh_unstr.f90 -->
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_node7" class="node">
+<title>sourcefile~rki_mesh_unstr.f90</title>
+<g id="a_sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_node7"><a xlink:href="../sourcefile/rki_mesh_unstr.f90.html" xlink:title="rki_mesh_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="266,-379.7 152,-379.7 152,-355.7 266,-355.7 266,-379.7"/>
+<text text-anchor="middle" x="209" y="-365.3" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_mesh_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_state_unstr.f90&#45;&gt;sourcefile~rki_mesh_unstr.f90 -->
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_edge8" class="edge">
+<title>sourcefile~rki_state_unstr.f90&#45;&gt;sourcefile~rki_mesh_unstr.f90</title>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M603,-367.7C510.8,-361.76 491.25,-412.86 399,-407.7"/>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M397,-407.7C349.23,-405.03 295.98,-392.69 258.56,-382.41"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="259.49,-379.04 248.92,-379.71 257.61,-385.78 259.49,-379.04"/>
+</g>
+<!-- sourcefile~rki_multilayer_state_unstr.f90 -->
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_node8" class="node">
+<title>sourcefile~rki_multilayer_state_unstr.f90</title>
+<g id="a_sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_node8"><a xlink:href="../sourcefile/rki_multilayer_state_unstr.f90.html" xlink:title="rki_multilayer_state_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="689,-259.7 519,-259.7 519,-235.7 689,-235.7 689,-259.7"/>
+<text text-anchor="middle" x="604" y="-245.3" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_multilayer_state_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_state_unstr.f90&#45;&gt;sourcefile~rki_multilayer_state_unstr.f90 -->
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_edge9" class="edge">
+<title>sourcefile~rki_state_unstr.f90&#45;&gt;sourcefile~rki_multilayer_state_unstr.f90</title>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M779.78,-355.53C745.11,-334.14 673.12,-289.72 633.2,-265.09"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="634.83,-261.99 624.48,-259.72 631.16,-267.95 634.83,-261.99"/>
+</g>
+<!-- sourcefile~rki_si_common.f90 -->
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_node9" class="node">
+<title>sourcefile~rki_si_common.f90</title>
+<g id="a_sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_node9"><a xlink:href="../sourcefile/rki_si_common.f90.html" xlink:title="rki_si_common.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="661.5,-339.7 546.5,-339.7 546.5,-315.7 661.5,-315.7 661.5,-339.7"/>
+<text text-anchor="middle" x="604" y="-325.3" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_si_common.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_state_unstr.f90&#45;&gt;sourcefile~rki_si_common.f90 -->
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_edge10" class="edge">
+<title>sourcefile~rki_state_unstr.f90&#45;&gt;sourcefile~rki_si_common.f90</title>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M744.8,-356.45C722.09,-351.78 695.53,-346.32 671.69,-341.41"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="672.15,-337.94 661.65,-339.35 670.74,-344.79 672.15,-337.94"/>
+</g>
+<!-- sourcefile~rki_si_unstr_state.f90 -->
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_node10" class="node">
+<title>sourcefile~rki_si_unstr_state.f90</title>
+<g id="a_sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_node10"><a xlink:href="../sourcefile/rki_si_unstr_state.f90.html" xlink:title="rki_si_unstr_state.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="667,-419.7 541,-419.7 541,-395.7 667,-395.7 667,-419.7"/>
+<text text-anchor="middle" x="604" y="-405.3" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_si_unstr_state.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_state_unstr.f90&#45;&gt;sourcefile~rki_si_unstr_state.f90 -->
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_edge11" class="edge">
+<title>sourcefile~rki_state_unstr.f90&#45;&gt;sourcefile~rki_si_unstr_state.f90</title>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M744.8,-378.95C722.58,-383.52 696.67,-388.85 673.24,-393.67"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="672.45,-390.25 663.36,-395.7 673.86,-397.11 672.45,-390.25"/>
+</g>
+<!-- sourcefile~rki_surface_forcing_unstr.f90 -->
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_node11" class="node">
+<title>sourcefile~rki_surface_forcing_unstr.f90</title>
+<g id="a_sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_node11"><a xlink:href="../sourcefile/rki_surface_forcing_unstr.f90.html" xlink:title="rki_surface_forcing_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="481,-379.7 315,-379.7 315,-355.7 481,-355.7 481,-379.7"/>
+<text text-anchor="middle" x="398" y="-365.3" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_surface_forcing_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_state_unstr.f90&#45;&gt;sourcefile~rki_surface_forcing_unstr.f90 -->
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_edge12" class="edge">
+<title>sourcefile~rki_state_unstr.f90&#45;&gt;sourcefile~rki_surface_forcing_unstr.f90</title>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M603,-367.7C566.65,-365.36 526.58,-364.9 491.65,-365.18"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="491.43,-361.69 481.46,-365.29 491.5,-368.68 491.43,-361.69"/>
+</g>
+<!-- sourcefile~rki_timestepper.f90 -->
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_node12" class="node">
+<title>sourcefile~rki_timestepper.f90</title>
+<g id="a_sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_node12"><a xlink:href="../sourcefile/rki_timestepper.f90.html" xlink:title="rki_timestepper.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="267.5,-59.7 150.5,-59.7 150.5,-35.7 267.5,-35.7 267.5,-59.7"/>
+<text text-anchor="middle" x="209" y="-45.3" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_timestepper.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_state_unstr.f90&#45;&gt;sourcefile~rki_timestepper.f90 -->
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_edge13" class="edge">
+<title>sourcefile~rki_state_unstr.f90&#45;&gt;sourcefile~rki_timestepper.f90</title>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M397,-47.7C357.61,-45.62 313.48,-45.51 277.99,-45.98"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="277.69,-42.48 267.75,-46.13 277.8,-49.48 277.69,-42.48"/>
+</g>
+<!-- sourcefile~rki_barotropic_state_unstr.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_edge14" class="edge">
+<title>sourcefile~rki_barotropic_state_unstr.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M312.97,-534.46C278.69,-533.39 240.13,-526.95 210,-507.7"/>
+</g>
+<!-- sourcefile~rki_barotropic_state_unstr.f90&#45;&gt;sourcefile~rki_mesh_unstr.f90 -->
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_edge15" class="edge">
+<title>sourcefile~rki_barotropic_state_unstr.f90&#45;&gt;sourcefile~rki_mesh_unstr.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M378.01,-515.64C360.55,-504.27 334.23,-486.37 313,-468.7 281.42,-442.42 248.02,-408.35 228.1,-387.26"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="230.55,-384.76 221.15,-379.86 225.44,-389.55 230.55,-384.76"/>
+</g>
+<!-- sourcefile~rki_mesh_unstr.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_edge16" class="edge">
+<title>sourcefile~rki_mesh_unstr.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#7fff00" stroke-dasharray="5,2" d="M184.62,-355.6C170.76,-347.61 153.5,-336.14 141,-322.7 103.54,-282.45 75.56,-223.32 62.21,-191.65"/>
+<polygon fill="#7fff00" stroke="#7fff00" points="65.29,-189.94 58.24,-182.03 58.81,-192.61 65.29,-189.94"/>
+</g>
+<!-- sourcefile~rki_multilayer_state_unstr.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_edge18" class="edge">
+<title>sourcefile~rki_multilayer_state_unstr.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#00ff3f" stroke-dasharray="5,2" d="M558.85,-235.62C517.81,-225.32 454.8,-211.85 399,-209.7"/>
+<path fill="none" stroke="#00ff3f" stroke-dasharray="5,2" d="M397,-209.7C282.99,-205.31 253.73,-208.29 141,-190.7 130.13,-189 118.61,-186.65 107.64,-184.13"/>
+<polygon fill="#00ff3f" stroke="#00ff3f" points="108.27,-180.68 97.74,-181.78 106.66,-187.5 108.27,-180.68"/>
+</g>
+<!-- sourcefile~rki_multilayer_state_unstr.f90&#45;&gt;sourcefile~rki_boundary_unstr.f90 -->
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_edge17" class="edge">
+<title>sourcefile~rki_multilayer_state_unstr.f90&#45;&gt;sourcefile~rki_boundary_unstr.f90</title>
+<path fill="none" stroke="#00ff3f" stroke-dasharray="5,2" d="M397,-209.7C346.29,-207.75 289.48,-222.38 251.92,-234.5"/>
+<polygon fill="#00ff3f" stroke="#00ff3f" points="250.73,-231.21 242.33,-237.67 252.93,-237.85 250.73,-231.21"/>
+</g>
+<!-- sourcefile~rki_multilayer_state_unstr.f90&#45;&gt;sourcefile~rki_mesh_unstr.f90 -->
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_edge20" class="edge">
+<title>sourcefile~rki_multilayer_state_unstr.f90&#45;&gt;sourcefile~rki_mesh_unstr.f90</title>
+<path fill="none" stroke="#00ff3f" stroke-dasharray="5,2" d="M583.32,-259.71C560.11,-273.39 519.99,-295.55 483,-308.7 473.2,-312.18 353.95,-337.49 276.33,-353.81"/>
+<polygon fill="#00ff3f" stroke="#00ff3f" points="275.21,-350.47 266.14,-355.95 276.65,-357.32 275.21,-350.47"/>
+</g>
+<!-- sourcefile~rki_eos.f90 -->
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_node13" class="node">
+<title>sourcefile~rki_eos.f90</title>
+<g id="a_sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_node13"><a xlink:href="../sourcefile/rki_eos.f90.html" xlink:title="rki_eos.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="434.5,-181.7 361.5,-181.7 361.5,-157.7 434.5,-157.7 434.5,-181.7"/>
+<text text-anchor="middle" x="398" y="-167.3" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_eos.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_multilayer_state_unstr.f90&#45;&gt;sourcefile~rki_eos.f90 -->
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_edge19" class="edge">
+<title>sourcefile~rki_multilayer_state_unstr.f90&#45;&gt;sourcefile~rki_eos.f90</title>
+<path fill="none" stroke="#00ff3f" stroke-dasharray="5,2" d="M577.11,-235.51C553.03,-224.4 516,-207.92 483,-195.7 470.69,-191.14 457.17,-186.71 444.64,-182.84"/>
+<polygon fill="#00ff3f" stroke="#00ff3f" points="445.43,-179.42 434.85,-179.86 443.39,-186.12 445.43,-179.42"/>
+</g>
+<!-- sourcefile~rki_tracer_unstr.f90 -->
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_node15" class="node">
+<title>sourcefile~rki_tracer_unstr.f90</title>
+<g id="a_sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_node15"><a xlink:href="../sourcefile/rki_tracer_unstr.f90.html" xlink:title="rki_tracer_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="456.5,-299.7 339.5,-299.7 339.5,-275.7 456.5,-275.7 456.5,-299.7"/>
+<text text-anchor="middle" x="398" y="-285.3" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_tracer_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_multilayer_state_unstr.f90&#45;&gt;sourcefile~rki_tracer_unstr.f90 -->
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_edge21" class="edge">
+<title>sourcefile~rki_multilayer_state_unstr.f90&#45;&gt;sourcefile~rki_tracer_unstr.f90</title>
+<path fill="none" stroke="#00ff3f" stroke-dasharray="5,2" d="M541.79,-259.7C518.07,-264.35 490.82,-269.7 466.53,-274.46"/>
+<polygon fill="#00ff3f" stroke="#00ff3f" points="465.81,-271.03 456.67,-276.39 467.16,-277.9 465.81,-271.03"/>
+</g>
+<!-- sourcefile~rki_vcoord.f90 -->
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_node16" class="node">
+<title>sourcefile~rki_vcoord.f90</title>
+<g id="a_sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_node16"><a xlink:href="../sourcefile/rki_vcoord.f90.html" xlink:title="rki_vcoord.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="254.5,-101.7 163.5,-101.7 163.5,-77.7 254.5,-77.7 254.5,-101.7"/>
+<text text-anchor="middle" x="209" y="-87.3" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_vcoord.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_multilayer_state_unstr.f90&#45;&gt;sourcefile~rki_vcoord.f90 -->
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_edge22" class="edge">
+<title>sourcefile~rki_multilayer_state_unstr.f90&#45;&gt;sourcefile~rki_vcoord.f90</title>
+<path fill="none" stroke="#00ff3f" stroke-dasharray="5,2" d="M592.08,-235.48C572.45,-214.31 528.93,-170.96 483,-148.7 412.35,-114.45 321.85,-99.93 264.88,-93.87"/>
+<polygon fill="#00ff3f" stroke="#00ff3f" points="264.95,-90.36 254.65,-92.84 264.25,-97.33 264.95,-90.36"/>
+</g>
+<!-- sourcefile~rki_si_unstr_state.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_edge23" class="edge">
+<title>sourcefile~rki_si_unstr_state.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#003fff" stroke-dasharray="5,2" d="M540.61,-415.27C533.03,-417.63 525.63,-420.71 519,-424.7 497.36,-437.74 505.01,-456.29 483,-468.7 456.31,-483.75 235.82,-524.2 210,-507.7"/>
+</g>
+<!-- sourcefile~rki_si_unstr_state.f90&#45;&gt;sourcefile~rki_mesh_unstr.f90 -->
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_edge24" class="edge">
+<title>sourcefile~rki_si_unstr_state.f90&#45;&gt;sourcefile~rki_mesh_unstr.f90</title>
+<path fill="none" stroke="#003fff" stroke-dasharray="5,2" d="M540.9,-409.5C500.46,-410.22 446.56,-410.36 399,-407.7"/>
+</g>
+<!-- sourcefile~rki_si_unstr_mg.f90 -->
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_node14" class="node">
+<title>sourcefile~rki_si_unstr_mg.f90</title>
+<g id="a_sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_node14"><a xlink:href="../sourcefile/rki_si_unstr_mg.f90.html" xlink:title="rki_si_unstr_mg.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="456.5,-459.7 339.5,-459.7 339.5,-435.7 456.5,-435.7 456.5,-459.7"/>
+<text text-anchor="middle" x="398" y="-445.3" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_si_unstr_mg.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_si_unstr_state.f90&#45;&gt;sourcefile~rki_si_unstr_mg.f90 -->
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_edge25" class="edge">
+<title>sourcefile~rki_si_unstr_state.f90&#45;&gt;sourcefile~rki_si_unstr_mg.f90</title>
+<path fill="none" stroke="#003fff" stroke-dasharray="5,2" d="M541.79,-419.7C518.07,-424.35 490.82,-429.7 466.53,-434.46"/>
+<polygon fill="#003fff" stroke="#003fff" points="465.81,-431.03 456.67,-436.39 467.16,-437.9 465.81,-431.03"/>
+</g>
+<!-- sourcefile~rki_surface_forcing_unstr.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_edge26" class="edge">
+<title>sourcefile~rki_surface_forcing_unstr.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#7f00ff" stroke-dasharray="5,2" d="M349.09,-355.65C310.69,-345.27 255.83,-328.79 210,-308.7"/>
+</g>
+<!-- sourcefile~rki_surface_forcing_unstr.f90&#45;&gt;sourcefile~rki_mesh_unstr.f90 -->
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_edge27" class="edge">
+<title>sourcefile~rki_surface_forcing_unstr.f90&#45;&gt;sourcefile~rki_mesh_unstr.f90</title>
+<path fill="none" stroke="#7f00ff" stroke-dasharray="5,2" d="M314.98,-367.7C302.1,-367.7 288.92,-367.7 276.45,-367.7"/>
+<polygon fill="#7f00ff" stroke="#7f00ff" points="276.16,-364.2 266.16,-367.7 276.16,-371.2 276.16,-364.2"/>
+</g>
+<!-- sourcefile~rki_timestepper.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_edge28" class="edge">
+<title>sourcefile~rki_timestepper.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#ff00bf" stroke-dasharray="5,2" d="M158.27,-59.83C152.21,-62.29 146.3,-65.22 141,-68.7 108.77,-89.83 81.53,-126.06 66.37,-148.9"/>
+<polygon fill="#ff00bf" stroke="#ff00bf" points="63.3,-147.21 60.81,-157.51 69.17,-151.01 63.3,-147.21"/>
+</g>
+<!-- sourcefile~rki_eos.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_edge29" class="edge">
+<title>sourcefile~rki_eos.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M361.24,-161.77C337.5,-156.92 305.55,-151.18 277,-148.7 216.78,-143.47 201.03,-141.6 141,-148.7 129.12,-150.1 116.52,-152.55 104.7,-155.28"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="103.87,-151.88 94.97,-157.63 105.52,-158.68 103.87,-151.88"/>
+</g>
+<!-- sourcefile~rki_grid.f90 -->
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_node17" class="node">
+<title>sourcefile~rki_grid.f90</title>
+<g id="a_sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_node17"><a xlink:href="../sourcefile/rki_grid.f90.html" xlink:title="rki_grid.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="246.5,-181.7 171.5,-181.7 171.5,-157.7 246.5,-157.7 246.5,-181.7"/>
+<text text-anchor="middle" x="209" y="-167.3" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_grid.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_eos.f90&#45;&gt;sourcefile~rki_grid.f90 -->
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_edge30" class="edge">
+<title>sourcefile~rki_eos.f90&#45;&gt;sourcefile~rki_grid.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M361.39,-169.7C331.74,-169.7 289.3,-169.7 256.9,-169.7"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="256.76,-166.2 246.76,-169.7 256.76,-173.2 256.76,-166.2"/>
+</g>
+<!-- sourcefile~rki_si_unstr_mg.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_edge31" class="edge">
+<title>sourcefile~rki_si_unstr_mg.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#7fff00" stroke-dasharray="5,2" d="M357.64,-459.72C343.54,-464.06 327.54,-469.05 313,-473.7 267.08,-488.38 250.62,-533.66 210,-507.7"/>
+<path fill="none" stroke="#7fff00" stroke-dasharray="5,2" d="M208,-507.7C94.14,-434.94 63.17,-255.02 55.67,-191.97"/>
+<polygon fill="#7fff00" stroke="#7fff00" points="59.14,-191.48 54.56,-181.92 52.18,-192.24 59.14,-191.48"/>
+</g>
+<!-- sourcefile~rki_si_unstr_mg.f90&#45;&gt;sourcefile~rki_mesh_unstr.f90 -->
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_edge32" class="edge">
+<title>sourcefile~rki_si_unstr_mg.f90&#45;&gt;sourcefile~rki_mesh_unstr.f90</title>
+<path fill="none" stroke="#7fff00" stroke-dasharray="5,2" d="M352.87,-435.69C339.85,-431.71 325.7,-426.94 313,-421.7 287.27,-411.08 259.37,-396.23 239.11,-384.79"/>
+<polygon fill="#7fff00" stroke="#7fff00" points="240.8,-381.72 230.38,-379.81 237.33,-387.8 240.8,-381.72"/>
+</g>
+<!-- sourcefile~rki_tracer_unstr.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_edge34" class="edge">
+<title>sourcefile~rki_tracer_unstr.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M343.02,-299.76C296.44,-309.09 233.11,-318.83 210,-308.7"/>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M208,-308.7C176.65,-294.95 167.48,-292.39 141,-270.7 111.51,-246.53 83.82,-211.77 67.77,-189.97"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="70.53,-187.81 61.83,-181.76 64.86,-191.92 70.53,-187.81"/>
+</g>
+<!-- sourcefile~rki_tracer_unstr.f90&#45;&gt;sourcefile~rki_boundary_unstr.f90 -->
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_edge33" class="edge">
+<title>sourcefile~rki_tracer_unstr.f90&#45;&gt;sourcefile~rki_boundary_unstr.f90</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M339.37,-275.99C320.27,-272.11 298.82,-267.75 278.97,-263.71"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="279.55,-260.26 269.06,-261.7 278.16,-267.12 279.55,-260.26"/>
+</g>
+<!-- sourcefile~rki_tracer_unstr.f90&#45;&gt;sourcefile~rki_mesh_unstr.f90 -->
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_edge35" class="edge">
+<title>sourcefile~rki_tracer_unstr.f90&#45;&gt;sourcefile~rki_mesh_unstr.f90</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M352.87,-299.7C339.85,-303.69 325.7,-308.46 313,-313.7 287.27,-324.32 259.37,-339.17 239.11,-350.6"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="237.33,-347.59 230.38,-355.59 240.8,-353.67 237.33,-347.59"/>
+</g>
+<!-- sourcefile~rki_vcoord.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_edge36" class="edge">
+<title>sourcefile~rki_vcoord.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#7f00ff" stroke-dasharray="5,2" d="M173.39,-101.74C162.82,-105.79 151.28,-110.59 141,-115.7 119.5,-126.39 96.43,-140.76 79.38,-151.99"/>
+<polygon fill="#7f00ff" stroke="#7f00ff" points="77.43,-149.08 71.05,-157.54 81.31,-154.91 77.43,-149.08"/>
+</g>
+<!-- sourcefile~rki_grid.f90&#45;&gt;sourcefile~rki_constants.f90 -->
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~EfferentGraph_edge37" class="edge">
+<title>sourcefile~rki_grid.f90&#45;&gt;sourcefile~rki_constants.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M171.39,-169.7C154.59,-169.7 134.22,-169.7 115.17,-169.7"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="115.05,-166.2 105.05,-169.7 115.05,-173.2 115.05,-166.2"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var pansourcefilerki_ml_vertical_viscosity_unstrf90EfferentGraph = svgPanZoom('#sourcefilerki_ml_vertical_viscosity_unstrf90EfferentGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#EfferentGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="EfferentGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="202pt" height="32pt"
+ viewBox="0.00 0.00 201.50 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 197.5,-28 197.5,4 -4,4"/>
+<!-- Source File -->
+<g id="node1" class="node">
+<title>Source File</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Source File</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node2" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="193.5,-24 88.5,-24 88.5,0 193.5,0 193.5,-24"/>
+<text text-anchor="middle" x="141" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a file to a file which it depends on. A file
+is dependent upon another if the latter must be compiled before the former
+can be.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Files dependent on this one</h3>
+          </div>
+          <div class="card-body">
+            <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~AfferentGraph Pages: 1 -->
+<svg id="sourcefilerki_ml_vertical_viscosity_unstrf90AfferentGraph" width="491pt" height="74pt"
+ viewBox="0.00 0.00 491.00 74.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~AfferentGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 70)">
+<title>sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~AfferentGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-70 487,-70 487,4 -4,4"/>
+<!-- sourcefile~rki_ml_vertical_viscosity_unstr.f90 -->
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~AfferentGraph_node1" class="node">
+<title>sourcefile~rki_ml_vertical_viscosity_unstr.f90</title>
+<polygon fill="none" stroke="black" points="193,-45 0,-45 0,-21 193,-21 193,-45"/>
+<text text-anchor="middle" x="96.5" y="-30.6" font-family="Helvetica,sans-Serif" font-size="10.50">rki_ml_vertical_viscosity_unstr.F90</text>
+</g>
+<!-- sourcefile~rki_solver_unstr.f90 -->
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~AfferentGraph_node2" class="node">
+<title>sourcefile~rki_solver_unstr.f90</title>
+<g id="a_sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~AfferentGraph_node2"><a xlink:href="../sourcefile/rki_solver_unstr.f90.html" xlink:title="rki_solver_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="346,-45 229,-45 229,-21 346,-21 346,-45"/>
+<text text-anchor="middle" x="287.5" y="-30.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_solver_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_ml_vertical_viscosity_unstr.f90 -->
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~AfferentGraph_edge1" class="edge">
+<title>sourcefile~rki_solver_unstr.f90&#45;&gt;sourcefile~rki_ml_vertical_viscosity_unstr.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M228.77,-33C220.65,-33 212.11,-33 203.44,-33"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="203.21,-29.5 193.21,-33 203.21,-36.5 203.21,-29.5"/>
+</g>
+<!-- sourcefile~rki_api_unstr.f90 -->
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~AfferentGraph_node3" class="node">
+<title>sourcefile~rki_api_unstr.f90</title>
+<g id="a_sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~AfferentGraph_node3"><a xlink:href="../sourcefile/rki_api_unstr.f90.html" xlink:title="rki_api_unstr.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="483,-66 382,-66 382,-42 483,-42 483,-66"/>
+<text text-anchor="middle" x="432.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_api_unstr.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_api_unstr.f90&#45;&gt;sourcefile~rki_solver_unstr.f90 -->
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~AfferentGraph_edge2" class="edge">
+<title>sourcefile~rki_api_unstr.f90&#45;&gt;sourcefile~rki_solver_unstr.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M381.89,-46.71C373.65,-45.51 364.99,-44.23 356.4,-42.97"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="356.78,-39.49 346.38,-41.5 355.76,-46.42 356.78,-39.49"/>
+</g>
+<!-- sourcefile~rki_driver.f90 -->
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~AfferentGraph_node4" class="node">
+<title>sourcefile~rki_driver.f90</title>
+<g id="a_sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~AfferentGraph_node4"><a xlink:href="../sourcefile/rki_driver.f90.html" xlink:title="rki_driver.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="474.5,-24 390.5,-24 390.5,0 474.5,0 474.5,-24"/>
+<text text-anchor="middle" x="432.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_driver.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~rki_driver.f90&#45;&gt;sourcefile~rki_solver_unstr.f90 -->
+<g id="sourcefile~~rki_ml_vertical_viscosity_unstr.f90~~AfferentGraph_edge3" class="edge">
+<title>sourcefile~rki_driver.f90&#45;&gt;sourcefile~rki_solver_unstr.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M390.14,-18.07C379.55,-19.63 367.88,-21.34 356.33,-23.04"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="355.64,-19.6 346.25,-24.52 356.66,-26.53 355.64,-19.6"/>
+</g>
+</g>
+</svg>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#AfferentGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="AfferentGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="202pt" height="32pt"
+ viewBox="0.00 0.00 201.50 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 197.5,-28 197.5,4 -4,4"/>
+<!-- Source File -->
+<g id="node1" class="node">
+<title>Source File</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Source File</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node2" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="193.5,-24 88.5,-24 88.5,0 193.5,0 193.5,-24"/>
+<text text-anchor="middle" x="141" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a file to a file which it depends on. A file
+is dependent upon another if the latter must be compiled before the former
+can be.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+          </div>
+        </div>
+<br>
+      <section>
+        <h2><span class="anchor" id="src"></span>Source Code</h2>
+        <div class="hl codehilite"><pre><span></span><a id="ln-1" name="ln-1" href="#ln-1"></a><span class="c">!! Vertical viscosity for layer momentum on the unstructured grid.</span>
+<a id="ln-2" name="ln-2" href="#ln-2"></a><span class="k">module </span><span class="n">rki_ml_vertical_viscosity_unstr</span>
+<a id="ln-3" name="ln-3" href="#ln-3"></a><span class="w">   </span><span class="c">!! Currently implements the gradient-Richardson-number closure of</span>
+<a id="ln-4" name="ln-4" href="#ln-4"></a><span class="w">   </span><span class="c">!! Pacanowski &amp; Philander (1981).  Computes a turbulent viscosity at</span>
+<a id="ln-5" name="ln-5" href="#ln-5"></a><span class="w">   </span><span class="c">!! each interior interface and applies a diffusive flux to layer</span>
+<a id="ln-6" name="ln-6" href="#ln-6"></a><span class="w">   </span><span class="c">!! momentum:</span>
+<a id="ln-7" name="ln-7" href="#ln-7"></a><span class="w">   </span><span class="c">!!</span>
+<a id="ln-8" name="ln-8" href="#ln-8"></a><span class="w">   </span><span class="c">!!   nu_t = nu_max / (1 + alpha*Ri)^2 + nu_bg</span>
+<a id="ln-9" name="ln-9" href="#ln-9"></a><span class="w">   </span><span class="c">!!</span>
+<a id="ln-10" name="ln-10" href="#ln-10"></a><span class="w">   </span><span class="c">!! Column-local, no neighbour reads — safe for `do concurrent`.</span>
+<a id="ln-11" name="ln-11" href="#ln-11"></a><span class="w">   </span><span class="c">!! When an ocean-grade KPP closure lands, it will live alongside this</span>
+<a id="ln-12" name="ln-12" href="#ln-12"></a><span class="w">   </span><span class="c">!! one and the solver will pick between them via a config flag.</span>
+<a id="ln-13" name="ln-13" href="#ln-13"></a><span class="w">   </span><span class="k">use </span><span class="n">rki_constants</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">wp</span><span class="p">,</span><span class="w"> </span><span class="n">GRAVITY</span><span class="p">,</span><span class="w"> </span><span class="n">DRY_TOLERANCE</span>
+<a id="ln-14" name="ln-14" href="#ln-14"></a><span class="w">   </span><span class="k">use </span><span class="n">rki_state_unstr</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">unstr_state_t</span>
+<a id="ln-15" name="ln-15" href="#ln-15"></a><span class="w">   </span><span class="k">use </span><span class="n">rki_ml_common_unstr</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">ML_MIN_DEPTH_UNSTR</span><span class="p">,</span><span class="w"> </span><span class="n">BPG_NZ_MAX</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<a id="ln-16" name="ln-16" href="#ln-16"></a><span class="w">                                  </span><span class="n">VANISHING_LAYER_TOL_UNSTR</span>
+<a id="ln-17" name="ln-17" href="#ln-17"></a><span class="w">   </span><span class="k">implicit none</span>
+<a id="ln-18" name="ln-18" href="#ln-18"></a><span class="k">   private</span>
+<a id="ln-19" name="ln-19" href="#ln-19"></a>
+<a id="ln-20" name="ln-20" href="#ln-20"></a><span class="k">   public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">ml_vertical_viscosity_unstr</span>
+<a id="ln-21" name="ln-21" href="#ln-21"></a>
+<a id="ln-22" name="ln-22" href="#ln-22"></a><span class="k">contains</span>
+<a id="ln-23" name="ln-23" href="#ln-23"></a>
+<a id="ln-24" name="ln-24" href="#ln-24"></a><span class="k">   pure subroutine </span><span class="n">ml_vertical_viscosity_unstr</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="w"> </span><span class="n">dt</span><span class="p">)</span>
+<a id="ln-25" name="ln-25" href="#ln-25"></a><span class="w">      </span><span class="c">!! Ri-dependent vertical viscosity for momentum.</span>
+<a id="ln-26" name="ln-26" href="#ln-26"></a><span class="w">      </span><span class="c">!! Computes gradient Richardson number at each interface and applies</span>
+<a id="ln-27" name="ln-27" href="#ln-27"></a><span class="w">      </span><span class="c">!! turbulent diffusive flux: nu_t = nu_max / (1 + alpha*Ri)^2 + nu_bg.</span>
+<a id="ln-28" name="ln-28" href="#ln-28"></a><span class="w">      </span><span class="c">!!</span>
+<a id="ln-29" name="ln-29" href="#ln-29"></a><span class="w">      </span><span class="c">!! Column-local — no neighbour access, safe for `do concurrent`.</span>
+<a id="ln-30" name="ln-30" href="#ln-30"></a><span class="w">      </span><span class="k">type</span><span class="p">(</span><span class="n">unstr_state_t</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">state</span>
+<a id="ln-31" name="ln-31" href="#ln-31"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">dt</span>
+<a id="ln-32" name="ln-32" href="#ln-32"></a>
+<a id="ln-33" name="ln-33" href="#ln-33"></a><span class="w">      </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">cell</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="n">nz</span><span class="p">,</span><span class="w"> </span><span class="n">n</span>
+<a id="ln-34" name="ln-34" href="#ln-34"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">h_k</span><span class="p">,</span><span class="w"> </span><span class="n">h_k1</span><span class="p">,</span><span class="w"> </span><span class="n">h_avg</span><span class="p">,</span><span class="w"> </span><span class="n">u_k</span><span class="p">,</span><span class="w"> </span><span class="n">v_k</span><span class="p">,</span><span class="w"> </span><span class="n">u_k1</span><span class="p">,</span><span class="w"> </span><span class="n">v_k1</span>
+<a id="ln-35" name="ln-35" href="#ln-35"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">du</span><span class="p">,</span><span class="w"> </span><span class="n">dv</span><span class="p">,</span><span class="w"> </span><span class="n">drho</span><span class="p">,</span><span class="w"> </span><span class="n">Ri</span><span class="p">,</span><span class="w"> </span><span class="n">denom</span><span class="p">,</span><span class="w"> </span><span class="n">nu_t</span><span class="p">,</span><span class="w"> </span><span class="n">flux_u</span><span class="p">,</span><span class="w"> </span><span class="n">flux_v</span>
+<a id="ln-36" name="ln-36" href="#ln-36"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">flux_u_iface</span><span class="p">(</span><span class="n">BPG_NZ_MAX</span><span class="p">),</span><span class="w"> </span><span class="n">flux_v_iface</span><span class="p">(</span><span class="n">BPG_NZ_MAX</span><span class="p">)</span>
+<a id="ln-37" name="ln-37" href="#ln-37"></a>
+<a id="ln-38" name="ln-38" href="#ln-38"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">parameter</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">EPS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0e-20_wp</span>
+<a id="ln-39" name="ln-39" href="#ln-39"></a>
+<a id="ln-40" name="ln-40" href="#ln-40"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">use_multilayer</span><span class="p">)</span><span class="w"> </span><span class="k">return</span>
+<a id="ln-41" name="ln-41" href="#ln-41"></a><span class="k">      </span><span class="n">nz</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">nz_ml</span>
+<a id="ln-42" name="ln-42" href="#ln-42"></a><span class="w">      </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">ncells_owned</span>
+<a id="ln-43" name="ln-43" href="#ln-43"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">nz</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="k">return</span>
+<a id="ln-44" name="ln-44" href="#ln-44"></a>
+<a id="ln-45" name="ln-45" href="#ln-45"></a><span class="k">      do</span><span class="w"> </span><span class="k">concurrent</span><span class="p">(</span><span class="n">cell</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="n">n</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<a id="ln-46" name="ln-46" href="#ln-46"></a><span class="w">         </span><span class="n">local</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="n">h_k</span><span class="p">,</span><span class="w"> </span><span class="n">h_k1</span><span class="p">,</span><span class="w"> </span><span class="n">h_avg</span><span class="p">,</span><span class="w"> </span><span class="n">u_k</span><span class="p">,</span><span class="w"> </span><span class="n">v_k</span><span class="p">,</span><span class="w"> </span><span class="n">u_k1</span><span class="p">,</span><span class="w"> </span><span class="n">v_k1</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<a id="ln-47" name="ln-47" href="#ln-47"></a><span class="w">               </span><span class="n">du</span><span class="p">,</span><span class="w"> </span><span class="n">dv</span><span class="p">,</span><span class="w"> </span><span class="n">drho</span><span class="p">,</span><span class="w"> </span><span class="n">Ri</span><span class="p">,</span><span class="w"> </span><span class="n">denom</span><span class="p">,</span><span class="w"> </span><span class="n">nu_t</span><span class="p">,</span><span class="w"> </span><span class="n">flux_u</span><span class="p">,</span><span class="w"> </span><span class="n">flux_v</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<a id="ln-48" name="ln-48" href="#ln-48"></a><span class="w">               </span><span class="n">flux_u_iface</span><span class="p">,</span><span class="w"> </span><span class="n">flux_v_iface</span><span class="p">)</span>
+<a id="ln-49" name="ln-49" href="#ln-49"></a>
+<a id="ln-50" name="ln-50" href="#ln-50"></a><span class="w">         </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">state</span><span class="p">%</span><span class="n">barotropic</span><span class="p">%</span><span class="n">height_cv</span><span class="p">(</span><span class="n">cell</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">ML_MIN_DEPTH_UNSTR</span><span class="p">)</span><span class="w"> </span><span class="k">cycle</span>
+<a id="ln-51" name="ln-51" href="#ln-51"></a>
+<a id="ln-52" name="ln-52" href="#ln-52"></a><span class="w">         </span><span class="c">! Pass 1: compute interface fluxes</span>
+<a id="ln-53" name="ln-53" href="#ln-53"></a><span class="w">         </span><span class="k">do </span><span class="n">k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">nz</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span>
+<a id="ln-54" name="ln-54" href="#ln-54"></a><span class="w">            </span><span class="n">h_k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">h_layer</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="n">cell</span><span class="p">)</span>
+<a id="ln-55" name="ln-55" href="#ln-55"></a><span class="w">            </span><span class="n">h_k1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">h_layer</span><span class="p">(</span><span class="n">k</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">cell</span><span class="p">)</span>
+<a id="ln-56" name="ln-56" href="#ln-56"></a><span class="w">            </span><span class="n">h_avg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.5_wp</span><span class="o">*</span><span class="p">(</span><span class="n">h_k</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">h_k1</span><span class="p">)</span>
+<a id="ln-57" name="ln-57" href="#ln-57"></a>
+<a id="ln-58" name="ln-58" href="#ln-58"></a><span class="w">            </span><span class="n">flux_u_iface</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<a id="ln-59" name="ln-59" href="#ln-59"></a><span class="w">            </span><span class="n">flux_v_iface</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<a id="ln-60" name="ln-60" href="#ln-60"></a>
+<a id="ln-61" name="ln-61" href="#ln-61"></a><span class="w">            </span><span class="c">! VCOORD_ZSTAR_FULL: no-flux through interfaces adjacent to</span>
+<a id="ln-62" name="ln-62" href="#ln-62"></a><span class="w">            </span><span class="c">! vanishing layers (otherwise nu_t * du / h_avg blows up</span>
+<a id="ln-63" name="ln-63" href="#ln-63"></a><span class="w">            </span><span class="c">! when h_avg = h_min / 2).</span>
+<a id="ln-64" name="ln-64" href="#ln-64"></a><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">h_avg</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">VANISHING_LAYER_TOL_UNSTR</span><span class="w"> </span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="w"> </span><span class="p">&amp;</span>
+<a id="ln-65" name="ln-65" href="#ln-65"></a><span class="w">                </span><span class="n">h_k</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">VANISHING_LAYER_TOL_UNSTR</span><span class="w"> </span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="w"> </span><span class="p">&amp;</span>
+<a id="ln-66" name="ln-66" href="#ln-66"></a><span class="w">                </span><span class="n">h_k1</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">VANISHING_LAYER_TOL_UNSTR</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<a id="ln-67" name="ln-67" href="#ln-67"></a><span class="k">               if</span><span class="w"> </span><span class="p">(</span><span class="n">h_k</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">DRY_TOLERANCE</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<a id="ln-68" name="ln-68" href="#ln-68"></a><span class="k">                  </span><span class="n">u_k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">hu_layer</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="n">cell</span><span class="p">)</span><span class="o">/</span><span class="n">h_k</span>
+<a id="ln-69" name="ln-69" href="#ln-69"></a><span class="w">                  </span><span class="n">v_k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">hv_layer</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="n">cell</span><span class="p">)</span><span class="o">/</span><span class="n">h_k</span>
+<a id="ln-70" name="ln-70" href="#ln-70"></a><span class="w">               </span><span class="k">else</span>
+<a id="ln-71" name="ln-71" href="#ln-71"></a><span class="k">                  </span><span class="n">u_k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<a id="ln-72" name="ln-72" href="#ln-72"></a><span class="w">                  </span><span class="n">v_k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<a id="ln-73" name="ln-73" href="#ln-73"></a><span class="w">               </span><span class="k">end if</span>
+<a id="ln-74" name="ln-74" href="#ln-74"></a><span class="k">               if</span><span class="w"> </span><span class="p">(</span><span class="n">h_k1</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">DRY_TOLERANCE</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<a id="ln-75" name="ln-75" href="#ln-75"></a><span class="k">                  </span><span class="n">u_k1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">hu_layer</span><span class="p">(</span><span class="n">k</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">cell</span><span class="p">)</span><span class="o">/</span><span class="n">h_k1</span>
+<a id="ln-76" name="ln-76" href="#ln-76"></a><span class="w">                  </span><span class="n">v_k1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">hv_layer</span><span class="p">(</span><span class="n">k</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">cell</span><span class="p">)</span><span class="o">/</span><span class="n">h_k1</span>
+<a id="ln-77" name="ln-77" href="#ln-77"></a><span class="w">               </span><span class="k">else</span>
+<a id="ln-78" name="ln-78" href="#ln-78"></a><span class="k">                  </span><span class="n">u_k1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<a id="ln-79" name="ln-79" href="#ln-79"></a><span class="w">                  </span><span class="n">v_k1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<a id="ln-80" name="ln-80" href="#ln-80"></a><span class="w">               </span><span class="k">end if</span>
+<a id="ln-81" name="ln-81" href="#ln-81"></a>
+<a id="ln-82" name="ln-82" href="#ln-82"></a><span class="k">               </span><span class="n">du</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">u_k1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">u_k</span>
+<a id="ln-83" name="ln-83" href="#ln-83"></a><span class="w">               </span><span class="n">dv</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">v_k1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">v_k</span>
+<a id="ln-84" name="ln-84" href="#ln-84"></a><span class="w">               </span><span class="n">drho</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">rho_layer</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="n">cell</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">rho_layer</span><span class="p">(</span><span class="n">k</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">cell</span><span class="p">)</span>
+<a id="ln-85" name="ln-85" href="#ln-85"></a>
+<a id="ln-86" name="ln-86" href="#ln-86"></a><span class="w">               </span><span class="n">Ri</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">GRAVITY</span><span class="o">*</span><span class="p">(</span><span class="n">drho</span><span class="o">/</span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">rho_0</span><span class="p">)</span><span class="o">*</span><span class="n">h_avg</span><span class="o">/</span><span class="p">(</span><span class="n">du</span><span class="o">*</span><span class="n">du</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">dv</span><span class="o">*</span><span class="n">dv</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">EPS</span><span class="p">)</span>
+<a id="ln-87" name="ln-87" href="#ln-87"></a><span class="w">               </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">Ri</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mf">0.0_wp</span><span class="p">)</span><span class="w"> </span><span class="n">Ri</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0_wp</span>
+<a id="ln-88" name="ln-88" href="#ln-88"></a>
+<a id="ln-89" name="ln-89" href="#ln-89"></a><span class="w">               </span><span class="n">denom</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0_wp</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">vmix_ri_alpha</span><span class="o">*</span><span class="n">Ri</span>
+<a id="ln-90" name="ln-90" href="#ln-90"></a><span class="w">               </span><span class="n">nu_t</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">vmix_nu_max</span><span class="o">/</span><span class="p">(</span><span class="n">denom</span><span class="o">*</span><span class="n">denom</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">vmix_nu_bg</span>
+<a id="ln-91" name="ln-91" href="#ln-91"></a>
+<a id="ln-92" name="ln-92" href="#ln-92"></a><span class="w">               </span><span class="c">! Stability: nu_t * dt / h_avg^2 &lt;= 0.5</span>
+<a id="ln-93" name="ln-93" href="#ln-93"></a><span class="w">               </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">nu_t</span><span class="o">*</span><span class="n">dt</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mf">0.5_wp</span><span class="o">*</span><span class="n">h_avg</span><span class="o">*</span><span class="n">h_avg</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<a id="ln-94" name="ln-94" href="#ln-94"></a><span class="k">                  </span><span class="n">nu_t</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.5_wp</span><span class="o">*</span><span class="n">h_avg</span><span class="o">*</span><span class="n">h_avg</span><span class="o">/</span><span class="n">dt</span>
+<a id="ln-95" name="ln-95" href="#ln-95"></a><span class="w">               </span><span class="k">end if</span>
+<a id="ln-96" name="ln-96" href="#ln-96"></a>
+<a id="ln-97" name="ln-97" href="#ln-97"></a><span class="k">               </span><span class="n">flux_u_iface</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nu_t</span><span class="o">*</span><span class="n">du</span><span class="o">/</span><span class="n">h_avg</span><span class="o">*</span><span class="n">dt</span>
+<a id="ln-98" name="ln-98" href="#ln-98"></a><span class="w">               </span><span class="n">flux_v_iface</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nu_t</span><span class="o">*</span><span class="n">dv</span><span class="o">/</span><span class="n">h_avg</span><span class="o">*</span><span class="n">dt</span>
+<a id="ln-99" name="ln-99" href="#ln-99"></a><span class="w">            </span><span class="k">end if</span>
+<a id="ln-100" name="ln-100" href="#ln-100"></a><span class="k">         end do</span>
+<a id="ln-101" name="ln-101" href="#ln-101"></a>
+<a id="ln-102" name="ln-102" href="#ln-102"></a><span class="w">         </span><span class="c">! Pass 2: apply fluxes to layers.  flux_*_iface(k) is the momentum</span>
+<a id="ln-103" name="ln-103" href="#ln-103"></a><span class="w">         </span><span class="c">! transfer across interface k+1/2 (units m^2/s); same quantity adds</span>
+<a id="ln-104" name="ln-104" href="#ln-104"></a><span class="w">         </span><span class="c">! to layer k and subtracts from layer k+1.  Previous h_layer</span>
+<a id="ln-105" name="ln-105" href="#ln-105"></a><span class="w">         </span><span class="c">! multipliers were dimensionally wrong and non-conservative under</span>
+<a id="ln-106" name="ln-106" href="#ln-106"></a><span class="w">         </span><span class="c">! non-uniform dz (e.g. VCOORD_ZSTAR_FULL).</span>
+<a id="ln-107" name="ln-107" href="#ln-107"></a><span class="w">         </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">hu_layer</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">cell</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">hu_layer</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">cell</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<a id="ln-108" name="ln-108" href="#ln-108"></a><span class="w">                                              </span><span class="o">+</span><span class="w"> </span><span class="n">flux_u_iface</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<a id="ln-109" name="ln-109" href="#ln-109"></a><span class="w">         </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">hv_layer</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">cell</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">hv_layer</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">cell</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<a id="ln-110" name="ln-110" href="#ln-110"></a><span class="w">                                              </span><span class="o">+</span><span class="w"> </span><span class="n">flux_v_iface</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<a id="ln-111" name="ln-111" href="#ln-111"></a><span class="w">         </span><span class="k">do </span><span class="n">k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">nz</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span>
+<a id="ln-112" name="ln-112" href="#ln-112"></a><span class="w">            </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">hu_layer</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="n">cell</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">hu_layer</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="n">cell</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<a id="ln-113" name="ln-113" href="#ln-113"></a><span class="w">                                                 </span><span class="o">+</span><span class="w"> </span><span class="p">(</span><span class="n">flux_u_iface</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">flux_u_iface</span><span class="p">(</span><span class="n">k</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">))</span>
+<a id="ln-114" name="ln-114" href="#ln-114"></a><span class="w">            </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">hv_layer</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="n">cell</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">hv_layer</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="n">cell</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<a id="ln-115" name="ln-115" href="#ln-115"></a><span class="w">                                                 </span><span class="o">+</span><span class="w"> </span><span class="p">(</span><span class="n">flux_v_iface</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">flux_v_iface</span><span class="p">(</span><span class="n">k</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">))</span>
+<a id="ln-116" name="ln-116" href="#ln-116"></a><span class="w">         </span><span class="k">end do</span>
+<a id="ln-117" name="ln-117" href="#ln-117"></a><span class="k">         </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">hu_layer</span><span class="p">(</span><span class="n">nz</span><span class="p">,</span><span class="w"> </span><span class="n">cell</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">hu_layer</span><span class="p">(</span><span class="n">nz</span><span class="p">,</span><span class="w"> </span><span class="n">cell</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<a id="ln-118" name="ln-118" href="#ln-118"></a><span class="w">                                               </span><span class="o">-</span><span class="w"> </span><span class="n">flux_u_iface</span><span class="p">(</span><span class="n">nz</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<a id="ln-119" name="ln-119" href="#ln-119"></a><span class="w">         </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">hv_layer</span><span class="p">(</span><span class="n">nz</span><span class="p">,</span><span class="w"> </span><span class="n">cell</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">%</span><span class="n">multilayer</span><span class="p">%</span><span class="n">hv_layer</span><span class="p">(</span><span class="n">nz</span><span class="p">,</span><span class="w"> </span><span class="n">cell</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<a id="ln-120" name="ln-120" href="#ln-120"></a><span class="w">                                               </span><span class="o">-</span><span class="w"> </span><span class="n">flux_v_iface</span><span class="p">(</span><span class="n">nz</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<a id="ln-121" name="ln-121" href="#ln-121"></a><span class="w">      </span><span class="k">end do</span>
+<a id="ln-122" name="ln-122" href="#ln-122"></a>
+<a id="ln-123" name="ln-123" href="#ln-123"></a><span class="k">   end subroutine </span><span class="n">ml_vertical_viscosity_unstr</span>
+<a id="ln-124" name="ln-124" href="#ln-124"></a>
+<a id="ln-125" name="ln-125" href="#ln-125"></a><span class="k">end module </span><span class="n">rki_ml_vertical_viscosity_unstr</span>
+</pre></div>
+
+      </section>
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Rakali
+ was developed by Jorge Luis Galvez Vallejo<br>              &copy; 2026 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+ on 2026-10-08 12:55 +0000             </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>

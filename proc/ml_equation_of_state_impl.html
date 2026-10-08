@@ -1,0 +1,957 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="GPU-native coastal solver — structured Cartesian and unstructured triangular grids, hydrostatic multilayer + non-hydrostatic, portable across NVHPC/gfortran/ifx.">
+    <meta name="author" content="Jorge Luis Galvez Vallejo" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>ml_equation_of_state_impl &ndash; Rakali</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">Rakali </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/absint.html">Abstract Interfaces</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>ml_equation_of_state_impl
+      <small>Subroutine</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.1% of total for procedures.">20 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/rki_ml_eos_unstr.F90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/rki_ml_eos_unstr.f90.html'>rki_ml_eos_unstr.F90</a></li>
+                <li class="breadcrumb-item"><a href='../module/rki_ml_eos_unstr.html'>rki_ml_eos_unstr</a></li>
+            <li class="breadcrumb-item active" aria-current="page">ml_equation_of_state_impl</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+  
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#vars-0"
+         aria-expanded="false" aria-controls="vars-0">
+         <h4 class="card-header bg-primary text-white">Variables</h4>
+      </a>
+      <div id="vars-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../proc/ml_equation_of_state_impl.html#variable-s_k~2">S_k</a>
+            <a class="list-group-item" href="../proc/ml_equation_of_state_impl.html#variable-t_k~2">T_k</a>
+            <a class="list-group-item" href="../proc/ml_equation_of_state_impl.html#variable-cell~3">cell</a>
+            <a class="list-group-item" href="../proc/ml_equation_of_state_impl.html#variable-h_k~8">h_k</a>
+            <a class="list-group-item" href="../proc/ml_equation_of_state_impl.html#variable-inv_h~2">inv_h</a>
+            <a class="list-group-item" href="../proc/ml_equation_of_state_impl.html#variable-k~50">k</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../proc/ml_equation_of_state_impl.html#src">ml_equation_of_state_impl</a>
+      </div>
+    </div>
+
+
+  </div>
+
+    </div>
+    
+    <div class="col-md-9" id='text'>
+    <h2>private pure subroutine ml_equation_of_state_impl(h_layer, hS_layer, hT_layer, rho_layer, S_ref, T_ref, rho_0, beta_S, alpha_T, nz, n)  
+</h2>
+    
+
+    <p>Inner kernel — flat-array dummies so the device-side
+<code>do concurrent</code> doesn&rsquo;t chase the tracer-registry indirection.</p>
+
+
+    <h3>Arguments</h3>
+        <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-h_layer~17"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>h_layer</strong>(nz,n)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-hs_layer~3"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>hS_layer</strong>(nz,n)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ht_layer~3"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>hT_layer</strong>(nz,n)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-rho_layer~3"></span>
+              real(kind=wp),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>rho_layer</strong>(nz,n)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-s_ref"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>S_ref</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-t_ref"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>T_ref</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-rho_0~5"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>rho_0</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-beta_s"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>beta_S</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-alpha_t"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>alpha_T</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nz~48"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nz</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-n~20"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>n</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <br>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Calls</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~ml_equation_of_state_impl~~CallsGraph Pages: 1 -->
+<svg id="procml_equation_of_state_implCallsGraph" width="252pt" height="32pt"
+ viewBox="0.00 0.00 252.00 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~ml_equation_of_state_impl~~CallsGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<title>proc~~ml_equation_of_state_impl~~CallsGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 248,-28 248,4 -4,4"/>
+<!-- proc~ml_equation_of_state_impl -->
+<g id="proc~~ml_equation_of_state_impl~~CallsGraph_node1" class="node">
+<title>proc~ml_equation_of_state_impl</title>
+<polygon fill="none" stroke="black" points="154,-24 0,-24 0,0 154,0 154,-24"/>
+<text text-anchor="middle" x="77" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">ml_equation_of_state_impl</text>
+</g>
+<!-- local -->
+<g id="proc~~ml_equation_of_state_impl~~CallsGraph_node2" class="node">
+<title>local</title>
+<polygon fill="#777777" stroke="#777777" points="244,-24 190,-24 190,0 244,0 244,-24"/>
+<text text-anchor="middle" x="217" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">local</text>
+</g>
+<!-- proc~ml_equation_of_state_impl&#45;&gt;local -->
+<g id="proc~~ml_equation_of_state_impl~~CallsGraph_edge1" class="edge">
+<title>proc~ml_equation_of_state_impl&#45;&gt;local</title>
+<path fill="none" stroke="#ff0000" d="M154.27,-12C163.19,-12 171.96,-12 179.95,-12"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="179.96,-15.5 189.96,-12 179.96,-8.5 179.96,-15.5"/>
+</g>
+</g>
+</svg>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CallsGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CallsGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Called by</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~ml_equation_of_state_impl~~CalledByGraph Pages: 1 -->
+<svg id="procml_equation_of_state_implCalledByGraph" width="641pt" height="56pt"
+ viewBox="0.00 0.00 641.00 56.12" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~ml_equation_of_state_impl~~CalledByGraph" class="graph" transform="scale(0.48 0.48) rotate(0) translate(4 112)">
+<title>proc~~ml_equation_of_state_impl~~CalledByGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-112 1321,-112 1321,4 -4,4"/>
+<!-- proc~ml_equation_of_state_impl -->
+<g id="proc~~ml_equation_of_state_impl~~CalledByGraph_node1" class="node">
+<title>proc~ml_equation_of_state_impl</title>
+<polygon fill="none" stroke="black" points="1317,-62 1163,-62 1163,-38 1317,-38 1317,-62"/>
+<text text-anchor="middle" x="1240" y="-47.6" font-family="Helvetica,sans-Serif" font-size="10.50">ml_equation_of_state_impl</text>
+</g>
+<!-- proc~ml_equation_of_state_unstr -->
+<g id="proc~~ml_equation_of_state_impl~~CalledByGraph_node2" class="node">
+<title>proc~ml_equation_of_state_unstr</title>
+<g id="a_proc~~ml_equation_of_state_impl~~CalledByGraph_node2"><a xlink:href="../proc/ml_equation_of_state_unstr.html" xlink:title="ml_equation_of_state_unstr">
+<polygon fill="#d9534f" stroke="#d9534f" points="1127,-62 969,-62 969,-38 1127,-38 1127,-62"/>
+<text text-anchor="middle" x="1048" y="-47.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">ml_equation_of_state_unstr</text>
+</a>
+</g>
+</g>
+<!-- proc~ml_equation_of_state_unstr&#45;&gt;proc~ml_equation_of_state_impl -->
+<g id="proc~~ml_equation_of_state_impl~~CalledByGraph_edge1" class="edge">
+<title>proc~ml_equation_of_state_unstr&#45;&gt;proc~ml_equation_of_state_impl</title>
+<path fill="none" stroke="#ff0000" d="M1127.1,-50C1135.47,-50 1144.02,-50 1152.48,-50"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="1152.73,-53.5 1162.73,-50 1152.73,-46.5 1152.73,-53.5"/>
+</g>
+<!-- proc~si_unstr_step_ml -->
+<g id="proc~~ml_equation_of_state_impl~~CalledByGraph_node3" class="node">
+<title>proc~si_unstr_step_ml</title>
+<g id="a_proc~~ml_equation_of_state_impl~~CalledByGraph_node3"><a xlink:href="../proc/si_unstr_step_ml.html" xlink:title="si_unstr_step_ml">
+<polygon fill="#d9534f" stroke="#d9534f" points="933,-102 833,-102 833,-78 933,-78 933,-102"/>
+<text text-anchor="middle" x="883" y="-87.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">si_unstr_step_ml</text>
+</a>
+</g>
+</g>
+<!-- proc~si_unstr_step_ml&#45;&gt;proc~ml_equation_of_state_unstr -->
+<g id="proc~~ml_equation_of_state_impl~~CalledByGraph_edge2" class="edge">
+<title>proc~si_unstr_step_ml&#45;&gt;proc~ml_equation_of_state_unstr</title>
+<path fill="none" stroke="#ff0000" d="M932.91,-78C950.23,-73.75 969.91,-68.92 987.99,-64.48"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="988.97,-67.84 997.85,-62.06 987.3,-61.05 988.97,-67.84"/>
+</g>
+<!-- proc~solver_unstr_init_multilayer -->
+<g id="proc~~ml_equation_of_state_impl~~CalledByGraph_node4" class="node">
+<title>proc~solver_unstr_init_multilayer</title>
+<g id="a_proc~~ml_equation_of_state_impl~~CalledByGraph_node4"><a xlink:href="../proc/solver_unstr_init_multilayer.html" xlink:title="solver_unstr_init_multilayer">
+<polygon fill="#d9534f" stroke="#d9534f" points="440,-24 282,-24 282,0 440,0 440,-24"/>
+<text text-anchor="middle" x="361" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_unstr_init_multilayer</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_unstr_init_multilayer&#45;&gt;proc~ml_equation_of_state_unstr -->
+<g id="proc~~ml_equation_of_state_impl~~CalledByGraph_edge3" class="edge">
+<title>proc~solver_unstr_init_multilayer&#45;&gt;proc~ml_equation_of_state_unstr</title>
+<path fill="none" stroke="#ff0000" d="M440.24,-16.34C568.8,-23.47 823.86,-37.62 958.7,-45.1"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="958.81,-48.61 968.99,-45.67 959.2,-41.62 958.81,-48.61"/>
+</g>
+<!-- proc~solver_unstr_step -->
+<g id="proc~~ml_equation_of_state_impl~~CalledByGraph_node5" class="node">
+<title>proc~solver_unstr_step</title>
+<g id="a_proc~~ml_equation_of_state_impl~~CalledByGraph_node5"><a xlink:href="../proc/solver_unstr_step.html" xlink:title="solver_unstr_step">
+<polygon fill="#d9534f" stroke="#d9534f" points="581,-84 476,-84 476,-60 581,-60 581,-84"/>
+<text text-anchor="middle" x="528.5" y="-69.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_unstr_step</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_unstr_step&#45;&gt;proc~ml_equation_of_state_unstr -->
+<g id="proc~~ml_equation_of_state_impl~~CalledByGraph_edge4" class="edge">
+<title>proc~solver_unstr_step&#45;&gt;proc~ml_equation_of_state_unstr</title>
+<path fill="none" stroke="#ff0000" d="M581.01,-69.81C669.18,-66.06 850,-58.37 958.65,-53.76"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="959.09,-57.24 968.93,-53.32 958.79,-50.25 959.09,-57.24"/>
+</g>
+<!-- proc~solver_unstr_step_semi_implicit -->
+<g id="proc~~ml_equation_of_state_impl~~CalledByGraph_node10" class="node">
+<title>proc~solver_unstr_step_semi_implicit</title>
+<g id="a_proc~~ml_equation_of_state_impl~~CalledByGraph_node10"><a xlink:href="../proc/solver_unstr_step_semi_implicit.html" xlink:title="solver_unstr_step_semi_implicit">
+<polygon fill="#d9534f" stroke="#d9534f" points="797,-102 617,-102 617,-78 797,-78 797,-102"/>
+<text text-anchor="middle" x="707" y="-87.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_unstr_step_semi_implicit</text>
+</a>
+</g>
+</g>
+<!-- proc~solver_unstr_step&#45;&gt;proc~solver_unstr_step_semi_implicit -->
+<g id="proc~~ml_equation_of_state_impl~~CalledByGraph_edge13" class="edge">
+<title>proc~solver_unstr_step&#45;&gt;proc~solver_unstr_step_semi_implicit</title>
+<path fill="none" stroke="#cc00ff" d="M581.03,-77.25C589.23,-78.09 597.95,-78.98 606.82,-79.89"/>
+<polygon fill="#cc00ff" stroke="#cc00ff" points="606.58,-83.38 616.88,-80.91 607.29,-76.42 606.58,-83.38"/>
+</g>
+<!-- proc~driver_run_coastal_unstr -->
+<g id="proc~~ml_equation_of_state_impl~~CalledByGraph_node6" class="node">
+<title>proc~driver_run_coastal_unstr</title>
+<g id="a_proc~~ml_equation_of_state_impl~~CalledByGraph_node6"><a xlink:href="../proc/driver_run_coastal_unstr.html" xlink:title="driver_run_coastal_unstr">
+<polygon fill="#d9534f" stroke="#d9534f" points="246,-66 103,-66 103,-42 246,-42 246,-66"/>
+<text text-anchor="middle" x="174.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">driver_run_coastal_unstr</text>
+</a>
+</g>
+</g>
+<!-- proc~driver_run_coastal_unstr&#45;&gt;proc~solver_unstr_init_multilayer -->
+<g id="proc~~ml_equation_of_state_impl~~CalledByGraph_edge6" class="edge">
+<title>proc~driver_run_coastal_unstr&#45;&gt;proc~solver_unstr_init_multilayer</title>
+<path fill="none" stroke="#00ff00" d="M228.37,-41.96C249.89,-37.07 274.93,-31.37 297.36,-26.26"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="298.15,-29.67 307.12,-24.04 296.59,-22.84 298.15,-29.67"/>
+</g>
+<!-- proc~solver_unstr_advance -->
+<g id="proc~~ml_equation_of_state_impl~~CalledByGraph_node9" class="node">
+<title>proc~solver_unstr_advance</title>
+<g id="a_proc~~ml_equation_of_state_impl~~CalledByGraph_node9"><a xlink:href="../proc/solver_unstr_advance.html" xlink:title="solver_unstr_advance">
+<polygon fill="#d9534f" stroke="#d9534f" points="425,-108 297,-108 297,-84 425,-84 425,-108"/>
+<text text-anchor="middle" x="361" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solver_unstr_advance</text>
+</a>
+</g>
+</g>
+<!-- proc~driver_run_coastal_unstr&#45;&gt;proc~solver_unstr_advance -->
+<g id="proc~~ml_equation_of_state_impl~~CalledByGraph_edge11" class="edge">
+<title>proc~driver_run_coastal_unstr&#45;&gt;proc~solver_unstr_advance</title>
+<path fill="none" stroke="#0066ff" d="M228.37,-66.04C249.89,-70.93 274.93,-76.63 297.36,-81.74"/>
+<polygon fill="#0066ff" stroke="#0066ff" points="296.59,-85.16 307.12,-83.96 298.15,-78.33 296.59,-85.16"/>
+</g>
+<!-- proc~rki_unstr_finalize -->
+<g id="proc~~ml_equation_of_state_impl~~CalledByGraph_node7" class="node">
+<title>proc~rki_unstr_finalize</title>
+<g id="a_proc~~ml_equation_of_state_impl~~CalledByGraph_node7"><a xlink:href="../proc/rki_unstr_finalize.html" xlink:title="rki_unstr_finalize">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="225.5,-24 123.5,-24 123.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="174.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_unstr_finalize</text>
+</a>
+</g>
+</g>
+<!-- proc~rki_unstr_finalize&#45;&gt;proc~solver_unstr_init_multilayer -->
+<g id="proc~~ml_equation_of_state_impl~~CalledByGraph_edge7" class="edge">
+<title>proc~rki_unstr_finalize&#45;&gt;proc~solver_unstr_init_multilayer</title>
+<path fill="none" stroke="#00ff00" d="M225.92,-12C240.09,-12 255.95,-12 271.65,-12"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="271.92,-15.5 281.92,-12 271.92,-8.5 271.92,-15.5"/>
+</g>
+<!-- proc~rki_unstr_step -->
+<g id="proc~~ml_equation_of_state_impl~~CalledByGraph_node8" class="node">
+<title>proc~rki_unstr_step</title>
+<g id="a_proc~~ml_equation_of_state_impl~~CalledByGraph_node8"><a xlink:href="../proc/rki_unstr_step.html" xlink:title="rki_unstr_step">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="404,-66 318,-66 318,-42 404,-42 404,-66"/>
+<text text-anchor="middle" x="361" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_unstr_step</text>
+</a>
+</g>
+</g>
+<!-- proc~rki_unstr_step&#45;&gt;proc~solver_unstr_step -->
+<g id="proc~~ml_equation_of_state_impl~~CalledByGraph_edge8" class="edge">
+<title>proc~rki_unstr_step&#45;&gt;proc~solver_unstr_step</title>
+<path fill="none" stroke="#0000ff" d="M404.19,-58.59C422.87,-60.62 445.21,-63.05 465.72,-65.28"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="465.61,-68.79 475.93,-66.39 466.36,-61.83 465.61,-68.79"/>
+</g>
+<!-- proc~solver_unstr_advance&#45;&gt;proc~solver_unstr_step -->
+<g id="proc~~ml_equation_of_state_impl~~CalledByGraph_edge9" class="edge">
+<title>proc~solver_unstr_advance&#45;&gt;proc~solver_unstr_step</title>
+<path fill="none" stroke="#0000ff" d="M425.04,-86.86C438.43,-84.92 452.56,-82.87 465.9,-80.93"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="466.53,-84.38 475.92,-79.48 465.52,-77.45 466.53,-84.38"/>
+</g>
+<!-- proc~solver_unstr_step_semi_implicit&#45;&gt;proc~si_unstr_step_ml -->
+<g id="proc~~ml_equation_of_state_impl~~CalledByGraph_edge5" class="edge">
+<title>proc~solver_unstr_step_semi_implicit&#45;&gt;proc~si_unstr_step_ml</title>
+<path fill="none" stroke="#ff0000" d="M797.04,-90C805.84,-90 814.61,-90 822.99,-90"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="823,-93.5 833,-90 823,-86.5 823,-93.5"/>
+</g>
+<!-- proc~driver_run -->
+<g id="proc~~ml_equation_of_state_impl~~CalledByGraph_node11" class="node">
+<title>proc~driver_run</title>
+<g id="a_proc~~ml_equation_of_state_impl~~CalledByGraph_node11"><a xlink:href="../proc/driver_run.html" xlink:title="driver_run">
+<polygon fill="#d9534f" stroke="#d9534f" points="67,-66 0,-66 0,-42 67,-42 67,-66"/>
+<text text-anchor="middle" x="33.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">driver_run</text>
+</a>
+</g>
+</g>
+<!-- proc~driver_run&#45;&gt;proc~driver_run_coastal_unstr -->
+<g id="proc~~ml_equation_of_state_impl~~CalledByGraph_edge10" class="edge">
+<title>proc~driver_run&#45;&gt;proc~driver_run_coastal_unstr</title>
+<path fill="none" stroke="#ff0000" d="M67.09,-54C74.9,-54 83.59,-54 92.54,-54"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="92.72,-57.5 102.72,-54 92.72,-50.5 92.72,-57.5"/>
+</g>
+<!-- proc~rki_unstr_advance -->
+<g id="proc~~ml_equation_of_state_impl~~CalledByGraph_node12" class="node">
+<title>proc~rki_unstr_advance</title>
+<g id="a_proc~~ml_equation_of_state_impl~~CalledByGraph_node12"><a xlink:href="../proc/rki_unstr_advance.html" xlink:title="rki_unstr_advance">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="229,-108 120,-108 120,-84 229,-84 229,-108"/>
+<text text-anchor="middle" x="174.5" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_unstr_advance</text>
+</a>
+</g>
+</g>
+<!-- proc~rki_unstr_advance&#45;&gt;proc~solver_unstr_advance -->
+<g id="proc~~ml_equation_of_state_impl~~CalledByGraph_edge12" class="edge">
+<title>proc~rki_unstr_advance&#45;&gt;proc~solver_unstr_advance</title>
+<path fill="none" stroke="#0066ff" d="M229.36,-96C247.3,-96 267.6,-96 286.76,-96"/>
+<polygon fill="#0066ff" stroke="#0066ff" points="286.96,-99.5 296.96,-96 286.96,-92.5 286.96,-99.5"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var panprocml_equation_of_state_implCalledByGraph = svgPanZoom('#procml_equation_of_state_implCalledByGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CalledByGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CalledByGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+
+
+    <section>    
+      <h2>Variables</h2>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Visibility</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+<th></th><th scope="col">Initial</th>        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-s_k~2"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>S_k</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-t_k~2"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>T_k</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-cell~3"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>cell</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-h_k~8"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>h_k</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-inv_h~2"></span>
+              real(kind=wp),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>inv_h</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-k~50"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>k</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    </section>
+    <br>
+    
+    
+
+    
+    
+
+
+
+    
+    <section>
+    <h2><span class="anchor" id="src"></span>Source Code</h2>
+    <div class="hl codehilite"><pre><span></span><span class="w">   </span><span class="k">pure subroutine </span><span class="n">ml_equation_of_state_impl</span><span class="p">(</span><span class="n">h_layer</span><span class="p">,</span><span class="w"> </span><span class="n">hS_layer</span><span class="p">,</span><span class="w"> </span><span class="n">hT_layer</span><span class="p">,</span><span class="w"> </span><span class="n">rho_layer</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                             </span><span class="n">S_ref</span><span class="p">,</span><span class="w"> </span><span class="n">T_ref</span><span class="p">,</span><span class="w"> </span><span class="n">rho_0</span><span class="p">,</span><span class="w"> </span><span class="n">beta_S</span><span class="p">,</span><span class="w"> </span><span class="n">alpha_T</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                             </span><span class="n">nz</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">)</span>
+<span class="w">      </span><span class="c">!! Inner kernel — flat-array dummies so the device-side</span>
+<span class="w">      </span><span class="c">!! `do concurrent` doesn't chase the tracer-registry indirection.</span>
+<span class="w">      </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w">  </span><span class="kd">::</span><span class="w"> </span><span class="n">nz</span><span class="p">,</span><span class="w"> </span><span class="n">n</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w">  </span><span class="kd">::</span><span class="w"> </span><span class="n">h_layer</span><span class="p">(</span><span class="n">nz</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">),</span><span class="w"> </span><span class="n">hS_layer</span><span class="p">(</span><span class="n">nz</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">),</span><span class="w"> </span><span class="n">hT_layer</span><span class="p">(</span><span class="n">nz</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">)</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">rho_layer</span><span class="p">(</span><span class="n">nz</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">)</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w">  </span><span class="kd">::</span><span class="w"> </span><span class="n">S_ref</span><span class="p">,</span><span class="w"> </span><span class="n">T_ref</span><span class="p">,</span><span class="w"> </span><span class="n">rho_0</span><span class="p">,</span><span class="w"> </span><span class="n">beta_S</span><span class="p">,</span><span class="w"> </span><span class="n">alpha_T</span>
+
+<span class="w">      </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">cell</span><span class="p">,</span><span class="w"> </span><span class="n">k</span>
+<span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">h_k</span><span class="p">,</span><span class="w"> </span><span class="n">S_k</span><span class="p">,</span><span class="w"> </span><span class="n">T_k</span><span class="p">,</span><span class="w"> </span><span class="n">inv_h</span>
+
+<span class="w">      </span><span class="k">do</span><span class="w"> </span><span class="k">concurrent</span><span class="p">(</span><span class="n">cell</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="n">nz</span><span class="p">)</span><span class="w"> </span><span class="n">local</span><span class="p">(</span><span class="n">h_k</span><span class="p">,</span><span class="w"> </span><span class="n">S_k</span><span class="p">,</span><span class="w"> </span><span class="n">T_k</span><span class="p">,</span><span class="w"> </span><span class="n">inv_h</span><span class="p">)</span>
+<span class="w">         </span><span class="n">h_k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">h_layer</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="n">cell</span><span class="p">)</span>
+<span class="w">         </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">h_k</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">DRY_TOLERANCE</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            </span><span class="n">inv_h</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0_wp</span><span class="o">/</span><span class="n">h_k</span>
+<span class="w">            </span><span class="n">S_k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hS_layer</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="n">cell</span><span class="p">)</span><span class="o">*</span><span class="n">inv_h</span>
+<span class="w">            </span><span class="n">T_k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hT_layer</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="n">cell</span><span class="p">)</span><span class="o">*</span><span class="n">inv_h</span>
+<span class="w">         </span><span class="k">else</span>
+<span class="k">            </span><span class="n">S_k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">S_ref</span>
+<span class="w">            </span><span class="n">T_k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">T_ref</span>
+<span class="w">         </span><span class="k">end if</span>
+<span class="k">         </span><span class="n">rho_layer</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="n">cell</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rho_0</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">beta_S</span><span class="o">*</span><span class="p">(</span><span class="n">S_k</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">S_ref</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">alpha_T</span><span class="o">*</span><span class="p">(</span><span class="n">T_k</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">T_ref</span><span class="p">)</span>
+<span class="w">      </span><span class="k">end do</span>
+<span class="k">   end subroutine </span><span class="n">ml_equation_of_state_impl</span>
+</pre></div>
+
+    </section>
+    <br>
+    
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Rakali
+ was developed by Jorge Luis Galvez Vallejo<br>              &copy; 2026 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+ on 2026-10-08 12:55 +0000             </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>

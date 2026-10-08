@@ -1,0 +1,796 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="GPU-native coastal solver — structured Cartesian and unstructured triangular grids, hydrostatic multilayer + non-hydrostatic, portable across NVHPC/gfortran/ifx.">
+    <meta name="author" content="Jorge Luis Galvez Vallejo" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>rki_keps_stability &ndash; Rakali</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">Rakali </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/absint.html">Abstract Interfaces</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>rki_keps_stability
+      <small>Module</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.2% of total for modules and submodules.">56 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/rki_keps_stability.F90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/rki_keps_stability.f90.html'>rki_keps_stability.F90</a></li>
+            <li class="breadcrumb-item active" aria-current="page">rki_keps_stability</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+
+  <div class="row">
+    <div class="col-md-3">
+        <div id="sidebar">
+      <h3>Contents</h3>
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#vars-0"
+         aria-expanded="false" aria-controls="vars-0">
+         <h4 class="card-header bg-primary text-white">Variables</h4>
+      </a>
+      <div id="vars-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../module/rki_keps_stability.html#variable-cmu">CMU</a>
+            <a class="list-group-item" href="../module/rki_keps_stability.html#variable-eps_min">EPS_MIN</a>
+            <a class="list-group-item" href="../module/rki_keps_stability.html#variable-pr_t">PR_T</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#subs-0"
+         aria-expanded="false" aria-controls="subs-0">
+         <h4 class="card-header bg-primary text-white">Subroutines</h4>
+      </a>
+      <div id="subs-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../module/rki_keps_stability.html#proc-keps_stability_funcs">keps_stability_funcs</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+
+
+  </div>
+
+    </div>
+
+    <div class="col-md-9" id='text'>
+      <p>Stratification-aware k-epsilon stability functions (S^2/N^2 -&gt; c_mu/c_mu&rsquo;),
+shared by structured (<code>rki_ml_keps</code>) and unstructured (<code>rki_ml_keps_unstr</code>).
+CONSTANT: c_mu = 0.09. GALPERIN: Galperin et al. (1988) / Mellor-Yamada
+level-2.5 algebraic form. CANUTO: Canuto et al. (2001) Model A in the
+rational alpha_M/alpha_N form of Umlauf &amp; Burchard (2003).</p>
+<br>          <div class="card mb-4">
+      <h3 class="card-header card-title bg-light">Uses</h3>
+      <div class="card-body">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <ul class="list-inline">
+                  <li class="list-inline-item"><a href='rki_constants.html'>rki_constants</a></li>
+              </ul>
+            </li>
+            <li class="list-group-item">
+              <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: module~~rki_keps_stability~~UsesGraph Pages: 1 -->
+<svg id="modulerki_keps_stabilityUsesGraph" width="327pt" height="32pt"
+ viewBox="0.00 0.00 327.00 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="module~~rki_keps_stability~~UsesGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<title>module~~rki_keps_stability~~UsesGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 323,-28 323,4 -4,4"/>
+<!-- module~rki_keps_stability -->
+<g id="module~~rki_keps_stability~~UsesGraph_node1" class="node">
+<title>module~rki_keps_stability</title>
+<polygon fill="none" stroke="black" points="319,-24 216,-24 216,0 319,0 319,-24"/>
+<text text-anchor="middle" x="267.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">rki_keps_stability</text>
+</g>
+<!-- module~rki_constants -->
+<g id="module~~rki_keps_stability~~UsesGraph_node2" class="node">
+<title>module~rki_constants</title>
+<g id="a_module~~rki_keps_stability~~UsesGraph_node2"><a xlink:href="../module/rki_constants.html" xlink:title="rki_constants">
+<polygon fill="#337ab7" stroke="#337ab7" points="180,-24 98,-24 98,0 180,0 180,-24"/>
+<text text-anchor="middle" x="139" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_constants</text>
+</a>
+</g>
+</g>
+<!-- module~rki_keps_stability&#45;&gt;module~rki_constants -->
+<g id="module~~rki_keps_stability~~UsesGraph_edge1" class="edge">
+<title>module~rki_keps_stability&#45;&gt;module~rki_constants</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M215.78,-12C207.37,-12 198.66,-12 190.26,-12"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="190.23,-8.5 180.23,-12 190.23,-15.5 190.23,-8.5"/>
+</g>
+<!-- pic_types -->
+<g id="module~~rki_keps_stability~~UsesGraph_node3" class="node">
+<title>pic_types</title>
+<polygon fill="#337ab7" stroke="#337ab7" points="62,-24 0,-24 0,0 62,0 62,-24"/>
+<text text-anchor="middle" x="31" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">pic_types</text>
+</g>
+<!-- module~rki_constants&#45;&gt;pic_types -->
+<g id="module~~rki_keps_stability~~UsesGraph_edge2" class="edge">
+<title>module~rki_constants&#45;&gt;pic_types</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M97.93,-12C89.6,-12 80.82,-12 72.48,-12"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="72.21,-8.5 62.21,-12 72.21,-15.5 72.21,-8.5"/>
+</g>
+</g>
+</svg>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#UsesGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="UsesGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="518pt" height="32pt"
+ viewBox="0.00 0.00 517.50 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 513.5,-28 513.5,4 -4,4"/>
+<!-- Module -->
+<g id="node1" class="node">
+<title>Module</title>
+<polygon fill="#337ab7" stroke="#337ab7" points="54,-24 0,-24 0,0 54,0 54,-24"/>
+<text text-anchor="middle" x="27" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Module</text>
+</g>
+<!-- Submodule -->
+<g id="node2" class="node">
+<title>Submodule</title>
+<polygon fill="#5bc0de" stroke="#5bc0de" points="145.5,-24 72.5,-24 72.5,0 145.5,0 145.5,-24"/>
+<text text-anchor="middle" x="109" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Submodule</text>
+</g>
+<!-- Subroutine -->
+<g id="node3" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="234,-24 164,-24 164,0 234,0 234,-24"/>
+<text text-anchor="middle" x="199" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node4" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="310,-24 252,-24 252,0 310,0 310,-24"/>
+<text text-anchor="middle" x="281" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Program -->
+<g id="node5" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="386,-24 328,-24 328,0 386,0 386,-24"/>
+<text text-anchor="middle" x="357" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node6" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="509.5,-24 404.5,-24 404.5,0 509.5,0 509.5,-24"/>
+<text text-anchor="middle" x="457" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a submodule to the (sub)module which it is
+descended from. Dashed arrows point from a module or program unit to 
+modules which it uses.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+            </li>
+        </ul>
+      </div>
+    </div>
+
+          <div class="card">
+      <h3 class="card-header card-title bg-light">Used by</h3>
+      <div class="card-body">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: module~~rki_keps_stability~~UsedByGraph Pages: 1 -->
+<svg id="modulerki_keps_stabilityUsedByGraph" width="641pt" height="128pt"
+ viewBox="0.00 0.00 641.00 128.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="module~~rki_keps_stability~~UsedByGraph" class="graph" transform="scale(0.98 0.98) rotate(0) translate(4 127)">
+<title>module~~rki_keps_stability~~UsedByGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-127 652,-127 652,4 -4,4"/>
+<!-- module~rki_keps_stability -->
+<g id="module~~rki_keps_stability~~UsedByGraph_node1" class="node">
+<title>module~rki_keps_stability</title>
+<polygon fill="none" stroke="black" points="103,-83 0,-83 0,-59 103,-59 103,-83"/>
+<text text-anchor="middle" x="51.5" y="-68.6" font-family="Helvetica,sans-Serif" font-size="10.50">rki_keps_stability</text>
+</g>
+<!-- module~rki_ml_keps -->
+<g id="module~~rki_keps_stability~~UsedByGraph_node2" class="node">
+<title>module~rki_ml_keps</title>
+<g id="a_module~~rki_keps_stability~~UsedByGraph_node2"><a xlink:href="../module/rki_ml_keps.html" xlink:title="rki_ml_keps">
+<polygon fill="#337ab7" stroke="#337ab7" points="230,-104 155,-104 155,-80 230,-80 230,-104"/>
+<text text-anchor="middle" x="192.5" y="-89.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_keps</text>
+</a>
+</g>
+</g>
+<!-- module~rki_ml_keps&#45;&gt;module~rki_keps_stability -->
+<g id="module~~rki_keps_stability~~UsedByGraph_edge1" class="edge">
+<title>module~rki_ml_keps&#45;&gt;module~rki_keps_stability</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M154.98,-86.48C142.23,-84.56 127.55,-82.34 113.36,-80.19"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="113.56,-76.68 103.15,-78.65 112.51,-83.61 113.56,-76.68"/>
+</g>
+<!-- module~rki_ml_keps_unstr -->
+<g id="module~~rki_keps_stability~~UsedByGraph_node3" class="node">
+<title>module~rki_ml_keps_unstr</title>
+<g id="a_module~~rki_keps_stability~~UsedByGraph_node3"><a xlink:href="../module/rki_ml_keps_unstr.html" xlink:title="rki_ml_keps_unstr">
+<polygon fill="#337ab7" stroke="#337ab7" points="246,-62 139,-62 139,-38 246,-38 246,-62"/>
+<text text-anchor="middle" x="192.5" y="-47.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_ml_keps_unstr</text>
+</a>
+</g>
+</g>
+<!-- module~rki_ml_keps_unstr&#45;&gt;module~rki_keps_stability -->
+<g id="module~~rki_keps_stability~~UsedByGraph_edge2" class="edge">
+<title>module~rki_ml_keps_unstr&#45;&gt;module~rki_keps_stability</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M138.95,-57.94C130.55,-59.21 121.8,-60.53 113.23,-61.82"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="112.65,-58.37 103.28,-63.33 113.7,-65.29 112.65,-58.37"/>
+</g>
+<!-- module~rki_si_unstr_step_ml -->
+<g id="module~~rki_keps_stability~~UsedByGraph_node4" class="node">
+<title>module~rki_si_unstr_step_ml</title>
+<g id="a_module~~rki_keps_stability~~UsedByGraph_node4"><a xlink:href="../module/rki_si_unstr_step_ml.html" xlink:title="rki_si_unstr_step_ml">
+<polygon fill="#337ab7" stroke="#337ab7" points="400,-24 282,-24 282,0 400,0 400,-24"/>
+<text text-anchor="middle" x="341" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_si_unstr_step_ml</text>
+</a>
+</g>
+</g>
+<!-- module~rki_si_unstr_step_ml&#45;&gt;module~rki_ml_keps_unstr -->
+<g id="module~~rki_keps_stability~~UsedByGraph_edge4" class="edge">
+<title>module~rki_si_unstr_step_ml&#45;&gt;module~rki_ml_keps_unstr</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M293.65,-24.02C279.68,-27.65 264.21,-31.66 249.68,-35.43"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="248.6,-32.09 239.8,-37.99 250.36,-38.87 248.6,-32.09"/>
+</g>
+<!-- module~rki_solver -->
+<g id="module~~rki_keps_stability~~UsedByGraph_node5" class="node">
+<title>module~rki_solver</title>
+<g id="a_module~~rki_keps_stability~~UsedByGraph_node5"><a xlink:href="../module/rki_solver.html" xlink:title="rki_solver">
+<polygon fill="#337ab7" stroke="#337ab7" points="516,-104 452,-104 452,-80 516,-80 516,-104"/>
+<text text-anchor="middle" x="484" y="-89.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_solver</text>
+</a>
+</g>
+</g>
+<!-- module~rki_solver&#45;&gt;module~rki_ml_keps -->
+<g id="module~~rki_keps_stability~~UsedByGraph_edge3" class="edge">
+<title>module~rki_solver&#45;&gt;module~rki_ml_keps</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M451.74,-92C400.85,-92 299.79,-92 240.3,-92"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="240.06,-88.5 230.06,-92 240.06,-95.5 240.06,-88.5"/>
+</g>
+<!-- module~rki_solver_unstr -->
+<g id="module~~rki_keps_stability~~UsedByGraph_node6" class="node">
+<title>module~rki_solver_unstr</title>
+<g id="a_module~~rki_keps_stability~~UsedByGraph_node6"><a xlink:href="../module/rki_solver_unstr.html" xlink:title="rki_solver_unstr">
+<polygon fill="#337ab7" stroke="#337ab7" points="532,-42 436,-42 436,-18 532,-18 532,-42"/>
+<text text-anchor="middle" x="484" y="-27.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_solver_unstr</text>
+</a>
+</g>
+</g>
+<!-- module~rki_solver_unstr&#45;&gt;module~rki_ml_keps_unstr -->
+<g id="module~~rki_keps_stability~~UsedByGraph_edge5" class="edge">
+<title>module~rki_solver_unstr&#45;&gt;module~rki_ml_keps_unstr</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M435.84,-33.26C386.92,-36.64 310.17,-41.94 256.17,-45.67"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="255.76,-42.19 246.03,-46.37 256.25,-49.17 255.76,-42.19"/>
+</g>
+<!-- module~rki_solver_unstr&#45;&gt;module~rki_si_unstr_step_ml -->
+<g id="module~~rki_keps_stability~~UsedByGraph_edge6" class="edge">
+<title>module~rki_solver_unstr&#45;&gt;module~rki_si_unstr_step_ml</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M435.66,-23.96C427.49,-22.91 418.86,-21.81 410.27,-20.72"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="410.6,-17.23 400.24,-19.44 409.72,-24.17 410.6,-17.23"/>
+</g>
+<!-- module~rki_api -->
+<g id="module~~rki_keps_stability~~UsedByGraph_node7" class="node">
+<title>module~rki_api</title>
+<g id="a_module~~rki_keps_stability~~UsedByGraph_node7"><a xlink:href="../module/rki_api.html" xlink:title="rki_api">
+<polygon fill="#337ab7" stroke="#337ab7" points="635,-123 581,-123 581,-99 635,-99 635,-123"/>
+<text text-anchor="middle" x="608" y="-108.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_api</text>
+</a>
+</g>
+</g>
+<!-- module~rki_api&#45;&gt;module~rki_solver -->
+<g id="module~~rki_keps_stability~~UsedByGraph_edge7" class="edge">
+<title>module~rki_api&#45;&gt;module~rki_solver</title>
+<path fill="none" stroke="#00ff00" stroke-dasharray="5,2" d="M580.83,-106.92C564.95,-104.45 544.34,-101.24 526.3,-98.43"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="526.74,-94.96 516.32,-96.88 525.66,-101.87 526.74,-94.96"/>
+</g>
+<!-- module~rki_api_unstr -->
+<g id="module~~rki_keps_stability~~UsedByGraph_node8" class="node">
+<title>module~rki_api_unstr</title>
+<g id="a_module~~rki_keps_stability~~UsedByGraph_node8"><a xlink:href="../module/rki_api_unstr.html" xlink:title="rki_api_unstr">
+<polygon fill="#337ab7" stroke="#337ab7" points="648,-39 568,-39 568,-15 648,-15 648,-39"/>
+<text text-anchor="middle" x="608" y="-24.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_api_unstr</text>
+</a>
+</g>
+</g>
+<!-- module~rki_api_unstr&#45;&gt;module~rki_solver_unstr -->
+<g id="module~~rki_keps_stability~~UsedByGraph_edge9" class="edge">
+<title>module~rki_api_unstr&#45;&gt;module~rki_solver_unstr</title>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M567.73,-27.97C559.62,-28.17 550.92,-28.38 542.31,-28.59"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="542.21,-25.09 532.3,-28.84 542.39,-32.09 542.21,-25.09"/>
+</g>
+<!-- module~rki_driver -->
+<g id="module~~rki_keps_stability~~UsedByGraph_node9" class="node">
+<title>module~rki_driver</title>
+<g id="a_module~~rki_keps_stability~~UsedByGraph_node9"><a xlink:href="../module/rki_driver.html" xlink:title="rki_driver">
+<polygon fill="#337ab7" stroke="#337ab7" points="639.5,-81 576.5,-81 576.5,-57 639.5,-57 639.5,-81"/>
+<text text-anchor="middle" x="608" y="-66.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">rki_driver</text>
+</a>
+</g>
+</g>
+<!-- module~rki_driver&#45;&gt;module~rki_solver -->
+<g id="module~~rki_keps_stability~~UsedByGraph_edge8" class="edge">
+<title>module~rki_driver&#45;&gt;module~rki_solver</title>
+<path fill="none" stroke="#00ff00" stroke-dasharray="5,2" d="M576.21,-74.8C561.02,-77.67 542.47,-81.17 526.08,-84.26"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="525.38,-80.83 516.2,-86.12 526.68,-87.7 525.38,-80.83"/>
+</g>
+<!-- module~rki_driver&#45;&gt;module~rki_solver_unstr -->
+<g id="module~~rki_keps_stability~~UsedByGraph_edge10" class="edge">
+<title>module~rki_driver&#45;&gt;module~rki_solver_unstr</title>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M576.21,-59.16C563.02,-54.94 547.31,-49.92 532.67,-45.24"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="533.35,-41.78 522.76,-42.07 531.22,-48.45 533.35,-41.78"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var panmodulerki_keps_stabilityUsedByGraph = svgPanZoom('#modulerki_keps_stabilityUsedByGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#UsedByGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="UsedByGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="518pt" height="32pt"
+ viewBox="0.00 0.00 517.50 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 513.5,-28 513.5,4 -4,4"/>
+<!-- Module -->
+<g id="node1" class="node">
+<title>Module</title>
+<polygon fill="#337ab7" stroke="#337ab7" points="54,-24 0,-24 0,0 54,0 54,-24"/>
+<text text-anchor="middle" x="27" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Module</text>
+</g>
+<!-- Submodule -->
+<g id="node2" class="node">
+<title>Submodule</title>
+<polygon fill="#5bc0de" stroke="#5bc0de" points="145.5,-24 72.5,-24 72.5,0 145.5,0 145.5,-24"/>
+<text text-anchor="middle" x="109" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Submodule</text>
+</g>
+<!-- Subroutine -->
+<g id="node3" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="234,-24 164,-24 164,0 234,0 234,-24"/>
+<text text-anchor="middle" x="199" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node4" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="310,-24 252,-24 252,0 310,0 310,-24"/>
+<text text-anchor="middle" x="281" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Program -->
+<g id="node5" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="386,-24 328,-24 328,0 386,0 386,-24"/>
+<text text-anchor="middle" x="357" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node6" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="509.5,-24 404.5,-24 404.5,0 509.5,0 509.5,-24"/>
+<text text-anchor="middle" x="457" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a submodule to the (sub)module which it is
+descended from. Dashed arrows point from a module or program unit to 
+modules which it uses.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+            </li>
+        </ul>
+      </div>
+    </div>
+
+      <br>
+
+
+        <section>
+          <h2>Variables</h2>
+            <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Visibility</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+<th></th><th scope="col">Initial</th>        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-cmu"></span>
+              real(kind=wp),
+            </td>
+              <td>private,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>CMU</strong></td>
+<td> =</td>
+                <td>0.09_wp</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-eps_min"></span>
+              real(kind=wp),
+            </td>
+              <td>private,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>EPS_MIN</strong></td>
+<td> =</td>
+                <td>1.0e-12_wp</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-pr_t"></span>
+              real(kind=wp),
+            </td>
+              <td>private,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>PR_T</strong></td>
+<td> =</td>
+                <td>1.0_wp</td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+        </section>
+        <br>
+
+
+
+
+
+
+        <section>
+          <h2>Subroutines</h2>
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-keps_stability_funcs"></span> <h3>public pure subroutine <a href='../proc/keps_stability_funcs.html'>keps_stability_funcs</a>(scheme, s2, n2, k, e, cmu_o, cmup_o)  
+</h3></div>
+    <div class="card-body">
+          
+  <p>Stability functions (c_mu, c_mu&rsquo;) for the chosen scheme, given shear S^2
+and buoyancy N^2 at the interface.
+Result dummies are cmu_o/cmup_o, NOT cmu/cmup: a <code>cmu</code> dummy shadows the
+module parameter CMU (case-insensitive) -&gt; self-assignment of undefined
+intent(out) -&gt; nu_t floored on GPU/gfortran.</p>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-scheme"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>scheme</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-s2"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>s2</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-n2"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>n2</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-k~14"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>k</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-e"></span>
+              real(kind=wp),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>e</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-cmu_o"></span>
+              real(kind=wp),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>cmu_o</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-cmup_o"></span>
+              real(kind=wp),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>cmup_o</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+    </div>
+  </div>
+
+        </section>
+        <br>
+
+
+
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Rakali
+ was developed by Jorge Luis Galvez Vallejo<br>              &copy; 2026 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+ on 2026-10-08 12:55 +0000             </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>
