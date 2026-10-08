@@ -69,7 +69,7 @@ contains
                                      dt, use_walls, state%multilayer%keps_stability)
    end subroutine ml_keps_update_unstr
 
-   pure subroutine ml_keps_update_unstr_impl(nz, n, h_layer, hu_layer, hv_layer, rho_layer, &
+   subroutine ml_keps_update_unstr_impl(nz, n, h_layer, hu_layer, hv_layer, rho_layer, &
                                              tke, eps, nut, kt, ustar_s, ustar_b, height_cv, &
                                              rho_0, dt, use_walls, scheme)
       !! Per-cell k/eps advance on flat explicit-shape arrays.  One
@@ -95,11 +95,8 @@ contains
 
       ni = nz + 1
 
-      do concurrent(cell=1:n) &
-         local(m, u_dn, u_up, v_dn, v_up, dudz, dvdz, drho, &
-               prod, buoy, ktx, dd, du, sink, src, eok, &
-               k_wb, k_ws, e_wb, e_ws, cmu_m, cmup_m, &
-               S2, N2, dz_if, a, b, c, rhs, cp)
+      !$omp parallel do private(m, u_dn, u_up, v_dn, v_up, dudz, dvdz, drho, prod, buoy, ktx, dd, du, sink, src, eok, k_wb, k_ws, e_wb, e_ws, cmu_m, cmup_m, S2, N2, dz_if, a, b, c, rhs, cp)
+      do cell = 1, n
          if (height_cv(cell) >= ML_MIN_DEPTH_UNSTR) then
 
             ! ---- interface metrics, shear S^2 and buoyancy N^2 ----
@@ -206,6 +203,7 @@ contains
             end do
          end if
       end do
+      !$omp end parallel do
    end subroutine ml_keps_update_unstr_impl
 
    subroutine ml_keps_apply_momentum_unstr(state, dt)
@@ -225,7 +223,7 @@ contains
                                              state%barotropic%height_cv, dt)
    end subroutine ml_keps_apply_momentum_unstr
 
-   pure subroutine ml_keps_apply_momentum_unstr_impl(nz, n, h_layer, hu_layer, hv_layer, &
+   subroutine ml_keps_apply_momentum_unstr_impl(nz, n, h_layer, hu_layer, hv_layer, &
                                                      nut, height_cv, dt)
       !! Per-cell implicit vertical diffusion of momentum on flat explicit-shape
       !! arrays.  Implicit (not the explicit PP81 clamp) -- the keps nu_t can
@@ -241,8 +239,8 @@ contains
       real(wp) :: a(BPG_NZ_MAX), b(BPG_NZ_MAX), c(BPG_NZ_MAX)
       real(wp) :: ru(BPG_NZ_MAX), rv(BPG_NZ_MAX), cp(BPG_NZ_MAX)
 
-      do concurrent(cell=1:n) &
-         local(k, h_k, h_dn, h_up, dz_dn, dz_up, cd, cu, a, b, c, ru, rv, cp)
+      !$omp parallel do private(k, h_k, h_dn, h_up, dz_dn, dz_up, cd, cu, a, b, c, ru, rv, cp)
+      do cell = 1, n
          if (height_cv(cell) >= ML_MIN_DEPTH_UNSTR) then
             do k = 1, nz
                h_k = h_layer(k, cell)
@@ -285,6 +283,7 @@ contains
             end do
          end if
       end do
+      !$omp end parallel do
    end subroutine ml_keps_apply_momentum_unstr_impl
 
    subroutine ml_keps_apply_diffusion_tracer_unstr(state, hTr, kappa_bg, dt)
@@ -305,7 +304,7 @@ contains
                                                      state%barotropic%height_cv, dt)
    end subroutine ml_keps_apply_diffusion_tracer_unstr
 
-   pure subroutine ml_keps_apply_diffusion_tracer_unstr_impl(nz, n, h_layer, hTr, kt, kappa_bg, &
+   subroutine ml_keps_apply_diffusion_tracer_unstr_impl(nz, n, h_layer, hTr, kt, kappa_bg, &
                                                              height_cv, dt)
       !! Per-cell implicit tracer diffusion on flat explicit-shape arrays.  Same
       !! tridiagonal as the momentum apply but with the scalar diffusivity
@@ -321,8 +320,8 @@ contains
       real(wp) :: a(BPG_NZ_MAX), b(BPG_NZ_MAX), c(BPG_NZ_MAX)
       real(wp) :: r(BPG_NZ_MAX), cp(BPG_NZ_MAX)
 
-      do concurrent(cell=1:n) &
-         local(k, h_k, h_dn, h_up, dz_dn, dz_up, cd, cu, a, b, c, r, cp)
+      !$omp parallel do private(k, h_k, h_dn, h_up, dz_dn, dz_up, cd, cu, a, b, c, r, cp)
+      do cell = 1, n
          if (height_cv(cell) >= ML_MIN_DEPTH_UNSTR) then
             do k = 1, nz
                h_k = h_layer(k, cell)
@@ -360,9 +359,10 @@ contains
             end do
          end if
       end do
+      !$omp end parallel do
    end subroutine ml_keps_apply_diffusion_tracer_unstr_impl
 
-   pure subroutine ml_keps_friction_velocities_unstr(state)
+   subroutine ml_keps_friction_velocities_unstr(state)
       !! Per-cell surface + bed friction velocities feeding the keps wall
       !! functions.  Surface: u_*s = sqrt(|tau_wind|/rho_0) from the (uniform)
       !! unstructured wind stress.  Bed: quadratic Manning u_*b = sqrt(C_d)*|u_b|,
@@ -383,7 +383,8 @@ contains
       mann = state%barotropic%manning_n
       us_s = sqrt(sqrt(tau_x*tau_x + tau_y*tau_y)/rho_0)   ! uniform wind -> per-cell constant
 
-      do concurrent(cell=1:n) local(m, h_col, h_b, u_b, v_b, speed_b, cf)
+      !$omp parallel do private(m, h_col, h_b, u_b, v_b, speed_b, cf)
+      do cell = 1, n
          state%multilayer%keps_ustar_s(cell) = us_s
          h_col = 0.0_wp
          do m = 1, nz
@@ -400,10 +401,11 @@ contains
             state%multilayer%keps_ustar_b(cell) = 0.0_wp
          end if
       end do
+      !$omp end parallel do
    end subroutine ml_keps_friction_velocities_unstr
 
    pure subroutine keps_tridiag_solve_u(a, b, c, rhs, cp, ni)
-      !$acc routine seq
+      ! [acc->omp-cpu] dropped device directive (host no-op): routine seq
       !! In-place Thomas solve over interfaces 1..ni with zero-gradient
       !! (no-flux) boundary rows.  `rhs` returns the solution; `cp` scratch.
       !! (Duplicate of the structured keps_tridiag_solve; tiny standard
@@ -435,7 +437,7 @@ contains
    end subroutine keps_tridiag_solve_u
 
    pure subroutine keps_tridiag_solve_noflux_u(a, b, c, rhs, cp, nn)
-      !$acc routine seq
+      ! [acc->omp-cpu] dropped device directive (host no-op): routine seq
       !! In-place Thomas solve over rows 1..nn with the boundary closure already
       !! baked into a/b/c by the caller (no row override, unlike
       !! `keps_tridiag_solve_u`).  a/b/c read-only so one factorisation serves

@@ -122,9 +122,7 @@ contains
                                           state%multilayer%tracers(state%multilayer%idx_salinity)%hTr, &
                                           state%multilayer%tracers(state%multilayer%idx_temperature)%hTr, &
                                           state%multilayer%kappa_S_bg, state%multilayer%kappa_T_bg, dt)
-      !$acc update self(state%multilayer%kpp_bl_depth, &
-      !$acc&            state%multilayer%kpp_u_star, &
-      !$acc&            state%multilayer%kpp_buoy_flux)
+      ! [acc->omp-cpu] dropped device directive (host no-op): update
       call state_unstr_exit_data(state)
       call mesh_unstr_exit_data(mesh)
    end subroutine run_kpp_unstr

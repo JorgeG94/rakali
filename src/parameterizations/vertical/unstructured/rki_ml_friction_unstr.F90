@@ -24,7 +24,7 @@ module rki_ml_friction_unstr
 
 contains
 
-   pure subroutine ml_apply_bottom_friction_unstr(state, dt)
+   subroutine ml_apply_bottom_friction_unstr(state, dt)
       !! Apply semi-implicit Manning bottom friction to the lowest active
       !! layer (bottom-up `k=1` bed) using that layer's velocity:
       !!   hu_new = hu / (1 + dt*C_d*|u_b|/h_k),  C_d = g*n^2/H^{1/3},
@@ -46,8 +46,8 @@ contains
       n = state%ncells_owned
       n_sq = manning_n*manning_n
 
-      do concurrent(cell=1:n) &
-         local(k, kk, k_bot, h_k, h_total, u_b, v_b, speed_b, cf, denom)
+      !$omp parallel do private(k, kk, k_bot, h_k, h_total, u_b, v_b, speed_b, cf, denom)
+      do cell = 1, n
 
          ! Lowest active layer: k=1 for SIGMA/ZSIGMA/ZSTAR-lite; the first
          ! non-vanishing layer for ZSTAR_FULL (bed layer may be parked at
@@ -79,10 +79,11 @@ contains
             end if
          end if
       end do
+      !$omp end parallel do
 
    end subroutine ml_apply_bottom_friction_unstr
 
-   pure subroutine ml_apply_coriolis_unstr(state, dt)
+   subroutine ml_apply_coriolis_unstr(state, dt)
       !! Rotate every wet layer's `(hu_k, hv_k)` through angle `f*dt` with
       !! the closed-form rotation matrix (energy-conserving, det = 1).
       !! Skips layers thinner than THIN_LAYER_THRESHOLD (already zeroed by
@@ -103,7 +104,8 @@ contains
       cosf = cos(f*dt)
       sinf = sin(f*dt)
 
-      do concurrent(cell=1:n) local(k, hu_old, hv_old)
+      !$omp parallel do private(k, hu_old, hv_old)
+      do cell = 1, n
          do k = 1, nz
             if (state%multilayer%h_layer(k, cell) > THIN_LAYER_THRESHOLD) then
                hu_old = state%multilayer%hu_layer(k, cell)
@@ -113,6 +115,7 @@ contains
             end if
          end do
       end do
+      !$omp end parallel do
 
    end subroutine ml_apply_coriolis_unstr
 

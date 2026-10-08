@@ -79,7 +79,7 @@ module rki_si_unstr_column
 
 contains
 
-   pure subroutine si_unstr_build_nu_interface(nz, nzp1, nct, nco, h_layer, &
+   subroutine si_unstr_build_nu_interface(nz, nzp1, nct, nco, h_layer, &
                                                hu_layer, hv_layer, rho_layer, &
                                                rho_0, nu_max, nu_bg, ri_alpha, &
                                                nu_iface)
@@ -121,9 +121,8 @@ contains
       real(wp) :: hk, hkp1, h_avg, uk, ukp1, vk, vkp1
       real(wp) :: du, dv, drho, shear2, ri_num, denom, nu_t
 
-      do concurrent(c=1:nco) &
-         local(k, hk, hkp1, h_avg, uk, ukp1, vk, vkp1, du, dv, drho, &
-               shear2, ri_num, denom, nu_t)
+      !$omp parallel do private(k, hk, hkp1, h_avg, uk, ukp1, vk, vkp1, du, dv, drho, shear2, ri_num, denom, nu_t)
+      do c = 1, nco
          nu_iface(1, c) = 0.0_wp
          nu_iface(nz + 1, c) = 0.0_wp
          do k = 1, nz - 1
@@ -149,9 +148,10 @@ contains
             end if
          end do
       end do
+      !$omp end parallel do
    end subroutine si_unstr_build_nu_interface
 
-   pure subroutine si_unstr_column_solve(nz, nzp1, nct, nco, h_layer, hu_layer, &
+   subroutine si_unstr_column_solve(nz, nzp1, nct, nco, h_layer, hu_layer, &
                                          hv_layer, nu_iface, manning_n, dt, &
                                          g_col_u, g_col_v, r_col, Hhat_cell, &
                                          Gbar_cell_x, Gbar_cell_y)
@@ -213,10 +213,8 @@ contains
       real(wp) :: lambda_drag, h_total, u_bed, v_bed, cf
       real(wp) :: gx_sum, gy_sum, hhat_sum
 
-      do concurrent(c=1:nco) &
-         local(k, hk_col, ak_col, bk_col, ck_col, rhs_u, rhs_v, rhs_r, &
-               hc, hm, hp, dz_bot, dz_top, alph, beta_k, denom_k, &
-               lambda_drag, h_total, u_bed, v_bed, cf, gx_sum, gy_sum, hhat_sum)
+      !$omp parallel do private(k, hk_col, ak_col, bk_col, ck_col, rhs_u, rhs_v, rhs_r, hc, hm, hp, dz_bot, dz_top, alph, beta_k, denom_k, lambda_drag, h_total, u_bed, v_bed, cf, gx_sum, gy_sum, hhat_sum)
+      do c = 1, nco
 
          ! ---- Floored thicknesses + plain u^n/v^n predictors (no PGF) ----
          do k = 1, nz
@@ -339,9 +337,10 @@ contains
          Gbar_cell_y(c) = gy_sum
          Hhat_cell(c) = hhat_sum
       end do
+      !$omp end parallel do
    end subroutine si_unstr_column_solve
 
-   pure subroutine si_unstr_fill_predictor_edges(mesh, nz, nct, nco, &
+   subroutine si_unstr_fill_predictor_edges(mesh, nz, nct, nco, &
                                                  Gbar_cell_x, Gbar_cell_y, &
                                                  hu_layer0, hv_layer0, &
                                                  u_n_edge, eta, Hf_edge, &
@@ -393,9 +392,8 @@ contains
       real(wp) :: inv_delta, dgdn, inc_n, enx, eny
       real(wp) :: x0x_c, x0y_c, x0x_n, x0y_n
 
-      do concurrent(c=1:nco) &
-         local(i, k, kn, inv_delta, dgdn, inc_n, enx, eny, &
-               x0x_c, x0y_c, x0x_n, x0y_n)
+      !$omp parallel do private(i, k, kn, inv_delta, dgdn, inc_n, enx, eny, x0x_c, x0y_c, x0x_n, x0y_n)
+      do c = 1, nco
          ! Own-cell pre-tendency column transport X0 (hoisted out of edges).
          x0x_c = 0.0_wp
          x0y_c = 0.0_wp
@@ -433,9 +431,10 @@ contains
             end if
          end do
       end do
+      !$omp end parallel do
    end subroutine si_unstr_fill_predictor_edges
 
-   pure subroutine si_unstr_recover_edge_layers(mesh, nz, nct, nco, h_layer, &
+   subroutine si_unstr_recover_edge_layers(mesh, nz, nct, nco, h_layer, &
                                                 hu_layer0, hv_layer0, dsig, &
                                                 bed, g_col_u, g_col_v, &
                                                 r_col, eta_n, eta_np1, Hf_edge, &
@@ -510,9 +509,8 @@ contains
       real(wp) :: inv_delta, grad_blend, inc_k, hhf, enx, eny
       real(wp) :: h_ghost, hk_ghost
 
-      do concurrent(c=1:nco) &
-         local(i, k, kn, inv_delta, grad_blend, inc_k, hhf, enx, eny, &
-               h_ghost, hk_ghost)
+      !$omp parallel do private(i, k, kn, inv_delta, grad_blend, inc_k, hhf, enx, eny, h_ghost, hk_ghost)
+      do c = 1, nco
          do i = 1, EDGES_PER_TRI
             if (Hf_edge(i, c) > 0.0_wp) then
                inv_delta = 1.0_wp/max(mesh%edge_delta(i, c), DELTA_EPS)
@@ -555,9 +553,10 @@ contains
             end if
          end do
       end do
+      !$omp end parallel do
    end subroutine si_unstr_recover_edge_layers
 
-   pure subroutine si_unstr_fill_mass_flux_edges(nz, nct, nco, u_edge_layer, &
+   subroutine si_unstr_fill_mass_flux_edges(nz, nct, nco, u_edge_layer, &
                                                  u_n_edge, Hf_edge, theta, &
                                                  mass_flux_edge, u_edge)
       !! The blended column edge flux the eta update used:
@@ -586,7 +585,8 @@ contains
       integer :: c, i, k
       real(wp) :: fsum
 
-      do concurrent(c=1:nco) local(i, k, fsum)
+      !$omp parallel do private(i, k, fsum)
+      do c = 1, nco
          do i = 1, EDGES_PER_TRI
             if (Hf_edge(i, c) > 0.0_wp) then
                fsum = 0.0_wp
@@ -601,9 +601,10 @@ contains
             end if
          end do
       end do
+      !$omp end parallel do
    end subroutine si_unstr_fill_mass_flux_edges
 
-   pure subroutine si_unstr_advect_tracer_dsig(mesh, nz, nct, nco, n_bc, dsig, &
+   subroutine si_unstr_advect_tracer_dsig(mesh, nz, nct, nco, n_bc, dsig, &
                                                h_layer, mass_flux_edge, &
                                                tr_bc_ext, hTr_old, hTr, dt)
       !! Depth-proportional, race-free, first-order-upwind tracer advection
@@ -664,8 +665,8 @@ contains
       ! (wet-side) tr_up — antisymmetry and conservation hold exactly, a
       ! uniform tracer stays uniform, and any resolved upwind layer
       ! (h > DRY_TOLERANCE) is bit-identical to plain upwinding.
-      do concurrent(c=1:nco) &
-         local(i, k, kn, g, flux_c, tr_up, h_up, h_dn, div_sum, inv_area)
+      !$omp parallel do private(i, k, kn, g, flux_c, tr_up, h_up, h_dn, div_sum, inv_area)
+      do c = 1, nco
          inv_area = 1.0_wp/mesh%area(c)
          do k = 1, nz
             div_sum = 0.0_wp
@@ -722,9 +723,10 @@ contains
             hTr(k, c) = hTr_old(k, c) - dt*div_sum*inv_area
          end do
       end do
+      !$omp end parallel do
    end subroutine si_unstr_advect_tracer_dsig
 
-   pure subroutine si_unstr_edge_layers_to_cells(mesh, nz, nct, nco, &
+   subroutine si_unstr_edge_layers_to_cells(mesh, nz, nct, nco, &
                                                  u_edge_layer, hu_layer, hv_layer)
       !! Per-layer least-squares A-grid cell-momentum reconstruction from
       !! the three per-layer edge-normal transports — the 2D
@@ -745,8 +747,8 @@ contains
       integer :: c, i, k
       real(wp) :: m11, m12, m22, rx, ry, det, wlen, enx, eny, ue
 
-      do concurrent(c=1:nco) &
-         local(i, k, m11, m12, m22, rx, ry, det, wlen, enx, eny, ue)
+      !$omp parallel do private(i, k, m11, m12, m22, rx, ry, det, wlen, enx, eny, ue)
+      do c = 1, nco
          ! The 2x2 normal matrix is layer-independent (mesh only).
          m11 = 0.0_wp
          m12 = 0.0_wp
@@ -784,9 +786,10 @@ contains
             end if
          end do
       end do
+      !$omp end parallel do
    end subroutine si_unstr_edge_layers_to_cells
 
-   pure subroutine si_unstr_update_thickness_ml(nz, nct, nco, eta, bed, dsig, &
+   subroutine si_unstr_update_thickness_ml(nz, nct, nco, eta, bed, dsig, &
                                                 stage, height, h_layer)
       !! h^{n+1} = max(eta^{n+1} - b, 0) (exactly the edge-flux continuity
       !! update) + the sigma slaving h_layer_k = dsig_k*h, and the stage
@@ -805,16 +808,18 @@ contains
 
       integer :: c, k
 
-      do concurrent(c=1:nco) local(k)
+      !$omp parallel do private(k)
+      do c = 1, nco
          stage(c) = eta(c)
          height(c) = max(eta(c) - bed(c), 0.0_wp)
          do k = 1, nz
             h_layer(k, c) = dsig(k)*height(c)
          end do
       end do
+      !$omp end parallel do
    end subroutine si_unstr_update_thickness_ml
 
-   pure subroutine si_unstr_apply_wind_top_layer(nz, nct, nco, h_layer, &
+   subroutine si_unstr_apply_wind_top_layer(nz, nct, nco, h_layer, &
                                                  hu_layer, hv_layer, &
                                                  wind_tau_x, wind_tau_y, dt)
       !! Surface wind stress into the TOP layer (k = nz) transport:
@@ -838,12 +843,14 @@ contains
 
       integer :: c
 
-      do concurrent(c=1:nco)
+      !$omp parallel do
+      do c = 1, nco
          if (h_layer(nz, c) > H_VANISHED) then
             hu_layer(nz, c) = hu_layer(nz, c) + dt*wind_tau_x/RHO_WATER
             hv_layer(nz, c) = hv_layer(nz, c) + dt*wind_tau_y/RHO_WATER
          end if
       end do
+      !$omp end parallel do
    end subroutine si_unstr_apply_wind_top_layer
 
 end module rki_si_unstr_column

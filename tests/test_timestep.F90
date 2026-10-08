@@ -49,9 +49,9 @@ contains
       hu = 0.0_wp
       hv = 0.0_wp
 
-      !$acc data copyin( h, hu, hv)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call compute_timestep(h, hu, hv, grid, CFL, dt)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       expected_dt = CFL*DX/sqrt(GRAVITY*1.0_wp)
       call check(error, abs(dt - expected_dt) < 1.0e-12_wp, &
@@ -71,9 +71,9 @@ contains
       h = 1.0_wp
       hu = 0.0_wp
       hv = 0.0_wp
-      !$acc data copyin( h, hu, hv)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call compute_timestep(h, hu, hv, grid, CFL, dt1)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       ! Case 2: same but add dry cells with huge momentum
       h = 1.0_wp
@@ -81,9 +81,9 @@ contains
       hv = 0.0_wp
       h(5, 5) = 0.5_wp*DRY_TOLERANCE
       hu(5, 5) = 1000.0_wp
-      !$acc data copyin( h, hu, hv)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call compute_timestep(h, hu, hv, grid, CFL, dt2)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       call check(error, abs(dt1 - dt2) < 1.0e-12_wp, &
                  "Dry cells with huge momentum should not change dt")
@@ -104,9 +104,9 @@ contains
       h = 1.0_wp
       hu = 0.0_wp
       hv = 0.0_wp
-      !$acc data copyin( h, hu, hv)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call compute_timestep(h, hu, hv, grid, CFL, dt_quiescent)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       ! Sub-DESING_EPS cell with momentum that would give u = hu/h =
       ! 10 m/s.  The estimator's desingularized velocity rolls off below
@@ -117,9 +117,9 @@ contains
       h(5, 5) = 0.5_wp*DESING_EPS
       hu(5, 5) = 0.5_wp*DESING_EPS*10.0_wp
 
-      !$acc data copyin( h, hu, hv)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call compute_timestep(h, hu, hv, grid, CFL, dt)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       ! With desingularization, the thin cell should not dominate over
       ! the deep cells — dt should not drop catastrophically
@@ -141,16 +141,16 @@ contains
       hv = 0.0_wp
 
       ! dt with no velocity
-      !$acc data copyin( h, hu, hv)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call compute_timestep(h, hu, hv, grid, CFL, dt_quiescent)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       ! One cell with high velocity
       hu(7, 7) = 10.0_wp
 
-      !$acc data copyin( h, hu, hv)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call compute_timestep(h, hu, hv, grid, CFL, dt)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       ! dt should be smaller than quiescent case
       call check(error, dt < dt_quiescent, &
@@ -172,9 +172,9 @@ contains
       hu = 0.0_wp
       hv = 0.0_wp
 
-      !$acc data copyin( h, hu, hv)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call compute_timestep(h, hu, hv, grid, CFL, dt)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       call check(error, dt > 0.0_wp, "All-dry grid should give positive fallback dt")
       call check(error, dt < 1.0e10_wp, "Fallback dt should be finite")

@@ -261,7 +261,7 @@ contains
       do n = 1, n_steps
          call solver_unstr_step(state, mesh, dt)
          newton_max = max(newton_max, state%si%newton_iters)
-         !$acc update self(state%barotropic%stage_cv)
+         ! [acc->omp-cpu] dropped device directive (host no-op): update
          eta_series(n) = state%barotropic%stage_cv(kprobe)
          mdrift = max(mdrift, abs(wet_volume(state, mesh) - mass0))
          ! Shoreline x = max circumcentre-x over wet cells; min cell v.
@@ -390,14 +390,14 @@ contains
          t_bc = state%time + theta*dt
          eta_bc = TIDE_AMP*sin(om*t_bc)
          state%bc_eta_ext(WEST_GROUP) = eta_bc
-         !$acc update device(state%bc_eta_ext)
+         ! [acc->omp-cpu] dropped device directive (host no-op): update
 
          call solver_unstr_step(state, mesh, dt)
          newton_max = max(newton_max, state%si%newton_iters)
 
-         !$acc update self(state%barotropic%stage_cv)
-         !$acc update self(state%si%u_edge)
-         !$acc update self(state%si%u_n_edge)
+         ! [acc->omp-cpu] dropped device directive (host no-op): update
+         ! [acc->omp-cpu] dropped device directive (host no-op): update
+         ! [acc->omp-cpu] dropped device directive (host no-op): update
 
          ! Open-edge inflow this step: the EXACT blended flux the eta
          ! update used, theta*U^{n+1} + (1-theta)*U^n, + along the OUTWARD
@@ -501,7 +501,7 @@ contains
       do n = 1, NSTEPS
          call solver_unstr_step(state_wd, mesh, dt)
       end do
-      !$acc update self(state_wd%barotropic%stage_cv)
+      ! [acc->omp-cpu] dropped device directive (host no-op): update
       allocate (stage_wd(mesh%ncells_owned))
       do k = 1, mesh%ncells_owned
          stage_wd(k) = state_wd%barotropic%stage_cv(k)
@@ -526,7 +526,7 @@ contains
       do n = 1, NSTEPS
          call solver_unstr_step(state_lin, mesh, dt)
       end do
-      !$acc update self(state_lin%barotropic%stage_cv)
+      ! [acc->omp-cpu] dropped device directive (host no-op): update
       diff_max = 0.0_wp
       do k = 1, mesh%ncells_owned
          diff_max = max(diff_max, &
@@ -561,7 +561,7 @@ contains
       end do
    end subroutine seiche_ic
 
-   pure function measure_period(eta_series, n, dt) result(t_meas)
+   function measure_period(eta_series, n, dt) result(t_meas)
       integer, intent(in) :: n
       real(wp), intent(in) :: eta_series(n)
       real(wp), intent(in) :: dt

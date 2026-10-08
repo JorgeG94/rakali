@@ -340,12 +340,14 @@ contains
          end do
       end do
 
-      !$acc data copyin(dz_old, dz_new, q_in) copyout(q_out)
-      !$acc parallel loop gang vector
-      do concurrent(i=1:ncol)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
+      !$omp parallel do
+      !$omp parallel do
+      do i = 1, ncol
          call remap_column_pqm(nz, dz_old, dz_new, q_in(:, i), q_out(:, i))
       end do
-      !$acc end data
+      !$omp end parallel do
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       ok = .true.
       do i = 1, ncol

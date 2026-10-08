@@ -61,7 +61,7 @@ contains
       end if
    end subroutine ml_equation_of_state_unstr
 
-   pure subroutine ml_equation_of_state_shared_unstr(h_layer, hS_layer, hT_layer, &
+   subroutine ml_equation_of_state_shared_unstr(h_layer, hS_layer, hT_layer, &
                                                      rho_layer, eos, nz, n)
       !! Opt-in SHARED (ocean) equation of state on the unstructured
       !! `(nz, ncells)` layout — the axis order is opposite to the
@@ -83,7 +83,9 @@ contains
       integer :: cell, k
       real(wp) :: h_k, S_k, T_k, inv_h
 
-      do concurrent(cell=1:n, k=1:nz) local(h_k, S_k, T_k, inv_h)
+      !$omp parallel do collapse(2) private(h_k, S_k, T_k, inv_h)
+      do cell = 1, n
+      do k = 1, nz
          h_k = h_layer(k, cell)
          if (h_k > H_VANISHED) then
             inv_h = 1.0_wp/h_k
@@ -94,9 +96,11 @@ contains
             rho_layer(k, cell) = eos%rho0
          end if
       end do
+      end do
+      !$omp end parallel do
    end subroutine ml_equation_of_state_shared_unstr
 
-   pure subroutine ml_equation_of_state_impl(h_layer, hS_layer, hT_layer, rho_layer, &
+   subroutine ml_equation_of_state_impl(h_layer, hS_layer, hT_layer, rho_layer, &
                                              S_ref, T_ref, rho_0, beta_S, alpha_T, &
                                              nz, n)
       !! Inner kernel — flat-array dummies so the device-side
@@ -109,7 +113,9 @@ contains
       integer :: cell, k
       real(wp) :: h_k, S_k, T_k, inv_h
 
-      do concurrent(cell=1:n, k=1:nz) local(h_k, S_k, T_k, inv_h)
+      !$omp parallel do collapse(2) private(h_k, S_k, T_k, inv_h)
+      do cell = 1, n
+      do k = 1, nz
          h_k = h_layer(k, cell)
          if (h_k > DRY_TOLERANCE) then
             inv_h = 1.0_wp/h_k
@@ -121,10 +127,12 @@ contains
          end if
          rho_layer(k, cell) = rho_0 + beta_S*(S_k - S_ref) - alpha_T*(T_k - T_ref)
       end do
+      end do
+      !$omp end parallel do
    end subroutine ml_equation_of_state_impl
 
    pure function rho_ref_at(z, rho_ref, dz, nz_ref, rho_0) result(rho)
-      !$acc routine seq
+      ! [acc->omp-cpu] dropped device directive (host no-op): routine seq
       !! Linear interpolation of the reference-density profile at depth `z`.
       !! Out-of-range values fall back to the nearest endpoint.
       !! When the profile is unset (`dz == 0`) returns `rho_0` so the
@@ -172,7 +180,7 @@ contains
       nz_ref = state%multilayer%nz_ref
 
       ! Pull layer data back so we can scan it on the host.
-      !$acc update self(state%multilayer%h_layer, state%multilayer%rho_layer) if_present
+      ! [acc->omp-cpu] dropped device directive (host no-op): update
 
       H_max = 0.0_wp
       do cell = 1, mesh%ncells_owned
@@ -186,7 +194,7 @@ contains
       if (H_max <= 0.0_wp) then
          state%multilayer%rho_ref = state%multilayer%rho_0
          state%multilayer%rho_ref_dz = 0.0_wp
-         !$acc update device(state%multilayer%rho_ref) if_present
+         ! [acc->omp-cpu] dropped device directive (host no-op): update
          return
       end if
 
@@ -243,7 +251,7 @@ contains
 
       deallocate (sum_rho_w)
 
-      !$acc update device(state%multilayer%rho_ref) if_present
+      ! [acc->omp-cpu] dropped device directive (host no-op): update
    end subroutine ml_compute_reference_density_unstr
 
 end module rki_ml_eos_unstr

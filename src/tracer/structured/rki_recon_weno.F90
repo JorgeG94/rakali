@@ -191,7 +191,7 @@ contains
       !!   WENO7(2) → rung_max_internal = 3
       !!   WENO9(3) → rung_max_internal = 4
       !! The kernel maps the public code to rung_max with `recon + 1`.
-      !$acc routine seq
+      ! [acc->omp-cpu] dropped device directive (host no-op): routine seq
       integer, intent(in) :: avail_up
          !! Interior cells from domain-west to face (including upwind cell c).
       integer, intent(in) :: avail_down
@@ -226,7 +226,7 @@ contains
       !! face  = q0 + (1 - sigma)/2 * slope
       !!
       !! Reference: van Leer (1977) slope limiter.
-      !$acc routine seq
+      ! [acc->omp-cpu] dropped device directive (host no-op): routine seq
       real(wp), intent(in) :: qm1, q0, qp1, sigma
       real(wp) :: face
       real(wp) :: d0, d1, slope
@@ -255,7 +255,7 @@ contains
       !!   r=0: {i-2, i-1, i}     d=1/10
       !!   r=1: {i-1, i,   i+1}   d=6/10
       !!   r=2: {i,   i+1, i+2}   d=3/10
-      !$acc routine seq
+      ! [acc->omp-cpu] dropped device directive (host no-op): routine seq
       real(wp), intent(in) :: qm2, qm1, q0, qp1, qp2
          !! Cell averages at i-2, i-1, i, i+1, i+2.
       real(wp), intent(in) :: sigma
@@ -333,7 +333,7 @@ contains
       !!
       !! Coefficient matrices from Balsara & Shu (2000), Table 1.
       !! Smoothness indicators from Balsara & Shu (2000), eq. 2.17.
-      !$acc routine seq
+      ! [acc->omp-cpu] dropped device directive (host no-op): routine seq
       real(wp), intent(in) :: qm3, qm2, qm1, q0, qp1, qp2, qp3
          !! Cell averages at i-3 through i+3.
       real(wp), intent(in) :: sigma
@@ -492,7 +492,7 @@ contains
       !! Smoothness indicators use the simplified 3-term form.
       !!
       !! Reference: Balsara & Shu (2000).
-      !$acc routine seq
+      ! [acc->omp-cpu] dropped device directive (host no-op): routine seq
       real(wp), intent(in) :: qm4, qm3, qm2, qm1, q0, qp1, qp2, qp3, qp4
          !! Cell averages at i-4 through i+4.
       real(wp), intent(in) :: sigma
@@ -728,7 +728,7 @@ contains
    !  Main advection kernel
    ! ==========================================================================
 
-   pure subroutine ml_advect_tracer_weno(h_layer, hu_layer, hv_layer, &
+   subroutine ml_advect_tracer_weno(h_layer, hu_layer, hv_layer, &
                                          mass_flux_x, mass_flux_y, &
                                          hTr_layer, weno_tr_snap, &
                                          grid, nz, dt, recon)
@@ -798,7 +798,9 @@ contains
       associate (tr_snap => weno_tr_snap)
 
          ! ---- Phase 0: concentration snapshot ----
-         do concurrent(j=1:ny, i=1:nx) local(k, h_val)
+         !$omp parallel do collapse(2) private(k, h_val)
+         do j = 1, ny
+         do i = 1, nx
          do k = 1, nz
             h_val = h_layer(i, j, k)
             if (h_val > DRY_TOLERANCE) then
@@ -808,18 +810,13 @@ contains
             end if
          end do
          end do
+         end do
+         !$omp end parallel do
 
          ! ---- Phase 1+2: combined flux + update ----
-         do concurrent(j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) &
-            local(k, kk, h_val, h_col, h_face, f_layer, u_eff, sigma, &
-                  flux_left, flux_right, flux_bot, flux_top, tr_face_val, &
-                  corr_xL, corr_xR, corr_yB, corr_yT, &
-                  H_active_xL, H_active_xR, H_active_yB, H_active_yT, &
-                  inv_H_xL, inv_H_xR, inv_H_yB, inv_H_yT, &
-                  h_iL, h_iR, h_jB, h_jT, &
-                  rung, avail_up, avail_down, &
-                  v_xL, v_xR, v_yB, v_yT, &
-                  hf_xL, hf_xR, hf_yB, hf_yT)
+         !$omp parallel do collapse(2) private(k, kk, h_val, h_col, h_face, f_layer, u_eff, sigma, flux_left, flux_right, flux_bot, flux_top, tr_face_val, corr_xL, corr_xR, corr_yB, corr_yT, H_active_xL, H_active_xR, H_active_yB, H_active_yT, inv_H_xL, inv_H_xR, inv_H_yB, inv_H_yT, h_iL, h_iR, h_jB, h_jT, rung, avail_up, avail_down, v_xL, v_xR, v_yB, v_yT, hf_xL, hf_xR, hf_yB, hf_yT)
+         do j = nghost + 1, ny - nghost
+         do i = nghost + 1, nx - nghost
 
             h_col = 0.0_wp
             do kk = 1, nz
@@ -1245,7 +1242,9 @@ contains
 
                end do  ! k loop
             end if  ! h_col > ML_MIN_DEPTH
-         end do  ! do concurrent(j, i)
+         end do
+         end do
+         !$omp end parallel do
 
       end associate
 

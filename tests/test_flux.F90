@@ -46,11 +46,10 @@ contains
 
       call grid%init(NX - 2*NG, NY - 2*NG, NG, 1.0_wp, 1.0_wp)
 
-      !$acc data copyin( h, hu, hv, b) &
-      !$acc&     copyout( flux_h, flux_hu, flux_hv, mass_flux_x, mass_flux_y)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call compute_flux_hll(h, hu, hv, b, flux_h, flux_hu, flux_hv, &
                             mass_flux_x, mass_flux_y, grid)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       max_flux = 0.0_wp
       do j = NG + 1, NY - NG
@@ -105,11 +104,10 @@ contains
 
       call grid%init(NX - 2*NG, NY - 2*NG, NG, 1.0_wp, 1.0_wp)
 
-      !$acc data copyin( h, hu, hv, b) &
-      !$acc&     copyout( flux_h, flux_hu, flux_hv, mass_flux_x, mass_flux_y)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call compute_flux_hll(h, hu, hv, b, flux_h, flux_hu, flux_hv, &
                             mass_flux_x, mass_flux_y, grid)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       expected_mass_flux = sqrt(0.5_wp*GRAVITY)
 
@@ -166,11 +164,10 @@ contains
 
       call grid%init(NX - 2*NG, NY - 2*NG, NG, 1.0_wp, 1.0_wp)
 
-      !$acc data copyin( h, hu, hv, b) &
-      !$acc&     copyout( flux_h, flux_hu, flux_hv, mass_flux_x, mass_flux_y)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call compute_flux_hll(h, hu, hv, b, flux_h, flux_hu, flux_hv, &
                             mass_flux_x, mass_flux_y, grid)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       max_flux = 0.0_wp
       do j = NG + 1, NY - NG
@@ -211,11 +208,10 @@ contains
 
       call grid%init(NX - 2*NG, NY - 2*NG, NG, 1.0_wp, 1.0_wp)
 
-      !$acc data copyin( h, hu, hv, b) &
-      !$acc&     copyout( flux_h, flux_hu, flux_hv, mass_flux_x, mass_flux_y)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call compute_flux_hll(h, hu, hv, b, flux_h, flux_hu, flux_hv, &
                             mass_flux_x, mass_flux_y, grid)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       max_flux = 0.0_wp
       do j = NG + 1, NY - NG
@@ -268,16 +264,14 @@ contains
          end do
       end do
 
-      !$acc data copyin( hx, hux, hvx, bx) &
-      !$acc&     copyout( fhx, fhux, fhvx, fmxx, fmxy)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call compute_flux_hll(hx, hux, hvx, bx, fhx, fhux, fhvx, &
                             fmxx, fmxy, grid)
-      !$acc end data
-      !$acc data copyin( hy, huy, hvy, by) &
-      !$acc&     copyout( fhy, fhuy, fhvy, fmyx, fmyy)
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call compute_flux_hll(hy, huy, hvy, by, fhy, fhuy, fhvy, &
                             fmyx, fmyy, grid)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       ! flux_h at the interface should be the same magnitude
       ! x-break at i=N/2, j=N/2; y-break at i=N/2, j=N/2
@@ -306,11 +300,10 @@ contains
 
       call grid%init(NX - 2*NG, NY - 2*NG, NG, 1.0_wp, 1.0_wp)
 
-      !$acc data copyin( h, hu, hv, b) &
-      !$acc&     copyout( flux_h, flux_hu, flux_hv, mass_flux_x, mass_flux_y)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call compute_flux_hll(h, hu, hv, b, flux_h, flux_hu, flux_hv, &
                             mass_flux_x, mass_flux_y, grid)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       do j = NG + 1, NY - NG
          do i = NG + 1, NX - NG
@@ -353,11 +346,10 @@ contains
 
       call grid%init(NX - 2*NG, NY - 2*NG, NG, 1.0_wp, 1.0_wp)
 
-      !$acc data copyin( h, hu, hv, b) &
-      !$acc&     copyout( flux_h, flux_hu, flux_hv, mass_flux_x, mass_flux_y)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call compute_flux_hllc(h, hu, hv, b, flux_h, flux_hu, flux_hv, &
                              mass_flux_x, mass_flux_y, grid)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       max_flux = 0.0_wp
       do j = NG + 1, NY - NG
@@ -404,14 +396,12 @@ contains
 
       call grid%init(NX - 2*NG, NY - 2*NG, NG, 1.0_wp, 1.0_wp)
 
-      !$acc data copyin( h, hu, hv, b) &
-      !$acc&     copyout( fh_a, fhu_a, fhv_a, mxa, mya)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call compute_flux_hll(h, hu, hv, b, fh_a, fhu_a, fhv_a, mxa, mya, grid)
-      !$acc end data
-      !$acc data copyin( h, hu, hv, b) &
-      !$acc&     copyout( fh_b, fhu_b, fhv_b, mxb, myb)
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call compute_flux_hllc(h, hu, hv, b, fh_b, fhu_b, fhv_b, mxb, myb, grid)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       maxdiff = 0.0_wp
       do j = NG + 1, NY - NG
@@ -461,14 +451,12 @@ contains
 
       call grid%init(NX - 2*NG, NY - 2*NG, NG, 1.0_wp, 1.0_wp)
 
-      !$acc data copyin( h, hu, hv, b) &
-      !$acc&     copyout( fh_a, fhu_a, fhv_a, mxa, mya)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call compute_flux_hll(h, hu, hv, b, fh_a, fhu_a, fhv_a, mxa, mya, grid)
-      !$acc end data
-      !$acc data copyin( h, hu, hv, b) &
-      !$acc&     copyout( fh_b, fhu_b, fhv_b, mxb, myb)
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call compute_flux_hllc(h, hu, hv, b, fh_b, fhu_b, fhv_b, mxb, myb, grid)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       ! flux_h must be identical (transverse momentum doesn't enter
       ! the h equation), but flux_hv must differ at the dam.

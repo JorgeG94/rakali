@@ -67,10 +67,10 @@ contains
          v_layer(:, :, k) = -1.5_wp
       end do
 
-      !$acc data copyin( h, u_layer, v_layer, dsig) copy( hu, hv)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call compute_depth_averaged_momentum(h, u_layer, v_layer, dsig, &
                                            hu, hv, grid, NZ)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       call check(error, abs(hu(5, 5) - 6.0_wp) < 1.0e-12_wp, &
                  "hu = h*u = 2*3 = 6")
@@ -94,10 +94,10 @@ contains
       u_layer(:, :, 2) = 4.0_wp   ! top
       v_layer = 0.0_wp
 
-      !$acc data copyin( h, u_layer, v_layer, dsig) copy( hu, hv)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call compute_depth_averaged_momentum(h, u_layer, v_layer, dsig, &
                                            hu, hv, grid, NZ)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       expected_hu = 1.0_wp*(0.5_wp*2.0_wp + 0.5_wp*4.0_wp)  ! = 3.0
       call check(error, abs(hu(5, 5) - expected_hu) < 1.0e-12_wp, &
@@ -116,9 +116,9 @@ contains
       hu_pre = 0.0_wp
       hv_pre = 0.0_wp
 
-      !$acc data copyin( hu, hv) copy( hu_pre, hv_pre)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call save_barotropic_state(hu, hv, hu_pre, hv_pre, grid)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       call check(error, abs(hu_pre(4, 4) - 7.0_wp) < 1.0e-14_wp, &
                  "hu_pre should equal hu")
@@ -149,11 +149,11 @@ contains
       ! du = (hu_new - hu_pre) / h = (6-4)/2 = 1
       expected_du = 1.0_wp
 
-      !$acc data copyin( h, hu, hv, hu_pre, hv_pre, dsig) copy( u_layer, v_layer)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call compute_layer_from_barotropic(h, hu, hv, hu_pre, hv_pre, &
                                          u_layer, v_layer, dsig, &
                                          grid, NZ, 0.1_wp)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       call check(error, abs(u_layer(5, 5, 1) - 3.0_wp) < 1.0e-12_wp, &
                  "u_layer(1) = 2 + 1 = 3")
@@ -180,10 +180,10 @@ contains
       end do
       w = 999.0_wp  ! should be overwritten
 
-      !$acc data copyin( h, b, u_layer, v_layer, dsig) copy( w)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call compute_vertical_velocity(h, u_layer, v_layer, b, dsig, w, &
                                      grid, NZ)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       ! Uniform h*u everywhere -> central difference div is zero -> w = 0
       call check(error, abs(w(5, 5, 1)) < 1.0e-14_wp, "w at bottom = 0")
@@ -204,9 +204,9 @@ contains
       dsig = 1.0_wp/real(NZ, wp)
       rhs = 999.0_wp
 
-      !$acc data copyin( h, w, dsig) copy( rhs)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call compute_nh_rhs(h, w, dsig, rhs, NX, NY, NZ, NG, DX, DY, 0.1_wp)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       call check(error, abs(rhs(5, 5, 1)) < 1.0e-14_wp, &
                  "RHS = 0 when w = 0")
@@ -224,9 +224,9 @@ contains
       dsig = 1.0_wp/real(NZ, wp)
       Ap = 999.0_wp
 
-      !$acc data copyin( h, p, dsig) copy( Ap)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call apply_poisson_operator(h, dsig, p, Ap, NX, NY, NZ, NG, DX, DY, 0.1_wp)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       call check(error, abs(Ap(5, 5, 1)) < 1.0e-14_wp, &
                  "A*0 = 0")
@@ -260,13 +260,13 @@ contains
          end do
       end do
 
-      !$acc data copyin( h, dsig, r) copy( z, Mz)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call apply_vertical_preconditioner(h, dsig, r, z, NX, NY, NZ, NG, DX, DY, DT)
 
       ! Apply the Poisson operator to z — if preconditioner is exact for
       ! the vertical part, Mz should recover r (up to horizontal residual)
       call apply_poisson_operator(h, dsig, z, Mz, NX, NY, NZ, NG, DX, DY, DT)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       ! z should be non-trivial (not all zeros)
       call check(error, maxval(abs(z(NG + 1:NX - NG, NG + 1:NY - NG, :))) > 1.0e-15_wp, &
@@ -320,13 +320,12 @@ contains
          end do
       end do
 
-      !$acc data copyin( h, u_layer, v_layer, dsig, b) &
-      !$acc&     copy( w, q_nh, cg_r, cg_p, cg_Ap, cg_z)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call solve_nh_pressure(h, u_layer, v_layer, w, q_nh, dsig, &
                              cg_r, cg_p, cg_Ap, cg_z, &
                              grid, NZ, DT, &
                              PCG_MAX_ITER, PCG_TOL, iter_out)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       ! RHS is non-zero (manufactured w field has nonzero divergence),
       ! so the solver must have iterated at least once.
@@ -367,11 +366,11 @@ contains
       v_layer0 = 4.0_wp
       w0 = 0.0_wp
 
-      !$acc data copy( u_layer, v_layer, w) copyin( u_layer0, v_layer0, w0)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call compute_rk2_average_layers(u_layer, v_layer, w, &
                                       u_layer0, v_layer0, w0, &
                                       grid, NZ)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       call check(error, abs(u_layer(5, 5, 1) - 3.0_wp) < 1.0e-14_wp, &
                  "u_layer avg = (2+4)/2 = 3")
@@ -427,10 +426,10 @@ contains
       v_before = v_layer
       w_before = w
 
-      !$acc data copyin(h, q_nh, dsig) copy(u_layer, v_layer, w)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call apply_nh_correction(h, u_layer, v_layer, w, q_nh, dsig, &
                                grid, NZ, DT)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       do k = 1, NZ
          do j = NG + 1, NY - NG

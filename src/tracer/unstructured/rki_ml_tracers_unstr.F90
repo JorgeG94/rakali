@@ -36,7 +36,7 @@ module rki_ml_tracers_unstr
 
 contains
 
-   pure subroutine ml_init_tracer_unstr(state, hTr_layer, tr_init)
+   subroutine ml_init_tracer_unstr(state, hTr_layer, tr_init)
       !! Initialise a tracer field from a uniform scalar value:
       !!   hTr_k(cell) = h_layer_k(cell) * tr_init
       !! Called once per tracer after `ml_init_layers_unstr` has
@@ -55,12 +55,16 @@ contains
       nz = state%multilayer%nz_ml
       n = state%ncells_total
 
-      do concurrent(cell=1:n, k=1:nz)
+      !$omp parallel do collapse(2)
+      do cell = 1, n
+      do k = 1, nz
          hTr_layer(k, cell) = state%multilayer%h_layer(k, cell)*tr_init
       end do
+      end do
+      !$omp end parallel do
    end subroutine ml_init_tracer_unstr
 
-   pure subroutine ml_init_tracer_stratified_unstr(state, hTr_layer, tr_bottom, tr_surface)
+   subroutine ml_init_tracer_stratified_unstr(state, hTr_layer, tr_bottom, tr_surface)
       !! Seed a tracer with a linear vertical profile: `tr_bottom` at k=1
       !! (bed) to `tr_surface` at k=nz (surface), per the bottom-up layer
       !! convention.  The per-column entry point anticipated by
@@ -82,13 +86,17 @@ contains
       n = state%ncells_total
       dtr = (tr_surface - tr_bottom)/real(nz - 1, wp)
 
-      do concurrent(cell=1:n, k=1:nz)
+      !$omp parallel do collapse(2)
+      do cell = 1, n
+      do k = 1, nz
          hTr_layer(k, cell) = state%multilayer%h_layer(k, cell) &
                               *(tr_bottom + dtr*real(k - 1, wp))
       end do
+      end do
+      !$omp end parallel do
    end subroutine ml_init_tracer_stratified_unstr
 
-   pure subroutine ml_seed_tracer_unstr(state, hTr_layer, tr_uniform, &
+   subroutine ml_seed_tracer_unstr(state, hTr_layer, tr_uniform, &
                                         tr_bottom, tr_surface)
       !! Seed one tracer's `hTr` field, dispatching between the uniform and
       !! the linear-stratified profile from the tracer's IC scalars.  When
@@ -111,7 +119,7 @@ contains
 
    end subroutine ml_seed_tracer_unstr
 
-   pure subroutine ml_seed_standard_tracers_unstr(state)
+   subroutine ml_seed_standard_tracers_unstr(state)
       !! Seed the two standard tracers (salinity, temperature) from the IC
       !! scalars carried on `state%multilayer`, each dispatching uniform-vs-
       !! stratified via `ml_seed_tracer_unstr`.  Call once after
@@ -133,7 +141,7 @@ contains
 
    end subroutine ml_seed_standard_tracers_unstr
 
-   pure subroutine ml_save_tracer_unstr(state, hTr_layer, hTr_layer0)
+   subroutine ml_save_tracer_unstr(state, hTr_layer, hTr_layer0)
       !! Snapshot a tracer field at step start for SSP-RK2 averaging.
       type(unstr_state_t), intent(inout) :: state
       ! assumed-shape-ok: unstructured outer-shim — ncells varies per mesh partition
@@ -148,12 +156,16 @@ contains
       nz = state%multilayer%nz_ml
       n = state%ncells_total
 
-      do concurrent(cell=1:n, k=1:nz)
+      !$omp parallel do collapse(2)
+      do cell = 1, n
+      do k = 1, nz
          hTr_layer0(k, cell) = hTr_layer(k, cell)
       end do
+      end do
+      !$omp end parallel do
    end subroutine ml_save_tracer_unstr
 
-   pure subroutine ml_rk2_average_tracer_unstr(state, hTr_layer, hTr_layer0)
+   subroutine ml_rk2_average_tracer_unstr(state, hTr_layer, hTr_layer0)
       !! RK2 blend for tracer fields: hTr := 0.5*(hTr + hTr^n).
       !!
       !! This element-wise blend is mass-conservative
@@ -178,13 +190,17 @@ contains
       nz = state%multilayer%nz_ml
       n = state%ncells_total
 
-      do concurrent(cell=1:n, k=1:nz)
+      !$omp parallel do collapse(2)
+      do cell = 1, n
+      do k = 1, nz
          hTr_layer(k, cell) = 0.5_wp*(hTr_layer(k, cell) &
                                       + hTr_layer0(k, cell))
       end do
+      end do
+      !$omp end parallel do
    end subroutine ml_rk2_average_tracer_unstr
 
-   pure subroutine ml_distribute_tracer_unstr(state, hTr_layer)
+   subroutine ml_distribute_tracer_unstr(state, hTr_layer)
       !! Preserve tracer concentration across a barotropic depth change.
       !!
       !! Reads `h_layer` (pre-update, still carries `dsig_k * H_old`),
@@ -209,7 +225,8 @@ contains
       nz = state%multilayer%nz_ml
       n = state%ncells_total
 
-      do concurrent(cell=1:n) local(k, h_val, h_k_old, h_k_new, tr_k)
+      !$omp parallel do private(k, h_val, h_k_old, h_k_new, tr_k)
+      do cell = 1, n
          h_val = state%barotropic%stage_cv(cell) - state%barotropic%bed_cv(cell)
          if (h_val < 0.0_wp) h_val = 0.0_wp
 
@@ -224,6 +241,7 @@ contains
             hTr_layer(k, cell) = h_k_new*tr_k
          end do
       end do
+      !$omp end parallel do
    end subroutine ml_distribute_tracer_unstr
 
    subroutine ml_clamp_tracer_unstr(state, hTr_layer, tr_min, tr_max)
@@ -257,7 +275,7 @@ contains
                                       state%multilayer%h_layer, hTr_layer, tr_min, tr_max)
    end subroutine ml_clamp_tracer_unstr
 
-   pure subroutine ml_clamp_tracer_unstr_impl(nz, n, h_layer, hTr_layer, tr_min, tr_max)
+   subroutine ml_clamp_tracer_unstr_impl(nz, n, h_layer, hTr_layer, tr_min, tr_max)
       !! Flat-impl of [[ml_clamp_tracer_unstr]]: explicit-shape dummies so the
       !! device kernel addresses raw pointers, not derived-type descriptors.
       integer, intent(in) :: nz, n
@@ -272,10 +290,8 @@ contains
       real(wp) :: col_hTr, col_h
       real(wp), parameter :: TINY_CAP = 1.0e-30_wp
 
-      do concurrent(cell=1:n) &
-         local(k, h_k, tr_k, room_k, &
-               excess_above, deficit_below, cap_to_add, cap_to_remove, &
-               net, frac, col_hTr, col_h)
+      !$omp parallel do private(k, h_k, tr_k, room_k, excess_above, deficit_below, cap_to_add, cap_to_remove, net, frac, col_hTr, col_h)
+      do cell = 1, n
 
          ! Pass 0: column mean.  The two-pass clip+redistribute below is
          ! EXACTLY conservative if and only if the column-mean concentration
@@ -352,9 +368,10 @@ contains
             end do
          end if
       end do
+      !$omp end parallel do
    end subroutine ml_clamp_tracer_unstr_impl
 
-   pure subroutine ml_advect_tracer_unstr(state, mesh, hTr_layer, dt, bc_tr_ext)
+   subroutine ml_advect_tracer_unstr(state, mesh, hTr_layer, dt, bc_tr_ext)
       !! First-order upwind horizontal tracer advection on triangles
       !! using a SHEAR-AWARE consistency-with-continuity (CWC) per-layer
       !! mass flux. Mirrors what the structured `ml_advect_tracer` does
@@ -450,14 +467,20 @@ contains
       ! Snapshot the input tracer into the scratch buffer so the per-cell
       ! kernel can read neighbour concentrations from a frozen image and
       ! write the update into the live buffer without a race.
-      do concurrent(cell=1:n, k=1:nz)
+      !$omp parallel do collapse(2)
+      do cell = 1, n
+      do k = 1, nz
          state%multilayer%tracer_advect_scratch(k, cell) = hTr_layer(k, cell)
       end do
+      end do
+      !$omp end parallel do
 
-      do concurrent(cell=1:mesh%ncells_owned)
+      !$omp parallel do
+      do cell = 1, mesh%ncells_owned
          call advect_tracer_one_cell(state, mesh, hTr_layer, nz, dt, cell, &
                                      bc_ext_local)
       end do
+      !$omp end parallel do
    end subroutine ml_advect_tracer_unstr
 
    pure subroutine advect_tracer_one_cell(state, mesh, hTr_layer, nz, dt, cell, &
@@ -715,7 +738,7 @@ contains
          hTr_layer, dt, bc_ext_local)
    end subroutine ml_advect_tracer_muscl_unstr
 
-   pure subroutine ml_advect_tracer_muscl_unstr_impl(nz, n, ncells_owned, &
+   subroutine ml_advect_tracer_muscl_unstr_impl(nz, n, ncells_owned, &
                                                      h_layer, hu_layer, hv_layer, &
                                                      dsig_ml, tracer_advect_scratch, &
                                                      lgrad_x, lgrad_y, mass_flux_e, &
@@ -762,16 +785,19 @@ contains
       integer :: bc_grp
 
       ! Snapshot the input tracer for Jacobi consistency.
-      do concurrent(cell=1:n, k=1:nz)
+      !$omp parallel do collapse(2)
+      do cell = 1, n
+      do k = 1, nz
          tracer_advect_scratch(k, cell) = hTr_layer(k, cell)
       end do
+      end do
+      !$omp end parallel do
 
       ! ---- Phase 1: Green-Gauss gradient + Barth-Jespersen limiter ----
       ! Computed for ALL cells (including halo) so Phase 2 can read
       ! the neighbour's gradient for inflow faces.
-      do concurrent(cell=1:n) &
-         local(k, e, nbr, tr_here, tr_nbr, tr_edge_val, tr_max, tr_min, &
-               gradx, grady, inv_area, n1, n2, L_e, dq_e, dx_e, dy_e, phi)
+      !$omp parallel do private(k, e, nbr, tr_here, tr_nbr, tr_edge_val, tr_max, tr_min, gradx, grady, inv_area, n1, n2, L_e, dq_e, dx_e, dy_e, phi)
+      do cell = 1, n
          inv_area = 1.0_wp/area(cell)
 
          do k = 1, nz
@@ -837,14 +863,11 @@ contains
             lgrad_y(k, cell) = phi*grady
          end do
       end do
+      !$omp end parallel do
 
       ! ---- Phase 2: MUSCL advection (same CWC flux + limited upwind) ----
-      do concurrent(cell=1:ncells_owned) &
-         local(k, e, nbr, bc_grp, inv_area, &
-               f_mass, f_layer, h_here, h_nbr, tr_up, accum, &
-               n1, n2, L_e, hu_edge, hv_edge, dx_e, dy_e, tr_here, tr_nbr, &
-               v_layer, hf_layer, H_active, inv_H_active, &
-               correction, frac, h_total, inv_h_total)
+      !$omp parallel do private(k, e, nbr, bc_grp, inv_area, f_mass, f_layer, h_here, h_nbr, tr_up, accum, n1, n2, L_e, hu_edge, hv_edge, dx_e, dy_e, tr_here, tr_nbr, v_layer, hf_layer, H_active, inv_H_active, correction, frac, h_total, inv_h_total)
+      do cell = 1, ncells_owned
          inv_area = 1.0_wp/area(cell)
 
          ! Column-local layer fraction (used only for the boundary-edge
@@ -964,6 +987,7 @@ contains
             hTr_layer(k, cell) = hTr_layer(k, cell) + dt*inv_area*accum
          end do
       end do
+      !$omp end parallel do
    end subroutine ml_advect_tracer_muscl_unstr_impl
 
    subroutine ml_apply_tracer_bcs_unstr(state, mesh, hTr_layer, bc_tr_ext)
@@ -1032,7 +1056,7 @@ contains
          state%multilayer%w_interface, hTr_layer, dt)
    end subroutine ml_vertical_exchange_tracer_unstr
 
-   pure subroutine ml_vertical_exchange_tracer_unstr_impl(nz, n, ncells_owned, height_cv, &
+   subroutine ml_vertical_exchange_tracer_unstr_impl(nz, n, ncells_owned, height_cv, &
                                                           h_layer, w_interface, hTr_layer, dt)
       !! Flat-impl of [[ml_vertical_exchange_tracer_unstr]]: explicit-shape dummies
       !! so the device kernel addresses raw pointers, not derived-type descriptors.
@@ -1047,7 +1071,8 @@ contains
       real(wp) :: w_face, tr_up, flux_tr, h_val
       real(wp) :: flux_iface(BPG_NZ_MAX)
 
-      do concurrent(cell=1:ncells_owned) local(k, w_face, tr_up, flux_tr, h_val, flux_iface)
+      !$omp parallel do private(k, w_face, tr_up, flux_tr, h_val, flux_iface)
+      do cell = 1, ncells_owned
          ! Skip thin columns
          if (height_cv(cell) < ML_MIN_DEPTH_UNSTR) cycle
 
@@ -1101,6 +1126,7 @@ contains
          ! Top / surface layer (k=nz): only has the interface BELOW it
          hTr_layer(nz, cell) = hTr_layer(nz, cell) + flux_iface(nz - 1)
       end do
+      !$omp end parallel do
    end subroutine ml_vertical_exchange_tracer_unstr_impl
 
    subroutine ml_horizontal_diffusion_tracer_unstr(state, mesh, hTr_layer, kappa, dt)
@@ -1150,7 +1176,7 @@ contains
          mesh%surrogate_neighbours, hTr_layer, kappa, dt)
    end subroutine ml_horizontal_diffusion_tracer_unstr
 
-   pure subroutine ml_horizontal_diffusion_tracer_unstr_impl(nz, n, ncells_owned, height_cv, &
+   subroutine ml_horizontal_diffusion_tracer_unstr_impl(nz, n, ncells_owned, height_cv, &
                                                              h_layer, hTr_pre, area, radius, &
                                                              centroid_x, centroid_y, edge_len, &
                                                              surrogate_neighbours, hTr_layer, &
@@ -1173,13 +1199,16 @@ contains
       real(wp) :: kappa_eff, tr_c, tr_nbr, h_k, h_nbr, inv_area
       real(wp) :: dx_cn, dy_cn, d_cn, flux_accum
 
-      do concurrent(k=1:nz, cell=1:n)
+      !$omp parallel do collapse(2)
+      do k = 1, nz
+      do cell = 1, n
          hTr_pre(k, cell) = hTr_layer(k, cell)
       end do
+      end do
+      !$omp end parallel do
 
-      do concurrent(cell=1:ncells_owned) &
-         local(k, e, nbr, kappa_eff, tr_c, tr_nbr, h_k, h_nbr, inv_area, &
-               dx_cn, dy_cn, d_cn, flux_accum)
+      !$omp parallel do private(k, e, nbr, kappa_eff, tr_c, tr_nbr, h_k, h_nbr, inv_area, dx_cn, dy_cn, d_cn, flux_accum)
+      do cell = 1, ncells_owned
 
          if (height_cv(cell) < ML_MIN_DEPTH_UNSTR) cycle
 
@@ -1215,9 +1244,10 @@ contains
                                  + kappa_eff*dt*flux_accum*inv_area
          end do
       end do
+      !$omp end parallel do
    end subroutine ml_horizontal_diffusion_tracer_unstr_impl
 
-   pure subroutine ml_vertical_diffusion_tracer_unstr(state, hTr_layer, kappa_bg, dt)
+   subroutine ml_vertical_diffusion_tracer_unstr(state, hTr_layer, kappa_bg, dt)
       !! Ri-dependent vertical diffusion of a scalar tracer.
       !! Uses stronger Ri suppression for tracers:
       !!   kappa_t = nu_max / (1 + alpha*Ri)^3 + kappa_bg.
@@ -1240,7 +1270,7 @@ contains
          hTr_layer, kappa_bg, dt)
    end subroutine ml_vertical_diffusion_tracer_unstr
 
-   pure subroutine ml_vertical_diffusion_tracer_unstr_impl(nz, n, ncells_owned, height_cv, &
+   subroutine ml_vertical_diffusion_tracer_unstr_impl(nz, n, ncells_owned, height_cv, &
                                                            h_layer, hu_layer, hv_layer, &
                                                            rho_layer, rho_0, vmix_ri_alpha, &
                                                            vmix_nu_max, hTr_layer, kappa_bg, dt)
@@ -1263,10 +1293,8 @@ contains
 
       real(wp), parameter :: EPS = 1.0e-20_wp
 
-      do concurrent(cell=1:ncells_owned) &
-         local(k, h_k, h_k1, h_avg, u_k, v_k, u_k1, v_k1, &
-               du, dv, drho, Ri, denom, kappa_t, &
-               tr_k, tr_k1, dtr, flux_tr, flux_iface)
+      !$omp parallel do private(k, h_k, h_k1, h_avg, u_k, v_k, u_k1, v_k1, du, dv, drho, Ri, denom, kappa_t, tr_k, tr_k1, dtr, flux_tr, flux_iface)
+      do cell = 1, ncells_owned
 
          if (height_cv(cell) < ML_MIN_DEPTH_UNSTR) cycle
 
@@ -1333,9 +1361,10 @@ contains
          end do
          hTr_layer(nz, cell) = hTr_layer(nz, cell) - flux_iface(nz - 1)
       end do
+      !$omp end parallel do
    end subroutine ml_vertical_diffusion_tracer_unstr_impl
 
-   pure subroutine ml_apply_surface_tracer_fluxes_unstr(state, hS_layer, hT_layer)
+   subroutine ml_apply_surface_tracer_fluxes_unstr(state, hS_layer, hT_layer)
       !! Apply prescribed surface fluxes to the top layer (k=nz) of every
       !! cell.  Two evaporation modes, mirroring the structured
       !! `ml_apply_surface_tracer_fluxes`:
@@ -1412,8 +1441,8 @@ contains
          latent_gain = RHO_WATER*LATENT_HEAT_VAPORIZATION*inv_rho0cp
       end if
 
-      do concurrent(cell=1:n) &
-         local(k, h_top, h_col, S_top, kin_q, dh_req, dh_eff, fac)
+      !$omp parallel do private(k, h_top, h_col, S_top, kin_q, dh_req, dh_eff, fac)
+      do cell = 1, n
          h_col = 0.0_wp
          do k = 1, nz
             h_col = h_col + state%multilayer%h_layer(k, cell)
@@ -1453,6 +1482,7 @@ contains
             end if
          end if
       end do
+      !$omp end parallel do
    end subroutine ml_apply_surface_tracer_fluxes_unstr
 
 end module rki_ml_tracers_unstr

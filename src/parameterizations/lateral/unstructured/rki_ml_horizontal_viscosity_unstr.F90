@@ -15,7 +15,7 @@ module rki_ml_horizontal_viscosity_unstr
 
 contains
 
-   pure subroutine ml_horizontal_viscosity_smag_unstr(state, mesh, dt)
+   subroutine ml_horizontal_viscosity_smag_unstr(state, mesh, dt)
       !! Smagorinsky (1963) horizontal viscosity for layer momentum on triangles.
       !! Velocity gradients via Green-Gauss; nu_h = (Cs^2*A)*|S|, stability-limited;
       !! FVM Laplacian. Jacobi snapshot on hu/hv for CPU/GPU consistency.
@@ -40,16 +40,17 @@ contains
       associate (hu_pre => state%multilayer%ml_horvisc_hu_pre, &
                  hv_pre => state%multilayer%ml_horvisc_hv_pre)
 
-         do concurrent(k=1:nz, cell=1:mesh%ncells_total)
+         !$omp parallel do collapse(2)
+         do k = 1, nz
+         do cell = 1, mesh%ncells_total
             hu_pre(k, cell) = state%multilayer%hu_layer(k, cell)
             hv_pre(k, cell) = state%multilayer%hv_layer(k, cell)
          end do
+         end do
+         !$omp end parallel do
 
-         do concurrent(cell=1:n) &
-            local(k, e, nbr, cs2_area, inv_area, nu_max_cell, &
-                  h_k, u_c, v_c, u_nbr, v_nbr, u_edge, v_edge, &
-                  dudx, dvdy, dudy, dvdx, strain, nu_h, &
-                  dx_cn, dy_cn, d_cn, lap_u, lap_v)
+         !$omp parallel do private(k, e, nbr, cs2_area, inv_area, nu_max_cell, h_k, u_c, v_c, u_nbr, v_nbr, u_edge, v_edge, dudx, dvdy, dudy, dvdx, strain, nu_h, dx_cn, dy_cn, d_cn, lap_u, lap_v)
+         do cell = 1, n
 
             if (state%barotropic%height_cv(cell) < ML_MIN_DEPTH_UNSTR) cycle
 
@@ -129,6 +130,7 @@ contains
                state%multilayer%hv_layer(k, cell) = hv_pre(k, cell) + dt*h_k*nu_h*lap_v
             end do
          end do
+         !$omp end parallel do
 
       end associate
 

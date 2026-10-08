@@ -221,7 +221,7 @@ contains
       ! sub-objects' allocatables) attach to it below.  Without the
       ! parent map first, NVHPC stdpar can't dereference component
       ! arrays from inside a do-concurrent body.
-      !$acc enter data copyin(state)
+      ! [acc->omp-cpu] dropped device directive (host no-op): enter data
 
       call state%barotropic%enter_data()
       call state%forcing%enter_data()
@@ -251,10 +251,9 @@ contains
 
       integer :: it
 
-      !$acc enter data copyin(state%multilayer%tracers)
+      ! [acc->omp-cpu] dropped device directive (host no-op): enter data
       do it = 1, size(state%multilayer%tracers)
-         !$acc enter data copyin(state%multilayer%tracers(it)%hTr, &
-         !$acc&                  state%multilayer%tracers(it)%hTr0)
+         ! [acc->omp-cpu] dropped device directive (host no-op): enter data
       end do
 
       ! The device map above is an element-by-element snapshot: growing
@@ -286,7 +285,7 @@ contains
       call state%barotropic%exit_data()
 
       ! Parent struct descriptor last.
-      !$acc exit data delete(state)
+      ! [acc->omp-cpu] dropped device directive (host no-op): exit data
    end subroutine state_unstr_exit_data
 
    subroutine tracers_exit_data(state)
@@ -296,10 +295,10 @@ contains
       integer :: it
 
       do it = 1, size(state%multilayer%tracers)
-         !$acc exit data copyout(state%multilayer%tracers(it)%hTr)
-         !$acc exit data delete(state%multilayer%tracers(it)%hTr0)
+         ! [acc->omp-cpu] dropped device directive (host no-op): exit data
+         ! [acc->omp-cpu] dropped device directive (host no-op): exit data
       end do
-      !$acc exit data delete(state%multilayer%tracers)
+      ! [acc->omp-cpu] dropped device directive (host no-op): exit data
 
       state%multilayer%registry_locked = .false.
    end subroutine tracers_exit_data

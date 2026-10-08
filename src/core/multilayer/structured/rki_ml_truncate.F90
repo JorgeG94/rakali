@@ -12,7 +12,7 @@ module rki_ml_truncate
 
 contains
 
-   pure subroutine ml_truncate_velocity(h_layer, hu_layer, hv_layer, &
+   subroutine ml_truncate_velocity(h_layer, hu_layer, hv_layer, &
                                         grid, nz, dt, &
                                         cfl_trunc)
       !! Clip any layer velocity with CFL > cfl_trunc to 0.9*cfl_trunc*dx/dt.
@@ -37,8 +37,9 @@ contains
       vel_max_x = 0.9_wp*cfl_trunc*dx/max(dt, 1.0e-10_wp)
       vel_max_y = 0.9_wp*cfl_trunc*dy/max(dt, 1.0e-10_wp)
 
-      do concurrent(j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) &
-         local(k, u_abs, v_abs, h_k)
+      !$omp parallel do collapse(2) private(k, u_abs, v_abs, h_k)
+      do j = nghost + 1, ny - nghost
+      do i = nghost + 1, nx - nghost
 
          do k = 1, nz
             h_k = h_layer(i, j, k)
@@ -55,6 +56,8 @@ contains
             end if
          end do
       end do
+      end do
+      !$omp end parallel do
 
    end subroutine ml_truncate_velocity
 

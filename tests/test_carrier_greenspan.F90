@@ -227,7 +227,7 @@ contains
             call solver_step(state, dt_max=real(k, wp)*dt_sample - t, time=t)
             t = t + state%dt
          end do
-         !$acc update self(state%barotropic%h)
+         ! [acc->omp-cpu] dropped device directive (host no-op): update
          n_track = n_track + 1
          t_track(n_track) = t
          do d = 1, size(h_thresh)

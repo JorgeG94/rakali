@@ -241,7 +241,7 @@ contains
       hsum0 = mass_sum(state, mesh)
       do n = 1, n_steps
          call solver_unstr_step(state, mesh, dt)
-         !$acc update self(state%barotropic%stage_cv)
+         ! [acc->omp-cpu] dropped device directive (host no-op): update
          eta_series(n) = state%barotropic%stage_cv(kprobe) - H0
          hdrift = max(hdrift, abs(mass_sum(state, mesh) - hsum0))
       end do
@@ -250,7 +250,7 @@ contains
       call mesh_unstr_exit_data(mesh)
    end subroutine run_series
 
-   pure function measure_period(eta_series, n, dt) result(t_meas)
+   function measure_period(eta_series, n, dt) result(t_meas)
       integer, intent(in) :: n
       real(wp), intent(in) :: eta_series(n)
       real(wp), intent(in) :: dt

@@ -260,7 +260,7 @@ contains
       do n = 1, n_steps
          call solver_unstr_step(state, mesh, dt)
          iters_total = iters_total + state%si%cg_iters
-         !$acc update self(state%barotropic%stage_cv)
+         ! [acc->omp-cpu] dropped device directive (host no-op): update
          eta_series(n) = state%barotropic%stage_cv(kprobe) - H0
          hdrift = max(hdrift, abs(mass_sum(state, mesh) - hsum0))
       end do
@@ -271,7 +271,7 @@ contains
       iters_mean = real(iters_total, wp)/real(n_steps, wp)
    end subroutine run_seiche
 
-   pure function measure_period(eta_series, n, dt) result(t_meas)
+   function measure_period(eta_series, n, dt) result(t_meas)
       !! Period from up-going zero crossings of (eta - mean).
       integer, intent(in) :: n
       real(wp), intent(in) :: eta_series(n)

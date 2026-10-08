@@ -43,9 +43,9 @@ contains
       hu = 3.0_wp
       hv = -2.0_wp
 
-      !$acc data copyin( h) copy( hu, hv)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call ml_horizontal_viscosity_biharmonic(h, hu, hv, 0.0_wp, grid, NZ, 0.1_wp)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       call check(error, abs(hu(4, 4, 1) - 3.0_wp) < 1.0e-14_wp, &
                  "nu_4 = 0 leaves hu unchanged")
@@ -67,9 +67,9 @@ contains
          end do
       end do
 
-      !$acc data copyin( h) copy( hu, hv)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call ml_horizontal_viscosity_biharmonic(h, hu, hv, 0.04_wp, grid, NZ, 0.1_wp)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       call check(error, abs(hu(4, 4, 1) - SLOPE*4.0_wp) < 1.0e-12_wp, &
                  "biharmonic leaves a linear (del^4 = 0) field untouched")
@@ -95,9 +95,9 @@ contains
       end do
       hu0 = hu(4, 4, 1)
 
-      !$acc data copyin( h) copy( hu, hv)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call ml_horizontal_viscosity_biharmonic(h, hu, hv, NU4, grid, NZ, DT)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       lambda = 16.0_wp*(1.0_wp/(DX*DX) + 1.0_wp/(DY*DY))**2
       factor = 1.0_wp - DT*NU4*lambda

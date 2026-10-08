@@ -29,11 +29,13 @@ contains
 
       n = mesh%ncells_owned
 
-      do concurrent(k=1:n)
+      !$omp parallel do
+      do k = 1, n
          state%barotropic%stage_backup(k) = state%barotropic%stage_cv(k)
          state%barotropic%xmom_backup(k) = state%barotropic%xmom_cv(k)
          state%barotropic%ymom_backup(k) = state%barotropic%ymom_cv(k)
       end do
+      !$omp end parallel do
    end subroutine fused_save_state_unstr
 
    subroutine fused_update_stage_generic_unstr(state, mesh, dt)
@@ -66,10 +68,8 @@ contains
       tau_y = state%barotropic%wind_tau_y/RHO_WATER
       mass_error_local = 0.0_wp
 
-      do concurrent(k=1:n) &
-         local(stage, xmom, ymom, h, h4, speed_sq, fr_max_sq, fr_scale, &
-               u_val, v_val, speed, cf, denom) &
-         reduce(+:mass_error_local)
+      !$omp parallel do private(stage, xmom, ymom, h, h4, speed_sq, fr_max_sq, fr_scale, u_val, v_val, speed, cf, denom)
+      do k = 1, n
          ! ---- Read state ----
          stage = state%barotropic%stage_cv(k)
          xmom = state%barotropic%xmom_cv(k)
@@ -132,6 +132,7 @@ contains
          state%barotropic%xmom_cv(k) = xmom
          state%barotropic%ymom_cv(k) = ymom
       end do
+      !$omp end parallel do
 
       state%mass_error = state%mass_error + mass_error_local
 
@@ -157,9 +158,8 @@ contains
       mass_error_local = 0.0_wp
       eps4 = DESING_EPS**4
 
-      do concurrent(k=1:n) &
-         local(stage, xmom, ymom, h, h4, speed_sq, fr_max_sq, fr_scale) &
-         reduce(+:mass_error_local)
+      !$omp parallel do private(stage, xmom, ymom, h, h4, speed_sq, fr_max_sq, fr_scale)
+      do k = 1, n
          stage = a_n*state%barotropic%stage_backup(k) + a_prev*state%barotropic%stage_cv(k)
          xmom = a_n*state%barotropic%xmom_backup(k) + a_prev*state%barotropic%xmom_cv(k)
          ymom = a_n*state%barotropic%ymom_backup(k) + a_prev*state%barotropic%ymom_cv(k)
@@ -197,6 +197,7 @@ contains
          state%barotropic%xmom_cv(k) = xmom
          state%barotropic%ymom_cv(k) = ymom
       end do
+      !$omp end parallel do
 
       state%mass_error = state%mass_error + mass_error_local
 
@@ -228,10 +229,8 @@ contains
       tau_y = state%barotropic%wind_tau_y/RHO_WATER
       mass_error_local = 0.0_wp
 
-      do concurrent(k=1:n) &
-         local(stage, xmom, ymom, h, h4, speed_sq, fr_max_sq, fr_scale, &
-               u_val, v_val, speed, cf, denom) &
-         reduce(+:mass_error_local)
+      !$omp parallel do private(stage, xmom, ymom, h, h4, speed_sq, fr_max_sq, fr_scale, u_val, v_val, speed, cf, denom)
+      do k = 1, n
          ! ---- Read + save backup ----
          stage = state%barotropic%stage_cv(k)
          xmom = state%barotropic%xmom_cv(k)
@@ -297,6 +296,7 @@ contains
          state%barotropic%xmom_cv(k) = xmom
          state%barotropic%ymom_cv(k) = ymom
       end do
+      !$omp end parallel do
 
       state%mass_error = state%mass_error + mass_error_local
 
@@ -328,10 +328,8 @@ contains
       tau_y = state%barotropic%wind_tau_y/RHO_WATER
       mass_error_local = 0.0_wp
 
-      do concurrent(k=1:n) &
-         local(stage, xmom, ymom, h, h4, speed_sq, fr_max_sq, fr_scale, &
-               u_val, v_val, speed, cf, denom) &
-         reduce(+:mass_error_local)
+      !$omp parallel do private(stage, xmom, ymom, h, h4, speed_sq, fr_max_sq, fr_scale, u_val, v_val, speed, cf, denom)
+      do k = 1, n
          ! ---- Read state ----
          stage = state%barotropic%stage_cv(k)
          xmom = state%barotropic%xmom_cv(k)
@@ -428,6 +426,7 @@ contains
          state%barotropic%xmom_cv(k) = xmom
          state%barotropic%ymom_cv(k) = ymom
       end do
+      !$omp end parallel do
 
       state%mass_error = state%mass_error + mass_error_local
 

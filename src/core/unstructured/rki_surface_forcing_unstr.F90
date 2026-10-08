@@ -108,8 +108,7 @@ contains
       !! right initial direction.
       class(unstr_surface_forcing_t), intent(inout) :: this
 
-      !$acc enter data copyin(this%heat_flux, this%evap_minus_precip, &
-      !$acc&                  this%wind_x, this%wind_y)
+      ! [acc->omp-cpu] dropped device directive (host no-op): enter data
    end subroutine unstr_surface_forcing_enter_data
 
    subroutine unstr_surface_forcing_exit_data(this)
@@ -118,8 +117,7 @@ contains
       !! information the host doesn't already have.
       class(unstr_surface_forcing_t), intent(inout) :: this
 
-      !$acc exit data delete(this%heat_flux, this%evap_minus_precip, &
-      !$acc&                 this%wind_x, this%wind_y)
+      ! [acc->omp-cpu] dropped device directive (host no-op): exit data
    end subroutine unstr_surface_forcing_exit_data
 
 end module rki_surface_forcing_unstr

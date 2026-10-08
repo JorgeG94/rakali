@@ -14,7 +14,7 @@ module rki_kernel_flux
 
 contains
 
-   pure subroutine compute_flux_hll(h, hu, hv, b, flux_h, flux_hu, flux_hv, &
+   subroutine compute_flux_hll(h, hu, hv, b, flux_h, flux_hu, flux_hv, &
                                     mass_flux_x, mass_flux_y, grid)
       !! Net flux divergence at each interior cell (HLL Riemann solver).
       !! Also writes the per-face HLL h-flux at the right face
@@ -42,8 +42,9 @@ contains
       dx = grid%dx
       dy = grid%dy
 
-      do concurrent(j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) &
-         local(fh, fhu, fhv, fmxL, fmxR, fmyB, fmyT)
+      !$omp parallel do collapse(2) private(fh, fhu, fhv, fmxL, fmxR, fmyB, fmyT)
+      do j = nghost + 1, ny - nghost
+      do i = nghost + 1, nx - nghost
          call flux_cell(h, hu, hv, b, nx, ny, i, j, dx, dy, use_hllc, &
                         fh, fhu, fhv, fmxL, fmxR, fmyB, fmyT)
          flux_h(i, j) = fh
@@ -56,10 +57,12 @@ contains
          if (i == nghost + 1) mass_flux_x(i - 1, j) = fmxL
          if (j == nghost + 1) mass_flux_y(i, j - 1) = fmyB
       end do
+      end do
+      !$omp end parallel do
 
    end subroutine compute_flux_hll
 
-   pure subroutine compute_flux_hllc(h, hu, hv, b, flux_h, flux_hu, flux_hv, &
+   subroutine compute_flux_hllc(h, hu, hv, b, flux_h, flux_hu, flux_hv, &
                                      mass_flux_x, mass_flux_y, grid)
       !! Net flux divergence at each interior cell (HLLC Riemann solver).
       !! h/hu flux and `mass_flux_x/y` match the HLL version; only the
@@ -86,8 +89,9 @@ contains
       dx = grid%dx
       dy = grid%dy
 
-      do concurrent(j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) &
-         local(fh, fhu, fhv, fmxL, fmxR, fmyB, fmyT)
+      !$omp parallel do collapse(2) private(fh, fhu, fhv, fmxL, fmxR, fmyB, fmyT)
+      do j = nghost + 1, ny - nghost
+      do i = nghost + 1, nx - nghost
          call flux_cell(h, hu, hv, b, nx, ny, i, j, dx, dy, use_hllc, &
                         fh, fhu, fhv, fmxL, fmxR, fmyB, fmyT)
          flux_h(i, j) = fh
@@ -98,6 +102,8 @@ contains
          if (i == nghost + 1) mass_flux_x(i - 1, j) = fmxL
          if (j == nghost + 1) mass_flux_y(i, j - 1) = fmyB
       end do
+      end do
+      !$omp end parallel do
 
    end subroutine compute_flux_hllc
 

@@ -18,7 +18,7 @@ module rki_kernel_fused_ml
 
 contains
 
-   pure subroutine ml_fused_tracer_post(hS_layer, hT_layer, h_layer, &
+   subroutine ml_fused_tracer_post(hS_layer, hT_layer, h_layer, &
                                         hu_layer, hv_layer, &
                                         h_bt, hu_bt, hv_bt, &
                                         heat_flux, evap_minus_precip, &
@@ -82,9 +82,9 @@ contains
       latent_gain = 0.0_wp
       if (evap_latent_cooling) latent_gain = RHO_WATER*LATENT_HEAT_VAPORIZATION*inv_rho0cp
 
-      do concurrent(j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) &
-         local(k, h_col, h_top, S_top, kin_heat_flux, h_k, hs_k, ht_k, &
-               s_val, t_val, column_wet, dh_req, dh_eff, fac)
+      !$omp parallel do collapse(2) private(k, h_col, h_top, S_top, kin_heat_flux, h_k, hs_k, ht_k, s_val, t_val, column_wet, dh_req, dh_eff, fac)
+      do j = nghost + 1, ny - nghost
+      do i = nghost + 1, nx - nghost
 
          ! ---- Total column depth (surface-flux wet gate) ----
          h_col = 0.0_wp
@@ -154,10 +154,12 @@ contains
             end if
          end do
       end do
+      end do
+      !$omp end parallel do
 
    end subroutine ml_fused_tracer_post
 
-   pure subroutine ml_fused_rk2_finalise(h, hu, hv, &
+   subroutine ml_fused_rk2_finalise(h, hu, hv, &
                                          h_layer, hu_layer, hv_layer, &
                                          h_layer0, hu_layer0, hv_layer0, &
                                          hS_layer, hT_layer, &
@@ -191,8 +193,9 @@ contains
       ny = grid%ny_total
       nghost = grid%nghost
 
-      do concurrent(j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) &
-         local(k, h_k, hu_k, hv_k, hs_k, ht_k, h_sum, hu_sum, hv_sum)
+      !$omp parallel do collapse(2) private(k, h_k, hu_k, hv_k, hs_k, ht_k, h_sum, hu_sum, hv_sum)
+      do j = nghost + 1, ny - nghost
+      do i = nghost + 1, nx - nghost
 
          h_sum = 0.0_wp
          hu_sum = 0.0_wp
@@ -236,10 +239,12 @@ contains
          hu(i, j) = hu_sum
          hv(i, j) = hv_sum
       end do
+      end do
+      !$omp end parallel do
 
    end subroutine ml_fused_rk2_finalise
 
-   pure subroutine ml_fused_post_update(h, hu, hv, &
+   subroutine ml_fused_post_update(h, hu, hv, &
                                         h_layer, hu_layer, hv_layer, &
                                         h0, hu0, hv0, &
                                         h_layer0, hu_layer0, hv_layer0, &
@@ -332,13 +337,9 @@ contains
       ! convention with compute_update / the CFL timestep estimator.
       eps4 = DESING_EPS**4
 
-      do concurrent(j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) &
-         local(k, h_new, hu_new, hv_new, hu_pre, hv_pre, &
-               h4, u_ds, v_ds, speed_sq, fr_max_sq, fr_scale, &
-               du, dv, h_k, h_k_new, u_k, v_k, &
-               u_b, v_b, speed_b, cf, denom, &
-               u_abs, v_abs, hu_sum, hv_sum, &
-               dpdx, dpdy, hu_old, hv_old)
+      !$omp parallel do collapse(2) private(k, h_new, hu_new, hv_new, hu_pre, hv_pre, h4, u_ds, v_ds, speed_sq, fr_max_sq, fr_scale, du, dv, h_k, h_k_new, u_k, v_k, u_b, v_b, speed_b, cf, denom, u_abs, v_abs, hu_sum, hv_sum, dpdx, dpdy, hu_old, hv_old)
+      do j = nghost + 1, ny - nghost
+      do i = nghost + 1, nx - nghost
 
          ! ---- Capture pre-update barotropic momentum in registers ----
          hu_pre = hu(i, j)
@@ -501,6 +502,8 @@ contains
          hu(i, j) = hu_new
          hv(i, j) = hv_new
       end do
+      end do
+      !$omp end parallel do
 
    end subroutine ml_fused_post_update
 

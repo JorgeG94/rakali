@@ -485,7 +485,7 @@ contains
 
    end subroutine multilayer_init_layers
 
-   pure subroutine multilayer_seed_tracers(this, grid)
+   subroutine multilayer_seed_tracers(this, grid)
       !! Seed salinity + temperature from the IC scalars on the state,
       !! each dispatching uniform-vs-stratified via `ml_seed_tracer`.
       !! Call once after the layer thicknesses are laid out and before

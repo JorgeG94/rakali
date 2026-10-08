@@ -86,8 +86,7 @@ contains
       real(wp), intent(inout) :: buoy_flux(grid%nx_total, grid%ny_total)
       real(wp), intent(inout) :: bl_depth(grid%nx_total, grid%ny_total)
 
-      !$acc enter data copyin(h, hu, hv, rho, hS, hT, wind_x, wind_y, &
-      !$acc&                  heat_flux, emp, u_star, buoy_flux, bl_depth)
+      ! [acc->omp-cpu] dropped device directive (host no-op): enter data
       call ml_kpp_boundary_layer(h, hu, hv, rho, hS, RHO0, ALPHA_T, BETA_S, &
                                  CP_WATER, wind_x, wind_y, heat_flux, emp, &
                                  RI_CRIT, c_vt2_in, u_star, buoy_flux, bl_depth, &
@@ -98,9 +97,8 @@ contains
                                     KAPPA_BG, KAPPA_BG, RI_ALPHA, CS_NONLOCAL, &
                                     heat_flux, emp, CP_WATER, u_star, buoy_flux, &
                                     bl_depth, grid, nz, dt)
-      !$acc update self(hu, hv, hS, hT, u_star, buoy_flux, bl_depth)
-      !$acc exit data delete(h, hu, hv, rho, hS, hT, wind_x, wind_y, &
-      !$acc&                 heat_flux, emp, u_star, buoy_flux, bl_depth)
+      ! [acc->omp-cpu] dropped device directive (host no-op): update
+      ! [acc->omp-cpu] dropped device directive (host no-op): exit data
    end subroutine run_kpp
 
    subroutine run_pp81(grid, nz, dt, h, hu, hv, rho, hS, hT)
@@ -116,15 +114,15 @@ contains
       real(wp), intent(inout) :: hS(grid%nx_total, grid%ny_total, nz)
       real(wp), intent(inout) :: hT(grid%nx_total, grid%ny_total, nz)
 
-      !$acc enter data copyin(h, hu, hv, rho, hS, hT)
+      ! [acc->omp-cpu] dropped device directive (host no-op): enter data
       call ml_vertical_viscosity(h, hu, hv, rho, RHO0, NU_MAX, NU_BG, RI_ALPHA, &
                                  grid, nz, dt)
       call ml_vertical_diffusion_tracer(h, hu, hv, hS, rho, RHO0, NU_MAX, &
                                         KAPPA_BG, RI_ALPHA, grid, nz, dt)
       call ml_vertical_diffusion_tracer(h, hu, hv, hT, rho, RHO0, NU_MAX, &
                                         KAPPA_BG, RI_ALPHA, grid, nz, dt)
-      !$acc update self(hu, hv, hS, hT)
-      !$acc exit data delete(h, hu, hv, rho, hS, hT)
+      ! [acc->omp-cpu] dropped device directive (host no-op): update
+      ! [acc->omp-cpu] dropped device directive (host no-op): exit data
    end subroutine run_pp81
 
    integer function iprobe(grid) result(ip)

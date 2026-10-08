@@ -147,7 +147,7 @@ contains
          end do
       end do
 
-      !$acc enter data copyin(h_layer, hS_layer, hT_layer) create(rho_layer)
+      ! [acc->omp-cpu] dropped device directive (host no-op): enter data
 
       do r = 1, n_warmup
          call ml_equation_of_state(h_layer, hS_layer, hT_layer, rho_layer, &
@@ -166,7 +166,7 @@ contains
       call tmr%stop()
       elapsed = tmr%get_elapsed_time()
 
-      !$acc update self(rho_layer)
+      ! [acc->omp-cpu] dropped device directive (host no-op): update
 
       drift = 0.0_wp
       do k = 1, nz
@@ -177,7 +177,7 @@ contains
          end do
       end do
 
-      !$acc exit data delete(h_layer, hS_layer, hT_layer, rho_layer)
+      ! [acc->omp-cpu] dropped device directive (host no-op): exit data
 
       cl_rate = real(ncells, wp)*real(nz, wp)*real(n_timed, wp)/elapsed
       bytes_per_step = real(ncells, wp)*real(nz, wp)*4.0_wp*8.0_wp

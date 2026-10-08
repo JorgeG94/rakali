@@ -20,7 +20,7 @@ module rki_ml_vertical_viscosity
 
 contains
 
-   pure subroutine ml_vertical_viscosity(h_layer, hu_layer, hv_layer, rho_layer, &
+   subroutine ml_vertical_viscosity(h_layer, hu_layer, hv_layer, rho_layer, &
                                          rho_0, nu_max, nu_bg, ri_alpha, &
                                          grid, nz, dt)
       !! Ri-dependent vertical viscosity for momentum (Pacanowski-Philander 1981).
@@ -54,9 +54,9 @@ contains
 
       if (nz < 2) return
 
-      do concurrent(j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) &
-         local(k, kk, h_k, h_k1, h_avg, u_k, v_k, u_k1, v_k1, du, dv, drho, &
-               Ri, denom, nu_t, flux_u, flux_v, h_col)
+      !$omp parallel do collapse(2) private(k, kk, h_k, h_k1, h_avg, u_k, v_k, u_k1, v_k1, du, dv, drho, Ri, denom, nu_t, flux_u, flux_v, h_col)
+      do j = nghost + 1, ny - nghost
+      do i = nghost + 1, nx - nghost
          h_col = 0.0_wp
          do kk = 1, nz
             h_col = h_col + h_layer(i, j, kk)
@@ -120,6 +120,8 @@ contains
             end do
          end if
       end do
+      end do
+      !$omp end parallel do
 
    end subroutine ml_vertical_viscosity
 

@@ -21,7 +21,7 @@ module rki_keps_stability
 contains
 
    pure subroutine keps_stability_funcs(scheme, s2, n2, k, e, cmu_o, cmup_o)
-      !$acc routine seq
+      ! [acc->omp-cpu] dropped device directive (host no-op): routine seq
       !! Stability functions (c_mu, c_mu') for the chosen scheme, given shear S^2
       !! and buoyancy N^2 at the interface.
       !! Result dummies are cmu_o/cmup_o, NOT cmu/cmup: a `cmu` dummy shadows the

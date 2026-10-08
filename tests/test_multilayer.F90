@@ -186,10 +186,10 @@ contains
       h_layer(:, :, 1) = 1.5_wp
       h_layer(:, :, 2) = 0.5_wp
 
-      !$acc data copyin( h_layer) copy( h)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call ensure_grid()
       call ml_compute_total_depth(h_layer, h, test_grid, NZ)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       call check(error, abs(h(5, 5) - 2.0_wp) < 1.0e-12_wp, &
                  "H = 1.5 + 0.5 = 2.0")
@@ -209,11 +209,11 @@ contains
       hv_layer(:, :, 1) = -1.0_wp
       hv_layer(:, :, 2) = 1.0_wp
 
-      !$acc data copyin( h_layer, hu_layer, hv_layer) copy( hu, hv)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call ensure_grid()
       call ml_compute_barotropic_momentum(h_layer, hu_layer, hv_layer, &
                                           hu, hv, test_grid, NZ)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       call check(error, abs(hu(5, 5) - 6.0_wp) < 1.0e-12_wp, &
                  "hu = 2 + 4 = 6")
@@ -234,12 +234,12 @@ contains
       hv = -1.0_wp
       dsig = 1.0_wp/real(NZ, wp)
 
-      !$acc data copyin( h, hu, hv, dsig) copy( h_layer, hu_layer, hv_layer)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call ensure_grid()
       call ml_init_layers_from_barotropic(h, hu, hv, dsig, &
                                           h_layer, hu_layer, hv_layer, &
                                           test_grid, NZ)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       call check(error, abs(h_layer(5, 5, 1) - 2.0_wp) < 1.0e-12_wp, &
                  "h_layer(k=1) = 0.5 * 4 = 2")
@@ -262,12 +262,11 @@ contains
       hu0 = 0.0_wp
       hv0 = 0.0_wp
 
-      !$acc data copyin( h_layer, hu_layer, hv_layer) &
-      !$acc&            copy( h0, hu0, hv0)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call ensure_grid()
       call ml_save_layer_state(h_layer, hu_layer, hv_layer, &
                                h0, hu0, hv0, test_grid, NZ)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       call check(error, abs(h0(5, 5, 2) - 3.0_wp) < 1.0e-12_wp, &
                  "saved h_layer")
@@ -290,12 +289,11 @@ contains
       hu0 = 0.0_wp
       hv0 = 0.0_wp
 
-      !$acc data copy( h_layer, hu_layer, hv_layer) &
-      !$acc&            copyin( h0, hu0, hv0)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call ensure_grid()
       call ml_rk2_average_layers(h_layer, hu_layer, hv_layer, &
                                  h0, hu0, hv0, test_grid, NZ)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       call check(error, abs(h_layer(5, 5, 1) - 3.0_wp) < 1.0e-12_wp, &
                  "h = 0.5*(2+4) = 3")
@@ -330,13 +328,12 @@ contains
       hu = 6.0_wp
       hv = 0.0_wp
 
-      !$acc data copyin( h, hu, hv, hu_pre, hv_pre, dsig) &
-      !$acc&            copy( h_layer, hu_layer, hv_layer)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call ensure_grid()
       call ml_distribute_barotropic(h, hu, hv, hu_pre, hv_pre, dsig, &
                                     h_layer, hu_layer, hv_layer, &
                                     test_grid, NZ)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       ! h_k = dsig * H_new = 0.5 * 2 = 1.0
       call check(error, abs(h_layer(5, 5, 1) - 1.0_wp) < 1.0e-12_wp, &
@@ -378,13 +375,12 @@ contains
       hu = 8.0_wp
       hv = 0.0_wp
 
-      !$acc data copyin( h, hu, hv, hu_pre, hv_pre, dsig) &
-      !$acc&            copy( h_layer, hu_layer, hv_layer)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call ensure_grid()
       call ml_distribute_barotropic(h, hu, hv, hu_pre, hv_pre, dsig, &
                                     h_layer, hu_layer, hv_layer, &
                                     test_grid, NZ)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       ! du = (8 - 4) / 2 = 2
       ! u1_new = 1.0 + 2.0 = 3.0, hu1_new = 1.0 * 3.0 = 3.0
@@ -415,11 +411,11 @@ contains
       w = 999.0_wp
       dsig = 1.0_wp/real(NZ, wp)
 
-      !$acc data copyin( h_layer, hu_layer, hv_layer, dsig) copy( w)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call ensure_grid()
       call ml_compute_vertical_velocity(h_layer, hu_layer, hv_layer, &
                                         dsig, w, test_grid, NZ)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       call check(error, abs(w(5, 5, 1)) < 1.0e-12_wp, "w(bottom) = 0")
       if (allocated(error)) return
@@ -446,11 +442,11 @@ contains
 
       hu_before = hu_layer(5, 5, 1)
 
-      !$acc data copyin( h_layer, w) copy( hu_layer, hv_layer)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call ensure_grid()
       call ml_compute_vertical_exchange(h_layer, hu_layer, hv_layer, &
                                         w, test_grid, NZ, 0.1_wp)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       call check(error, abs(hu_layer(5, 5, 1) - hu_before) < 1.0e-12_wp, &
                  "no exchange when w = 0")
@@ -479,11 +475,11 @@ contains
       ! w > 0 => upwind from below: flux = w * u1 * dt = 0.5 * 2.0 * 0.1 = 0.1
       flux_expected = 0.5_wp*2.0_wp*dt
 
-      !$acc data copyin( h_layer, w) copy( hu_layer, hv_layer)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call ensure_grid()
       call ml_compute_vertical_exchange(h_layer, hu_layer, hv_layer, &
                                         w, test_grid, NZ, dt)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       ! Bottom layer loses momentum
       call check(error, abs(hu_layer(5, 5, 1) - (hu1_before - flux_expected)) < 1.0e-12_wp, &
@@ -513,13 +509,13 @@ contains
       hu_layer = 0.0_wp
       hv_layer = 0.0_wp
 
-      !$acc data copyin( h_layer, rho_layer) copy( hu_layer, hv_layer)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call ensure_grid()
       call ml_baroclinic_pressure_gradient(h_layer, rho_layer, &
                                            hu_layer, hv_layer, rho_0, &
                                            TEST_RHO_REF, TEST_RHO_REF_DZ, TEST_NZ_REF, &
                                            test_grid, NZ, dt)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       ! No density gradient => no BPG => momentum unchanged
       call check(error, abs(hu_layer(5, 5, 1)) < 1.0e-12_wp, &
@@ -562,13 +558,13 @@ contains
          end do
       end do
 
-      !$acc data copyin( h_layer, rho_layer) copy( hu_layer, hv_layer)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call ensure_grid()
       call ml_baroclinic_pressure_gradient(h_layer, rho_layer, &
                                            hu_layer, hv_layer, rho_0, &
                                            TEST_RHO_REF, TEST_RHO_REF_DZ, TEST_NZ_REF, &
                                            test_grid, NZ, dt)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       ! Internal pressure at bottom layer centre:
       !   p_1 = rho_2*h_2 + 0.5*rho_1*h_1
@@ -600,10 +596,10 @@ contains
       h_layer = 1.5_wp
       S_init = 35.0_wp
 
-      !$acc data copyin( h_layer) copy( hS_layer)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call ensure_grid()
       call ml_init_tracer(h_layer, hS_layer, S_init, test_grid, NZ)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       call check(error, abs(hS_layer(5, 5, 1) - 1.5_wp*35.0_wp) < 1.0e-12_wp, &
                  "hS = h * S_init = 1.5 * 35 = 52.5")
@@ -627,12 +623,12 @@ contains
       hS_layer(:, :, 2) = 1.0_wp*0.0_wp   ! S = 0 PSU (fresh water)
       hT_layer = 1.0_wp*T_ref             ! T = T_ref so T contribution = 0
 
-      !$acc data copyin( h_layer, hS_layer, hT_layer) copy( rho_layer)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call ensure_grid()
       call ml_equation_of_state(h_layer, hS_layer, hT_layer, rho_layer, &
                                 rho_0, beta_S, S_ref, alpha_T, T_ref, &
                                 test_grid, NZ)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       expected = 1000.0_wp + 0.78_wp*35.0_wp  ! = 1027.3
       call check(error, abs(rho_layer(5, 5, 1) - expected) < 1.0e-10_wp, &
@@ -651,10 +647,10 @@ contains
 
       h_layer = 1.5_wp
 
-      !$acc data copyin( h_layer) copyout( hT_layer)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call ensure_grid()
       call ml_init_tracer(h_layer, hT_layer, T_INIT, test_grid, NZ)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       call check(error, abs(hT_layer(5, 5, 1) - 1.5_wp*T_INIT) < 1.0e-12_wp, &
                  "hT = h * T_init = 1.5 * 10 = 15")
@@ -677,10 +673,10 @@ contains
 
       h_layer = 1.5_wp
 
-      !$acc data copyin( h_layer) copyout( hT_layer)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call ensure_grid()
       call ml_init_tracer_stratified(h_layer, hT_layer, T_BOT, T_SURF, test_grid, NZ)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       do k = 1, NZ
          t_expect = T_BOT + (T_SURF - T_BOT)*real(k - 1, wp)/real(NZ - 1, wp)
@@ -709,12 +705,12 @@ contains
       hS_layer(:, :, 2) = 0.0_wp        ! S = 0,  cold: 5
       hT_layer(:, :, 2) = 5.0_wp        !   rho = 1000 + 0        - 0.2*(5-15)  = 1002.0
 
-      !$acc data copyin( h_layer, hS_layer, hT_layer) copy( rho_layer)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call ensure_grid()
       call ml_equation_of_state(h_layer, hS_layer, hT_layer, rho_layer, &
                                 rho_0, beta_S, S_ref, alpha_T, T_ref, &
                                 test_grid, NZ)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       expected = rho_0 + beta_S*(35.0_wp - S_ref) - alpha_T*(20.0_wp - T_ref)
       call check(error, abs(rho_layer(5, 5, 1) - expected) < 1.0e-10_wp, &
@@ -740,12 +736,12 @@ contains
       hS_layer(:, :, 2) = 0.0_wp
       hT_layer = 1.0_wp*99.0_wp   ! arbitrary T — must NOT affect rho when alpha_T=0
 
-      !$acc data copyin( h_layer, hS_layer, hT_layer) copy( rho_layer)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call ensure_grid()
       call ml_equation_of_state(h_layer, hS_layer, hT_layer, rho_layer, &
                                 rho_0, beta_S, 0.0_wp, 0.0_wp, 15.0_wp, &
                                 test_grid, NZ)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       call check(error, abs(rho_layer(5, 5, 1) - (rho_0 + beta_S*35.0_wp)) < 1.0e-10_wp, &
                  "alpha_T=0 regression: rho = rho_0 + beta_S*S")
@@ -765,13 +761,13 @@ contains
       hS_layer = 1.0_wp*35.0_wp          ! S = 35
       hT_layer = 1.0_wp*15.0_wp          ! T = T_ref
 
-      !$acc data copyin( h_layer, hS_layer, hT_layer) copy( rho_layer)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call ensure_grid()
       call ml_equation_of_state(h_layer, hS_layer, hT_layer, rho_layer, &
                                 1000.0_wp, 0.78_wp, 35.0_wp, &
                                 0.17_wp, 15.0_wp, &
                                 test_grid, NZ)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       call check(error, abs(rho_layer(5, 5, 1) - 1000.0_wp) < 1.0e-10_wp, &
                  "S=S_ref and T=T_ref -> rho = rho_0 exactly")
@@ -806,11 +802,11 @@ contains
       hS_total_pre = sum(hS_layer(5, 5, :))
       hT_total_pre = sum(hT_layer(5, 5, :))
 
-      !$acc data copyin( h_layer) copy( hS_layer, hT_layer)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call ensure_grid()
       call ml_clamp_tracer(hS_layer, h_layer, 0.0_wp, 40.0_wp, test_grid, NZ)
       call ml_clamp_tracer(hT_layer, h_layer, -2.0_wp, 40.0_wp, test_grid, NZ)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       S1 = hS_layer(5, 5, 1)/h_layer(5, 5, 1)
       S2 = hS_layer(5, 5, 2)/h_layer(5, 5, 2)
@@ -860,11 +856,11 @@ contains
 
       S_before = hS_layer(5, 5, 1)/h_layer(5, 5, 1)  ! = 35.0
 
-      !$acc data copyin( h_layer, dsig, h_new) copy( hS_layer)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call ensure_grid()
       call ml_distribute_tracer(h_layer, hS_layer, dsig, h_new, &
                                 test_grid, NZ)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       ! h_k_new = dsig * H_new = 0.5 * 3.0 = 1.5
       ! S should be preserved: hS_new / h_k_new = S_before
@@ -897,11 +893,11 @@ contains
       ! w > 0 => upwind from below: flux = w * S1 * dt = 0.5 * 35.0 * 0.1
       flux_expected = 0.5_wp*35.0_wp*dt
 
-      !$acc data copyin( h_layer, w) copy( hS_layer)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call ensure_grid()
       call ml_vertical_exchange_tracer(h_layer, hS_layer, w, &
                                        test_grid, NZ, dt)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       call check(error, abs(hS_layer(5, 5, 1) - (hS1_before - flux_expected)) < 1.0e-10_wp, &
                  "bottom layer loses salinity upward")
@@ -936,12 +932,12 @@ contains
 
       hu_before = hu_layer(5, 5, 1)
 
-      !$acc data copyin( h_layer, rho_layer) copy( hu_layer, hv_layer)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call ensure_grid()
       call ml_vertical_viscosity(h_layer, hu_layer, hv_layer, rho_layer, &
                                  rho_0, nu_max, nu_bg, ri_alpha, &
                                  test_grid, NZ, dt)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       ! No shear => du=0 => zero flux regardless of Ri
       call check(error, abs(hu_layer(5, 5, 1) - hu_before) < 1.0e-14_wp, &
@@ -972,12 +968,12 @@ contains
       hv_layer = 0.0_wp
       rho_layer = RHO0_VAL    ! uniform => Ri = 0
 
-      !$acc data copyin( h_layer, rho_layer) copy( hu_layer, hv_layer)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call ensure_grid()
       call ml_vertical_viscosity(h_layer, hu_layer, hv_layer, rho_layer, &
                                  RHO0_VAL, NU_MAX, NU_BG, RI_ALPHA, &
                                  test_grid, NZ, DT_VAL)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       du = U_TOP - U_BOT
       nu_t = NU_MAX + NU_BG            ! Ri = 0 => denom = 1
@@ -1024,12 +1020,12 @@ contains
       ! Unstratified case
       rho_layer = 1000.0_wp
 
-      !$acc data copyin( h_layer, rho_layer) copy( hu_layer, hv_layer)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call ensure_grid()
       call ml_vertical_viscosity(h_layer, hu_layer, hv_layer, rho_layer, &
                                  rho_0, nu_max, nu_bg, ri_alpha, &
                                  test_grid, NZ, dt)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
       hu_unstrat = hu_layer
 
       ! Reset and do strongly stratified case
@@ -1041,11 +1037,11 @@ contains
       rho_layer(:, :, 1) = 1030.0_wp
       rho_layer(:, :, 2) = 1000.0_wp
 
-      !$acc data copyin( h_layer, rho_layer) copy( hu_layer, hv_layer)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call ml_vertical_viscosity(h_layer, hu_layer, hv_layer, rho_layer, &
                                  rho_0, nu_max, nu_bg, ri_alpha, &
                                  test_grid, NZ, dt)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
       hu_strat = hu_layer
 
       change_unstrat = abs(hu_unstrat(5, 5, 1))
@@ -1083,14 +1079,13 @@ contains
       S1_before = hS_layer(5, 5, 1)/h_layer(5, 5, 1)
       S2_before = hS_layer(5, 5, 2)/h_layer(5, 5, 2)
 
-      !$acc data copyin( h_layer, hu_layer, hv_layer, rho_layer) &
-      !$acc&            copy( hS_layer)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call ensure_grid()
       call ml_vertical_diffusion_tracer(h_layer, hu_layer, hv_layer, &
                                         hS_layer, rho_layer, rho_0, &
                                         nu_max, kappa_bg, ri_alpha, &
                                         test_grid, NZ, dt)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       S1_after = hS_layer(5, 5, 1)/h_layer(5, 5, 1)
       S2_after = hS_layer(5, 5, 2)/h_layer(5, 5, 2)
@@ -1122,13 +1117,13 @@ contains
       hu_layer = 0.0_wp
       hv_layer = 0.0_wp
 
-      !$acc data copyin( h_layer, rho_layer) copy( hu_layer, hv_layer)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call ensure_grid()
       call ml_baroclinic_pressure_gradient_jacobian(h_layer, rho_layer, &
                                                     hu_layer, hv_layer, rho_0, &
                                                     TEST_RHO_REF, TEST_RHO_REF_DZ, TEST_NZ_REF, &
                                                     test_grid, NZ, dt)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       call check(error, abs(hu_layer(5, 5, 1)) < 1.0e-10_wp, &
                  "Jacobian BPG zero for uniform density (hu)")
@@ -1166,13 +1161,13 @@ contains
          end do
       end do
 
-      !$acc data copyin( h_layer, rho_layer) copy( hu_layer, hv_layer)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call ensure_grid()
       call ml_baroclinic_pressure_gradient_jacobian(h_layer, rho_layer, &
                                                     hu_layer, hv_layer, rho_0, &
                                                     TEST_RHO_REF, TEST_RHO_REF_DZ, TEST_NZ_REF, &
                                                     test_grid, NZ, dt)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       ! At a cell away from the depth transition, BPG should be zero
       ! (uniform density on both sides, same depth)
@@ -1234,13 +1229,13 @@ contains
          end do
       end do
 
-      !$acc data copyin( h_layer, rho_layer) copy( hu_layer, hv_layer)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call ensure_grid()
       call ml_baroclinic_pressure_gradient_jacobian(h_layer, rho_layer, &
                                                     hu_layer, hv_layer, rho_0, &
                                                     TEST_RHO_REF, TEST_RHO_REF_DZ, TEST_NZ_REF, &
                                                     test_grid, NZ, dt)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       ! Dense bottom water should be pushed right (toward lighter side)
       call check(error, hu_layer(6, 5, 1) > 0.0_wp, &
@@ -1267,11 +1262,11 @@ contains
 
       hu_before = hu_layer(5, 5, 1)
 
-      !$acc data copyin( h_layer) copy( hu_layer, hv_layer)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call ensure_grid()
       call ml_horizontal_viscosity_smag(h_layer, hu_layer, hv_layer, &
                                         cs, test_grid, NZ, dt)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       call check(error, abs(hu_layer(5, 5, 1) - hu_before) < 1.0e-12_wp, &
                  "uniform velocity: no change from Smagorinsky")
@@ -1307,11 +1302,11 @@ contains
          end do
       end do
 
-      !$acc data copyin( h_layer) copy( hu_layer, hv_layer)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call ensure_grid()
       call ml_horizontal_viscosity_smag(h_layer, hu_layer, hv_layer, &
                                         CS_VAL, test_grid, NZ, DT_VAL)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       strain_expected = U_STEP/(2.0_wp*DX)              ! |S|
       nu_h_expected = (CS_VAL*sqrt(DX*DY))**2*strain_expected
@@ -1350,11 +1345,11 @@ contains
       hu_top_before = hu_layer(5, 5, NZ)
       hu_bot_before = hu_layer(5, 5, 1)
 
-      !$acc data copyin( h_layer) copy( hu_layer, hv_layer)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call ensure_grid()
       call ml_apply_bottom_friction(h_layer, hu_layer, hv_layer, &
                                     manning_n, .false., 0.0_wp, test_grid, NZ, dt)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       ! Top layer (k=NZ) should be untouched
       call check(error, abs(hu_layer(5, 5, NZ) - hu_top_before) < 1.0e-12_wp, &
@@ -1399,15 +1394,14 @@ contains
       hT_before = hT_layer(5, 5, NZ)
       expected_delta = dt*Q/(rho_0*CP_WATER)
 
-      !$acc data copyin( h_layer, hu_layer, hv_layer, heat_flux_2d, evap_minus_precip_2d) &
-      !$acc&     copy( hS_layer, hT_layer)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call ensure_grid()
       call ml_apply_surface_tracer_fluxes(hS_layer, hT_layer, h_layer, &
                                           hu_layer, hv_layer, &
                                           heat_flux_2d, evap_minus_precip_2d, &
                                           .false., .false., &
                                           rho_0, CP_WATER, test_grid, NZ, dt)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       call check(error, abs((hT_layer(5, 5, NZ) - hT_before) - expected_delta) < 1.0e-12_wp, &
                  "surface heat flux warms top layer (k=NZ) by dt*Q/(rho_0*cp)")
@@ -1447,15 +1441,14 @@ contains
       hS_before = hS_layer(5, 5, NZ)
       expected_delta = dt*EP*S_top      ! = 1e-6 * 35 = 3.5e-5
 
-      !$acc data copyin( h_layer, hu_layer, hv_layer, heat_flux_2d, evap_minus_precip_2d) &
-      !$acc&     copy( hS_layer, hT_layer)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call ensure_grid()
       call ml_apply_surface_tracer_fluxes(hS_layer, hT_layer, h_layer, &
                                           hu_layer, hv_layer, &
                                           heat_flux_2d, evap_minus_precip_2d, &
                                           .false., .false., &
                                           rho_0, CP_WATER, test_grid, NZ, dt)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       call check(error, abs((hS_layer(5, 5, NZ) - hS_before) - expected_delta) < 1.0e-12_wp, &
                  "virtual salt flux concentrates top layer (k=NZ): hS += dt*(E-P)*S_top")
@@ -1503,13 +1496,12 @@ contains
 
       call tracer_scratch_ensure(scratch, NX, NY, NZ, &
                                  want_ppm=.false., want_upwind=.true., want_hdiff=.false.)
-      !$acc data copyin(h_layer, hu_layer, hv_layer, mass_flux_x, mass_flux_y) &
-      !$acc&     copy(hTr_layer)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call ensure_grid()
       call ml_advect_tracer(h_layer, hu_layer, hv_layer, &
                             mass_flux_x, mass_flux_y, &
                             hTr_layer, scratch%adv_hTr_snap, test_grid, NZ, dt)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
       call tracer_scratch_destroy(scratch)
 
       do k = 1, NZ
@@ -1550,13 +1542,12 @@ contains
 
       call tracer_scratch_ensure(scratch, NX, NY, NZ, &
                                  want_ppm=.false., want_upwind=.true., want_hdiff=.false.)
-      !$acc data copyin(h_layer, hu_layer, hv_layer, mass_flux_x, mass_flux_y) &
-      !$acc&     copy(hTr_layer)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call ensure_grid()
       call ml_advect_tracer(h_layer, hu_layer, hv_layer, &
                             mass_flux_x, mass_flux_y, &
                             hTr_layer, scratch%adv_hTr_snap, test_grid, NZ, dt)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
       call tracer_scratch_destroy(scratch)
 
       do k = 1, NZ
@@ -1602,13 +1593,12 @@ contains
 
       call tracer_scratch_ensure(scratch, NX, NY, NZ, &
                                  want_ppm=.false., want_upwind=.true., want_hdiff=.false.)
-      !$acc data copyin(h_layer, hu_layer, hv_layer, mass_flux_x, mass_flux_y) &
-      !$acc&     copy(hTr_layer)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call ensure_grid()
       call ml_advect_tracer(h_layer, hu_layer, hv_layer, &
                             mass_flux_x, mass_flux_y, &
                             hTr_layer, scratch%adv_hTr_snap, test_grid, NZ, dt)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
       call tracer_scratch_destroy(scratch)
 
       call check(error, hTr_layer(ic, jc, kc) < hTr_src_before, &
@@ -1648,12 +1638,12 @@ contains
 
       call tracer_scratch_ensure(scratch, NX, NY, NZ, &
                                  want_ppm=.false., want_upwind=.false., want_hdiff=.true.)
-      !$acc data copyin(h_layer) copy(hTr_layer)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call ensure_grid()
       call ml_horizontal_diffusion_tracer(h_layer, hTr_layer, 0.0_wp, &
                                           scratch%hdiff_hTr_pre, &
                                           test_grid, NZ, dt)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
       call tracer_scratch_destroy(scratch)
 
       do k = 1, NZ
@@ -1682,12 +1672,12 @@ contains
 
       call tracer_scratch_ensure(scratch, NX, NY, NZ, &
                                  want_ppm=.false., want_upwind=.false., want_hdiff=.true.)
-      !$acc data copyin(h_layer) copy(hTr_layer)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call ensure_grid()
       call ml_horizontal_diffusion_tracer(h_layer, hTr_layer, KAPPA, &
                                           scratch%hdiff_hTr_pre, &
                                           test_grid, NZ, dt)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
       call tracer_scratch_destroy(scratch)
 
       do k = 1, NZ
@@ -1732,12 +1722,12 @@ contains
 
       call tracer_scratch_ensure(scratch, NX, NY, NZ, &
                                  want_ppm=.false., want_upwind=.false., want_hdiff=.true.)
-      !$acc data copyin(h_layer) copy(hTr_layer)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call ensure_grid()
       call ml_horizontal_diffusion_tracer(h_layer, hTr_layer, KAPPA, &
                                           scratch%hdiff_hTr_pre, &
                                           test_grid, NZ, dt)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
       call tracer_scratch_destroy(scratch)
 
       kc = 1
@@ -1780,11 +1770,11 @@ contains
       hu_before = hu_layer
       hv_before = hv_layer
 
-      !$acc data copyin(h_layer) copy(hu_layer, hv_layer)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call ensure_grid()
       call ml_truncate_velocity(h_layer, hu_layer, hv_layer, &
                                 test_grid, NZ, dt, cfl_trunc)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       do k = 1, NZ
          do j = NG + 1, NY - NG
@@ -1820,11 +1810,11 @@ contains
       hu_layer = u_above*h_layer
       hv_layer = v_above*h_layer
 
-      !$acc data copyin(h_layer) copy(hu_layer, hv_layer)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call ensure_grid()
       call ml_truncate_velocity(h_layer, hu_layer, hv_layer, &
                                 test_grid, NZ, dt, cfl_trunc)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       ic = NX/2; jc = NY/2; kc = 1
       u_observed = hu_layer(ic, jc, kc)/h_layer(ic, jc, kc)
@@ -1870,11 +1860,11 @@ contains
       hu_before = hu_layer
       hv_before = hv_layer
 
-      !$acc data copyin(h_layer) copy(hu_layer, hv_layer)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call ensure_grid()
       call ml_truncate_velocity(h_layer, hu_layer, hv_layer, &
                                 test_grid, NZ, dt, cfl_trunc)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       ! All other columns must be unchanged.
       do k = 1, NZ
@@ -1931,8 +1921,7 @@ contains
 
       call tracer_scratch_ensure(scratch, NX, NY, NZ, &
                                  want_ppm=.true., want_upwind=.false., want_hdiff=.false.)
-      !$acc data copyin(h_layer, hu_layer, hv_layer, mass_flux_x, mass_flux_y) &
-      !$acc&     copy(hTr_layer)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call ensure_grid()
       call ml_advect_tracer_ppm(h_layer, hu_layer, hv_layer, &
                                 mass_flux_x, mass_flux_y, &
@@ -1940,7 +1929,7 @@ contains
                                 scratch%ppm_tr_snap, scratch%ppm_ql_x, scratch%ppm_qr_x, &
                                 scratch%ppm_ql_y, scratch%ppm_qr_y, &
                                 test_grid, NZ, dt)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
       call tracer_scratch_destroy(scratch)
 
       do k = 1, NZ
@@ -1978,8 +1967,7 @@ contains
 
       call tracer_scratch_ensure(scratch, NX, NY, NZ, &
                                  want_ppm=.true., want_upwind=.false., want_hdiff=.false.)
-      !$acc data copyin(h_layer, hu_layer, hv_layer, mass_flux_x, mass_flux_y) &
-      !$acc&     copy(hTr_layer)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call ensure_grid()
       call ml_advect_tracer_ppm(h_layer, hu_layer, hv_layer, &
                                 mass_flux_x, mass_flux_y, &
@@ -1987,7 +1975,7 @@ contains
                                 scratch%ppm_tr_snap, scratch%ppm_ql_x, scratch%ppm_qr_x, &
                                 scratch%ppm_ql_y, scratch%ppm_qr_y, &
                                 test_grid, NZ, dt)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
       call tracer_scratch_destroy(scratch)
 
       do k = 1, NZ
@@ -2034,8 +2022,7 @@ contains
 
       call tracer_scratch_ensure(scratch, NX, NY, NZ, &
                                  want_ppm=.true., want_upwind=.false., want_hdiff=.false.)
-      !$acc data copyin(h_layer, hu_layer, hv_layer, mass_flux_x, mass_flux_y) &
-      !$acc&     copy(hTr_layer)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call ensure_grid()
       call ml_advect_tracer_ppm(h_layer, hu_layer, hv_layer, &
                                 mass_flux_x, mass_flux_y, &
@@ -2043,7 +2030,7 @@ contains
                                 scratch%ppm_tr_snap, scratch%ppm_ql_x, scratch%ppm_qr_x, &
                                 scratch%ppm_ql_y, scratch%ppm_qr_y, &
                                 test_grid, NZ, dt)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
       call tracer_scratch_destroy(scratch)
 
       call check(error, hTr_layer(ic, jc, kc) < hTr_src_before, &
@@ -2097,24 +2084,22 @@ contains
                                  want_ppm=.true., want_upwind=.true., want_hdiff=.false.)
 
       ! Advect with first-order upwind
-      !$acc data copyin(h_layer, hu_layer, hv_layer, mass_flux_x, mass_flux_y) &
-      !$acc&     copy(hTr_upwind)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call ensure_grid()
       call ml_advect_tracer(h_layer, hu_layer, hv_layer, &
                             mass_flux_x, mass_flux_y, &
                             hTr_upwind, scratch%adv_hTr_snap, test_grid, NZ, dt)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       ! Advect with PPM
-      !$acc data copyin(h_layer, hu_layer, hv_layer, mass_flux_x, mass_flux_y) &
-      !$acc&     copy(hTr_ppm)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call ml_advect_tracer_ppm(h_layer, hu_layer, hv_layer, &
                                 mass_flux_x, mass_flux_y, &
                                 hTr_ppm, &
                                 scratch%ppm_tr_snap, scratch%ppm_ql_x, scratch%ppm_qr_x, &
                                 scratch%ppm_ql_y, scratch%ppm_qr_y, &
                                 test_grid, NZ, dt)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
       call tracer_scratch_destroy(scratch)
 
       ! Compute L2 error against the exact shifted step.

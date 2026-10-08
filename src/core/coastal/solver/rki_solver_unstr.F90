@@ -616,15 +616,14 @@ contains
 
       integer :: it
 
-      !$acc update self(state%barotropic%stage_cv, state%barotropic%xmom_cv, state%barotropic%ymom_cv, &
-      !$acc&            state%barotropic%height_cv)
+      ! [acc->omp-cpu] dropped device directive (host no-op): update
 
       if (state%use_multilayer) then
-         !$acc update self(state%multilayer%h_layer, state%multilayer%hu_layer, state%multilayer%hv_layer)
+         ! [acc->omp-cpu] dropped device directive (host no-op): update
 
          if (allocated(state%multilayer%tracers)) then
             do it = 1, size(state%multilayer%tracers)
-               !$acc update self(state%multilayer%tracers(it)%hTr)
+               ! [acc->omp-cpu] dropped device directive (host no-op): update
             end do
          end if
       end if
@@ -641,9 +640,7 @@ contains
       !! exit/enter round-trip.
       type(unstr_state_t), intent(inout) :: state
 
-      !$acc update device(state%forcing%heat_flux, &
-      !$acc&              state%forcing%evap_minus_precip, &
-      !$acc&              state%forcing%wind_x, state%forcing%wind_y)
+      ! [acc->omp-cpu] dropped device directive (host no-op): update
    end subroutine solver_unstr_update_forcing
 
 end module rki_solver_unstr

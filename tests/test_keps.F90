@@ -63,11 +63,11 @@ contains
       kt = nut
       nstep = nint(T_END/DT)
 
-      !$acc data copyin( h, hu, hv, rho) copy( tke, eps, nut, kt)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       do step = 1, nstep
          call ml_keps_update(h, hu, hv, rho, tke, eps, nut, kt, 1025.0_wp, DT, grid, NZ)
       end do
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       k_exact = K0*(1.0_wp + (CE2 - 1.0_wp)*E0/K0*T_END)**(-1.0_wp/(CE2 - 1.0_wp))
       call check(error, abs(tke(4, 4, 3) - k_exact)/k_exact < 0.02_wp, &
@@ -95,11 +95,11 @@ contains
       nut = 1.0e-4_wp
       kt = nut
 
-      !$acc data copyin( h, hu, hv, rho) copy( tke, eps, nut, kt)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       do k = 1, 200
          call ml_keps_update(h, hu, hv, rho, tke, eps, nut, kt, 1025.0_wp, 100.0_wp, grid, NZ)
       end do
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       call check(error, all(tke(NG + 1:NX - NG, NG + 1:NY - NG, :) > 0.0_wp), &
                  "k stays positive under strong shear + large dt")
@@ -134,11 +134,11 @@ contains
       sum_u0 = sum(hu(4, 4, :))
       sum_v0 = sum(hv(4, 4, :))
 
-      !$acc data copyin( h, nut) copy( hu, hv)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       do step = 1, 10
          call ml_keps_apply_momentum(h, hu, hv, nut, grid, NZ, DT)
       end do
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       sum_u1 = sum(hu(4, 4, :))
       sum_v1 = sum(hv(4, 4, :))
@@ -169,11 +169,11 @@ contains
       u_mean = sum(hu(4, 4, :))/sum(h(4, 4, :))
       spread0 = maxval(hu(4, 4, :)/h(4, 4, :)) - minval(hu(4, 4, :)/h(4, 4, :))
 
-      !$acc data copyin( h, nut) copy( hu, hv)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       do step = 1, 500
          call ml_keps_apply_momentum(h, hu, hv, nut, grid, NZ, DT)
       end do
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       spread1 = maxval(hu(4, 4, :)/h(4, 4, :)) - minval(hu(4, 4, :)/h(4, 4, :))
       call check(error, spread1 < 0.01_wp*spread0, &
@@ -207,12 +207,12 @@ contains
       ustar_b = USB
       ustar_s = USS
 
-      !$acc data copyin( h, hu, hv, rho, ustar_b, ustar_s) copy( tke, eps, nut, kt)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       do step = 1, 5
          call ml_keps_update(h, hu, hv, rho, tke, eps, nut, kt, 1025.0_wp, 10.0_wp, grid, NZ, &
                              ustar_b, ustar_s)
       end do
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       k_wb_exp = USB*USB/sqrt(CMU)
       k_ws_exp = USS*USS/sqrt(CMU)
@@ -241,11 +241,11 @@ contains
       tr_mean = sum0/sum(h(4, 4, :))
       spread0 = maxval(hTr(4, 4, :)/h(4, 4, :)) - minval(hTr(4, 4, :)/h(4, 4, :))
 
-      !$acc data copyin( h, kt) copy( hTr)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       do step = 1, 500
          call ml_keps_apply_diffusion_tracer(h, hTr, kt, KAPPA_BG, grid, NZ, DT)
       end do
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       sum1 = sum(hTr(4, 4, :))
       spread1 = maxval(hTr(4, 4, :)/h(4, 4, :)) - minval(hTr(4, 4, :)/h(4, 4, :))
@@ -288,10 +288,10 @@ contains
       eps = 5.0e-3_wp
       nut = 1.0e-3_wp
       kt = 1.0e-3_wp
-      !$acc data copyin( h, hu, hv, rho) copy( tke, eps, nut, kt)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call ml_keps_update(h, hu, hv, rho, tke, eps, nut, kt, 1025.0_wp, 10.0_wp, &
                           grid, NZ, scheme=KEPS_STAB_CONSTANT)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
       nut_c = nut(4, 4, 3)
 
       ! galperin scheme, identical initial state
@@ -299,10 +299,10 @@ contains
       eps = 5.0e-3_wp
       nut = 1.0e-3_wp
       kt = 1.0e-3_wp
-      !$acc data copyin( h, hu, hv, rho) copy( tke, eps, nut, kt)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call ml_keps_update(h, hu, hv, rho, tke, eps, nut, kt, 1025.0_wp, 10.0_wp, &
                           grid, NZ, scheme=KEPS_STAB_GALPERIN)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
       nut_g = nut(4, 4, 3)
 
       call check(error, nut_g < nut_c, &
@@ -339,10 +339,10 @@ contains
       nut = 1.0e-3_wp
       kt = 1.0e-3_wp
 
-      !$acc data copyin( h, hu, hv, rho) copy( tke, eps, nut, kt)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call ml_keps_update(h, hu, hv, rho, tke, eps, nut, kt, 1025.0_wp, 10.0_wp, &
                           grid, NZ, scheme=KEPS_STAB_CANUTO)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
       nut_c = nut(4, 4, 3)
       kt_c = kt(4, 4, 3)
 

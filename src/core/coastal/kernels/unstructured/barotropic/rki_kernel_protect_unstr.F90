@@ -39,9 +39,8 @@ contains
       mass_error_local = 0.0_wp
       eps4 = DESING_EPS**4
 
-      do concurrent(k=1:mesh%ncells_owned) &
-         local(h, h4, u_ds, v_ds, speed_sq, fr_max_sq, fr_scale) &
-         reduce(+:mass_error_local)
+      !$omp parallel do private(h, h4, u_ds, v_ds, speed_sq, fr_max_sq, fr_scale)
+      do k = 1, mesh%ncells_owned
          h = state%barotropic%stage_cv(k) - state%barotropic%bed_cv(k)
 
          if (h < DRY_TOLERANCE) then
@@ -77,6 +76,7 @@ contains
             state%barotropic%stage_cv(k) = state%barotropic%bed_cv(k)
          end if
       end do
+      !$omp end parallel do
 
       ! Accumulate into the running mass-error tally on the state.
       state%mass_error = state%mass_error + mass_error_local

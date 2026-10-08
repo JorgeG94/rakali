@@ -50,9 +50,9 @@ contains
       eps4 = eps**4
       max_speed = 0.0_wp
 
-      do concurrent(j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) &
-         local(wave_speed, h4, denom, u_abs, v_abs, speed_x, speed_y) &
-         reduce(max:max_speed)
+      !$omp parallel do collapse(2) private(wave_speed, h4, denom, u_abs, v_abs, speed_x, speed_y)
+      do j = nghost + 1, ny - nghost
+      do i = nghost + 1, nx - nghost
          if (h(i, j) > DRY_TOLERANCE) then
             wave_speed = sqrt(GRAVITY*h(i, j))
 
@@ -68,6 +68,8 @@ contains
             max_speed = max(max_speed, speed_x/dx, speed_y/dy)
          end if
       end do
+      end do
+      !$omp end parallel do
 
       if (max_speed > 0.0_wp) then
          dt = cfl/max_speed
@@ -102,9 +104,9 @@ contains
 
       max_speed = 0.0_wp
 
-      do concurrent(j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) &
-         local(c_int, speed_x, speed_y, k) &
-         reduce(max:max_speed)
+      !$omp parallel do collapse(2) private(c_int, speed_x, speed_y, k)
+      do j = nghost + 1, ny - nghost
+      do i = nghost + 1, nx - nghost
          if (h(i, j) > DRY_TOLERANCE) then
             c_int = sqrt(GRAVITY*h(i, j)/real(nz, wp))
             do k = 1, nz
@@ -114,6 +116,8 @@ contains
             end do
          end if
       end do
+      end do
+      !$omp end parallel do
 
       if (max_speed > 0.0_wp) then
          dt = cfl/max_speed

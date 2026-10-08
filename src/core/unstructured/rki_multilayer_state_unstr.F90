@@ -481,60 +481,40 @@ contains
       !! (in `rki_state_unstr`).
       class(unstr_multilayer_state_t), intent(inout) :: this
 
-      !$acc enter data copyin(this%dsig_ml, &
-      !$acc&                  this%h_layer, this%hu_layer, this%hv_layer, &
-      !$acc&                  this%rho_layer, this%w_interface, &
-      !$acc&                  this%h_layer0, this%hu_layer0, this%hv_layer0, &
-      !$acc&                  this%rho_ref, &
-      !$acc&                  this%kpp_bl_depth, this%kpp_u_star, this%kpp_buoy_flux)
-      !$acc enter data create(this%xmom_pre, this%ymom_pre, &
-      !$acc&                  this%tracer_advect_scratch, &
-      !$acc&                  this%ml_lgrad_x, this%ml_lgrad_y, &
-      !$acc&                  this%ml_hdiff_hTr_pre, &
-      !$acc&                  this%ml_horvisc_hu_pre, this%ml_horvisc_hv_pre)
-      !$acc enter data copyin(this%keps_tke, this%keps_eps, this%keps_nut, &
-      !$acc&                  this%keps_kt, this%keps_ustar_s, this%keps_ustar_b)
+      ! [acc->omp-cpu] dropped device directive (host no-op): enter data
+      ! [acc->omp-cpu] dropped device directive (host no-op): enter data
+      ! [acc->omp-cpu] dropped device directive (host no-op): enter data
       if (allocated(this%keps_tke0)) then
-         !$acc enter data copyin(this%keps_tke0, this%keps_eps0)
+         ! [acc->omp-cpu] dropped device directive (host no-op): enter data
       end if
       if (allocated(this%vcoord_z_ref)) then
-         !$acc enter data copyin(this%vcoord_z_ref)
+         ! [acc->omp-cpu] dropped device directive (host no-op): enter data
       end if
       if (allocated(this%vcoord_z_ref_col)) then
-         !$acc enter data copyin(this%vcoord_z_ref_col)
+         ! [acc->omp-cpu] dropped device directive (host no-op): enter data
       end if
       if (allocated(this%remap_dz_old)) then
-         !$acc enter data create(this%remap_dz_old)
+         ! [acc->omp-cpu] dropped device directive (host no-op): enter data
       end if
    end subroutine unstr_multilayer_enter_data
 
    subroutine unstr_multilayer_exit_data(this)
       class(unstr_multilayer_state_t), intent(inout) :: this
 
-      !$acc exit data copyout(this%h_layer, this%hu_layer, this%hv_layer, &
-      !$acc&                  this%rho_layer, this%w_interface)
-      !$acc exit data delete(this%dsig_ml, &
-      !$acc&                 this%h_layer0, this%hu_layer0, this%hv_layer0, &
-      !$acc&                 this%xmom_pre, this%ymom_pre, &
-      !$acc&                 this%tracer_advect_scratch, &
-      !$acc&                 this%ml_lgrad_x, this%ml_lgrad_y, &
-      !$acc&                 this%ml_hdiff_hTr_pre, &
-      !$acc&                 this%ml_horvisc_hu_pre, this%ml_horvisc_hv_pre, &
-      !$acc&                 this%rho_ref, &
-      !$acc&                 this%kpp_bl_depth, this%kpp_u_star, this%kpp_buoy_flux)
-      !$acc exit data delete(this%keps_tke, this%keps_eps, this%keps_nut, &
-      !$acc&                 this%keps_kt, this%keps_ustar_s, this%keps_ustar_b)
+      ! [acc->omp-cpu] dropped device directive (host no-op): exit data
+      ! [acc->omp-cpu] dropped device directive (host no-op): exit data
+      ! [acc->omp-cpu] dropped device directive (host no-op): exit data
       if (allocated(this%keps_tke0)) then
-         !$acc exit data delete(this%keps_tke0, this%keps_eps0)
+         ! [acc->omp-cpu] dropped device directive (host no-op): exit data
       end if
       if (allocated(this%vcoord_z_ref_col)) then
-         !$acc exit data delete(this%vcoord_z_ref_col)
+         ! [acc->omp-cpu] dropped device directive (host no-op): exit data
       end if
       if (allocated(this%vcoord_z_ref)) then
-         !$acc exit data delete(this%vcoord_z_ref)
+         ! [acc->omp-cpu] dropped device directive (host no-op): exit data
       end if
       if (allocated(this%remap_dz_old)) then
-         !$acc exit data delete(this%remap_dz_old)
+         ! [acc->omp-cpu] dropped device directive (host no-op): exit data
       end if
    end subroutine unstr_multilayer_exit_data
 

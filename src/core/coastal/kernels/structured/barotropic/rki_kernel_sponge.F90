@@ -13,7 +13,7 @@ module rki_kernel_sponge
 
 contains
 
-   pure subroutine apply_sponge(h, hu, hv, grid, dt, bc)
+   subroutine apply_sponge(h, hu, hv, grid, dt, bc)
       !! Apply sponge layer relaxation to h, hu, hv
       !!
       !! Cells within sponge_width of a sponge boundary are relaxed toward
@@ -54,8 +54,9 @@ contains
       has_south = (bc%south == BC_SPONGE)
       has_north = (bc%north == BC_SPONGE)
 
-      do concurrent(j=j_first:j_last, i=i_first:i_last) &
-         local(d_west, d_east, d_south, d_north, d_min, alpha, ratio)
+      !$omp parallel do collapse(2) private(d_west, d_east, d_south, d_north, d_min, alpha, ratio)
+      do j = j_first, j_last
+      do i = i_first, i_last
          ! Compute distance from each sponge boundary (in cells)
          d_min = sw + 1  ! Start beyond sponge width (no damping)
 
@@ -84,6 +85,8 @@ contains
             hv(i, j) = hv(i, j) - dt*alpha*hv(i, j)
          end if
       end do
+      end do
+      !$omp end parallel do
 
    end subroutine apply_sponge
 

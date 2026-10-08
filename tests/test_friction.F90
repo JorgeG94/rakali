@@ -74,10 +74,10 @@ contains
       hv = 3.0_wp
       call make_uniform_forcing(0.0_wp, 0.0_wp, wx, wy, p_atm, precip)
 
-      !$acc data copyin( h, wx, wy, p_atm, precip) copy( hu, hv)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call apply_friction(h, hu, hv, grid, 0.1_wp, 0.0_wp, &
                           wx, wy, p_atm, precip)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       call check(error, abs(hu(4, 4) - 5.0_wp) < 1.0e-14_wp, &
                  "hu unchanged with zero friction and zero wind")
@@ -105,10 +105,10 @@ contains
       hv = HV_VAL
       call make_uniform_forcing(0.0_wp, 0.0_wp, wx, wy, p_atm, precip)
 
-      !$acc data copyin( h, wx, wy, p_atm, precip) copy( hu, hv)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call apply_friction(h, hu, hv, grid, DT_VAL, N_MAN, &
                           wx, wy, p_atm, precip)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       speed = sqrt((HU_VAL/H_VAL)**2 + (HV_VAL/H_VAL)**2)
       cf = GRAVITY*N_MAN*N_MAN/(H_VAL**(1.0_wp/3.0_wp))
@@ -144,10 +144,10 @@ contains
       hu_layer(:, :, 1) = HU_VAL    ! bottom layer (k=1, ROMS bottom-up)
       hv_layer(:, :, 1) = HV_VAL
 
-      !$acc data copyin( h_layer) copy( hu_layer, hv_layer)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call ml_apply_bottom_friction(h_layer, hu_layer, hv_layer, &
                                     0.0_wp, .true., R, grid, NZ, DT)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       denom = 1.0_wp + DT*R
       call check(error, abs(hu_layer(4, 4, 1) - HU_VAL/denom) < 1.0e-12_wp, &
@@ -173,10 +173,10 @@ contains
       hv = 0.5_wp
       call make_uniform_forcing(0.0_wp, 0.0_wp, wx, wy, p_atm, precip)
 
-      !$acc data copyin( h, wx, wy, p_atm, precip) copy( hu, hv)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call apply_friction(h, hu, hv, grid, 100.0_wp, 0.05_wp, &
                           wx, wy, p_atm, precip)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       call check(error, hu(4, 4) >= 0.0_wp, &
                  "Semi-implicit friction should not overshoot (hu)")
@@ -202,10 +202,10 @@ contains
       hv = 0.0_wp
       call make_uniform_forcing(WIND_X, WIND_Y, wx, wy, p_atm, precip)
 
-      !$acc data copyin( h, wx, wy, p_atm, precip) copy( hu, hv)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call apply_friction(h, hu, hv, grid, DT, 0.0_wp, &
                           wx, wy, p_atm, precip)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       expected_hu = DT*WIND_X/RHO_WATER
       expected_hv = DT*WIND_Y/RHO_WATER
@@ -229,10 +229,10 @@ contains
       hv = 50.0_wp
       call make_uniform_forcing(1.0_wp, 1.0_wp, wx, wy, p_atm, precip)
 
-      !$acc data copy( h) copy( hu, hv) copyin( wx, wy, p_atm, precip)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call apply_friction(h, hu, hv, grid, 1.0_wp, 0.025_wp, &
                           wx, wy, p_atm, precip)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       call check(error, abs(hu(4, 4) - 100.0_wp) < 1.0e-14_wp, &
                  "Dry cell hu should be unchanged by friction")
@@ -256,20 +256,20 @@ contains
       hu = 5.0_wp
       hv = 0.0_wp
       call make_uniform_forcing(0.0_wp, 0.0_wp, wx, wy, p_atm, precip)
-      !$acc data copyin( h, wx, wy, p_atm, precip) copy( hu, hv)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call apply_friction(h, hu, hv, grid, DT, MANNING, &
                           wx, wy, p_atm, precip)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
       hu_no_wind = hu(4, 4)
 
       ! Second: friction + positive wind
       hu = 5.0_wp
       hv = 0.0_wp
       call make_uniform_forcing(10.0_wp, 0.0_wp, wx, wy, p_atm, precip)
-      !$acc data copyin( h, wx, wy, p_atm, precip) copy( hu, hv)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call apply_friction(h, hu, hv, grid, DT, MANNING, &
                           wx, wy, p_atm, precip)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
       hu_with_wind = hu(4, 4)
 
       call check(error, hu_with_wind > hu_no_wind, &
@@ -290,17 +290,17 @@ contains
       call make_uniform_forcing(0.0_wp, 0.0_wp, wx, wy, p_atm, precip)
 
       hu_pos = 5.0_wp
-      !$acc data copyin( h, wx, wy, p_atm, precip) copy( hu_pos, hv)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call apply_friction(h, hu_pos, hv, grid, DT, MANNING, &
                           wx, wy, p_atm, precip)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       hv = 0.0_wp
       hu_neg = -5.0_wp
-      !$acc data copyin( h, wx, wy, p_atm, precip) copy( hu_neg, hv)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call apply_friction(h, hu_neg, hv, grid, DT, MANNING, &
                           wx, wy, p_atm, precip)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       call check(error, abs(hu_pos(4, 4) + hu_neg(4, 4)) < 1.0e-12_wp, &
                  "Friction on +hu and -hu should give equal and opposite results")
@@ -323,10 +323,10 @@ contains
       call make_uniform_forcing(0.0_wp, 0.0_wp, wx, wy, p_atm, precip)
       precip = RAIN_RATE
 
-      !$acc data copy( h) copy( hu, hv) copyin( wx, wy, p_atm, precip)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call apply_friction(h, hu, hv, grid, DT, 0.0_wp, &
                           wx, wy, p_atm, precip)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       call check(error, abs(h(4, 4) - (h_before + DT*RAIN_RATE)) < 1.0e-14_wp, &
                  "Precipitation should add dt * P to water depth")
@@ -353,10 +353,10 @@ contains
          p_atm(i, :) = 101325.0_wp - 100.0_wp*real(i, wp)*DX_TEST
       end do
 
-      !$acc data copy( h) copy( hu, hv) copyin( wx, wy, p_atm, precip)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call apply_friction(h, hu, hv, grid, DT, 0.0_wp, &
                           wx, wy, p_atm, precip)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       ! dp/dx = -100, so -(h/rho)*dp/dx = -(1.0/1025)*(-100) > 0
       call check(error, hu(4, 4) > 0.0_wp, &
@@ -383,9 +383,9 @@ contains
       hu = 5.0_wp
       hv = 3.0_wp
 
-      !$acc data copyin( h) copy( hu, hv)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call apply_coriolis(h, hu, hv, grid, 0.1_wp, 0.0_wp)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       call check(error, abs(hu(4, 4) - 5.0_wp) < 1.0e-14_wp, &
                  "Zero f should not change hu")
@@ -408,9 +408,9 @@ contains
       hu = 1.0_wp
       hv = 0.0_wp
 
-      !$acc data copyin( h) copy( hu, hv)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call apply_coriolis(h, hu, hv, grid, DT, F_COR)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       ! Positive f with initial u>0 should deflect flow to the right (hv < 0)
       call check(error, hv(4, 4) < 0.0_wp, &
@@ -437,9 +437,9 @@ contains
       hv = 4.0_wp
       ke_before = hu(4, 4)**2 + hv(4, 4)**2
 
-      !$acc data copyin( h) copy( hu, hv)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call apply_coriolis(h, hu, hv, grid, DT, F_COR)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       ke_after = hu(4, 4)**2 + hv(4, 4)**2
 
@@ -473,13 +473,13 @@ contains
       hu2d = 3.0_wp
       hv2d = 4.0_wp
 
-      !$acc data copyin( h_layer) copy( hu_layer, hv_layer)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call ml_apply_coriolis(h_layer, hu_layer, hv_layer, grid, NZ, DT, F_COR)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
-      !$acc data copyin( h2d) copy( hu2d, hv2d)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call apply_coriolis(h2d, hu2d, hv2d, grid, DT, F_COR)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       ! Sum the rotated layer momenta and compare to the depth-averaged result
       hu_sum = 0.0_wp
@@ -518,9 +518,9 @@ contains
          ke_before(k) = hu_layer(4, 4, k)**2 + hv_layer(4, 4, k)**2
       end do
 
-      !$acc data copyin( h_layer) copy( hu_layer, hv_layer)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call ml_apply_coriolis(h_layer, hu_layer, hv_layer, grid, NZ, DT, F_COR)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       do k = 1, NZ
          ke_after(k) = hu_layer(4, 4, k)**2 + hv_layer(4, 4, k)**2

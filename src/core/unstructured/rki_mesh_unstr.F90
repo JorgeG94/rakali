@@ -657,16 +657,9 @@ contains
       ! first `do concurrent` deref of `mesh%<anything>` trips
       ! CUDA_ERROR_ILLEGAL_ADDRESS. Partition metadata no kernel reads
       ! still must be attached to keep the parent descriptor well-formed.
-      !$acc enter data copyin(mesh)
-      !$acc enter data copyin(mesh%centroid_x, mesh%centroid_y, &
-      !$acc&                  mesh%area, mesh%radius, &
-      !$acc&                  mesh%n_boundaries, &
-      !$acc&                  mesh%edge_len, mesh%edge_n1, mesh%edge_n2, &
-      !$acc&                  mesh%edge_mid_x, mesh%edge_mid_y, &
-      !$acc&                  mesh%neighbours, mesh%neighbour_edges, &
-      !$acc&                  mesh%surrogate_neighbours, mesh%bc_group)
-      !$acc enter data copyin(mesh%circumcentre_x, mesh%circumcentre_y, &
-      !$acc&                  mesh%edge_delta, mesh%edge_dev_angle)
+      ! [acc->omp-cpu] dropped device directive (host no-op): enter data
+      ! [acc->omp-cpu] dropped device directive (host no-op): enter data
+      ! [acc->omp-cpu] dropped device directive (host no-op): enter data
    end subroutine mesh_unstr_enter_data
 
    subroutine mesh_unstr_exit_data(mesh)
@@ -676,16 +669,9 @@ contains
       type(mesh_unstr_t), intent(inout) :: mesh
 
       ! Components first, parent struct last (mirror of enter_data).
-      !$acc exit data delete(mesh%circumcentre_x, mesh%circumcentre_y, &
-      !$acc&                 mesh%edge_delta, mesh%edge_dev_angle)
-      !$acc exit data delete(mesh%centroid_x, mesh%centroid_y, &
-      !$acc&                 mesh%area, mesh%radius, &
-      !$acc&                 mesh%n_boundaries, &
-      !$acc&                 mesh%edge_len, mesh%edge_n1, mesh%edge_n2, &
-      !$acc&                 mesh%edge_mid_x, mesh%edge_mid_y, &
-      !$acc&                 mesh%neighbours, mesh%neighbour_edges, &
-      !$acc&                 mesh%surrogate_neighbours, mesh%bc_group)
-      !$acc exit data delete(mesh)
+      ! [acc->omp-cpu] dropped device directive (host no-op): exit data
+      ! [acc->omp-cpu] dropped device directive (host no-op): exit data
+      ! [acc->omp-cpu] dropped device directive (host no-op): exit data
    end subroutine mesh_unstr_exit_data
 
    subroutine mesh_unstr_destroy(mesh)

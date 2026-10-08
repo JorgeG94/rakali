@@ -61,9 +61,11 @@ contains
          ref = ref + a(i)
       end do
       s = 0.0_wp
-      do concurrent(i=1:N) reduce(+:s)
+      !$omp parallel do
+      do i = 1, N
          s = s + a(i)
       end do
+      !$omp end parallel do
       call check(error, s == ref, "do concurrent reduce(+) on real(wp) must be exact")
    end subroutine test_real_sum
 

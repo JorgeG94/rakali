@@ -297,7 +297,7 @@ contains
             t_bc = state%time + SI_UNSTR_THETA*dt_si
             eta_bc = TIDE_AMP*sin(om*t_bc)
             state%bc_eta_ext(WEST_GROUP) = eta_bc
-            !$acc update device(state%bc_eta_ext)
+            ! [acc->omp-cpu] dropped device directive (host no-op): update
             call solver_unstr_step(state, mesh, dt_si)
             iters_total = iters_total + state%si%cg_iters
          else
@@ -305,10 +305,10 @@ contains
             ! flux pass; advance owns the CFL dt.
             eta_bc = TIDE_AMP*sin(om*(state%time + 0.5_wp*dt_si))
             state%bc_eta_ext(WEST_GROUP) = eta_bc
-            !$acc update device(state%bc_eta_ext)
+            ! [acc->omp-cpu] dropped device directive (host no-op): update
             call solver_unstr_advance(state, mesh, real(n, wp)*dt_si)
          end if
-         !$acc update self(state%barotropic%stage_cv)
+         ! [acc->omp-cpu] dropped device directive (host no-op): update
          do p = 1, 3
             eta_ser(n, p) = state%barotropic%stage_cv(kp(p))
          end do

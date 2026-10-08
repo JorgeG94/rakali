@@ -34,7 +34,7 @@ contains
       call centroid_restore(state, mesh)
    end subroutine extrapolate_second_order_edge_unstr
 
-   pure subroutine centroid_pass(state, mesh)
+   subroutine centroid_pass(state, mesh)
       !! Compute heights, zero momenta on dry cells, prep velocity-form.
       type(unstr_state_t), intent(inout) :: state
       type(mesh_unstr_t), intent(in) :: mesh
@@ -43,7 +43,8 @@ contains
       real(wp) :: dk, xmom_out, ymom_out, inv_dk
       logical :: is_dry, do_extrap
 
-      do concurrent(k=1:mesh%ncells_total)
+      !$omp parallel do
+      do k = 1, mesh%ncells_total
          dk = max(state%barotropic%stage_cv(k) - state%barotropic%bed_cv(k), 0.0_wp)
          state%barotropic%height_cv(k) = dk
 
@@ -71,9 +72,10 @@ contains
          state%barotropic%xmom_cv(k) = xmom_out*inv_dk
          state%barotropic%ymom_cv(k) = ymom_out*inv_dk
       end do
+      !$omp end parallel do
    end subroutine centroid_pass
 
-   pure subroutine per_cell_extrapolation(state, mesh)
+   subroutine per_cell_extrapolation(state, mesh)
       !! Compute edge-midpoint values for stage, height, xmom, ymom and
       !! recover bed_ev from the well-balanced identity.
       type(unstr_state_t), intent(inout) :: state
@@ -81,9 +83,11 @@ contains
 
       integer :: k
 
-      do concurrent(k=1:mesh%ncells_total)
+      !$omp parallel do
+      do k = 1, mesh%ncells_total
          call extrapolate_one_cell(state, mesh, k)
       end do
+      !$omp end parallel do
    end subroutine per_cell_extrapolation
 
    pure subroutine extrapolate_one_cell(state, mesh, k)
@@ -325,7 +329,7 @@ contains
       ymom_ev_local(3) = state%barotropic%ymom_cv(k) + dqv(3)
    end subroutine extrapolate_one_neighbour_branch
 
-   pure subroutine centroid_restore(state, mesh)
+   subroutine centroid_restore(state, mesh)
       !! If velocity-form extrapolation was on, restore the original
       !! centroid momenta from the work arrays.
       type(unstr_state_t), intent(inout) :: state
@@ -335,10 +339,12 @@ contains
 
       if (.not. state%extrapolate_velocity_second_order) return
 
-      do concurrent(k=1:mesh%ncells_total)
+      !$omp parallel do
+      do k = 1, mesh%ncells_total
          state%barotropic%xmom_cv(k) = state%barotropic%x_centroid_work(k)
          state%barotropic%ymom_cv(k) = state%barotropic%y_centroid_work(k)
       end do
+      !$omp end parallel do
    end subroutine centroid_restore
 
    ! Inlined pointwise helpers (`*_impl`): self-contained pure helpers
@@ -346,7 +352,7 @@ contains
    ! inlines them.
 
    pure subroutine qrange_one_diff_impl(dq1, qmin, qmax)
-      !$acc routine seq
+      ! [acc->omp-cpu] dropped device directive (host no-op): routine seq
       real(wp), intent(in) :: dq1
       real(wp), intent(out) :: qmin, qmax
 
@@ -360,7 +366,7 @@ contains
    end subroutine qrange_one_diff_impl
 
    pure subroutine qrange_three_diff_impl(dq0, dq1, dq2, qmin, qmax)
-      !$acc routine seq
+      ! [acc->omp-cpu] dropped device directive (host no-op): routine seq
       real(wp), intent(in) :: dq0, dq1, dq2
       real(wp), intent(out) :: qmin, qmax
 
@@ -369,7 +375,7 @@ contains
    end subroutine qrange_three_diff_impl
 
    pure subroutine limit_gradient_impl(dqv, qmin, qmax, beta)
-      !$acc routine seq
+      ! [acc->omp-cpu] dropped device directive (host no-op): routine seq
       real(wp), intent(inout) :: dqv(3)
       real(wp), intent(in) :: qmin, qmax, beta
 
@@ -397,7 +403,7 @@ contains
       dxv0, dxv1, dxv2, dyv0, dyv1, dyv2, &
       dx1, dx2, dy1, dy2, inv_area2, &
       beta, edge_values)
-      !$acc routine seq
+      ! [acc->omp-cpu] dropped device directive (host no-op): routine seq
       real(wp), intent(in) :: cv_k, cv_k0, cv_k1, cv_k2
       real(wp), intent(in) :: dxv0, dxv1, dxv2
       real(wp), intent(in) :: dyv0, dyv1, dyv2
@@ -434,7 +440,7 @@ contains
       dq1, dx2, dy2, &
       dxv0, dxv1, dxv2, dyv0, dyv1, dyv2, &
       dqv)
-      !$acc routine seq
+      ! [acc->omp-cpu] dropped device directive (host no-op): routine seq
       real(wp), intent(in) :: dq1
       real(wp), intent(in) :: dx2, dy2
       real(wp), intent(in) :: dxv0, dxv1, dxv2
@@ -452,7 +458,7 @@ contains
    end subroutine calc_dqv_one_neighbour_impl
 
    pure subroutine set_constant_edge_values_impl(cv_k, edge_values)
-      !$acc routine seq
+      ! [acc->omp-cpu] dropped device directive (host no-op): routine seq
       real(wp), intent(in) :: cv_k
       real(wp), intent(out) :: edge_values(3)
 
@@ -462,7 +468,7 @@ contains
    end subroutine set_constant_edge_values_impl
 
    pure function compute_hfactor_impl(hc, h0, h1, h2, min_h) result(hfactor)
-      !$acc routine seq
+      ! [acc->omp-cpu] dropped device directive (host no-op): routine seq
       real(wp), intent(in) :: hc, h0, h1, h2, min_h
       real(wp) :: hfactor
 

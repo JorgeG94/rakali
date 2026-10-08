@@ -432,7 +432,7 @@ contains
    ! Flat-impl helpers (explicit-shape, do concurrent, device-resident).
    ! ------------------------------------------------------------------
 
-   pure subroutine si_ml_save_and_eta(nct, nco, stage, bed, height, eta, &
+   subroutine si_ml_save_and_eta(nct, nco, stage, bed, height, eta, &
                                       u_edge, u_n_edge)
       !! Save the edge transports U^n, refresh height = max(stage - b, 0),
       !! and form eta^n = stage at circumcentres (the CG warm start).
@@ -448,16 +448,18 @@ contains
 
       integer :: c, i
 
-      do concurrent(c=1:nco) local(i)
+      !$omp parallel do private(i)
+      do c = 1, nco
          do i = 1, EDGES_PER_TRI
             u_n_edge(i, c) = u_edge(i, c)
          end do
          height(c) = max(stage(c) - bed(c), 0.0_wp)
          eta(c) = stage(c)
       end do
+      !$omp end parallel do
    end subroutine si_ml_save_and_eta
 
-   pure subroutine si_ml_zero_dead_edges(nct, nco, Hf_edge, u_n_edge)
+   subroutine si_ml_zero_dead_edges(nct, nco, Hf_edge, u_n_edge)
       !! Zero the saved U^n on dead (wall / Hf=0) edges — Casulli rule R3:
       !! a dead edge carries no (1-theta) flux into the theta-blend RHS.
       integer, intent(in) :: nct
@@ -469,14 +471,16 @@ contains
 
       integer :: c, i
 
-      do concurrent(c=1:nco) local(i)
+      !$omp parallel do private(i)
+      do c = 1, nco
          do i = 1, EDGES_PER_TRI
             if (Hf_edge(i, c) <= 0.0_wp) u_n_edge(i, c) = 0.0_wp
          end do
       end do
+      !$omp end parallel do
    end subroutine si_ml_zero_dead_edges
 
-   pure subroutine si_ml_wetdry_face_depths(mesh, nct, nco, n_bc, eta, b_min, &
+   subroutine si_ml_wetdry_face_depths(mesh, nct, nco, n_bc, eta, b_min, &
                                             Hhat, bc_type, bc_eta_ext, &
                                             Hf_edge, eta_ghost_edge)
       !! Frozen wet/dry edge depths for the 3D column-integrated eta-solve —
@@ -514,7 +518,8 @@ contains
       integer :: c, i, kn, g, bt
       real(wp) :: geo, eta_bc
 
-      do concurrent(c=1:nco) local(i, kn, g, bt, geo, eta_bc)
+      !$omp parallel do private(i, kn, g, bt, geo, eta_bc)
+      do c = 1, nco
          do i = 1, EDGES_PER_TRI
             eta_ghost_edge(i, c) = 0.0_wp
             Hf_edge(i, c) = 0.0_wp
@@ -543,6 +548,7 @@ contains
             end if
          end do
       end do
+      !$omp end parallel do
    end subroutine si_ml_wetdry_face_depths
 
    subroutine si_ml_wetdry_newton(state, mesh, nct, nco, g_theta2_dt2, iter_out)
@@ -575,14 +581,18 @@ contains
          ! rhs_d = eta_r + (v(eta^n) - eta^n): swap the linear RHS leading
          ! term for the wetted volume (same as the 2D/structured wet/dry).
          call si_unstr_wetdry_volume(si%n_sub, nct, nco, si%eta, si%b_sub, si%v_cell)
-         do concurrent(k=1:nco)
+         !$omp parallel do
+         do k = 1, nco
             si%rhs_d(k) = si%eta_r(k) + (si%v_cell(k) - si%eta(k))
          end do
+         !$omp end parallel do
 
          rhs2 = 0.0_wp
-         do concurrent(k=1:nco) reduce(+:rhs2)
+         !$omp parallel do
+         do k = 1, nco
             rhs2 = rhs2 + si%rhs_d(k)*si%rhs_d(k)
          end do
+         !$omp end parallel do
          tol2 = max(SI_UNSTR_NEWTON_TOL*SI_UNSTR_NEWTON_TOL*rhs2, 1.0e-60_wp)
 
          cg_it_total = 0
@@ -609,21 +619,27 @@ contains
 
             ! Solve J*dz = -F from zero (full-array zero so the ghost band of
             ! the search space stays 0); eta += dz.
-            do concurrent(k=1:nct)
+            !$omp parallel do
+            do k = 1, nct
                si%newton_dz(k) = 0.0_wp
             end do
-            do concurrent(k=1:nco)
+            !$omp end parallel do
+            !$omp parallel do
+            do k = 1, nco
                si%eta_r(k) = -si%newton_F(k)
             end do
+            !$omp end parallel do
             call si_unstr_cg_solve(mesh, nct, nco, si%newton_dz, si%eta_r, &
                                    si%eta_p, si%eta_Ap, si%eta_z, si%eta_diag, &
                                    si%Hf_edge, g_theta2_dt2, si%precond, &
                                    si%rtol, cg_it, mass_res, &
                                    mass_diag=si%mass_diag)
             cg_it_total = cg_it_total + cg_it
-            do concurrent(k=1:nco)
+            !$omp parallel do
+            do k = 1, nco
                si%eta(k) = si%eta(k) + si%newton_dz(k)
             end do
+            !$omp end parallel do
          end do
 
          si%newton_iters = min(nit, SI_UNSTR_NEWTON_MAX)

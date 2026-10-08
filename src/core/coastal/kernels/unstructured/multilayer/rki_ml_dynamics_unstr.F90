@@ -80,9 +80,11 @@ contains
 
       ! `height_cv` is populated lazily by the extrapolation kernel (zero
       ! at IC time); compute it from `stage_cv - bed_cv` for a consistent H.
-      do concurrent(cell=1:n)
+      !$omp parallel do
+      do cell = 1, n
          state%barotropic%height_cv(cell) = max(state%barotropic%stage_cv(cell) - state%barotropic%bed_cv(cell), 0.0_wp)
       end do
+      !$omp end parallel do
 
       ! Per-column thicknesses from vcoord, momentum split uniformly.
       ! `vcoord_target_dz_column` outputs dz_col in ROMS order
@@ -94,7 +96,7 @@ contains
             real(wp) :: z_ref_local(0:NZ_STACK_MAX)
             integer :: kk
             h_min = state%multilayer%vcoord%zstar_h_min
-            !$acc parallel loop present(state) private(k, kk, H_col, dz_col, z_ref_local)
+            !$omp parallel do private(k, kk, H_col, dz_col, z_ref_local)
             do cell = 1, n
                H_col = state%barotropic%height_cv(cell)
                do kk = 0, nz
@@ -111,7 +113,7 @@ contains
             end do
          end block
       else
-         !$acc parallel loop present(state) private(k, H_col, dz_col)
+         !$omp parallel do private(k, H_col, dz_col)
          do cell = 1, n
             H_col = state%barotropic%height_cv(cell)
             call vcoord_target_dz_column(coord_type, nz, H_col, &
@@ -146,7 +148,7 @@ contains
       n_surf = state%multilayer%vcoord%zstar_n_surf
       stretching = state%multilayer%vcoord%zstar_stretching
 
-      !$acc update self(state%barotropic%bed_cv) if_present
+      ! [acc->omp-cpu] dropped device directive (host no-op): update
 
       do cell = 1, n
          ! Clamp to non-negative bed depth: bed_cv > 0 (dry land) gives a
@@ -157,10 +159,10 @@ contains
                                       state%multilayer%vcoord_z_ref_col(:, cell))
       end do
 
-      !$acc update device(state%multilayer%vcoord_z_ref_col) if_present
+      ! [acc->omp-cpu] dropped device directive (host no-op): update
    end subroutine ml_build_vcoord_zstar_full_unstr
 
-   pure subroutine ml_save_barotropic_pre_unstr(state)
+   subroutine ml_save_barotropic_pre_unstr(state)
       !! Snapshot the barotropic momentum before the HLL update so the
       !! distribute kernel can compute the acceleration increment
       !! `du = (hu_new - hu_pre) / H_new` at cell level.
@@ -171,13 +173,15 @@ contains
       if (.not. state%use_multilayer) return
 
       n = state%ncells_total
-      do concurrent(cell=1:n)
+      !$omp parallel do
+      do cell = 1, n
          state%multilayer%xmom_pre(cell) = state%barotropic%xmom_cv(cell)
          state%multilayer%ymom_pre(cell) = state%barotropic%ymom_cv(cell)
       end do
+      !$omp end parallel do
    end subroutine ml_save_barotropic_pre_unstr
 
-   pure subroutine ml_distribute_barotropic_unstr(state)
+   subroutine ml_distribute_barotropic_unstr(state)
       !! Distribute the barotropic HLL acceleration across layers (sigma):
       !!   du = (hu_new - hu_pre)/H_new; u_k_old = hu_k_old/h_k_old;
       !!   h_k = dsig_k*H_new; hu_k = h_k*(u_k_old + du)
@@ -193,7 +197,8 @@ contains
       nz = state%multilayer%nz_ml
       n = state%ncells_total
 
-      do concurrent(cell=1:n) local(k, h_val, du, dv, h_k_old, u_k, v_k, h_k_new)
+      !$omp parallel do private(k, h_val, du, dv, h_k_old, u_k, v_k, h_k_new)
+      do cell = 1, n
          ! `height_cv` is stale right after the barotropic update;
          ! recompute H_new from `stage_cv - bed_cv`, clamped at zero so
          ! emptied cells get a clean dry layer profile.
@@ -229,6 +234,7 @@ contains
             end if
          end do
       end do
+      !$omp end parallel do
    end subroutine ml_distribute_barotropic_unstr
 
    subroutine ml_distribute_with_remap_unstr(state)
@@ -261,16 +267,20 @@ contains
       blend_width = state%multilayer%vcoord%blend_width
 
       ! Step 1: save old layer thicknesses for the per-tracer remap.
-      do concurrent(cell=1:n, k=1:nz)
+      !$omp parallel do collapse(2)
+      do cell = 1, n
+      do k = 1, nz
          state%multilayer%remap_dz_old(k, cell) = state%multilayer%h_layer(k, cell)
       end do
+      end do
+      !$omp end parallel do
 
       ! Steps 2-3: target thicknesses + momentum distribution.
       ! `!$acc parallel loop` (not do concurrent): the column body calls
       ! vcoord_target_dz_column cross-module, which NVHPC stdpar won't
       ! lower from do concurrent.
-      !$acc parallel loop present(state) &
-      !$acc&   private(k, h_val, du, dv, h_k_old, u_k, v_k, h_k_new, dz_new)
+      !$omp parallel do &
+      !$omp&   private(k, h_val, du, dv, h_k_old, u_k, v_k, h_k_new, dz_new)
       do cell = 1, n
 
          ! `height_cv` is stale after the barotropic update; recompute
@@ -349,9 +359,9 @@ contains
       n = state%ncells_total
       remap_method = state%multilayer%vcoord%remap_method
 
-      !$acc parallel loop present(state, hTr_layer) &
-      !$acc&   private(k, h_val, h_old_total, scale_old, tr_col_sum, &
-      !$acc&           tr_col_mean, dz_old_col, dz_new_col, tr_old, tr_new)
+      !$omp parallel do &
+      !$omp&   private(k, h_val, h_old_total, scale_old, tr_col_sum, &
+      !$omp&           tr_col_mean, dz_old_col, dz_new_col, tr_old, tr_new)
       do cell = 1, n
 
          ! Recompute H_new from stage_cv - bed_cv (height_cv is stale right
@@ -427,13 +437,17 @@ contains
       n = state%ncells_total
       h_min = state%multilayer%vcoord%zstar_h_min
 
-      do concurrent(cell=1:n, k=1:nz)
+      !$omp parallel do collapse(2)
+      do cell = 1, n
+      do k = 1, nz
          state%multilayer%remap_dz_old(k, cell) = state%multilayer%h_layer(k, cell)
       end do
+      end do
+      !$omp end parallel do
 
-      !$acc parallel loop present(state) &
-      !$acc&   private(k, kk, h_val, du, dv, h_k_old, u_k, v_k, h_k_new, &
-      !$acc&           dz_new, z_ref_local)
+      !$omp parallel do &
+      !$omp&   private(k, kk, h_val, du, dv, h_k_old, u_k, v_k, h_k_new, &
+      !$omp&           dz_new, z_ref_local)
       do cell = 1, n
 
          h_val = state%barotropic%stage_cv(cell) - state%barotropic%bed_cv(cell)
@@ -481,7 +495,7 @@ contains
       end do
    end subroutine ml_distribute_with_remap_full_unstr
 
-   pure subroutine ml_compute_barotropic_momentum_unstr(state)
+   subroutine ml_compute_barotropic_momentum_unstr(state)
       !! Depth-integrate layer momentum back onto the barotropic fields:
       !!   HU = sum_k hu_k,  HV = sum_k hv_k.
       !! Also refreshes `height_cv = sum_k h_k` and `stage_cv` from the
@@ -498,7 +512,8 @@ contains
       nz = state%multilayer%nz_ml
       n = state%ncells_total
 
-      do concurrent(cell=1:n) local(k, su, sv, sh)
+      !$omp parallel do private(k, su, sv, sh)
+      do cell = 1, n
          su = 0.0_wp
          sv = 0.0_wp
          sh = 0.0_wp
@@ -512,9 +527,10 @@ contains
          state%barotropic%height_cv(cell) = sh
          state%barotropic%stage_cv(cell) = sh + state%barotropic%bed_cv(cell)
       end do
+      !$omp end parallel do
    end subroutine ml_compute_barotropic_momentum_unstr
 
-   pure subroutine ml_compute_total_depth_unstr(state)
+   subroutine ml_compute_total_depth_unstr(state)
       !! Public only for the unit-test suite (no production module imports it);
       !! ignore when developing production code in other modules.
       !! Refresh `height_cv = sum_k h_k` without touching momentum.
@@ -529,7 +545,8 @@ contains
       nz = state%multilayer%nz_ml
       n = state%ncells_total
 
-      do concurrent(cell=1:n) local(k, sh)
+      !$omp parallel do private(k, sh)
+      do cell = 1, n
          sh = 0.0_wp
          do k = 1, nz
             sh = sh + state%multilayer%h_layer(k, cell)
@@ -537,9 +554,10 @@ contains
          state%barotropic%height_cv(cell) = sh
          state%barotropic%stage_cv(cell) = sh + state%barotropic%bed_cv(cell)
       end do
+      !$omp end parallel do
    end subroutine ml_compute_total_depth_unstr
 
-   pure subroutine ml_save_layer_state_unstr(state)
+   subroutine ml_save_layer_state_unstr(state)
       !! Snapshot the layer state at the start of the step for the
       !! SSP-RK2 average.
       type(unstr_state_t), intent(inout) :: state
@@ -551,14 +569,18 @@ contains
       nz = state%multilayer%nz_ml
       n = state%ncells_total
 
-      do concurrent(cell=1:n, k=1:nz)
+      !$omp parallel do collapse(2)
+      do cell = 1, n
+      do k = 1, nz
          state%multilayer%h_layer0(k, cell) = state%multilayer%h_layer(k, cell)
          state%multilayer%hu_layer0(k, cell) = state%multilayer%hu_layer(k, cell)
          state%multilayer%hv_layer0(k, cell) = state%multilayer%hv_layer(k, cell)
       end do
+      end do
+      !$omp end parallel do
    end subroutine ml_save_layer_state_unstr
 
-   pure subroutine ml_rk2_average_layers_unstr(state)
+   subroutine ml_rk2_average_layers_unstr(state)
       !! Public only for the unit-test suite (no production module imports it);
       !! ignore when developing production code in other modules.
       !! Final RK2 blend:  Q := 0.5 * Q + 0.5 * Q^n
@@ -573,7 +595,9 @@ contains
       nz = state%multilayer%nz_ml
       n = state%ncells_total
 
-      do concurrent(cell=1:n, k=1:nz)
+      !$omp parallel do collapse(2)
+      do cell = 1, n
+      do k = 1, nz
          state%multilayer%h_layer(k, cell) = 0.5_wp*(state%multilayer%h_layer(k, cell) &
                                                      + state%multilayer%h_layer0(k, cell))
          state%multilayer%hu_layer(k, cell) = 0.5_wp*(state%multilayer%hu_layer(k, cell) &
@@ -581,6 +605,8 @@ contains
          state%multilayer%hv_layer(k, cell) = 0.5_wp*(state%multilayer%hv_layer(k, cell) &
                                                       + state%multilayer%hv_layer0(k, cell))
       end do
+      end do
+      !$omp end parallel do
    end subroutine ml_rk2_average_layers_unstr
 
    ! ======================================================================
@@ -598,7 +624,7 @@ contains
    ! half the donor layer in a single step.
    ! ======================================================================
 
-   pure subroutine ml_compute_vertical_velocity_unstr(state, mesh)
+   subroutine ml_compute_vertical_velocity_unstr(state, mesh)
       !! Compute diagnostic vertical velocity from horizontal divergence.
       !!
       !! Uses the barotropic mass flux stashed by the flux kernel to ensure
@@ -628,7 +654,8 @@ contains
       nz = state%multilayer%nz_ml
       n = mesh%ncells_owned
 
-      do concurrent(cell=1:n) local(k, e, inv_area, div_barotropic, div_layer)
+      !$omp parallel do private(k, e, inv_area, div_barotropic, div_layer)
+      do cell = 1, n
          inv_area = 1.0_wp/mesh%area(cell)
 
          ! No penetration at bottom
@@ -656,9 +683,10 @@ contains
             end do
          end if
       end do
+      !$omp end parallel do
    end subroutine ml_compute_vertical_velocity_unstr
 
-   pure subroutine ml_vertical_exchange_unstr(state, dt)
+   subroutine ml_vertical_exchange_unstr(state, dt)
       !! Vertical momentum exchange using upwind advection at interfaces.
       !!
       !! For each interior interface k+1/2 (between layers k and k+1):
@@ -688,8 +716,8 @@ contains
       ! Single-layer case: no vertical exchange
       if (nz < 2) return
 
-      do concurrent(cell=1:n) local(k, w_face, u_up, v_up, flux_u, flux_v, h_val, &
-                                    flux_u_iface, flux_v_iface)
+      !$omp parallel do private(k, w_face, u_up, v_up, flux_u, flux_v, h_val, flux_u_iface, flux_v_iface)
+      do cell = 1, n
          ! Skip thin columns
          if (state%barotropic%height_cv(cell) < ML_MIN_DEPTH_UNSTR) cycle
 
@@ -760,6 +788,7 @@ contains
          state%multilayer%hu_layer(nz, cell) = state%multilayer%hu_layer(nz, cell) + flux_u_iface(nz - 1)
          state%multilayer%hv_layer(nz, cell) = state%multilayer%hv_layer(nz, cell) + flux_v_iface(nz - 1)
       end do
+      !$omp end parallel do
    end subroutine ml_vertical_exchange_unstr
 
 end module rki_ml_dynamics_unstr

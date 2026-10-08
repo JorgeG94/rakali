@@ -8,7 +8,7 @@ module rki_ml_common
    ! Minimum total water depth for vertical layer operations. Columns shallower
    ! than this skip vertical exchange, mixing, tracer advection, and BPG.
    real(wp), protected :: ML_MIN_DEPTH = 0.5_wp
-   !$acc declare create(ML_MIN_DEPTH)
+   ! [acc->omp-cpu] dropped device directive (host no-op): declare
 
    ! Vanishing-layer threshold for VCOORD_ZSTAR_FULL. A layer with
    ! h_layer < VANISHING_LAYER_TOL is treated as a collapsed structural
@@ -29,7 +29,7 @@ contains
       !! Call once at startup from config.
       real(wp), intent(in) :: depth
       ML_MIN_DEPTH = depth
-      !$acc update device(ML_MIN_DEPTH)
+      ! [acc->omp-cpu] dropped device directive (host no-op): update
    end subroutine ml_set_min_depth
 
 end module rki_ml_common

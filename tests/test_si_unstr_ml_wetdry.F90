@@ -265,13 +265,13 @@ contains
          mass_close_max = 0.0_wp
          salt_close_max = 0.0_wp
          ! Seed the host copies (layer init + tracer seed ran on the device).
-         !$acc update self(state%barotropic%stage_cv)
-         !$acc update self(state%multilayer%tracers(it_s)%hTr)
+         ! [acc->omp-cpu] dropped device directive (host no-op): update
+         ! [acc->omp-cpu] dropped device directive (host no-op): update
          do n = 1, n_steps
             t_bc = state%time + SI_UNSTR_THETA*dt
             eta_bc = TIDE_AMP*sin(om*t_bc)
             state%bc_eta_ext(WEST_GROUP) = eta_bc
-            !$acc update device(state%bc_eta_ext)
+            ! [acc->omp-cpu] dropped device directive (host no-op): update
 
             ! Pre-step column water + salt (host copies are current: step 1
             ! reads the IC, later steps the previous iteration's update self).
@@ -286,10 +286,10 @@ contains
             call solver_unstr_step(state, mesh, dt)
             newton_max = max(newton_max, state%si%newton_iters)
 
-            !$acc update self(state%barotropic%stage_cv)
-            !$acc update self(state%multilayer%h_layer)
-            !$acc update self(state%multilayer%tracers(it_s)%hTr)
-            !$acc update self(state%si%mass_flux_edge)
+            ! [acc->omp-cpu] dropped device directive (host no-op): update
+            ! [acc->omp-cpu] dropped device directive (host no-op): update
+            ! [acc->omp-cpu] dropped device directive (host no-op): update
+            ! [acc->omp-cpu] dropped device directive (host no-op): update
 
             nwet = 0
             do k = 1, mesh%ncells_owned
@@ -436,13 +436,13 @@ contains
          ! One full down-then-up sweep centred to expose dry + re-wet.
          eta_bc = -2.0_wp*TIDE_AMP*cos(om*t_bc)
          state%bc_eta_ext(WEST_GROUP) = eta_bc
-         !$acc update device(state%bc_eta_ext)
+         ! [acc->omp-cpu] dropped device directive (host no-op): update
 
          call solver_unstr_step(state, mesh, dt)
 
-         !$acc update self(state%barotropic%stage_cv)
-         !$acc update self(state%multilayer%h_layer)
-         !$acc update self(state%multilayer%tracers(it_s)%hTr)
+         ! [acc->omp-cpu] dropped device directive (host no-op): update
+         ! [acc->omp-cpu] dropped device directive (host no-op): update
+         ! [acc->omp-cpu] dropped device directive (host no-op): update
 
          h_tot = max(state%barotropic%stage_cv(kdry) - state%barotropic%bed_cv(kdry), 0.0_wp)
          if (h_tot <= DRY_TOLERANCE) then

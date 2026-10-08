@@ -79,7 +79,7 @@ contains
                               rho_layer, grid%nx_total, grid%ny_total, nz)
    end subroutine ml_equation_of_state_shared
 
-   pure subroutine ml_equation_of_state(h_layer, hS_layer, hT_layer, rho_layer, &
+   subroutine ml_equation_of_state(h_layer, hS_layer, hT_layer, rho_layer, &
                                         rho_0, beta_S, S_ref, &
                                         alpha_T, T_ref, &
                                         grid, nz)
@@ -118,8 +118,10 @@ contains
       ! baroclinic pressure gradient uses central differences that access
       ! ghost cell rho values.  Ghost cells already have valid h_layer
       ! (from ml_apply_layer_bcs) and hS/hT_layer (from ml_apply_tracer_bcs).
-      do concurrent(k=1:nz, j=1:ny, i=1:nx) &
-         local(S_k, T_k, inv_h)
+      !$omp parallel do collapse(3) private(S_k, T_k, inv_h)
+      do k = 1, nz
+      do j = 1, ny
+      do i = 1, nx
          if (h_layer(i, j, k) > DRY_TOLERANCE) then
             inv_h = 1.0_wp/h_layer(i, j, k)
             S_k = hS_layer(i, j, k)*inv_h
@@ -130,6 +132,9 @@ contains
          end if
          rho_layer(i, j, k) = rho_0 + beta_S*(S_k - S_ref) - alpha_T*(T_k - T_ref)
       end do
+      end do
+      end do
+      !$omp end parallel do
 
    end subroutine ml_equation_of_state
 
@@ -164,7 +169,7 @@ contains
       ny = grid%ny_total
       nghost = grid%nghost
 
-      !$acc update self(h_layer, rho_layer) if_present
+      ! [acc->omp-cpu] dropped device directive (host no-op): update
 
       H_max = 0.0_wp
       do j = nghost + 1, ny - nghost
@@ -180,7 +185,7 @@ contains
       if (H_max <= 0.0_wp) then
          rho_ref = rho_0
          rho_ref_dz = 0.0_wp
-         !$acc update device(rho_ref) if_present
+         ! [acc->omp-cpu] dropped device directive (host no-op): update
          return
       end if
 
@@ -232,7 +237,7 @@ contains
 
       deallocate (sum_rho)
 
-      !$acc update device(rho_ref) if_present
+      ! [acc->omp-cpu] dropped device directive (host no-op): update
    end subroutine ml_compute_reference_density
 
 end module rki_ml_eos

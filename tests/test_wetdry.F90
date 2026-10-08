@@ -59,9 +59,9 @@ contains
 
       call grid%init(NX - 2*NG, NY - 2*NG, NG, 1.0_wp, 1.0_wp)
 
-      !$acc data copy( h, hu, hv) copyin( flux_h, flux_hu, flux_hv)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call compute_update(h, hu, hv, flux_h, flux_hu, flux_hv, grid, 0.1_wp)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       scale = sqrt(2.0_wp)*h_thin**2/sqrt(h_thin**4 + eps**4)
       hu_expect = scale*2.0e-4_wp
@@ -105,9 +105,9 @@ contains
 
       call grid%init(NX - 2*NG, NY - 2*NG, NG, 1.0_wp, 1.0_wp)
 
-      !$acc data copy( h, hu, hv) copyin( flux_h, flux_hu, flux_hv)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call compute_update(h, hu, hv, flux_h, flux_hu, flux_hv, grid, 0.1_wp)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       call check(error, abs(h(4, 4) - h_original) < 1.0e-15_wp, &
                  "Small positive h preserved for mass conservation")
@@ -134,9 +134,9 @@ contains
 
       call grid%init(NX - 2*NG, NY - 2*NG, NG, 1.0_wp, 1.0_wp)
 
-      !$acc data copy( h, hu, hv) copyin( flux_h, flux_hu, flux_hv)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call compute_update(h, hu, hv, flux_h, flux_hu, flux_hv, grid, 0.1_wp)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       call check(error, abs(hu(4, 4) - 0.5_wp) < 1.0e-14_wp, &
                  "Wet cell momentum should be unchanged with zero flux")
@@ -174,11 +174,10 @@ contains
 
       call grid%init(NX - 2*NG, NY - 2*NG, NG, 1.0_wp, 1.0_wp)
 
-      !$acc data copyin( h, hu, hv, b) &
-      !$acc&     copyout( flux_h, flux_hu, flux_hv, mass_flux_x, mass_flux_y)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call compute_flux_hll(h, hu, hv, b, flux_h, flux_hu, flux_hv, &
                             mass_flux_x, mass_flux_y, grid)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       ! Check that fluxes are bounded
       max_flux = 0.0_wp
@@ -221,9 +220,9 @@ contains
 
       call grid%init(NX - 2*NG, NY - 2*NG, NG, DX, DY)
 
-      !$acc data copyin( h, hu, hv)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call compute_timestep(h, hu, hv, grid, CFL, dt)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       ! dt should be set by the wet cells: CFL / (u + sqrt(g*h)) * dx
       dt_expected_min = CFL*DX/(2.0_wp + sqrt(GRAVITY*1.0_wp))

@@ -17,19 +17,21 @@ module rki_array_utils
 
 contains
 
-   pure subroutine fill_gpu_1d(arr, val)
+   subroutine fill_gpu_1d(arr, val)
       ! assumed-shape-ok: generic fill utility; must accept any rank-1 slice
       real(wp), intent(inout) :: arr(:)
       real(wp), intent(in)    :: val
       integer :: i, lo, hi
       lo = lbound(arr, 1)
       hi = ubound(arr, 1)
-      do concurrent(i=lo:hi)
+      !$omp parallel do
+      do i = lo, hi
          arr(i) = val
       end do
+      !$omp end parallel do
    end subroutine fill_gpu_1d
 
-   pure subroutine fill_gpu_2d(arr, val)
+   subroutine fill_gpu_2d(arr, val)
       ! assumed-shape-ok: generic fill utility; must accept any rank-2 slice
       real(wp), intent(inout) :: arr(:, :)
       real(wp), intent(in)    :: val
@@ -38,12 +40,16 @@ contains
       hi1 = ubound(arr, 1)
       lo2 = lbound(arr, 2)
       hi2 = ubound(arr, 2)
-      do concurrent(j=lo2:hi2, i=lo1:hi1)
+      !$omp parallel do collapse(2)
+      do j = lo2, hi2
+      do i = lo1, hi1
          arr(i, j) = val
       end do
+      end do
+      !$omp end parallel do
    end subroutine fill_gpu_2d
 
-   pure subroutine fill_gpu_3d(arr, val)
+   subroutine fill_gpu_3d(arr, val)
       ! assumed-shape-ok: generic fill utility; must accept any rank-3 slice
       real(wp), intent(inout) :: arr(:, :, :)
       real(wp), intent(in)    :: val
@@ -54,9 +60,15 @@ contains
       hi2 = ubound(arr, 2)
       lo3 = lbound(arr, 3)
       hi3 = ubound(arr, 3)
-      do concurrent(k=lo3:hi3, j=lo2:hi2, i=lo1:hi1)
+      !$omp parallel do collapse(3)
+      do k = lo3, hi3
+      do j = lo2, hi2
+      do i = lo1, hi1
          arr(i, j, k) = val
       end do
+      end do
+      end do
+      !$omp end parallel do
    end subroutine fill_gpu_3d
 
 end module rki_array_utils

@@ -306,12 +306,16 @@ contains
       ! solver_enter_data) and in standalone unit tests (nothing mapped):
       ! OpenMP target is strict and demands explicit map() when the data
       ! isn't already on device, unlike OpenACC's implicit copy.
-      do concurrent(j=j_lo:j_hi, i=i_lo:i_hi) local(h_ij) reduce(+:acc)
+      !$omp parallel do collapse(2) private(h_ij)
+      do j = j_lo, j_hi
+      do i = i_lo, i_hi
          h_ij = s%barotropic%h(i, j)
          if (h_ij > 0.0_wp .and. h_ij < 1.0e6_wp) then
             acc = acc + h_ij*cell_area
          end if
       end do
+      end do
+      !$omp end parallel do
 
       mass = acc
    end function compute_total_mass
@@ -368,7 +372,10 @@ contains
 
       ! Explicit present_or_copyin (as in compute_total_mass) so the kernel
       ! works in both production and unit-test contexts.
-      do concurrent(k=1:nz, j=j_lo:j_hi, i=i_lo:i_hi) local(h_ijk) reduce(+:acc_h, acc_S, acc_T)
+      !$omp parallel do collapse(3) private(h_ijk)
+      do k = 1, nz
+      do j = j_lo, j_hi
+      do i = i_lo, i_hi
          h_ijk = h_layer(i, j, k)
          ! Skip NaN / dry-cell garbage with the same guard as mass.
          if (h_ijk > 0.0_wp .and. h_ijk < 1.0e6_wp) then
@@ -377,6 +384,9 @@ contains
             acc_T = acc_T + hT_layer(i, j, k)
          end if
       end do
+      end do
+      end do
+      !$omp end parallel do
 
       sum_h = acc_h
       sum_hS = acc_S

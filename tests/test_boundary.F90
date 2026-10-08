@@ -53,9 +53,9 @@ contains
 
       call grid%init(nx - 2*ng, ny - 2*ng, ng, 1.0_wp, 1.0_wp)
 
-      !$acc data copy( h, hu, hv, b)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call apply_boundary_conditions(h, hu, hv, b, grid, bc)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
    end subroutine apply_bc_wrapper
 
    subroutine test_wall_normal(error)

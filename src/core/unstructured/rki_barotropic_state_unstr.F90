@@ -198,22 +198,14 @@ contains
 
       ! Conserved + bathymetry + height: read first, then written.  Backup
       ! arrays are also copyin so test setups can pre-fill them.
-      !$acc enter data copyin(this%stage_cv, this%xmom_cv, this%ymom_cv, &
-      !$acc&                  this%bed_cv, this%height_cv, &
-      !$acc&                  this%stage_eu, this%xmom_eu, this%ymom_eu, &
-      !$acc&                  this%stage_backup, this%xmom_backup, this%ymom_backup, &
-      !$acc&                  this%chapman_eta_old)
+      ! [acc->omp-cpu] dropped device directive (host no-op): enter data
 
       ! Pure scratch / written-before-read: create-only.
-      !$acc enter data create(this%x_centroid_work, this%y_centroid_work, &
-      !$acc&                  this%stage_ev, this%xmom_ev, this%ymom_ev, &
-      !$acc&                  this%bed_ev, this%height_ev, &
-      !$acc&                  this%xmom_siu, this%ymom_siu, &
-      !$acc&                  this%mass_flux_e)
+      ! [acc->omp-cpu] dropped device directive (host no-op): enter data
       ! `max_speed` feeds the CFL reduction; copyin so a defined value
       ! is present if the timestep kernel runs before the flux kernel
       ! (production paths overwrite it every flux pass).
-      !$acc enter data copyin(this%max_speed)
+      ! [acc->omp-cpu] dropped device directive (host no-op): enter data
    end subroutine unstr_barotropic_enter_data
 
    subroutine unstr_barotropic_exit_data(this)
@@ -222,19 +214,10 @@ contains
       !! caller `state_unstr_exit_data`).
       class(unstr_barotropic_state_t), intent(inout) :: this
 
-      !$acc exit data copyout(this%stage_cv, this%xmom_cv, this%ymom_cv, &
-      !$acc&                  this%height_cv, &
-      !$acc&                  this%stage_ev, this%xmom_ev, this%ymom_ev, &
-      !$acc&                  this%bed_ev, this%height_ev, &
-      !$acc&                  this%stage_eu, this%xmom_eu, this%ymom_eu, &
-      !$acc&                  this%stage_backup, this%xmom_backup, this%ymom_backup, &
-      !$acc&                  this%max_speed)
-      !$acc exit data delete(this%chapman_eta_old)
+      ! [acc->omp-cpu] dropped device directive (host no-op): exit data
+      ! [acc->omp-cpu] dropped device directive (host no-op): exit data
 
-      !$acc exit data delete(this%bed_cv, &
-      !$acc&                 this%x_centroid_work, this%y_centroid_work, &
-      !$acc&                 this%xmom_siu, this%ymom_siu, &
-      !$acc&                 this%mass_flux_e)
+      ! [acc->omp-cpu] dropped device directive (host no-op): exit data
    end subroutine unstr_barotropic_exit_data
 
 end module rki_barotropic_state_unstr

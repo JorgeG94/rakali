@@ -64,13 +64,8 @@ contains
       ! after this call.  `if_present` makes the routine usable on a
       ! host-only state too (e.g. in unit tests where the caller never
       ! enters a data region).
-      !$acc update self(state%barotropic%h, state%barotropic%hu, &
-      !$acc&            state%barotropic%hv, state%barotropic%b) if_present
-      !$acc update self(state%barotropic%flux_h(lo_i:hi_i, lo_j:hi_j), &
-      !$acc&            state%barotropic%flux_hu(lo_i:hi_i, lo_j:hi_j), &
-      !$acc&            state%barotropic%flux_hv(lo_i:hi_i, lo_j:hi_j), &
-      !$acc&            state%barotropic%mass_flux_x(lo_i:hi_i, lo_j:hi_j), &
-      !$acc&            state%barotropic%mass_flux_y(lo_i:hi_i, lo_j:hi_j)) if_present
+      ! [acc->omp-cpu] dropped device directive (host no-op): update
+      ! [acc->omp-cpu] dropped device directive (host no-op): update
 
       ! Cell-centre coordinates with the interior origin at x=y=0; ghost
       ! cells land at negative indices.

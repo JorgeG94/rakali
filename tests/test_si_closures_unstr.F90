@@ -127,13 +127,13 @@ contains
       height_cv = real(nz, wp)*2.0_wp
       nsteps = nint(t_end/dt)
 
-      !$acc data copyin(h, hu, hv, rho, ustar_s, ustar_b, height_cv) copy(tke, eps, nut, kt)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       do istep = 1, nsteps
          call ml_keps_update_unstr_impl(nz, N, h, hu, hv, rho, tke, eps, nut, kt, &
                                         ustar_s, ustar_b, height_cv, 1025.0_wp, dt, &
                                         .false., KEPS_STAB_CONSTANT)
       end do
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
       nut_out = nut
    end subroutine run_frozen_column
 
@@ -164,29 +164,29 @@ contains
       kt = 1.0e-4_wp
       height_cv = real(NZ, wp)*2.0_wp
 
-      !$acc data copyin(h, rho, hv, height_cv) copy(hu, tke, eps, nut, kt, ustar_s, ustar_b)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       ! Spin up 20 large steps with strong wall forcing.
       ustar_s = 0.05_wp
       ustar_b = 0.05_wp
-      !$acc update device(ustar_s, ustar_b)
+      ! [acc->omp-cpu] dropped device directive (host no-op): update
       do istep = 1, 20
          call ml_keps_update_unstr_impl(NZ, N, h, hu, hv, rho, tke, eps, nut, kt, &
                                         ustar_s, ustar_b, height_cv, 1025.0_wp, DT, &
                                         .false., KEPS_STAB_CONSTANT)
       end do
-      !$acc update self(tke)
+      ! [acc->omp-cpu] dropped device directive (host no-op): update
       tke_spun = tke(NZ/2, 4)
       ! Shock off: kill the walls AND the shear; decay 100 large steps.
       ustar_s = 0.0_wp
       ustar_b = 0.0_wp
       hu = 0.0_wp
-      !$acc update device(ustar_s, ustar_b, hu)
+      ! [acc->omp-cpu] dropped device directive (host no-op): update
       do istep = 1, 100
          call ml_keps_update_unstr_impl(NZ, N, h, hu, hv, rho, tke, eps, nut, kt, &
                                         ustar_s, ustar_b, height_cv, 1025.0_wp, DT, &
                                         .false., KEPS_STAB_CONSTANT)
       end do
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       call check(error, all(tke >= K_MIN) .and. all(eps >= EPS_MIN), &
                  "k / eps (unstr) dropped below positivity floors under shock-off decay")
@@ -348,8 +348,7 @@ contains
          end do
       end block
 
-      !$acc update self(state%barotropic%stage_cv, &
-      !$acc&            state%multilayer%keps_tke, state%multilayer%keps_eps)
+      ! [acc->omp-cpu] dropped device directive (host no-op): update
 
       call state_unstr_exit_data(state)
       call mesh_unstr_exit_data(mesh)
@@ -507,8 +506,7 @@ contains
          call solver_unstr_step(state, mesh, dt)
       end do
 
-      !$acc update self(state%multilayer%hu_layer, &
-      !$acc&            state%multilayer%keps_tke, state%multilayer%keps_eps)
+      ! [acc->omp-cpu] dropped device directive (host no-op): update
       call state_unstr_exit_data(state)
       call mesh_unstr_exit_data(mesh)
 
@@ -608,7 +606,7 @@ contains
       nz_ml = state%multilayer%nz_ml
       nco = mesh%ncells_owned
       associate (hl_leaf => state%multilayer%h_layer)
-         !$acc update self(hl_leaf)
+         ! [acc->omp-cpu] dropped device directive (host no-op): update
       end associate
       associate (ht_leaf => state%multilayer%tracers(state%multilayer%idx_temperature)%hTr, &
                  hs_leaf => state%multilayer%tracers(state%multilayer%idx_salinity)%hTr, &
@@ -622,7 +620,7 @@ contains
                hs_leaf(k, c) = S_SEED*hl(k, c)
             end do
          end do
-         !$acc update device(ht_leaf, hs_leaf)
+         ! [acc->omp-cpu] dropped device directive (host no-op): update
       end associate
 
       ! Record initial total salt (owned cells).  Host hTr/h_layer are
@@ -645,7 +643,7 @@ contains
       associate (ht_leaf => state%multilayer%tracers(state%multilayer%idx_temperature)%hTr, &
                  hs_leaf => state%multilayer%tracers(state%multilayer%idx_salinity)%hTr, &
                  hl_leaf => state%multilayer%h_layer)
-         !$acc update self(ht_leaf, hs_leaf, hl_leaf)
+         ! [acc->omp-cpu] dropped device directive (host no-op): update
       end associate
 
       call state_unstr_exit_data(state)
@@ -724,13 +722,12 @@ contains
          t_col0(c) = sum(hT(:, c))
       end do
 
-      !$acc data copyin(h, hu, hv, rho, heat, evap, ustar, bflux, bld) &
-      !$acc&     copy(hS, hT)
+      ! [acc->omp-cpu] dropped device directive (host no-op): data
       call si_unstr_kpp_diffusion_tracers(NZ, NZ + 1, N, N, h, hu, hv, hS, hT, &
                                           rho, 1025.0_wp, 0.01_wp, 1.0e-5_wp, &
                                           1.0e-5_wp, 5.0_wp, 6.3_wp, heat, evap, &
                                           CP_WATER, ustar, bflux, bld, DT)
-      !$acc end data
+      ! [acc->omp-cpu] dropped device directive (host no-op): end data
 
       s_err = 0.0_wp
       t_err = 0.0_wp

@@ -364,23 +364,23 @@ contains
    subroutine si_unstr_state_enter_data_impl(this)
       type(semi_implicit_state_unstr_t), intent(inout) :: this
 
-      !$acc enter data copyin(this%eta, this%eta_r, this%eta_p, this%eta_Ap, this%eta_z)
-      !$acc enter data copyin(this%eta_diag, this%u_edge, this%u_star, this%Hf_edge)
-      !$acc enter data copyin(this%eta_ghost_edge, this%u_n_edge)
+      ! [acc->omp-cpu] dropped device directive (host no-op): enter data
+      ! [acc->omp-cpu] dropped device directive (host no-op): enter data
+      ! [acc->omp-cpu] dropped device directive (host no-op): enter data
 
       ! P3.2 (3D multilayer) column slots — only when allocated.
       if (this%nz_si > 1) then
-         !$acc enter data copyin(this%g_col_u, this%g_col_v, this%r_col)
-         !$acc enter data copyin(this%nu_iface, this%Hhat_cell)
-         !$acc enter data copyin(this%Gbar_cell_x, this%Gbar_cell_y)
-         !$acc enter data copyin(this%u_edge_layer, this%mass_flux_edge)
+         ! [acc->omp-cpu] dropped device directive (host no-op): enter data
+         ! [acc->omp-cpu] dropped device directive (host no-op): enter data
+         ! [acc->omp-cpu] dropped device directive (host no-op): enter data
+         ! [acc->omp-cpu] dropped device directive (host no-op): enter data
       end if
 
       ! P3.3 Casulli wet/dry slots — only when allocated.
       if (this%wetdry) then
-         !$acc enter data copyin(this%b_sub, this%b_min, this%a_wet)
-         !$acc enter data copyin(this%mass_diag, this%v_cell, this%rhs_d)
-         !$acc enter data copyin(this%newton_dz, this%newton_F, this%newton_Jeta)
+         ! [acc->omp-cpu] dropped device directive (host no-op): enter data
+         ! [acc->omp-cpu] dropped device directive (host no-op): enter data
+         ! [acc->omp-cpu] dropped device directive (host no-op): enter data
       end if
 
       ! Aggregation-MG hierarchy — only when built (precond == MG).
@@ -404,22 +404,22 @@ contains
 
       ! P3.3 Casulli wet/dry slots — reverse order of enter.
       if (this%wetdry) then
-         !$acc exit data delete(this%newton_dz, this%newton_F, this%newton_Jeta)
-         !$acc exit data delete(this%mass_diag, this%v_cell, this%rhs_d)
-         !$acc exit data delete(this%b_sub, this%b_min, this%a_wet)
+         ! [acc->omp-cpu] dropped device directive (host no-op): exit data
+         ! [acc->omp-cpu] dropped device directive (host no-op): exit data
+         ! [acc->omp-cpu] dropped device directive (host no-op): exit data
       end if
 
       ! P3.2 (3D multilayer) column slots — reverse order of enter.
       if (this%nz_si > 1) then
-         !$acc exit data delete(this%u_edge_layer, this%mass_flux_edge)
-         !$acc exit data delete(this%Gbar_cell_x, this%Gbar_cell_y)
-         !$acc exit data delete(this%nu_iface, this%Hhat_cell)
-         !$acc exit data delete(this%g_col_u, this%g_col_v, this%r_col)
+         ! [acc->omp-cpu] dropped device directive (host no-op): exit data
+         ! [acc->omp-cpu] dropped device directive (host no-op): exit data
+         ! [acc->omp-cpu] dropped device directive (host no-op): exit data
+         ! [acc->omp-cpu] dropped device directive (host no-op): exit data
       end if
 
-      !$acc exit data delete(this%eta_ghost_edge, this%u_n_edge)
-      !$acc exit data delete(this%eta_diag, this%u_edge, this%u_star, this%Hf_edge)
-      !$acc exit data delete(this%eta, this%eta_r, this%eta_p, this%eta_Ap, this%eta_z)
+      ! [acc->omp-cpu] dropped device directive (host no-op): exit data
+      ! [acc->omp-cpu] dropped device directive (host no-op): exit data
+      ! [acc->omp-cpu] dropped device directive (host no-op): exit data
    end subroutine si_unstr_state_exit_data_impl
 
    function parse_si_precond_unstr(tag) result(precond)
