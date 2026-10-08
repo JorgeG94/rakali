@@ -653,7 +653,7 @@ contains
       !! Transcribed from the verified prototype roquet_spv_eos.py.  One
       !! sqrt for zs (shared by SV and both derivatives) + one sqrt for
       !! the ct_from_pt poly normalisation.
-      !$acc routine seq
+      !$omp declare target
       real(wp), intent(in) :: T_pt, S_sp, p
       real(wp), intent(out) :: sv, dsv_dt_model, dsv_ds_model
 
@@ -811,7 +811,7 @@ contains
       !! The `else` is unreachable-by-contract: `eos_validate`
       !! guarantees `eos%variant` is in the device-callable set at
       !! configure time (device code cannot `error stop`).
-      !$acc routine seq
+      !$omp declare target
       type(eos_t), intent(in) :: eos
          !! Shared EOS handle (variant + scalar coeffs), by value.
       real(wp), intent(in) :: T, S
@@ -859,7 +859,7 @@ contains
       !! diagnostics.  Takes the shared `eos_t` handle by value.
       !! The `else` is unreachable-by-contract (see
       !! `eos_validate`).
-      !$acc routine seq
+      !$omp declare target
       type(eos_t), intent(in) :: eos
       real(wp), intent(in) :: T, S, p
       real(wp) :: rho
@@ -903,7 +903,7 @@ contains
       !! polynomial slots in later as an `eos%variant ==
       !! EOS_VARIANT_ROQUET_SPV / EOS_VARIANT_TEOS10` branch, mirroring
       !! the dispatch in `eos_density_point`.
-      !$acc routine seq
+      !$omp declare target
       type(eos_t), intent(in) :: eos
          !! Shared EOS handle (variant tag), by value.  Read for the
          !! future per-variant dispatch; every variant takes the linear

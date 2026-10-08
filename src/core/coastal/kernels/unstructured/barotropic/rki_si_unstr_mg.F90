@@ -587,7 +587,7 @@ contains
    subroutine level_coeffs_to_device(lev)
       !! Push the host-refreshed coefficient arrays to the device.
       type(agglom_level_unstr_t), intent(inout) :: lev
-      !$acc update device(lev%ke, lev%diag, lev%dinv)
+      !$omp target update to(lev%ke, lev%diag, lev%dinv)
    end subroutine level_coeffs_to_device
 
    ! ======================================================================
@@ -832,13 +832,13 @@ contains
 
    subroutine agglom_level_enter_data_impl(lev)
       type(agglom_level_unstr_t), intent(inout) :: lev
-      !$acc enter data copyin(lev%nbr, lev%n_nbr, lev%ke, lev%diag, lev%dinv)
-      !$acc enter data copyin(lev%e, lev%r, lev%tmp)
+      !$omp target enter data map(to: lev%nbr, lev%n_nbr, lev%ke, lev%diag, lev%dinv)
+      !$omp target enter data map(to: lev%e, lev%r, lev%tmp)
       if (allocated(lev%agg_of)) then
-         !$acc enter data copyin(lev%agg_of)
+         !$omp target enter data map(to: lev%agg_of)
       end if
       if (allocated(lev%mstart)) then
-         !$acc enter data copyin(lev%mstart, lev%mlist)
+         !$omp target enter data map(to: lev%mstart, lev%mlist)
       end if
    end subroutine agglom_level_enter_data_impl
 
@@ -853,13 +853,13 @@ contains
    subroutine agglom_level_exit_data_impl(lev)
       type(agglom_level_unstr_t), intent(inout) :: lev
       if (allocated(lev%mstart)) then
-         !$acc exit data delete(lev%mstart, lev%mlist)
+         !$omp target exit data map(delete: lev%mstart, lev%mlist)
       end if
       if (allocated(lev%agg_of)) then
-         !$acc exit data delete(lev%agg_of)
+         !$omp target exit data map(delete: lev%agg_of)
       end if
-      !$acc exit data delete(lev%e, lev%r, lev%tmp)
-      !$acc exit data delete(lev%nbr, lev%n_nbr, lev%ke, lev%diag, lev%dinv)
+      !$omp target exit data map(delete: lev%e, lev%r, lev%tmp)
+      !$omp target exit data map(delete: lev%nbr, lev%n_nbr, lev%ke, lev%diag, lev%dinv)
    end subroutine agglom_level_exit_data_impl
 
    subroutine agglom_level_destroy(this)

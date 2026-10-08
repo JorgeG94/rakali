@@ -137,10 +137,10 @@ contains
 
       hu_before = hu_layer(5, 5, 1)
 
-      !$acc data copyin(h_layer) copy(hu_layer, hv_layer)
+      !$omp target data map(to: h_layer) map(tofrom: hu_layer, hv_layer)
       call ml_apply_bottom_friction(h_layer, hu_layer, hv_layer, &
                                     manning_n, .false., 0.0_wp, test_grid, NZ, dt)
-      !$acc end data
+      !$omp end target data
 
       ! Bottom layer (k=1) should be damped
       call check(error, hu_layer(5, 5, 1) < hu_before, &
@@ -185,10 +185,10 @@ contains
       denom = 1.0_wp + dt*cf*abs(u_b)/h_k
       hu_expected = h_k*u_b/denom
 
-      !$acc data copyin(h_layer) copy(hu_layer, hv_layer)
+      !$omp target data map(to: h_layer) map(tofrom: hu_layer, hv_layer)
       call ml_apply_bottom_friction(h_layer, hu_layer, hv_layer, &
                                     manning_n, .false., 0.0_wp, test_grid, NZ, dt)
-      !$acc end data
+      !$omp end target data
 
       call check(error, abs(hu_layer(ic, jc, 1) - hu_expected) < 1.0e-12_wp, &
                  "bottom friction matches analytical formula with non-uniform sigma")
@@ -213,9 +213,9 @@ contains
       call ensure_grid()
       h_layer = H_total/real(NZ, wp)
 
-      !$acc data copyin(h_layer) copyout(h)
+      !$omp target data map(to: h_layer) map(from: h)
       call ml_compute_total_depth(h_layer, h, test_grid, NZ)
-      !$acc end data
+      !$omp end target data
 
       do j = NG + 1, NY - NG
          do i = NG + 1, NX - NG
@@ -264,11 +264,11 @@ contains
       rho_layer = rho_0
 
       call ensure_grid()
-      !$acc data copyin(h_layer, hS_layer, hT_layer) copy(rho_layer)
+      !$omp target data map(to: h_layer, hS_layer, hT_layer) map(tofrom: rho_layer)
       call ml_equation_of_state(h_layer, hS_layer, hT_layer, rho_layer, &
                                 rho_0, beta_S, S_ref, alpha_T, T_ref, &
                                 test_grid, NZ)
-      !$acc end data
+      !$omp end target data
 
       ! Wet cell should have density updated
       call check(error, abs(rho_layer(6, 6, 1) - (rho_0 + beta_S*35.0_wp)) < 1.0e-10_wp, &
@@ -300,10 +300,10 @@ contains
       w = -999.0_wp
 
       call ensure_grid()
-      !$acc data copyin(h_layer, hu_layer, hv_layer, dsig) copyout(w)
+      !$omp target data map(to: h_layer, hu_layer, hv_layer, dsig) map(from: w)
       call ml_compute_vertical_velocity(h_layer, hu_layer, hv_layer, dsig, w, &
                                         test_grid, NZ)
-      !$acc end data
+      !$omp end target data
 
       ! Bottom: w(k=1) = 0 by construction
       call check(error, abs(w(5, 5, 1)) < 1.0e-14_wp, &
@@ -352,10 +352,10 @@ contains
       w = -999.0_wp
 
       call ensure_grid()
-      !$acc data copyin(h_layer, hu_layer, hv_layer, dsig) copyout(w)
+      !$omp target data map(to: h_layer, hu_layer, hv_layer, dsig) map(from: w)
       call ml_compute_vertical_velocity(h_layer, hu_layer, hv_layer, dsig, w, &
                                         test_grid, NZ)
-      !$acc end data
+      !$omp end target data
 
       ! Interior interfaces (all of w) must vanish to round-off.
       wmax = 0.0_wp
@@ -408,10 +408,10 @@ contains
       w = -999.0_wp
 
       call ensure_grid()
-      !$acc data copyin(h_layer, hu_layer, hv_layer, dsig) copyout(w)
+      !$omp target data map(to: h_layer, hu_layer, hv_layer, dsig) map(from: w)
       call ml_compute_vertical_velocity(h_layer, hu_layer, hv_layer, dsig, w, &
                                         test_grid, NZ)
-      !$acc end data
+      !$omp end target data
 
       ! Bed BC: w(1) = 0 exactly.
       call check(error, abs(w(5, 5, 1)) < 1.0e-14_wp, "diasurface w bed = 0")
@@ -468,10 +468,10 @@ contains
       hu_total_before = sum(hu_layer(5, 5, :))
 
       call ensure_grid()
-      !$acc data copyin(h_layer, w) copy(hu_layer, hv_layer)
+      !$omp target data map(to: h_layer, w) map(tofrom: hu_layer, hv_layer)
       call ml_compute_vertical_exchange(h_layer, hu_layer, hv_layer, &
                                         w, test_grid, NZ, dt)
-      !$acc end data
+      !$omp end target data
 
       hu_total_after = sum(hu_layer(5, 5, :))
 
@@ -519,13 +519,13 @@ contains
       hu_before = hu_layer(ic, jc, 1)
 
       call ensure_grid()
-      !$acc data copyin(h_layer, rho_layer) copy(hu_layer, hv_layer)
+      !$omp target data map(to: h_layer, rho_layer) map(tofrom: hu_layer, hv_layer)
       call ml_baroclinic_pressure_gradient_jacobian(h_layer, rho_layer, &
                                                     hu_layer, hv_layer, &
                                                     rho_0, &
                                                     TEST_RHO_REF, TEST_RHO_REF_DZ, TEST_NZ_REF, &
                                                     test_grid, NZ, dt)
-      !$acc end data
+      !$omp end target data
 
       ! Dry cell should not have been modified
       call check(error, abs(hu_layer(ic, jc, 1) - hu_before) < 1.0e-14_wp, &
@@ -564,11 +564,11 @@ contains
       hu_before = hu_layer(ic, jc, 1)
 
       call ensure_grid()
-      !$acc data copyin(h_layer, rho_layer) copy(hu_layer, hv_layer)
+      !$omp target data map(to: h_layer, rho_layer) map(tofrom: hu_layer, hv_layer)
       call ml_vertical_viscosity(h_layer, hu_layer, hv_layer, rho_layer, &
                                  rho_0, nu_max, nu_bg, ri_alpha, &
                                  test_grid, NZ, dt)
-      !$acc end data
+      !$omp end target data
 
       call check(error, abs(hu_layer(ic, jc, 1) - hu_before) < 1.0e-14_wp, &
                  "vmix skips dry column with non-uniform sigma")
@@ -610,14 +610,14 @@ contains
       expected_delta = dt*Q/(rho_0*CP_WATER)
 
       call ensure_grid()
-      !$acc data copyin(h_layer, hu_layer, hv_layer, heat_flux_2d, evap_minus_precip_2d) &
-      !$acc&     copy(hS_layer, hT_layer)
+      !$omp target data map(to: h_layer, hu_layer, hv_layer, heat_flux_2d, evap_minus_precip_2d) &
+      !$omp&     map(tofrom: hS_layer, hT_layer)
       call ml_apply_surface_tracer_fluxes(hS_layer, hT_layer, h_layer, &
                                           hu_layer, hv_layer, &
                                           heat_flux_2d, evap_minus_precip_2d, &
                                           .false., .false., &
                                           rho_0, CP_WATER, test_grid, NZ, dt)
-      !$acc end data
+      !$omp end target data
 
       call check(error, abs((hT_layer(5, 5, NZ) - hT_before) - expected_delta) < 1.0e-12_wp, &
                  "surface heat flux correct with non-uniform sigma")
@@ -663,12 +663,12 @@ contains
       call ensure_grid()
       call tracer_scratch_ensure(scratch, NX, NY, NZ, &
                                  want_ppm=.false., want_upwind=.true., want_hdiff=.false.)
-      !$acc data copyin(h_layer, hu_layer, hv_layer, mass_flux_x, mass_flux_y) &
-      !$acc&     copy(hTr_layer)
+      !$omp target data map(to: h_layer, hu_layer, hv_layer, mass_flux_x, mass_flux_y) &
+      !$omp&     map(tofrom: hTr_layer)
       call ml_advect_tracer(h_layer, hu_layer, hv_layer, &
                             mass_flux_x, mass_flux_y, &
                             hTr_layer, scratch%adv_hTr_snap, test_grid, NZ, dt)
-      !$acc end data
+      !$omp end target data
       call tracer_scratch_destroy(scratch)
 
       call check(error, abs(hTr_layer(ic, jc, 1) - hTr_before) < 1.0e-14_wp, &

@@ -394,12 +394,12 @@ contains
          t_bc = state%time + SI_UNSTR_THETA*dt
          eta_bc = TIDE_AMP*sin(om*t_bc)
          state%bc_eta_ext(WEST_GROUP) = eta_bc
-         !$acc update device(state%bc_eta_ext)
+         !$omp target update to(state%bc_eta_ext)
          call solver_unstr_step(state, mesh, dt)
          iters_last = state%si%cg_iters
       end do
 
-      !$acc update self(state%barotropic%stage_cv)
+      !$omp target update from(state%barotropic%stage_cv)
       do k = 1, mesh%ncells_owned
          eta_out(k) = state%barotropic%stage_cv(k)
       end do

@@ -582,8 +582,8 @@ contains
          state%multilayer%evap_mass_sink, state%multilayer%evap_latent_cooling, &
          state%multilayer%rho_0, CP_WATER, state%grid, NZ, DT_K)
 
-      !$acc update self(state%multilayer%tracers(state%multilayer%idx_temperature)%hTr, &
-      !$acc&            state%multilayer%h_layer)
+      !$omp target update from(state%multilayer%tracers(state%multilayer%idx_temperature)%hTr, &
+      !$omp&            state%multilayer%h_layer)
       call solver_exit_data(state)
 
       call check(error,.not. state%multilayer%registry_locked, &

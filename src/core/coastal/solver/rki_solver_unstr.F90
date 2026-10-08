@@ -616,15 +616,15 @@ contains
 
       integer :: it
 
-      !$acc update self(state%barotropic%stage_cv, state%barotropic%xmom_cv, state%barotropic%ymom_cv, &
-      !$acc&            state%barotropic%height_cv)
+      !$omp target update from(state%barotropic%stage_cv, state%barotropic%xmom_cv, state%barotropic%ymom_cv, &
+      !$omp&            state%barotropic%height_cv)
 
       if (state%use_multilayer) then
-         !$acc update self(state%multilayer%h_layer, state%multilayer%hu_layer, state%multilayer%hv_layer)
+         !$omp target update from(state%multilayer%h_layer, state%multilayer%hu_layer, state%multilayer%hv_layer)
 
          if (allocated(state%multilayer%tracers)) then
             do it = 1, size(state%multilayer%tracers)
-               !$acc update self(state%multilayer%tracers(it)%hTr)
+               !$omp target update from(state%multilayer%tracers(it)%hTr)
             end do
          end if
       end if
@@ -641,9 +641,9 @@ contains
       !! exit/enter round-trip.
       type(unstr_state_t), intent(inout) :: state
 
-      !$acc update device(state%forcing%heat_flux, &
-      !$acc&              state%forcing%evap_minus_precip, &
-      !$acc&              state%forcing%wind_x, state%forcing%wind_y)
+      !$omp target update to(state%forcing%heat_flux, &
+      !$omp&              state%forcing%evap_minus_precip, &
+      !$omp&              state%forcing%wind_x, state%forcing%wind_y)
    end subroutine solver_unstr_update_forcing
 
 end module rki_solver_unstr

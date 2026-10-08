@@ -176,10 +176,9 @@ contains
       ! !$acc parallel loop (not do concurrent): the body calls
       ! vcoord_target_dz_column from another module (rki_vcoord), which
       ! NVHPC stdpar GPU offload does not lower from inside do concurrent.
-      !$acc parallel loop collapse(2) &
-      !$acc&   present(h, hu, hv, hu_pre, hv_pre, dsig, z_ref, &
-      !$acc&           h_layer, hu_layer, hv_layer, remap_dz_old) &
-      !$acc&   private(k, h_val, du, dv, h_k_old, u_k, v_k, dz_new)
+      !$omp target teams distribute parallel do collapse(2) &
+      !$omp& &
+      !$omp&   private(k, h_val, du, dv, h_k_old, u_k, v_k, dz_new)
       do j = nghost + 1, ny - nghost
       do i = nghost + 1, nx - nghost
 
@@ -279,10 +278,10 @@ contains
       ny = grid%ny_total
       nghost = grid%nghost
 
-      !$acc parallel loop collapse(2) &
-      !$acc&   present(hTr, h, h_layer, remap_dz_old) &
-      !$acc&   private(k, h_val, h_old_total, scale_old, tr_col_sum, &
-      !$acc&           tr_col_mean, dz_old_col, dz_new_col, tr_old, tr_new)
+      !$omp target teams distribute parallel do collapse(2) &
+      !$omp& &
+      !$omp&   private(k, h_val, h_old_total, scale_old, tr_col_sum, &
+      !$omp&           tr_col_mean, dz_old_col, dz_new_col, tr_old, tr_new)
       do j = nghost + 1, ny - nghost
       do i = nghost + 1, nx - nghost
 
@@ -369,11 +368,10 @@ contains
          remap_dz_old(i, j, k) = h_layer(i, j, k)
       end do
 
-      !$acc parallel loop collapse(2) &
-      !$acc&   present(h, hu, hv, hu_pre, hv_pre, z_ref_col, &
-      !$acc&           h_layer, hu_layer, hv_layer, remap_dz_old) &
-      !$acc&   private(k, h_val, du, dv, h_k_old, u_k, v_k, &
-      !$acc&           dz_new, z_ref_local)
+      !$omp target teams distribute parallel do collapse(2) &
+      !$omp& &
+      !$omp&   private(k, h_val, du, dv, h_k_old, u_k, v_k, &
+      !$omp&           dz_new, z_ref_local)
       do j = nghost + 1, ny - nghost
       do i = nghost + 1, nx - nghost
 
@@ -934,10 +932,9 @@ contains
       nghost = grid%nghost
 
       ! West ghost cells
-      !$acc parallel loop collapse(2) &
-      !$acc&   present(h_layer, hu_layer, hv_layer, h, hu, hv, dsig, &
-      !$acc&           vcoord_z_ref_col) &
-      !$acc&   private(k, dz_col, z_ref_local)
+      !$omp target teams distribute parallel do collapse(2) &
+      !$omp& &
+      !$omp&   private(k, dz_col, z_ref_local)
       do g = 1, nghost
          do j = 1, ny
             do k = 0, nz
@@ -955,10 +952,9 @@ contains
       end do
 
       ! East ghost cells
-      !$acc parallel loop collapse(2) &
-      !$acc&   present(h_layer, hu_layer, hv_layer, h, hu, hv, dsig, &
-      !$acc&           vcoord_z_ref_col) &
-      !$acc&   private(k, dz_col, z_ref_local)
+      !$omp target teams distribute parallel do collapse(2) &
+      !$omp& &
+      !$omp&   private(k, dz_col, z_ref_local)
       do g = nx - nghost + 1, nx
          do j = 1, ny
             do k = 0, nz
@@ -976,10 +972,9 @@ contains
       end do
 
       ! South ghost cells
-      !$acc parallel loop collapse(2) &
-      !$acc&   present(h_layer, hu_layer, hv_layer, h, hu, hv, dsig, &
-      !$acc&           vcoord_z_ref_col) &
-      !$acc&   private(k, dz_col, z_ref_local)
+      !$omp target teams distribute parallel do collapse(2) &
+      !$omp& &
+      !$omp&   private(k, dz_col, z_ref_local)
       do g = 1, nghost
          do i = 1, nx
             do k = 0, nz
@@ -997,10 +992,9 @@ contains
       end do
 
       ! North ghost cells
-      !$acc parallel loop collapse(2) &
-      !$acc&   present(h_layer, hu_layer, hv_layer, h, hu, hv, dsig, &
-      !$acc&           vcoord_z_ref_col) &
-      !$acc&   private(k, dz_col, z_ref_local)
+      !$omp target teams distribute parallel do collapse(2) &
+      !$omp& &
+      !$omp&   private(k, dz_col, z_ref_local)
       do g = ny - nghost + 1, ny
          do i = 1, nx
             do k = 0, nz
@@ -1035,19 +1029,19 @@ contains
 
       if (need_alloc) then
          allocate (remap_dz_old(nx, ny, nz))
-         !$acc enter data create(remap_dz_old)
+         !$omp target enter data map(alloc: remap_dz_old)
       end if
    end subroutine remap_workspace_ensure
 
    subroutine remap_workspace_cleanup()
       if (.not. allocated(remap_dz_old)) return
-      !$acc exit data delete(remap_dz_old)
+      !$omp target exit data map(delete: remap_dz_old)
       deallocate (remap_dz_old)
    end subroutine remap_workspace_cleanup
 
    pure logical function all_neighbours_wet(h_col, h_col_ip1, h_col_im1, &
                                             h_col_jp1, h_col_jm1) result(all_wet)
-      !$acc routine seq
+      !$omp declare target
       !! Returns `.true.` if the centre cell and its four face-neighbours all
       !! have total column depth >= `ML_MIN_DEPTH`. Guards central-difference
       !! operators (BPG, divergence) against spurious gradients at dry cells.
@@ -1082,7 +1076,7 @@ contains
 
       integer :: i, j
 
-      !$acc update self(b) if_present
+      !$omp target update from(b)
 
       do j = 1, grid%ny_total
          do i = 1, grid%nx_total
@@ -1096,7 +1090,7 @@ contains
          end do
       end do
 
-      !$acc update device(vcoord_z_ref_col) if_present
+      !$omp target update to(vcoord_z_ref_col)
    end subroutine ml_build_vcoord_zstar_full
 
    subroutine ml_dynamics_workspaces_cleanup()

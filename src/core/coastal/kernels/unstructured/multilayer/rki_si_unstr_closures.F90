@@ -493,7 +493,7 @@ contains
    end subroutine si_unstr_kpp_diffusion_tracers
 
    pure subroutine si_unstr_tridiag_noflux(a, b, c, rhs, cpv, n)
-      !$acc routine seq
+      !$omp declare target
       !! In-place Thomas solve over rows 1..n with the boundary closure
       !! baked into a/b/c by the caller (the no-flux tridiagonal closure).
       !! `rhs` returns the solution.

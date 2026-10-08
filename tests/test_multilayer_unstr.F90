@@ -2626,7 +2626,7 @@ contains
       ! ---- Pass 1: B2 OFF (rho_ref_dz = 0 -> helper falls back to rho_0) ----
       state%multilayer%rho_ref_dz = 0.0_wp
       state%multilayer%rho_ref = state%multilayer%rho_0
-      !$acc update device(state%multilayer%rho_ref)
+      !$omp target update to(state%multilayer%rho_ref)
       call ml_equation_of_state_unstr(state)
       call ml_baroclinic_pressure_gradient_unstr(state, mesh, DT)
 
@@ -2738,9 +2738,9 @@ contains
       ! before the test captures the pre-snapshot, otherwise the
       ! "bit-exact unchanged" checks compare host-zero against device
       ! values and fail spuriously even with zero forcing.
-      !$acc update self(state%multilayer%h_layer, &
-      !$acc&            state%multilayer%tracers(state%multilayer%idx_salinity)%hTr, &
-      !$acc&            state%multilayer%tracers(state%multilayer%idx_temperature)%hTr)
+      !$omp target update from(state%multilayer%h_layer, &
+      !$omp&            state%multilayer%tracers(state%multilayer%idx_salinity)%hTr, &
+      !$omp&            state%multilayer%tracers(state%multilayer%idx_temperature)%hTr)
    end subroutine setup_surface_flux_state
 
    subroutine test_surface_zero_forcing_no_change(error)
@@ -2766,8 +2766,8 @@ contains
       call ml_apply_surface_tracer_fluxes_unstr(state, &
                                                 state%multilayer%tracers(state%multilayer%idx_salinity)%hTr, &
                                                 state%multilayer%tracers(state%multilayer%idx_temperature)%hTr)
-      !$acc update self(state%multilayer%tracers(state%multilayer%idx_salinity)%hTr, &
-      !$acc&            state%multilayer%tracers(state%multilayer%idx_temperature)%hTr)
+      !$omp target update from(state%multilayer%tracers(state%multilayer%idx_salinity)%hTr, &
+      !$omp&            state%multilayer%tracers(state%multilayer%idx_temperature)%hTr)
 
       do cell = 1, mesh%ncells_owned
          do k = 1, NZ
@@ -2812,12 +2812,12 @@ contains
 
       Q = 200.0_wp  ! W/m^2
       state%forcing%heat_flux = Q
-      !$acc update device(state%forcing%heat_flux)
+      !$omp target update to(state%forcing%heat_flux)
 
       call ml_apply_surface_tracer_fluxes_unstr(state, &
                                                 state%multilayer%tracers(state%multilayer%idx_salinity)%hTr, &
                                                 state%multilayer%tracers(state%multilayer%idx_temperature)%hTr)
-      !$acc update self(state%multilayer%tracers(state%multilayer%idx_temperature)%hTr)
+      !$omp target update from(state%multilayer%tracers(state%multilayer%idx_temperature)%hTr)
 
       expected_delta = state%dt*Q/(state%multilayer%rho_0*CP_WATER)
 
@@ -2851,12 +2851,12 @@ contains
       hT_pre = state%multilayer%tracers(state%multilayer%idx_temperature)%hTr
 
       state%forcing%heat_flux = 500.0_wp
-      !$acc update device(state%forcing%heat_flux)
+      !$omp target update to(state%forcing%heat_flux)
 
       call ml_apply_surface_tracer_fluxes_unstr(state, &
                                                 state%multilayer%tracers(state%multilayer%idx_salinity)%hTr, &
                                                 state%multilayer%tracers(state%multilayer%idx_temperature)%hTr)
-      !$acc update self(state%multilayer%tracers(state%multilayer%idx_temperature)%hTr)
+      !$omp target update from(state%multilayer%tracers(state%multilayer%idx_temperature)%hTr)
 
       do cell = 1, mesh%ncells_owned
          do k = 1, NZ - 1
@@ -2891,12 +2891,12 @@ contains
 
       E = 1.0e-6_wp  ! m/s, ~0.1 mm/h -- comfortably in the linear regime
       state%forcing%evap_minus_precip = E
-      !$acc update device(state%forcing%evap_minus_precip)
+      !$omp target update to(state%forcing%evap_minus_precip)
 
       call ml_apply_surface_tracer_fluxes_unstr(state, &
                                                 state%multilayer%tracers(state%multilayer%idx_salinity)%hTr, &
                                                 state%multilayer%tracers(state%multilayer%idx_temperature)%hTr)
-      !$acc update self(state%multilayer%tracers(state%multilayer%idx_salinity)%hTr)
+      !$omp target update from(state%multilayer%tracers(state%multilayer%idx_salinity)%hTr)
 
       do cell = 1, mesh%ncells_owned
          h_top = state%multilayer%h_layer(NZ, cell)
@@ -2945,14 +2945,14 @@ contains
 
       E = 1.0e-3_wp
       state%forcing%evap_minus_precip = E
-      !$acc update device(state%forcing%evap_minus_precip)
+      !$omp target update to(state%forcing%evap_minus_precip)
 
       call ml_apply_surface_tracer_fluxes_unstr(state, &
                                                 state%multilayer%tracers(state%multilayer%idx_salinity)%hTr, &
                                                 state%multilayer%tracers(state%multilayer%idx_temperature)%hTr)
-      !$acc update self(state%multilayer%h_layer, &
-      !$acc&            state%multilayer%tracers(state%multilayer%idx_salinity)%hTr, &
-      !$acc&            state%multilayer%tracers(state%multilayer%idx_temperature)%hTr)
+      !$omp target update from(state%multilayer%h_layer, &
+      !$omp&            state%multilayer%tracers(state%multilayer%idx_salinity)%hTr, &
+      !$omp&            state%multilayer%tracers(state%multilayer%idx_temperature)%hTr)
 
       dh_eff = E*state%dt
       do cell = 1, mesh%ncells_owned
@@ -3015,12 +3015,12 @@ contains
 
       E = 1.0e-3_wp
       state%forcing%evap_minus_precip = E
-      !$acc update device(state%forcing%evap_minus_precip)
+      !$omp target update to(state%forcing%evap_minus_precip)
 
       call ml_apply_surface_tracer_fluxes_unstr(state, &
                                                 state%multilayer%tracers(state%multilayer%idx_salinity)%hTr, &
                                                 state%multilayer%tracers(state%multilayer%idx_temperature)%hTr)
-      !$acc update self(state%multilayer%tracers(state%multilayer%idx_temperature)%hTr)
+      !$omp target update from(state%multilayer%tracers(state%multilayer%idx_temperature)%hTr)
 
       latent_gain = RHO_WATER*LATENT_HEAT_VAPORIZATION/(state%multilayer%rho_0*CP_WATER)
 

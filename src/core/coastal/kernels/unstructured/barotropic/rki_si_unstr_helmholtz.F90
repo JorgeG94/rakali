@@ -59,7 +59,7 @@ contains
       !! the back-substituted edge transports satisfy discrete continuity
       !! identically (mass consistency).  `!$acc routine seq` for device
       !! do-concurrent bodies.
-      !$acc routine seq
+      !$omp declare target
       real(wp), intent(in) :: hf
          !! Frozen edge effective depth Hf_e.
       real(wp), intent(in) :: eta_c, eta_nbr
@@ -77,7 +77,7 @@ contains
       !! the gated-mean rule (`face_depth_wetdry`) in its
       !! all-wet limit — it reduces EXACTLY to the linear edge depth.  Wall edges never call
       !! this (Hf stays 0); Dirichlet edges pass the ghost `h`.
-      !$acc routine seq
+      !$omp declare target
       real(wp), intent(in) :: h_c, h_nbr
       real(wp) :: hf
 

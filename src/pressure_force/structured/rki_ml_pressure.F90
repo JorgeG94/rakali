@@ -35,7 +35,7 @@ module rki_ml_pressure
 contains
 
    pure function rho_ref_at(z, rho_ref, dz, nz_ref, rho_0) result(rho)
-      !$acc routine seq
+      !$omp declare target
       !! Linear interpolation of the reference-density profile at depth z.
       !! Out-of-range falls back to the nearest endpoint. When the profile
       !! is unset (`dz == 0`) returns rho_0 so the kernel reduces to the
@@ -519,7 +519,7 @@ contains
    end subroutine ml_baroclinic_pressure_gradient_jacobian
    pure logical function all_neighbours_wet(h_col, h_col_ip1, h_col_im1, &
                                             h_col_jp1, h_col_jm1) result(all_wet)
-      !$acc routine seq
+      !$omp declare target
       !! Returns `.true.` if the centre cell and its four face-neighbours all
       !! have a total column depth at or above `ML_MIN_DEPTH`.
       !!

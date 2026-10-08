@@ -35,9 +35,9 @@ contains
 
       call grid%init(nx - 2*ng, ny - 2*ng, ng, 1.0_wp, 1.0_wp)
 
-      !$acc data copy( h, hu, hv)
+      !$omp target data map(tofrom:  h, hu, hv)
       call apply_sponge(h, hu, hv, grid, dt, bc)
-      !$acc end data
+      !$omp end target data
    end subroutine call_sponge
 
    subroutine test_noop_zero_width(error)

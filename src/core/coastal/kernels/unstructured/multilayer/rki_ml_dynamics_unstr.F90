@@ -94,7 +94,7 @@ contains
             real(wp) :: z_ref_local(0:NZ_STACK_MAX)
             integer :: kk
             h_min = state%multilayer%vcoord%zstar_h_min
-            !$acc parallel loop present(state) private(k, kk, H_col, dz_col, z_ref_local)
+            !$omp target teams distribute parallel do private(k, kk, H_col, dz_col, z_ref_local)
             do cell = 1, n
                H_col = state%barotropic%height_cv(cell)
                do kk = 0, nz
@@ -111,7 +111,7 @@ contains
             end do
          end block
       else
-         !$acc parallel loop present(state) private(k, H_col, dz_col)
+         !$omp target teams distribute parallel do private(k, H_col, dz_col)
          do cell = 1, n
             H_col = state%barotropic%height_cv(cell)
             call vcoord_target_dz_column(coord_type, nz, H_col, &
@@ -146,7 +146,7 @@ contains
       n_surf = state%multilayer%vcoord%zstar_n_surf
       stretching = state%multilayer%vcoord%zstar_stretching
 
-      !$acc update self(state%barotropic%bed_cv) if_present
+      !$omp target update from(state%barotropic%bed_cv)
 
       do cell = 1, n
          ! Clamp to non-negative bed depth: bed_cv > 0 (dry land) gives a
@@ -157,7 +157,7 @@ contains
                                       state%multilayer%vcoord_z_ref_col(:, cell))
       end do
 
-      !$acc update device(state%multilayer%vcoord_z_ref_col) if_present
+      !$omp target update to(state%multilayer%vcoord_z_ref_col)
    end subroutine ml_build_vcoord_zstar_full_unstr
 
    pure subroutine ml_save_barotropic_pre_unstr(state)
@@ -269,8 +269,8 @@ contains
       ! `!$acc parallel loop` (not do concurrent): the column body calls
       ! vcoord_target_dz_column cross-module, which NVHPC stdpar won't
       ! lower from do concurrent.
-      !$acc parallel loop present(state) &
-      !$acc&   private(k, h_val, du, dv, h_k_old, u_k, v_k, h_k_new, dz_new)
+      !$omp target teams distribute parallel do &
+      !$omp&   private(k, h_val, du, dv, h_k_old, u_k, v_k, h_k_new, dz_new)
       do cell = 1, n
 
          ! `height_cv` is stale after the barotropic update; recompute
@@ -349,9 +349,9 @@ contains
       n = state%ncells_total
       remap_method = state%multilayer%vcoord%remap_method
 
-      !$acc parallel loop present(state, hTr_layer) &
-      !$acc&   private(k, h_val, h_old_total, scale_old, tr_col_sum, &
-      !$acc&           tr_col_mean, dz_old_col, dz_new_col, tr_old, tr_new)
+      !$omp target teams distribute parallel do &
+      !$omp&   private(k, h_val, h_old_total, scale_old, tr_col_sum, &
+      !$omp&           tr_col_mean, dz_old_col, dz_new_col, tr_old, tr_new)
       do cell = 1, n
 
          ! Recompute H_new from stage_cv - bed_cv (height_cv is stale right
@@ -431,9 +431,9 @@ contains
          state%multilayer%remap_dz_old(k, cell) = state%multilayer%h_layer(k, cell)
       end do
 
-      !$acc parallel loop present(state) &
-      !$acc&   private(k, kk, h_val, du, dv, h_k_old, u_k, v_k, h_k_new, &
-      !$acc&           dz_new, z_ref_local)
+      !$omp target teams distribute parallel do &
+      !$omp&   private(k, kk, h_val, du, dv, h_k_old, u_k, v_k, h_k_new, &
+      !$omp&           dz_new, z_ref_local)
       do cell = 1, n
 
          h_val = state%barotropic%stage_cv(cell) - state%barotropic%bed_cv(cell)

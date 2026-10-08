@@ -241,7 +241,7 @@ contains
       hsum0 = mass_sum(state, mesh)
       do n = 1, n_steps
          call solver_unstr_step(state, mesh, dt)
-         !$acc update self(state%barotropic%stage_cv)
+         !$omp target update from(state%barotropic%stage_cv)
          eta_series(n) = state%barotropic%stage_cv(kprobe) - H0
          hdrift = max(hdrift, abs(mass_sum(state, mesh) - hsum0))
       end do

@@ -191,7 +191,7 @@ contains
    pure function ke_cell(h, hu, hv, area) result(v)
       !! Per-cell kinetic energy 0.5·(hu²+hv²)/h·area; 0 on a dry / NaN-guarded
       !! cell (the additive identity, so it drops out of the KE sum).
-      !$acc routine seq
+      !$omp declare target
       real(wp), intent(in) :: h, hu, hv, area
       real(wp) :: v
       if (h > 0.0_wp .and. h < 1.0e6_wp) then
@@ -204,7 +204,7 @@ contains
    pure function cfl_cell(h, hu, hv, dt, idx, idy) result(v)
       !! Per-cell advective CFL |u|·dt·idx + |v|·dt·idy; 0 on a dry / NaN-guarded
       !! cell (≤ any real CFL, so it drops out of the max).
-      !$acc routine seq
+      !$omp declare target
       real(wp), intent(in) :: h, hu, hv, dt, idx, idy
       real(wp) :: v
       if (h > 0.0_wp .and. h < 1.0e6_wp) then

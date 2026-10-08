@@ -41,7 +41,7 @@ contains
 
       if (need_alloc) then
          allocate (horvisc_hu_pre(nx, ny, nz), horvisc_hv_pre(nx, ny, nz))
-         !$acc enter data create(horvisc_hu_pre, horvisc_hv_pre)
+         !$omp target enter data map(alloc: horvisc_hu_pre, horvisc_hv_pre)
       end if
    end subroutine horvisc_workspace_ensure
 
@@ -56,14 +56,14 @@ contains
       else if (size(bih_lap_u, 1) /= nx .or. &
                size(bih_lap_u, 2) /= ny .or. &
                size(bih_lap_u, 3) /= nz) then
-         !$acc exit data delete(bih_lap_u, bih_lap_v)
+         !$omp target exit data map(delete: bih_lap_u, bih_lap_v)
          deallocate (bih_lap_u, bih_lap_v)
          need_alloc = .true.
       end if
 
       if (need_alloc) then
          allocate (bih_lap_u(nx, ny, nz), bih_lap_v(nx, ny, nz))
-         !$acc enter data create(bih_lap_u, bih_lap_v)
+         !$omp target enter data map(alloc: bih_lap_u, bih_lap_v)
       end if
    end subroutine bih_workspace_ensure
 
@@ -71,11 +71,11 @@ contains
       !! Release the lateral-viscosity persistent workspaces.  Called by the
       !! solver at simulation end.
       if (allocated(horvisc_hu_pre)) then
-         !$acc exit data delete(horvisc_hu_pre, horvisc_hv_pre)
+         !$omp target exit data map(delete: horvisc_hu_pre, horvisc_hv_pre)
          deallocate (horvisc_hu_pre, horvisc_hv_pre)
       end if
       if (allocated(bih_lap_u)) then
-         !$acc exit data delete(bih_lap_u, bih_lap_v)
+         !$omp target exit data map(delete: bih_lap_u, bih_lap_v)
          deallocate (bih_lap_u, bih_lap_v)
       end if
    end subroutine ml_horizontal_viscosity_cleanup

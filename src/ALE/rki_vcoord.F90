@@ -223,10 +223,10 @@ contains
       !! Map read-only coordinate arrays to GPU.
       class(vcoord_t), intent(inout) :: self
       if (allocated(self%dsig_target)) then
-         !$acc enter data copyin(self%dsig_target)
+         !$omp target enter data map(to: self%dsig_target)
       end if
       if (allocated(self%z_ref)) then
-         !$acc enter data copyin(self%z_ref)
+         !$omp target enter data map(to: self%z_ref)
       end if
    end subroutine vcoord_enter_data
 
@@ -234,10 +234,10 @@ contains
       !! Unmap coordinate arrays from GPU.
       class(vcoord_t), intent(inout) :: self
       if (allocated(self%dsig_target)) then
-         !$acc exit data delete(self%dsig_target)
+         !$omp target exit data map(delete: self%dsig_target)
       end if
       if (allocated(self%z_ref)) then
-         !$acc exit data delete(self%z_ref)
+         !$omp target exit data map(delete: self%z_ref)
       end if
    end subroutine vcoord_exit_data
 
@@ -253,7 +253,7 @@ contains
 
    pure subroutine vcoord_target_dz_column(coord_type, nz, H, dsig, z_ref, &
                                            depth_transition, blend_width, dz)
-      !$acc routine seq
+      !$omp declare target
       !! Compute target layer thicknesses for a single water column.
       !! Pure, called from `do concurrent` (one thread per column).
       !!
@@ -515,7 +515,7 @@ contains
 
    pure subroutine vcoord_target_dz_column_zstar_full(nz, H, z_ref_col, &
                                                       h_min, dz)
-      !$acc routine seq
+      !$omp declare target
       !! Compute target layer thicknesses for VCOORD_ZSTAR_FULL.
       !! Inputs: z_ref_col(0:nz) local reference (top-down, 0=surface, nz=h_bed);
       !! H current total depth (m) = h_bed + η; h_min vanishing-layer floor (m).

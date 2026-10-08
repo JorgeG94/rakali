@@ -271,7 +271,7 @@ contains
       !! Frozen wet/dry edge conveyance: the arithmetic-mean water depth of
       !! the two adjacent cells, gated to 0 by the max-eta/sill wet test.
       !! `!$acc routine seq` so device do-concurrent bodies can call it.
-      !$acc routine seq
+      !$omp declare target
       real(wp), intent(in) :: eta_l, eta_r, b_l, b_r
       real(wp) :: hf
 

@@ -227,7 +227,7 @@ contains
    end subroutine ml_keps_update
 
    pure subroutine keps_tridiag_solve(a, b, c, rhs, cp, ni)
-      !$acc routine seq
+      !$omp declare target
       !! In-place Thomas solve over interfaces 1..ni with zero-gradient
       !! (no-flux) boundary rows.  `rhs` returns the solution; `cp` scratch.
       integer, intent(in) :: ni
@@ -492,7 +492,7 @@ contains
    end subroutine ml_keps_friction_velocities
 
    pure subroutine keps_tridiag_solve_noflux(a, b, c, rhs, cp, n)
-      !$acc routine seq
+      !$omp declare target
       !! In-place Thomas solve over rows 1..n with the boundary closure
       !! already baked into a/b/c by the caller (no row override, unlike
       !! `keps_tridiag_solve`).  `rhs` returns the solution; `cp` scratch.

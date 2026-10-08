@@ -147,7 +147,7 @@ contains
          end do
       end do
 
-      !$acc enter data copyin(h_layer, hS_layer, hT_layer) create(rho_layer)
+      !$omp target enter data map(to: h_layer, hS_layer, hT_layer) map(alloc: rho_layer)
 
       do r = 1, n_warmup
          call ml_equation_of_state(h_layer, hS_layer, hT_layer, rho_layer, &
@@ -166,7 +166,7 @@ contains
       call tmr%stop()
       elapsed = tmr%get_elapsed_time()
 
-      !$acc update self(rho_layer)
+      !$omp target update from(rho_layer)
 
       drift = 0.0_wp
       do k = 1, nz
@@ -177,7 +177,7 @@ contains
          end do
       end do
 
-      !$acc exit data delete(h_layer, hS_layer, hT_layer, rho_layer)
+      !$omp target exit data map(delete: h_layer, hS_layer, hT_layer, rho_layer)
 
       cl_rate = real(ncells, wp)*real(nz, wp)*real(n_timed, wp)/elapsed
       bytes_per_step = real(ncells, wp)*real(nz, wp)*4.0_wp*8.0_wp

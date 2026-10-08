@@ -156,7 +156,7 @@ contains
          call ml_save_barotropic_pre_unstr(state)
          ! xmom_pre / ymom_pre are mapped `create` (workspace), so the kernel
          ! writes them on the device but exit_data won't copy them back.
-         !$acc update self(state%multilayer%xmom_pre, state%multilayer%ymom_pre)
+         !$omp target update from(state%multilayer%xmom_pre, state%multilayer%ymom_pre)
          call map_out(mesh, state)
 
          call check(error, all(abs(state%multilayer%xmom_pre - state%barotropic%xmom_cv) < 1.0e-12_wp), &
@@ -197,7 +197,7 @@ contains
          state%barotropic%xmom_cv = state%barotropic%xmom_cv + DHU
 
          call map_in(mesh, state)
-         !$acc update device(state%multilayer%xmom_pre, state%multilayer%ymom_pre)
+         !$omp target update to(state%multilayer%xmom_pre, state%multilayer%ymom_pre)
          call ml_distribute_barotropic_unstr(state)
          call map_out(mesh, state)
 
@@ -326,9 +326,9 @@ contains
          call ml_save_layer_state_unstr(state)
          ! h_layer0 / hu_layer0 / hv_layer0 are workspace (delete-mapped on exit),
          ! so explicitly pull them back before the host-side assertion.
-         !$acc update self(state%multilayer%h_layer0, &
-         !$acc&            state%multilayer%hu_layer0, &
-         !$acc&            state%multilayer%hv_layer0)
+         !$omp target update from(state%multilayer%h_layer0, &
+         !$omp&            state%multilayer%hu_layer0, &
+         !$omp&            state%multilayer%hv_layer0)
          call map_out(mesh, state)
 
          call check(error, all(abs(state%multilayer%h_layer - state%multilayer%h_layer0) < 1.0e-12_wp), &
@@ -394,7 +394,7 @@ contains
 
       call map_in(mesh, state)
       ! mass_flux_e is `create`-mapped — push the host zero into the device buffer.
-      !$acc update device(state%barotropic%mass_flux_e)
+      !$omp target update to(state%barotropic%mass_flux_e)
       call ml_compute_vertical_velocity_unstr(state, mesh)
       call map_out(mesh, state)
 
@@ -426,7 +426,7 @@ contains
          call map_in(mesh, state)
          ! mass_flux_e is `create`-mapped on enter_data — push the host pattern
          ! to the device buffer so the kernel actually sees a non-zero divergence.
-         !$acc update device(state%barotropic%mass_flux_e)
+         !$omp target update to(state%barotropic%mass_flux_e)
          call ml_compute_vertical_velocity_unstr(state, mesh)
          call map_out(mesh, state)
 

@@ -59,9 +59,9 @@ contains
 
       call grid%init(NX - 2*NG, NY - 2*NG, NG, 1.0_wp, 1.0_wp)
 
-      !$acc data copy( h, hu, hv) copyin( flux_h, flux_hu, flux_hv)
+      !$omp target data map(tofrom:  h, hu, hv) map(to:  flux_h, flux_hu, flux_hv)
       call compute_update(h, hu, hv, flux_h, flux_hu, flux_hv, grid, 0.1_wp)
-      !$acc end data
+      !$omp end target data
 
       scale = sqrt(2.0_wp)*h_thin**2/sqrt(h_thin**4 + eps**4)
       hu_expect = scale*2.0e-4_wp
@@ -105,9 +105,9 @@ contains
 
       call grid%init(NX - 2*NG, NY - 2*NG, NG, 1.0_wp, 1.0_wp)
 
-      !$acc data copy( h, hu, hv) copyin( flux_h, flux_hu, flux_hv)
+      !$omp target data map(tofrom:  h, hu, hv) map(to:  flux_h, flux_hu, flux_hv)
       call compute_update(h, hu, hv, flux_h, flux_hu, flux_hv, grid, 0.1_wp)
-      !$acc end data
+      !$omp end target data
 
       call check(error, abs(h(4, 4) - h_original) < 1.0e-15_wp, &
                  "Small positive h preserved for mass conservation")
@@ -134,9 +134,9 @@ contains
 
       call grid%init(NX - 2*NG, NY - 2*NG, NG, 1.0_wp, 1.0_wp)
 
-      !$acc data copy( h, hu, hv) copyin( flux_h, flux_hu, flux_hv)
+      !$omp target data map(tofrom:  h, hu, hv) map(to:  flux_h, flux_hu, flux_hv)
       call compute_update(h, hu, hv, flux_h, flux_hu, flux_hv, grid, 0.1_wp)
-      !$acc end data
+      !$omp end target data
 
       call check(error, abs(hu(4, 4) - 0.5_wp) < 1.0e-14_wp, &
                  "Wet cell momentum should be unchanged with zero flux")
@@ -174,11 +174,11 @@ contains
 
       call grid%init(NX - 2*NG, NY - 2*NG, NG, 1.0_wp, 1.0_wp)
 
-      !$acc data copyin( h, hu, hv, b) &
-      !$acc&     copyout( flux_h, flux_hu, flux_hv, mass_flux_x, mass_flux_y)
+      !$omp target data map(to:  h, hu, hv, b) &
+      !$omp&     map(from:  flux_h, flux_hu, flux_hv, mass_flux_x, mass_flux_y)
       call compute_flux_hll(h, hu, hv, b, flux_h, flux_hu, flux_hv, &
                             mass_flux_x, mass_flux_y, grid)
-      !$acc end data
+      !$omp end target data
 
       ! Check that fluxes are bounded
       max_flux = 0.0_wp
@@ -221,9 +221,9 @@ contains
 
       call grid%init(NX - 2*NG, NY - 2*NG, NG, DX, DY)
 
-      !$acc data copyin( h, hu, hv)
+      !$omp target data map(to:  h, hu, hv)
       call compute_timestep(h, hu, hv, grid, CFL, dt)
-      !$acc end data
+      !$omp end target data
 
       ! dt should be set by the wet cells: CFL / (u + sqrt(g*h)) * dx
       dt_expected_min = CFL*DX/(2.0_wp + sqrt(GRAVITY*1.0_wp))

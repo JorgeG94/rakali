@@ -199,7 +199,7 @@ contains
    end subroutine flux_one_cell
 
    pure subroutine compute_chapman_eta_target(state, mesh, k, i, hle, eta_target)
-      !$acc routine seq
+      !$omp declare target
       !! Orlanski-style radiating ghost stage at boundary edge `i` of
       !! cell `k`. Advects the persistent `chapman_eta_old(i, k)` toward
       !! the interior centroid stage along the phase speed, writes back
@@ -253,7 +253,7 @@ contains
    ! them (cross-module `!$acc routine seq` would be a real call).
 
    pure subroutine rotate_to_normal_impl(q, n1, n2)
-      !$acc routine seq
+      !$omp declare target
       real(wp), intent(inout) :: q(3)
       real(wp), intent(in) :: n1, n2
       real(wp) :: q1, q2
@@ -266,7 +266,7 @@ contains
 
    pure subroutine compute_velocity_terms_impl(h, h_edge, uh_raw, vh_raw, &
                                                u, uh, v, vh)
-      !$acc routine seq
+      !$omp declare target
       real(wp), intent(in) :: h, h_edge, uh_raw, vh_raw
       real(wp), intent(out) :: u, uh, v, vh
       real(wp) :: inv_h_edge
@@ -286,7 +286,7 @@ contains
    end subroutine compute_velocity_terms_impl
 
    pure function compute_s_max_impl(u_left, u_right, c_left, c_right) result(s)
-      !$acc routine seq
+      !$omp declare target
       real(wp), intent(in) :: u_left, u_right, c_left, c_right
       real(wp) :: s
 
@@ -295,7 +295,7 @@ contains
    end function compute_s_max_impl
 
    pure function compute_s_min_impl(u_left, u_right, c_left, c_right) result(s)
-      !$acc routine seq
+      !$omp declare target
       real(wp), intent(in) :: u_left, u_right, c_left, c_right
       real(wp) :: s
 
@@ -307,7 +307,7 @@ contains
                                            u_left, u_right, &
                                            v_left, v_right, &
                                            c_left, c_right) result(fr)
-      !$acc routine seq
+      !$omp declare target
       integer, intent(in) :: low_froude_mode
       real(wp), intent(in) :: u_left, u_right, v_left, v_right, c_left, c_right
       real(wp) :: fr
@@ -338,7 +338,7 @@ contains
       n1, n2, &
       low_froude_mode, &
       edgeflux, max_speed, pressure_flux)
-      !$acc routine seq
+      !$omp declare target
       real(wp), intent(in) :: q_left(3), q_right(3)
       real(wp), intent(in) :: h_left, h_right
       real(wp), intent(in) :: hle, hre
@@ -417,7 +417,7 @@ contains
       q_left, n1, n2, zl, hle, bc_type, &
       eta_ext, un_ext, h_ext, Qn_ext, &
       q_right, zr, hre)
-      !$acc routine seq
+      !$omp declare target
       real(wp), intent(in) :: q_left(3)
       real(wp), intent(in) :: n1, n2
       real(wp), intent(in) :: zl, hle

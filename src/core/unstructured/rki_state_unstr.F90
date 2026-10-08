@@ -221,7 +221,7 @@ contains
       ! sub-objects' allocatables) attach to it below.  Without the
       ! parent map first, NVHPC stdpar can't dereference component
       ! arrays from inside a do-concurrent body.
-      !$acc enter data copyin(state)
+      !$omp target enter data map(to: state)
 
       call state%barotropic%enter_data()
       call state%forcing%enter_data()
@@ -251,10 +251,10 @@ contains
 
       integer :: it
 
-      !$acc enter data copyin(state%multilayer%tracers)
+      !$omp target enter data map(to: state%multilayer%tracers)
       do it = 1, size(state%multilayer%tracers)
-         !$acc enter data copyin(state%multilayer%tracers(it)%hTr, &
-         !$acc&                  state%multilayer%tracers(it)%hTr0)
+         !$omp target enter data map(to: state%multilayer%tracers(it)%hTr, &
+         !$omp&                  state%multilayer%tracers(it)%hTr0)
       end do
 
       ! The device map above is an element-by-element snapshot: growing
@@ -286,7 +286,7 @@ contains
       call state%barotropic%exit_data()
 
       ! Parent struct descriptor last.
-      !$acc exit data delete(state)
+      !$omp target exit data map(delete: state)
    end subroutine state_unstr_exit_data
 
    subroutine tracers_exit_data(state)
@@ -296,10 +296,10 @@ contains
       integer :: it
 
       do it = 1, size(state%multilayer%tracers)
-         !$acc exit data copyout(state%multilayer%tracers(it)%hTr)
-         !$acc exit data delete(state%multilayer%tracers(it)%hTr0)
+         !$omp target exit data map(from: state%multilayer%tracers(it)%hTr)
+         !$omp target exit data map(delete: state%multilayer%tracers(it)%hTr0)
       end do
-      !$acc exit data delete(state%multilayer%tracers)
+      !$omp target exit data map(delete: state%multilayer%tracers)
 
       state%multilayer%registry_locked = .false.
    end subroutine tracers_exit_data

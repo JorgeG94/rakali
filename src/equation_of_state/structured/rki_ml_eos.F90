@@ -164,7 +164,7 @@ contains
       ny = grid%ny_total
       nghost = grid%nghost
 
-      !$acc update self(h_layer, rho_layer) if_present
+      !$omp target update from(h_layer, rho_layer)
 
       H_max = 0.0_wp
       do j = nghost + 1, ny - nghost
@@ -180,7 +180,7 @@ contains
       if (H_max <= 0.0_wp) then
          rho_ref = rho_0
          rho_ref_dz = 0.0_wp
-         !$acc update device(rho_ref) if_present
+         !$omp target update to(rho_ref)
          return
       end if
 
@@ -232,7 +232,7 @@ contains
 
       deallocate (sum_rho)
 
-      !$acc update device(rho_ref) if_present
+      !$omp target update to(rho_ref)
    end subroutine ml_compute_reference_density
 
 end module rki_ml_eos

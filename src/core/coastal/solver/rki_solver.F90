@@ -141,41 +141,41 @@ contains
       ! state_t; otherwise attaching a sub-struct creates a "partial
       ! presence" condition that errors out when kernels reference state
       ! from an `!$acc parallel loop`.
-      !$acc enter data copyin(state)
+      !$omp target enter data map(to: state)
 
-      !$acc enter data copyin(state%barotropic%h, state%barotropic%hu, state%barotropic%hv, state%barotropic%b, &
-      !$acc&                  state%barotropic%flux_h, state%barotropic%flux_hu, state%barotropic%flux_hv, &
-      !$acc&                  state%barotropic%mass_flux_x, state%barotropic%mass_flux_y, &
-      !$acc&                  state%barotropic%h0, state%barotropic%hu0, state%barotropic%hv0)
+      !$omp target enter data map(to: state%barotropic%h, state%barotropic%hu, state%barotropic%hv, state%barotropic%b, &
+      !$omp&                  state%barotropic%flux_h, state%barotropic%flux_hu, state%barotropic%flux_hv, &
+      !$omp&                  state%barotropic%mass_flux_x, state%barotropic%mass_flux_y, &
+      !$omp&                  state%barotropic%h0, state%barotropic%hu0, state%barotropic%hv0)
 
       ! Surface forcing: value-type member, so only its allocatable arrays
       ! need explicit attaches (scalars/descriptors came with copyin(state)).
-      !$acc enter data copyin(state%forcing%wind_x, state%forcing%wind_y, &
-      !$acc&                  state%forcing%atm_pressure, &
-      !$acc&                  state%forcing%precipitation, &
-      !$acc&                  state%forcing%heat_flux, &
-      !$acc&                  state%forcing%evap_minus_precip)
+      !$omp target enter data map(to: state%forcing%wind_x, state%forcing%wind_y, &
+      !$omp&                  state%forcing%atm_pressure, &
+      !$omp&                  state%forcing%precipitation, &
+      !$omp&                  state%forcing%heat_flux, &
+      !$omp&                  state%forcing%evap_minus_precip)
 
       ! Chapman BC eta_old (one slot per cell along each edge). Always
       ! mapped because bc_init_chapman unconditionally allocates all four
       ! arrays; the kernel only reads them when the matching edge is
       ! BC_CHAPMAN.
-      !$acc enter data copyin(state%bc%eta_old_west, state%bc%eta_old_east, &
-      !$acc&                  state%bc%eta_old_south, state%bc%eta_old_north)
+      !$omp target enter data map(to: state%bc%eta_old_west, state%bc%eta_old_east, &
+      !$omp&                  state%bc%eta_old_south, state%bc%eta_old_north)
 
       ! Coupled hydrostatic multi-layer arrays
       if (state%use_multilayer) then
-         !$acc enter data copyin(state%multilayer%dsig_ml, state%multilayer%vcoord_z_ref, &
-         !$acc&                  state%multilayer%h_layer, state%multilayer%hu_layer, state%multilayer%hv_layer, &
-         !$acc&                  state%multilayer%h_layer0, state%multilayer%hu_layer0, state%multilayer%hv_layer0, &
-         !$acc&                  state%multilayer%w_ml, state%multilayer%hu_ml_pre, state%multilayer%hv_ml_pre, &
-         !$acc&                  state%multilayer%rho_layer, state%multilayer%rho_ref)
+         !$omp target enter data map(to: state%multilayer%dsig_ml, state%multilayer%vcoord_z_ref, &
+         !$omp&                  state%multilayer%h_layer, state%multilayer%hu_layer, state%multilayer%hv_layer, &
+         !$omp&                  state%multilayer%h_layer0, state%multilayer%hu_layer0, state%multilayer%hv_layer0, &
+         !$omp&                  state%multilayer%w_ml, state%multilayer%hu_ml_pre, state%multilayer%hv_ml_pre, &
+         !$omp&                  state%multilayer%rho_layer, state%multilayer%rho_ref)
          if (allocated(state%multilayer%vcoord_z_ref_col)) then
             ! associate hoists the leaf so the attach path is one-deep
             ! (ifx OpenMP-target chokes on deep `state%multilayer%X` chains
             ! in map clauses; enforced by openmp_portability_lint).
             associate (vref_col => state%multilayer%vcoord_z_ref_col)
-               !$acc enter data copyin(vref_col)
+               !$omp target enter data map(to: vref_col)
             end associate
          end if
 
@@ -185,7 +185,7 @@ contains
             associate (kpp_bl => state%multilayer%kpp_bl_depth, &
                        kpp_us => state%multilayer%kpp_u_star, &
                        kpp_bf => state%multilayer%kpp_buoy_flux)
-               !$acc enter data copyin(kpp_bl, kpp_us, kpp_bf)
+               !$omp target enter data map(to: kpp_bl, kpp_us, kpp_bf)
             end associate
          end if
 
@@ -199,13 +199,13 @@ contains
                        ke_kt => state%multilayer%keps_kt, &
                        ke_usb => state%multilayer%keps_ustar_b, &
                        ke_uss => state%multilayer%keps_ustar_s)
-               !$acc enter data copyin(ke_tke, ke_eps, ke_nut, ke_kt, ke_usb, ke_uss)
+               !$omp target enter data map(to: ke_tke, ke_eps, ke_nut, ke_kt, ke_usb, ke_uss)
             end associate
          end if
 
          if (allocated(state%multilayer%bed_sediment)) then
             associate (bed_sed => state%multilayer%bed_sediment)
-               !$acc enter data copyin(bed_sed)
+               !$omp target enter data map(to: bed_sed)
             end associate
          end if
 
@@ -259,21 +259,21 @@ contains
 
       ! Non-hydrostatic arrays
       if (state%use_nonhydrostatic) then
-         !$acc enter data copyin(state%nh%dsig, state%nh%u_layer, state%nh%v_layer, &
-         !$acc&                  state%nh%w, state%nh%q_nh, &
-         !$acc&                  state%nh%u_layer0, state%nh%v_layer0, state%nh%w0, &
-         !$acc&                  state%nh%cg_r, state%nh%cg_p, state%nh%cg_Ap, &
-         !$acc&                  state%nh%hu_pre, state%nh%hv_pre)
+         !$omp target enter data map(to: state%nh%dsig, state%nh%u_layer, state%nh%v_layer, &
+         !$omp&                  state%nh%w, state%nh%q_nh, &
+         !$omp&                  state%nh%u_layer0, state%nh%v_layer0, state%nh%w0, &
+         !$omp&                  state%nh%cg_r, state%nh%cg_p, state%nh%cg_Ap, &
+         !$omp&                  state%nh%hu_pre, state%nh%hv_pre)
          if (state%nh%nh_preconditioner) then
-            !$acc enter data copyin(state%nh%cg_z)
+            !$omp target enter data map(to: state%nh%cg_z)
          end if
       end if
 
       ! Mode splitting arrays
       if (allocated(state%nh%h_avg)) then
-         !$acc enter data create(state%nh%h_avg, state%nh%hu_avg, state%nh%hv_avg, &
-         !$acc&                  state%nh%h_bt0, state%nh%hu_bt0, state%nh%hv_bt0, &
-         !$acc&                  state%nh%baro_tend_x, state%nh%baro_tend_y)
+         !$omp target enter data map(alloc: state%nh%h_avg, state%nh%hu_avg, state%nh%hv_avg, &
+         !$omp&                  state%nh%h_bt0, state%nh%hu_bt0, state%nh%hv_bt0, &
+         !$omp&                  state%nh%baro_tend_x, state%nh%baro_tend_y)
       end if
 
    end subroutine solver_enter_data
@@ -284,35 +284,35 @@ contains
       type(state_t), intent(inout) :: state
          !! Solution state to retrieve from device
 
-      !$acc exit data copyout(state%barotropic%h, state%barotropic%hu, state%barotropic%hv)
+      !$omp target exit data map(from: state%barotropic%h, state%barotropic%hu, state%barotropic%hv)
       ! The Chapman BC's eta_old_* is PERSISTENT state (the previous step's
       ! boundary surface); it must round-trip, or every snapshot / restart
       ! write (which exits and re-enters the device data) would re-enter with
       ! a stale host copy.
-      !$acc exit data copyout(state%bc%eta_old_west, state%bc%eta_old_east, &
-      !$acc&                  state%bc%eta_old_south, state%bc%eta_old_north)
-      !$acc exit data delete(state%barotropic%b, state%barotropic%flux_h, state%barotropic%flux_hu, state%barotropic%flux_hv, &
-      !$acc&                 state%barotropic%mass_flux_x, state%barotropic%mass_flux_y, &
-      !$acc&                 state%barotropic%h0, state%barotropic%hu0, state%barotropic%hv0)
+      !$omp target exit data map(from: state%bc%eta_old_west, state%bc%eta_old_east, &
+      !$omp&                  state%bc%eta_old_south, state%bc%eta_old_north)
+      !$omp target exit data map(delete: state%barotropic%b, state%barotropic%flux_h, state%barotropic%flux_hu, state%barotropic%flux_hv, &
+      !$omp&                 state%barotropic%mass_flux_x, state%barotropic%mass_flux_y, &
+      !$omp&                 state%barotropic%h0, state%barotropic%hu0, state%barotropic%hv0)
 
       ! Surface forcing: only the allocatable arrays need detaching; the
       ! value-type forcing struct drops with the parent below.
-      !$acc exit data delete(state%forcing%wind_x, state%forcing%wind_y, &
-      !$acc&                 state%forcing%atm_pressure, &
-      !$acc&                 state%forcing%precipitation, &
-      !$acc&                 state%forcing%heat_flux, &
-      !$acc&                 state%forcing%evap_minus_precip)
+      !$omp target exit data map(delete: state%forcing%wind_x, state%forcing%wind_y, &
+      !$omp&                 state%forcing%atm_pressure, &
+      !$omp&                 state%forcing%precipitation, &
+      !$omp&                 state%forcing%heat_flux, &
+      !$omp&                 state%forcing%evap_minus_precip)
 
       ! Coupled hydrostatic multi-layer arrays
       if (state%use_multilayer) then
-         !$acc exit data copyout(state%multilayer%h_layer, state%multilayer%hu_layer, state%multilayer%hv_layer, &
-         !$acc&                 state%multilayer%w_ml, state%multilayer%rho_layer)
-         !$acc exit data delete(state%multilayer%dsig_ml, state%multilayer%vcoord_z_ref, &
-         !$acc&                 state%multilayer%h_layer0, state%multilayer%hu_layer0, state%multilayer%hv_layer0, &
-         !$acc&                 state%multilayer%hu_ml_pre, state%multilayer%hv_ml_pre, state%multilayer%rho_ref)
+         !$omp target exit data map(from: state%multilayer%h_layer, state%multilayer%hu_layer, state%multilayer%hv_layer, &
+         !$omp&                 state%multilayer%w_ml, state%multilayer%rho_layer)
+         !$omp target exit data map(delete: state%multilayer%dsig_ml, state%multilayer%vcoord_z_ref, &
+         !$omp&                 state%multilayer%h_layer0, state%multilayer%hu_layer0, state%multilayer%hv_layer0, &
+         !$omp&                 state%multilayer%hu_ml_pre, state%multilayer%hv_ml_pre, state%multilayer%rho_ref)
          if (allocated(state%multilayer%vcoord_z_ref_col)) then
             associate (vref_col => state%multilayer%vcoord_z_ref_col)
-               !$acc exit data delete(vref_col)
+               !$omp target exit data map(delete: vref_col)
             end associate
          end if
 
@@ -320,7 +320,7 @@ contains
             associate (kpp_bl => state%multilayer%kpp_bl_depth, &
                        kpp_us => state%multilayer%kpp_u_star, &
                        kpp_bf => state%multilayer%kpp_buoy_flux)
-               !$acc exit data copyout(kpp_bl, kpp_us, kpp_bf)
+               !$omp target exit data map(from: kpp_bl, kpp_us, kpp_bf)
             end associate
          end if
 
@@ -334,13 +334,13 @@ contains
                ! copyout, not delete: k and epsilon are prognostic and nu_t /
                ! kappa_t carry the previous step's value, so they must survive
                ! the exit/enter round trip around a snapshot or restart write.
-               !$acc exit data copyout(ke_tke, ke_eps, ke_nut, ke_kt, ke_usb, ke_uss)
+               !$omp target exit data map(from: ke_tke, ke_eps, ke_nut, ke_kt, ke_usb, ke_uss)
             end associate
          end if
 
          if (allocated(state%multilayer%bed_sediment)) then
             associate (bed_sed => state%multilayer%bed_sediment)
-               !$acc exit data copyout(bed_sed)
+               !$omp target exit data map(from: bed_sed)
             end associate
          end if
 
@@ -360,25 +360,25 @@ contains
 
       ! Non-hydrostatic arrays
       if (state%use_nonhydrostatic) then
-         !$acc exit data copyout(state%nh%u_layer, state%nh%v_layer, state%nh%w, state%nh%q_nh)
+         !$omp target exit data map(from: state%nh%u_layer, state%nh%v_layer, state%nh%w, state%nh%q_nh)
          if (state%nh%nh_preconditioner) then
-            !$acc exit data delete(state%nh%cg_z)
+            !$omp target exit data map(delete: state%nh%cg_z)
          end if
-         !$acc exit data delete(state%nh%dsig, &
-         !$acc&                 state%nh%u_layer0, state%nh%v_layer0, state%nh%w0, &
-         !$acc&                 state%nh%cg_r, state%nh%cg_p, state%nh%cg_Ap, &
-         !$acc&                 state%nh%hu_pre, state%nh%hv_pre)
+         !$omp target exit data map(delete: state%nh%dsig, &
+         !$omp&                 state%nh%u_layer0, state%nh%v_layer0, state%nh%w0, &
+         !$omp&                 state%nh%cg_r, state%nh%cg_p, state%nh%cg_Ap, &
+         !$omp&                 state%nh%hu_pre, state%nh%hv_pre)
       end if
 
       ! Mode splitting arrays
       if (allocated(state%nh%h_avg)) then
-         !$acc exit data delete(state%nh%h_avg, state%nh%hu_avg, state%nh%hv_avg, &
-         !$acc&                 state%nh%h_bt0, state%nh%hu_bt0, state%nh%hv_bt0, &
-         !$acc&                 state%nh%baro_tend_x, state%nh%baro_tend_y)
+         !$omp target exit data map(delete: state%nh%h_avg, state%nh%hu_avg, state%nh%hv_avg, &
+         !$omp&                 state%nh%h_bt0, state%nh%hu_bt0, state%nh%hv_bt0, &
+         !$omp&                 state%nh%baro_tend_x, state%nh%baro_tend_y)
       end if
 
       ! Parent state struct last (mirror of enter_data order).
-      !$acc exit data delete(state)
+      !$omp target exit data map(delete: state)
 
    end subroutine solver_exit_data
 
@@ -391,29 +391,29 @@ contains
 
       integer :: it
 
-      !$acc update self(state%barotropic%h, state%barotropic%hu, state%barotropic%hv)
+      !$omp target update from(state%barotropic%h, state%barotropic%hu, state%barotropic%hv)
 
       ! Coupled hydrostatic multi-layer arrays
       if (state%use_multilayer) then
-         !$acc update self(state%multilayer%h_layer, state%multilayer%hu_layer, state%multilayer%hv_layer, &
-         !$acc&                   state%multilayer%w_ml, state%multilayer%rho_layer)
+         !$omp target update from(state%multilayer%h_layer, state%multilayer%hu_layer, state%multilayer%hv_layer, &
+         !$omp&                   state%multilayer%w_ml, state%multilayer%rho_layer)
 
          ! Generic tracer registry: pull each element's hTr back
          if (allocated(state%multilayer%tracers)) then
             do it = 1, size(state%multilayer%tracers)
-               !$acc update self(state%multilayer%tracers(it)%hTr)
+               !$omp target update from(state%multilayer%tracers(it)%hTr)
             end do
          end if
 
          ! Bed sediment reservoir (2D), present only with sediment on.
          if (allocated(state%multilayer%bed_sediment)) then
-            !$acc update self(state%multilayer%bed_sediment)
+            !$omp target update from(state%multilayer%bed_sediment)
          end if
       end if
 
       ! Non-hydrostatic arrays
       if (state%use_nonhydrostatic) then
-         !$acc update self(state%nh%u_layer, state%nh%v_layer, state%nh%w, state%nh%q_nh)
+         !$omp target update from(state%nh%u_layer, state%nh%v_layer, state%nh%w, state%nh%q_nh)
       end if
 
    end subroutine solver_update_host
@@ -425,11 +425,11 @@ contains
       type(state_t), intent(inout) :: state
          !! Solution state whose forcing arrays to sync
 
-      !$acc update device(state%forcing%wind_x, state%forcing%wind_y, &
-      !$acc&                 state%forcing%atm_pressure, &
-      !$acc&                 state%forcing%precipitation, &
-      !$acc&                 state%forcing%heat_flux, &
-      !$acc&                 state%forcing%evap_minus_precip)
+      !$omp target update to(state%forcing%wind_x, state%forcing%wind_y, &
+      !$omp&                 state%forcing%atm_pressure, &
+      !$omp&                 state%forcing%precipitation, &
+      !$omp&                 state%forcing%heat_flux, &
+      !$omp&                 state%forcing%evap_minus_precip)
 
    end subroutine solver_update_forcing
 
@@ -442,24 +442,24 @@ contains
 
       integer :: it
 
-      !$acc update device(state%barotropic%h, state%barotropic%hu, state%barotropic%hv)
+      !$omp target update to(state%barotropic%h, state%barotropic%hu, state%barotropic%hv)
 
       ! Coupled hydrostatic multi-layer arrays
       if (state%use_multilayer) then
-         !$acc update device(state%multilayer%h_layer, state%multilayer%hu_layer, state%multilayer%hv_layer, &
-         !$acc&                 state%multilayer%w_ml, state%multilayer%rho_layer)
+         !$omp target update to(state%multilayer%h_layer, state%multilayer%hu_layer, state%multilayer%hv_layer, &
+         !$omp&                 state%multilayer%w_ml, state%multilayer%rho_layer)
 
          ! Generic tracer registry: push each element's hTr to device
          if (allocated(state%multilayer%tracers)) then
             do it = 1, size(state%multilayer%tracers)
-               !$acc update device(state%multilayer%tracers(it)%hTr)
+               !$omp target update to(state%multilayer%tracers(it)%hTr)
             end do
          end if
       end if
 
       ! Non-hydrostatic arrays
       if (state%use_nonhydrostatic) then
-         !$acc update device(state%nh%u_layer, state%nh%v_layer, state%nh%w, state%nh%q_nh)
+         !$omp target update to(state%nh%u_layer, state%nh%v_layer, state%nh%w, state%nh%q_nh)
       end if
 
    end subroutine solver_update_state
@@ -474,10 +474,10 @@ contains
 
       integer :: it
 
-      !$acc enter data copyin(state%multilayer%tracers)
+      !$omp target enter data map(to: state%multilayer%tracers)
       do it = 1, size(state%multilayer%tracers)
-         !$acc enter data copyin(state%multilayer%tracers(it)%hTr, &
-         !$acc&                  state%multilayer%tracers(it)%hTr0)
+         !$omp target enter data map(to: state%multilayer%tracers(it)%hTr, &
+         !$omp&                  state%multilayer%tracers(it)%hTr0)
       end do
 
       ! The device map above is an element-by-element snapshot: growing
@@ -496,10 +496,10 @@ contains
       integer :: it
 
       do it = 1, size(state%multilayer%tracers)
-         !$acc exit data copyout(state%multilayer%tracers(it)%hTr)
-         !$acc exit data delete(state%multilayer%tracers(it)%hTr0)
+         !$omp target exit data map(from: state%multilayer%tracers(it)%hTr)
+         !$omp target exit data map(delete: state%multilayer%tracers(it)%hTr0)
       end do
-      !$acc exit data delete(state%multilayer%tracers)
+      !$omp target exit data map(delete: state%multilayer%tracers)
 
       state%multilayer%registry_locked = .false.
    end subroutine solver_tracers_exit_data

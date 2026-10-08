@@ -260,7 +260,7 @@ contains
       do n = 1, n_steps
          call solver_unstr_step(state, mesh, dt)
          iters_total = iters_total + state%si%cg_iters
-         !$acc update self(state%barotropic%stage_cv)
+         !$omp target update from(state%barotropic%stage_cv)
          eta_series(n) = state%barotropic%stage_cv(kprobe) - H0
          hdrift = max(hdrift, abs(mass_sum(state, mesh) - hsum0))
       end do

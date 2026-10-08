@@ -403,7 +403,7 @@ contains
    end subroutine ml_keps_friction_velocities_unstr
 
    pure subroutine keps_tridiag_solve_u(a, b, c, rhs, cp, ni)
-      !$acc routine seq
+      !$omp declare target
       !! In-place Thomas solve over interfaces 1..ni with zero-gradient
       !! (no-flux) boundary rows.  `rhs` returns the solution; `cp` scratch.
       !! (Duplicate of the structured keps_tridiag_solve; tiny standard
@@ -435,7 +435,7 @@ contains
    end subroutine keps_tridiag_solve_u
 
    pure subroutine keps_tridiag_solve_noflux_u(a, b, c, rhs, cp, nn)
-      !$acc routine seq
+      !$omp declare target
       !! In-place Thomas solve over rows 1..nn with the boundary closure already
       !! baked into a/b/c by the caller (no row override, unlike
       !! `keps_tridiag_solve_u`).  a/b/c read-only so one factorisation serves

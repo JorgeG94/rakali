@@ -418,18 +418,18 @@ contains
          ! Update atmospheric forcing arrays for current time
          if (forc%active) then
             call forcing_update(forc, state, t_current)
-            !$acc update device(state%forcing%wind_x, state%forcing%wind_y, &
-            !$acc&              state%forcing%atm_pressure, &
-            !$acc&              state%forcing%precipitation, &
-            !$acc&              state%forcing%heat_flux, &
-            !$acc&              state%forcing%evap_minus_precip)
+            !$omp target update to(state%forcing%wind_x, state%forcing%wind_y, &
+            !$omp&              state%forcing%atm_pressure, &
+            !$omp&              state%forcing%precipitation, &
+            !$omp&              state%forcing%heat_flux, &
+            !$omp&              state%forcing%evap_minus_precip)
          end if
 
          ! Update nested boundary ghost cells from parent domain
          if (nest%active) then
-            !$acc update self(state%barotropic%h, state%barotropic%hu, state%barotropic%hv)
+            !$omp target update from(state%barotropic%h, state%barotropic%hu, state%barotropic%hv)
             call nesting_update(nest, state, t_current)
-            !$acc update device(state%barotropic%h, state%barotropic%hu, state%barotropic%hv)
+            !$omp target update to(state%barotropic%h, state%barotropic%hu, state%barotropic%hv)
          end if
 
          call profiler_start("solver_step")
@@ -789,9 +789,9 @@ contains
       do g = 1, gauges%n_local
          i0 = gauges%ix0(g)
          j0 = gauges%iy0(g)
-         !$acc update self(state%barotropic%h(i0:i0 + 1, j0:j0 + 1))
-         !$acc update self(state%barotropic%hu(i0:i0 + 1, j0:j0 + 1))
-         !$acc update self(state%barotropic%hv(i0:i0 + 1, j0:j0 + 1))
+         !$omp target update from(state%barotropic%h(i0:i0 + 1, j0:j0 + 1))
+         !$omp target update from(state%barotropic%hu(i0:i0 + 1, j0:j0 + 1))
+         !$omp target update from(state%barotropic%hv(i0:i0 + 1, j0:j0 + 1))
       end do
       call gauges_write(gauges, state, t_current)
       if (cfg%gauge_output_interval > 0.0_wp) then

@@ -32,7 +32,7 @@ option(RAKALI_ENABLE_THREADS
 # Setting `openmp` on `main` directly only changes compiler flags — the source
 # still carries `!$acc` directives until acc_to_omp.py runs.
 set(RAKALI_PARALLEL_BACKEND
-    "openacc"
+    "openmp"
     CACHE STRING "Parallel backend: openacc | openmp (advanced; leave default)")
 set_property(CACHE RAKALI_PARALLEL_BACKEND PROPERTY STRINGS openacc openmp)
 mark_as_advanced(RAKALI_PARALLEL_BACKEND)

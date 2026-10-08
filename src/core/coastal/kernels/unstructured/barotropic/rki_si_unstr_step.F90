@@ -182,7 +182,7 @@ contains
       !          (host build from the live Hf; structures static).  Once per
       !          step, NOT per V-cycle. ----
       if (precond == SI_PRECOND_MG .and. present(mg)) then
-         !$acc update self(Hf_edge)
+         !$omp target update from(Hf_edge)
          call agglom_hierarchy_unstr_refresh(mg, mesh, nco, g_theta2_dt2, &
                                              Hf_edge(:, 1:nco))
       end if

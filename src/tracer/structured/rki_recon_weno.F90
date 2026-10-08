@@ -191,7 +191,7 @@ contains
       !!   WENO7(2) → rung_max_internal = 3
       !!   WENO9(3) → rung_max_internal = 4
       !! The kernel maps the public code to rung_max with `recon + 1`.
-      !$acc routine seq
+      !$omp declare target
       integer, intent(in) :: avail_up
          !! Interior cells from domain-west to face (including upwind cell c).
       integer, intent(in) :: avail_down
@@ -226,7 +226,7 @@ contains
       !! face  = q0 + (1 - sigma)/2 * slope
       !!
       !! Reference: van Leer (1977) slope limiter.
-      !$acc routine seq
+      !$omp declare target
       real(wp), intent(in) :: qm1, q0, qp1, sigma
       real(wp) :: face
       real(wp) :: d0, d1, slope
@@ -255,7 +255,7 @@ contains
       !!   r=0: {i-2, i-1, i}     d=1/10
       !!   r=1: {i-1, i,   i+1}   d=6/10
       !!   r=2: {i,   i+1, i+2}   d=3/10
-      !$acc routine seq
+      !$omp declare target
       real(wp), intent(in) :: qm2, qm1, q0, qp1, qp2
          !! Cell averages at i-2, i-1, i, i+1, i+2.
       real(wp), intent(in) :: sigma
@@ -333,7 +333,7 @@ contains
       !!
       !! Coefficient matrices from Balsara & Shu (2000), Table 1.
       !! Smoothness indicators from Balsara & Shu (2000), eq. 2.17.
-      !$acc routine seq
+      !$omp declare target
       real(wp), intent(in) :: qm3, qm2, qm1, q0, qp1, qp2, qp3
          !! Cell averages at i-3 through i+3.
       real(wp), intent(in) :: sigma
@@ -492,7 +492,7 @@ contains
       !! Smoothness indicators use the simplified 3-term form.
       !!
       !! Reference: Balsara & Shu (2000).
-      !$acc routine seq
+      !$omp declare target
       real(wp), intent(in) :: qm4, qm3, qm2, qm1, q0, qp1, qp2, qp3, qp4
          !! Cell averages at i-4 through i+4.
       real(wp), intent(in) :: sigma

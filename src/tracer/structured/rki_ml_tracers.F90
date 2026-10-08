@@ -840,11 +840,11 @@ contains
       if (allocated(arr)) then
          if (size(arr, 1) == nx .and. size(arr, 2) == ny .and. &
              size(arr, 3) == nz) return
-         !$acc exit data delete(arr)
+         !$omp target exit data map(delete: arr)
          deallocate (arr)
       end if
       allocate (arr(nx, ny, nz))
-      !$acc enter data create(arr)
+      !$omp target enter data map(alloc: arr)
    end subroutine scratch_array_ensure
 
    subroutine scratch_array_destroy(arr)
@@ -852,7 +852,7 @@ contains
       real(wp), allocatable, intent(inout) :: arr(:, :, :)
 
       if (.not. allocated(arr)) return
-      !$acc exit data delete(arr)
+      !$omp target exit data map(delete: arr)
       deallocate (arr)
    end subroutine scratch_array_destroy
 

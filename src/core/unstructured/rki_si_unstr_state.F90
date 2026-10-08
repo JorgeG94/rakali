@@ -364,23 +364,23 @@ contains
    subroutine si_unstr_state_enter_data_impl(this)
       type(semi_implicit_state_unstr_t), intent(inout) :: this
 
-      !$acc enter data copyin(this%eta, this%eta_r, this%eta_p, this%eta_Ap, this%eta_z)
-      !$acc enter data copyin(this%eta_diag, this%u_edge, this%u_star, this%Hf_edge)
-      !$acc enter data copyin(this%eta_ghost_edge, this%u_n_edge)
+      !$omp target enter data map(to: this%eta, this%eta_r, this%eta_p, this%eta_Ap, this%eta_z)
+      !$omp target enter data map(to: this%eta_diag, this%u_edge, this%u_star, this%Hf_edge)
+      !$omp target enter data map(to: this%eta_ghost_edge, this%u_n_edge)
 
       ! P3.2 (3D multilayer) column slots — only when allocated.
       if (this%nz_si > 1) then
-         !$acc enter data copyin(this%g_col_u, this%g_col_v, this%r_col)
-         !$acc enter data copyin(this%nu_iface, this%Hhat_cell)
-         !$acc enter data copyin(this%Gbar_cell_x, this%Gbar_cell_y)
-         !$acc enter data copyin(this%u_edge_layer, this%mass_flux_edge)
+         !$omp target enter data map(to: this%g_col_u, this%g_col_v, this%r_col)
+         !$omp target enter data map(to: this%nu_iface, this%Hhat_cell)
+         !$omp target enter data map(to: this%Gbar_cell_x, this%Gbar_cell_y)
+         !$omp target enter data map(to: this%u_edge_layer, this%mass_flux_edge)
       end if
 
       ! P3.3 Casulli wet/dry slots — only when allocated.
       if (this%wetdry) then
-         !$acc enter data copyin(this%b_sub, this%b_min, this%a_wet)
-         !$acc enter data copyin(this%mass_diag, this%v_cell, this%rhs_d)
-         !$acc enter data copyin(this%newton_dz, this%newton_F, this%newton_Jeta)
+         !$omp target enter data map(to: this%b_sub, this%b_min, this%a_wet)
+         !$omp target enter data map(to: this%mass_diag, this%v_cell, this%rhs_d)
+         !$omp target enter data map(to: this%newton_dz, this%newton_F, this%newton_Jeta)
       end if
 
       ! Aggregation-MG hierarchy — only when built (precond == MG).
@@ -404,22 +404,22 @@ contains
 
       ! P3.3 Casulli wet/dry slots — reverse order of enter.
       if (this%wetdry) then
-         !$acc exit data delete(this%newton_dz, this%newton_F, this%newton_Jeta)
-         !$acc exit data delete(this%mass_diag, this%v_cell, this%rhs_d)
-         !$acc exit data delete(this%b_sub, this%b_min, this%a_wet)
+         !$omp target exit data map(delete: this%newton_dz, this%newton_F, this%newton_Jeta)
+         !$omp target exit data map(delete: this%mass_diag, this%v_cell, this%rhs_d)
+         !$omp target exit data map(delete: this%b_sub, this%b_min, this%a_wet)
       end if
 
       ! P3.2 (3D multilayer) column slots — reverse order of enter.
       if (this%nz_si > 1) then
-         !$acc exit data delete(this%u_edge_layer, this%mass_flux_edge)
-         !$acc exit data delete(this%Gbar_cell_x, this%Gbar_cell_y)
-         !$acc exit data delete(this%nu_iface, this%Hhat_cell)
-         !$acc exit data delete(this%g_col_u, this%g_col_v, this%r_col)
+         !$omp target exit data map(delete: this%u_edge_layer, this%mass_flux_edge)
+         !$omp target exit data map(delete: this%Gbar_cell_x, this%Gbar_cell_y)
+         !$omp target exit data map(delete: this%nu_iface, this%Hhat_cell)
+         !$omp target exit data map(delete: this%g_col_u, this%g_col_v, this%r_col)
       end if
 
-      !$acc exit data delete(this%eta_ghost_edge, this%u_n_edge)
-      !$acc exit data delete(this%eta_diag, this%u_edge, this%u_star, this%Hf_edge)
-      !$acc exit data delete(this%eta, this%eta_r, this%eta_p, this%eta_Ap, this%eta_z)
+      !$omp target exit data map(delete: this%eta_ghost_edge, this%u_n_edge)
+      !$omp target exit data map(delete: this%eta_diag, this%u_edge, this%u_star, this%Hf_edge)
+      !$omp target exit data map(delete: this%eta, this%eta_r, this%eta_p, this%eta_Ap, this%eta_z)
    end subroutine si_unstr_state_exit_data_impl
 
    function parse_si_precond_unstr(tag) result(precond)
