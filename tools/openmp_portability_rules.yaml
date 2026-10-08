@@ -1,0 +1,42 @@
+# OpenMP portability rules for openmp_portability_lint.py.
+#
+# Each rule names a !$acc directive shape on `main` that is known to break
+# when translated to OpenMP and run on a particular compiler. The lint scans
+# changed lines on PRs to main and fails when one of these patterns appears.
+#
+# Adding a rule:
+#   1. Find the pattern by diffing main vs main-openmp (Phase 0 procedure).
+#   2. Write a regex that matches the !$acc form on main.
+#   3. Cite the file/commit on main-openmp where the workaround lives.
+#   4. Add the suggested fix verb-phrased (imperative).
+#
+# Schema per rule:
+#   id        : stable identifier, short_kebab_case
+#   match     : Python re.compile-compatible regex; applied to single lines
+#   compiler  : list of compilers the rule protects against
+#   severity  : "error" (fail the lint) | "warn" (print but don't fail)
+#   message   : one paragraph explaining why
+#   fix       : how the developer should rewrite the directive
+#   evidence  : commit/file reference proving the workaround was needed
+
+rules:
+  - id: deep-struct-chain-data
+    match: '!\$acc\s+(enter|exit)\s+data\s+\w+\(\s*\w+(%\w+){2,}'
+    compiler: [ifx]
+    severity: error
+    message: >
+      Deep struct-chain access in OpenACC data directives (e.g.
+      `state%barotropic%c`) fails on Intel ifx — the present table loses
+      track of nested allocatables attached this way. Works on NVIDIA and
+      AMD, but the regenerated `auto/dc-openmp` variant cannot be made to
+      work on Aurora without addressing this at the source.
+    fix: >
+      Attach the parent (one less '%' segment, e.g. `state%barotropic`) and
+      reference the leaf field inside the kernel body, OR wrap the kernel
+      body in an `associate (c => state%barotropic%c) ... end associate`
+      block and attach the leaf path directly. Either form works on all
+      three compilers.
+    evidence: >
+      main-openmp branch: most rki_*_state.F90 files have parent-only
+      attaches with `associate` constructs in the consuming kernel — diff
+      vs main to see the canonical form.

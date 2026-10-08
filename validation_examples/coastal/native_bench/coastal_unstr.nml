@@ -1,0 +1,78 @@
+! Native coastal multilayer bench -- UNSTRUCTURED (triangular) path.
+!
+! Mirrors coastal_str.nml (grid_type="unstructured"): linear T(z) + S(z)
+! stratification via T_init_*/S_init_* in &tracer_nml, honoured by both
+! coastal backends.  The same &grid_nml drives a
+! native regular triangulation (gen_regular_triangulation), &nonhydrostatic_nml's
+! nz_layers sets the column, and the same physics knobs are plumbed onto the
+! unstructured state.  The stratification makes this a real 3D bench --
+! exercising the EOS, the baroclinic pressure gradient, and Ri-dependent
+! vertical mixing.  No meshpy / Triangle / Python.
+!
+! Run:  ./build/rakali validation_examples/coastal/native_bench/coastal_unstr.nml
+
+&grid_nml
+  grid_type = "unstructured"
+  nx        = 48
+  ny        = 48
+  dx        = 200.0
+  dy        = 200.0
+  nghost    = 2
+/
+
+&time_nml
+  t_end = 600.0
+  cfl   = 0.45
+/
+
+&physics_nml
+  manning_n     = 0.025
+  wind_stress_x = 0.1
+  coriolis_f    = 1.0e-4
+/
+
+&initial_condition_nml
+  init_condition = "gaussian_hump"
+  h0             = 100.0
+  hump_amplitude = 0.0
+/
+
+&boundary_nml
+  bc_west  = "wall"
+  bc_east  = "wall"
+  bc_south = "wall"
+  bc_north = "wall"
+/
+
+&nonhydrostatic_nml
+  use_multilayer = .true.
+  nz_layers      = 8
+  rho_0          = 1025.0
+  hdiff_kappa    = 1.0
+  smagorinsky_cs = 0.15
+  vmix_use_keps  = .true.
+  keps_stability = "constant"
+/
+
+&tracer_nml
+  initial_salinity    = 35.0
+  S_init_surface      = 30.0   ! fresh surface (k=nz)
+  S_init_bottom       = 35.0   ! salty bed (k=1) -> stable linear S(z)
+  initial_temperature = 15.0
+  T_init_surface      = 20.0   ! warm surface (k=nz)
+  T_init_bottom       = 12.0   ! cold bed (k=1) -> stable linear T(z)
+  beta_S              = 0.78
+  alpha_T             = 0.17
+  kappa_S_bg          = 1.0e-5
+  kappa_T_bg          = 1.0e-5
+  use_ppm_tracer      = .true.
+/
+
+&output_nml
+  output_to_file = .false.
+/
+
+&logging_nml
+  log_level       = "info"
+  status_interval = 300.0
+/

@@ -1,0 +1,103 @@
+# Compiler portability, serial CPU, NetCDF on.
+#
+# netcdf-fortran writes compiler-specific `.mod` files, so each leg builds its
+# own with `tools/build_netcdf_fortran.sh` (about 30 s). The C half (netcdf-c,
+# HDF5, zlib) does not have to match the Fortran compiler, so it comes prebuilt
+# from apt.
+#
+# gfortran 15 is the floor: the kernels use F2018 `do concurrent` locality
+# specifiers, which GCC implements only from 15.
+#
+# `RAKALI_EXTRA_FORTRAN_FLAGS` pins the CPU target on every leg. GNU Release
+# flags carry `-march=native` and nvfortran targets the build host's CPU by
+# default; the runner pool is heterogeneous, so an unpinned binary can die with
+# SIGILL (ctest "ILLEGAL") on a different host.
+#
+# `exploratory` legs are `continue-on-error`: a red does not block a PR until
+# the leg has a known-good baseline. Promote it once it has a run of greens.
+# `fail-fast: false` so one compiler's failure does not hide another's.
+#
+# The GPU build is NOT exercised here: a hosted runner has no GPU. Run the GPU
+# suite locally (never `ctest -j` on it).
+
+name: Portability (serial)
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: portability-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    name: ${{ matrix.toolchain.compiler }} ${{ matrix.toolchain.version }}
+    runs-on: ubuntu-latest
+    continue-on-error: ${{ matrix.exploratory }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - toolchain: {compiler: gcc, version: 15}
+            exploratory: false
+            extra_flags: '-march=x86-64-v3'
+          # No green baseline yet for ifx or NVHPC: exploratory until they have one.
+          - toolchain: {compiler: intel, version: '2025.0'}
+            exploratory: true
+            extra_flags: '-march=x86-64-v3'
+          - toolchain: {compiler: nvidia-hpc, version: 'latest'}
+            exploratory: true
+            extra_flags: '-tp=haswell'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Fortran compiler
+        uses: fortran-lang/setup-fortran@v1.9.0
+        id: setup-fortran
+        with:
+          compiler: ${{ matrix.toolchain.compiler }}
+          version: ${{ matrix.toolchain.version }}
+
+      # The CPU model is evidence: when a run fails intermittently the first
+      # question is which machine it ran on, and a green rerun destroys the
+      # only copy of that answer.
+      - name: Report toolchain
+        run: |
+          echo "FC=${{ env.FC }}"
+          ${{ env.FC }} --version || true
+          grep -m1 'model name' /proc/cpuinfo || true
+          echo "--- extra flags: '${{ matrix.extra_flags }}' ---"
+
+      - name: Install netcdf-c and build netcdf-fortran
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq libnetcdf-dev
+          tools/build_netcdf_fortran.sh \
+            --fc "${{ env.FC }}" \
+            --netcdf-c /usr \
+            --prefix "$HOME/netcdff"
+          echo "RAKALI_NETCDFF=$HOME/netcdff" >> "$GITHUB_ENV"
+
+      - name: Configure
+        run: >-
+          cmake -B build_ci -S .
+          -DCMAKE_BUILD_TYPE=Release
+          -DCMAKE_Fortran_COMPILER=${{ env.FC }}
+          -DCMAKE_PREFIX_PATH="${{ env.RAKALI_NETCDFF }};/usr"
+          -DRAKALI_EXTRA_FORTRAN_FLAGS="${{ matrix.extra_flags }}"
+          -DRAKALI_ENABLE_NETCDF=ON
+          -DRAKALI_ENABLE_GPU=OFF
+          -DRAKALI_ENABLE_TESTING=ON
+
+      - name: Build
+        run: cmake --build build_ci --parallel
+
+      # No `-j`, and OMP_NUM_THREADS=1: HDF5 is not thread-safe.
+      - name: Test
+        working-directory: build_ci
+        env:
+          OMP_NUM_THREADS: "1"
+        run: ctest -R rakali --output-on-failure

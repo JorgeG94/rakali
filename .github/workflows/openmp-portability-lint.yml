@@ -1,0 +1,31 @@
+name: OpenMP portability lint
+
+# Hard-blocks PRs to main that introduce !$acc directive shapes known to
+# break under the OpenMP variant (ifx on Aurora, etc). The lint is driven
+# by tools/openmp_portability_rules.yaml; new rules are added there as
+# new compiler-specific patterns surface.
+#
+# Only NEW offenders fail the gate — pre-existing patterns on main are
+# tracked but not blocking, so this can land without a backfill sweep.
+
+on:
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install PyYAML (optional speed-up over the inline parser)
+        run: pip install pyyaml
+      - name: Run portability lint on changed lines
+        run: |
+          python tools/openmp_portability_lint.py \
+            src/ app/ \
+            --diff origin/${{ github.base_ref }} \
+            --fail-on-warn

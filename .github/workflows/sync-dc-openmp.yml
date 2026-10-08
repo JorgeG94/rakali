@@ -1,0 +1,81 @@
+name: Sync auto OpenMP-target branches from main
+
+# Regenerates the two auto OpenMP-target variant branches from main on every
+# push, force-pushing the translated tree:
+#
+#   auto/dc-openmp  — !$acc → !$omp, do concurrent KEPT.
+#   auto/openmp     — full OpenMP, do concurrent rewritten as
+#                     !$omp target teams distribute parallel do.
+#   auto/openmp-cpu — full OpenMP, host multicore: compute loops are
+#                     !$omp parallel do (no target teams distribute), device
+#                     data directives dropped. Build with RAKALI_ENABLE_GPU=OFF.
+#
+# Build verification is intentionally NOT in CI (Intel oneAPI install alone
+# burns ~12 min of the private-repo budget per run); build it yourself locally
+# when you want to validate.
+#
+# To verify a regenerated tree builds:
+#   git fetch origin auto/openmp               # or auto/dc-openmp
+#   git checkout auto/openmp
+#   cmake -B build_omp -S . -DRAKALI_PARALLEL_BACKEND=openmp \
+#                            -DRAKALI_ENABLE_GPU=OFF \
+#                            -DRAKALI_ENABLE_THREADS=ON \
+#                            -DRAKALI_ENABLE_NETCDF=OFF
+#   cmake --build build_omp -j
+#
+# Nobody should edit these branches manually; all OpenMP-side fixes live as
+# patches under patches/openmp/ or as translator improvements in
+# tools/acc_to_omp.py / tools/dc_to_omp.py.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'app/**'
+      - 'benchmarks/**'
+      - 'tests/**'
+      - 'tools/acc_to_omp.py'
+      - 'tools/dc_to_omp.py'
+      - 'tools/dc_audit.py'
+      - 'tools/regen_dc_openmp.sh'
+      - 'patches/openmp/**'
+      - 'CMakeLists.txt'
+      - 'cmake/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  regenerate:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - variant: dc-openmp-target
+            branch: auto/dc-openmp
+          - variant: openmp
+            branch: auto/openmp
+          - variant: openmp-cpu
+            branch: auto/openmp-cpu
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install PyYAML
+        run: pip install pyyaml
+      - name: Regenerate variant tree (${{ matrix.variant }})
+        run: bash tools/regen_dc_openmp.sh ${{ matrix.variant }}
+      - name: Commit and force-push to ${{ matrix.branch }}
+        run: |
+          git config user.name "rakali-bot"
+          git config user.email "bot@rakali.invalid"
+          git checkout -B "${{ matrix.branch }}"
+          git add -A
+          git commit -m "regen ${{ matrix.variant }} from $(git rev-parse main)"
+          git push --force origin "${{ matrix.branch }}"

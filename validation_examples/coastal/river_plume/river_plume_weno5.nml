@@ -1,0 +1,94 @@
+! River plume — WENO5 tracer reconstruction
+!
+! Identical to river_plume_ppm.nml EXCEPT:
+!   &tracer_nml tracer_recon = 'weno5'   (Jiang-Shu 1996 + Borges 2008 Z-weights)
+!   &grid_nml   nghost = 3               (weno5 needs a 3-cell halo; fail-loud below)
+! Output lands in ./output_weno5/ so it pairs cleanly against the PPM run.
+!
+! The plume front is exactly where a higher-order limiter pays off: WENO5
+! should hold the S=0 <-> S=35 interface sharper than PPM without introducing
+! new S extrema (monotone Z-weights) and while conserving total salt.
+!
+! Generate bathymetry first:
+!   cd validation_examples/coastal/river_plume
+!   python3 generate_bathymetry.py
+!
+! Then run:
+!   ./build/rakali validation_examples/coastal/river_plume/river_plume_weno5.nml
+
+&grid_nml
+  nx = 300
+  ny = 150
+  dx = 10.0
+  dy = 10.0
+  nghost = 3                 ! weno5 requires nghost >= 3
+/
+
+&time_nml
+  t_end = 1000.0
+  cfl = 0.45
+/
+
+&physics_nml
+  manning_n = 0.025
+  dry_threshold = 0.01
+/
+
+&output_nml
+  output_to_file = .true.
+  output_dir = "./output_weno5"
+  output_interval = 500.0
+  output_format = "netcdf"
+  bathymetry_file = "bathymetry.nc"
+
+  out_h_layer = .true.
+  out_velocity = .true.
+  out_salinity = .true.
+  out_density = .true.
+  out_w = .true.
+/
+
+&boundary_nml
+  bc_west  = "inflow"
+  bc_east  = "open"
+  bc_south = "wall"
+  bc_north = "wall"
+
+  inflow_velocity = 0.5
+  inflow_salinity = 0.0
+/
+
+&initial_condition_nml
+  init_condition = "still_water"
+  eta_initial = 0.0
+/
+
+&nonhydrostatic_nml
+  use_multilayer = .true.
+  nz_layers = 5
+  bpg_method = "jacobian"
+  ml_min_depth = 0.5
+
+  rho_0 = 1025.0
+
+  hdiff_kappa = 1.0
+  smagorinsky_cs = 0.15
+
+  vmix_nu_max = 0.01
+  vmix_nu_bg = 1.0e-4
+  vmix_ri_alpha = 5.0
+/
+
+&tracer_nml
+  initial_salinity = 35.0
+  beta_S = 0.78
+  kappa_S_bg = 1.0e-5
+  alpha_T = 0.0
+  use_ppm_tracer = .true.    ! required by the weno guard (high-order branch)
+  tracer_recon = 'weno5'
+/
+
+&logging_nml
+  log_level = "info"
+  status_interval = 300.0
+/

@@ -1,0 +1,90 @@
+! River plume — PPM tracer reconstruction (baseline for the WENO comparison)
+!
+! Identical physics to river_plume.nml, but with file output ON (to
+! ./output_ppm/) so it can be paired against river_plume_weno5.nml /
+! river_plume_weno7.nml via compare_recon.py.  tracer_recon='ppm' is the
+! default, so this is the reference reconstruction.
+!
+! Generate bathymetry first:
+!   cd validation_examples/coastal/river_plume
+!   python3 generate_bathymetry.py
+!
+! Then run:
+!   ./build/rakali validation_examples/coastal/river_plume/river_plume_ppm.nml
+
+&grid_nml
+  nx = 300
+  ny = 150
+  dx = 10.0
+  dy = 10.0
+  nghost = 2
+/
+
+&time_nml
+  t_end = 1000.0       ! 2 hours — enough for plume to develop
+  cfl = 0.45
+/
+
+&physics_nml
+  manning_n = 0.025
+  dry_threshold = 0.01
+/
+
+&output_nml
+  output_to_file = .true.
+  output_dir = "./output_ppm"
+  output_interval = 500.0    ! snapshot every 5 minutes
+  output_format = "netcdf"
+  bathymetry_file = "bathymetry.nc"
+
+  out_h_layer = .true.
+  out_velocity = .true.
+  out_salinity = .true.
+  out_density = .true.
+  out_w = .true.
+/
+
+&boundary_nml
+  bc_west  = "inflow"        ! river enters from the west
+  bc_east  = "open"          ! Flather radiation lets water exit
+  bc_south = "wall"
+  bc_north = "wall"
+
+  inflow_velocity = 0.5      ! 0.5 m/s river current
+  inflow_salinity = 0.0      ! fresh water (PSU)
+/
+
+&initial_condition_nml
+  init_condition = "still_water"
+  eta_initial = 0.0
+/
+
+&nonhydrostatic_nml
+  use_multilayer = .true.
+  nz_layers = 5
+  bpg_method = "jacobian"
+  ml_min_depth = 0.5
+
+  rho_0 = 1025.0
+
+  hdiff_kappa = 1.0
+  smagorinsky_cs = 0.15
+
+  vmix_nu_max = 0.01
+  vmix_nu_bg = 1.0e-4
+  vmix_ri_alpha = 5.0
+/
+
+&tracer_nml
+  initial_salinity = 35.0
+  beta_S = 0.78
+  kappa_S_bg = 1.0e-5
+  alpha_T = 0.0
+  use_ppm_tracer = .true.
+  tracer_recon = 'ppm'       ! reference reconstruction
+/
+
+&logging_nml
+  log_level = "info"
+  status_interval = 300.0
+/

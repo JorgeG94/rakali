@@ -1,0 +1,160 @@
+{
+  "version": 4,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 25,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "_base",
+      "hidden": true,
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "generator": "Unix Makefiles",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "_nvhpc",
+      "hidden": true,
+      "inherits": "_base",
+      "cacheVariables": {
+        "CMAKE_Fortran_COMPILER": "nvfortran"
+      }
+    },
+    {
+      "name": "_gcc",
+      "hidden": true,
+      "inherits": "_base",
+      "cacheVariables": {
+        "CMAKE_Fortran_COMPILER": "gfortran"
+      }
+    },
+    {
+      "name": "gpu",
+      "displayName": "NVHPC GPU (single device)",
+      "description": "do concurrent + OpenACC, -stdpar=gpu, Release",
+      "inherits": "_nvhpc",
+      "cacheVariables": {
+        "RAKALI_ENABLE_GPU": "ON"
+      }
+    },
+    {
+      "name": "gpu-debug",
+      "displayName": "NVHPC GPU (Debug)",
+      "inherits": "gpu",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "multicore",
+      "displayName": "NVHPC multicore CPU",
+      "description": "do concurrent + OpenACC, -stdpar=multicore, Release",
+      "inherits": "_nvhpc",
+      "cacheVariables": {
+        "RAKALI_ENABLE_THREADS": "ON"
+      }
+    },
+    {
+      "name": "gcc",
+      "displayName": "gfortran serial",
+      "inherits": "_gcc"
+    },
+    {
+      "name": "gcc-threads",
+      "displayName": "gfortran threaded (-ftree-parallelize-loops)",
+      "inherits": "_gcc",
+      "cacheVariables": {
+        "RAKALI_ENABLE_THREADS": "ON"
+      }
+    },
+    {
+      "name": "gcc-debug",
+      "displayName": "gfortran Debug",
+      "inherits": "_gcc",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "python",
+      "displayName": "NVHPC GPU + Python shared library",
+      "description": "Builds librakali.so for the Python/Julia API",
+      "inherits": "gpu",
+      "cacheVariables": {
+        "RAKALI_ENABLE_PYTHON": "ON",
+        "RAKALI_BUILD_SHARED": "ON"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "gpu",
+      "configurePreset": "gpu"
+    },
+    {
+      "name": "gpu-debug",
+      "configurePreset": "gpu-debug"
+    },
+    {
+      "name": "multicore",
+      "configurePreset": "multicore"
+    },
+    {
+      "name": "gcc",
+      "configurePreset": "gcc"
+    },
+    {
+      "name": "gcc-threads",
+      "configurePreset": "gcc-threads"
+    },
+    {
+      "name": "gcc-debug",
+      "configurePreset": "gcc-debug"
+    },
+    {
+      "name": "python",
+      "configurePreset": "python"
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "_test_base",
+      "hidden": true,
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "noTestsAction": "error",
+        "stopOnFailure": false
+      }
+    },
+    {
+      "name": "gpu",
+      "configurePreset": "gpu",
+      "inherits": "_test_base"
+    },
+    {
+      "name": "multicore",
+      "configurePreset": "multicore",
+      "inherits": "_test_base"
+    },
+    {
+      "name": "gcc",
+      "configurePreset": "gcc",
+      "inherits": "_test_base"
+    },
+    {
+      "name": "gcc-threads",
+      "configurePreset": "gcc-threads",
+      "inherits": "_test_base"
+    },
+    {
+      "name": "gcc-debug",
+      "configurePreset": "gcc-debug",
+      "inherits": "_test_base"
+    }
+  ]
+}

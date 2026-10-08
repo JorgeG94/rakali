@@ -1,0 +1,97 @@
+! River plume example
+!
+! A fresh-water river channel (200 m wide, 4 m deep) empties into a
+! saline harbour basin (12 m deep) via a smooth bathymetric transition.
+! The buoyant plume spreads across the surface while a salt wedge
+! intrudes along the bottom.
+!
+! Generate bathymetry first:
+!   cd validation_examples/coastal/river_plume
+!   python generate_bathymetry.py
+!
+! Then run:
+!   ./build/rakali validation_examples/coastal/river_plume/river_plume.nml
+
+&grid_nml
+  nx = 300
+  ny = 150
+  dx = 10.0
+  dy = 10.0
+  nghost = 2
+/
+
+&time_nml
+  t_end = 1000.0       ! 2 hours — enough for plume to develop
+  cfl = 0.45
+/
+
+&physics_nml
+  manning_n = 0.025
+  dry_threshold = 0.01
+/
+
+&output_nml
+  output_to_file = .false.
+  output_dir = "./output"
+  output_interval = 500.0    ! snapshot every 5 minutes
+  output_format = "netcdf"
+  bathymetry_file = "bathymetry.nc"
+
+  ! Output: layer thickness, velocity, salinity, density
+  out_h_layer = .true.
+  out_velocity = .true.
+  out_salinity = .true.
+  out_density = .true.
+  out_w = .true.
+/
+
+&boundary_nml
+  bc_west  = "inflow"        ! river enters from the west
+  bc_east  = "open"          ! Flather radiation lets water exit
+  bc_south = "wall"
+  bc_north = "wall"
+
+  inflow_velocity = 0.5      ! 0.5 m/s river current
+  inflow_salinity = 0.0      ! fresh water (PSU)
+/
+
+&initial_condition_nml
+  init_condition = "still_water"
+  eta_initial = 0.0
+/
+
+&nonhydrostatic_nml
+  use_multilayer = .true.
+  nz_layers = 5
+  bpg_method = "jacobian"
+  ml_min_depth = 0.5
+
+  rho_0 = 1025.0
+
+  ! Horizontal tracer diffusion (smooths density fronts)
+  hdiff_kappa = 1.0
+
+  ! Smagorinsky horizontal viscosity (damps velocity gradients at fronts)
+  smagorinsky_cs = 0.15
+
+  ! Pacanowski-Philander vertical mixing (momentum)
+  vmix_nu_max = 0.01
+  vmix_nu_bg = 1.0e-4
+  vmix_ri_alpha = 5.0
+/
+
+&tracer_nml
+  ! Harbour starts at 35 PSU, river inflow is fresh (0 PSU)
+  initial_salinity = 35.0
+  beta_S = 0.78
+  kappa_S_bg = 1.0e-5
+  alpha_T = 0.0              ! keep temperature decoupled from dynamics
+  use_ppm_tracer = .true.    ! PPM is required to keep S front sharp;
+                             ! set .false. to fall back to first-order
+                             ! upwind for A/B comparison
+/
+
+&logging_nml
+  log_level = "info"
+  status_interval = 300.0    ! status every 5 minutes sim time
+/

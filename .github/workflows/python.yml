@@ -1,0 +1,69 @@
+# Python interface: build librakali.so and run the pytest suite.
+#
+# Same toolchain recipe as portability.yml (gfortran 15, netcdf-fortran built
+# for that compiler, CPU target pinned). Tests must NOT run in parallel: they
+# share one process and non-thread-safe HDF5, hence OMP_NUM_THREADS=1 and no
+# xdist.
+
+name: Python
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: python-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pytest:
+    name: pytest (gfortran 15)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Fortran compiler
+        uses: fortran-lang/setup-fortran@v1.9.0
+        with:
+          compiler: gcc
+          version: 15
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install netcdf-c and build netcdf-fortran
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq libnetcdf-dev
+          tools/build_netcdf_fortran.sh \
+            --fc "${{ env.FC }}" \
+            --netcdf-c /usr \
+            --prefix "$HOME/netcdff"
+          echo "RAKALI_NETCDFF=$HOME/netcdff" >> "$GITHUB_ENV"
+
+      - name: Configure
+        run: >-
+          cmake -B build_ci -S .
+          -DCMAKE_BUILD_TYPE=Release
+          -DCMAKE_Fortran_COMPILER=${{ env.FC }}
+          -DCMAKE_PREFIX_PATH="${{ env.RAKALI_NETCDFF }};/usr"
+          -DRAKALI_EXTRA_FORTRAN_FLAGS="-march=x86-64-v3"
+          -DRAKALI_ENABLE_NETCDF=ON
+          -DRAKALI_ENABLE_PYTHON=ON
+          -DRAKALI_ENABLE_GPU=OFF
+          -DRAKALI_ENABLE_TESTING=OFF
+
+      - name: Build librakali.so
+        run: cmake --build build_ci --parallel --target rakali_shared
+
+      - name: Install the package and test dependencies
+        run: pip install -e ".[all,dev]"
+
+      - name: Run pytest
+        env:
+          RAKALI_LIB: ${{ github.workspace }}/build_ci/librakali.so
+          OMP_NUM_THREADS: "1"
+        run: pytest python/tests -q

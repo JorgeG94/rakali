@@ -1,0 +1,35 @@
+# Rakali — Spack environment
+#
+# Provides the system-level toolchain for a serial or threaded CPU build.
+# Fortran dependencies (pic, test-drive) are fetched automatically
+# by CMake FetchContent — they are NOT managed here.
+#
+# Usage:
+#   spack env create rakali environments/spack_env.yaml
+#   spack env activate rakali
+#   spack install
+#
+#   cmake -B build -S .
+#   cmake --build build
+#
+# Requires gcc >= 15.x (do concurrent with locality specifiers).
+# If your system gcc is older, see spack_env_full.yaml to build gcc from source.
+
+spack:
+  specs:
+    - "gcc@15:"
+    - "cmake@3.25:"
+    - netcdf-fortran
+    - netcdf-c ~mpi ~parallel-netcdf
+    - hdf5 ~mpi +fortran +hl
+
+  packages:
+    c:
+      require: "gcc@15:"
+    cxx:
+      require: "gcc@15:"
+    fortran:
+      require: "gcc@15:"
+
+  concretizer:
+    unify: true

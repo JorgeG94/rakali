@@ -1,0 +1,47 @@
+# Rakali — Spack environment (full bootstrap, builds gcc from source)
+#
+# For bare systems that lack gcc >= 15.x. This is a two-step process:
+#
+# Step 1 — Build gcc 15 with whatever system compiler is available:
+#
+#   spack install gcc@15
+#   spack compiler find $(spack location -i gcc@15)
+#
+# Step 2 — Create the environment using the freshly built gcc:
+#
+#   spack env create rakali-full environments/spack_env_full.yaml
+#   spack env activate rakali-full
+#   spack install
+#
+#   cmake -B build -S .
+#   cmake --build build
+#
+# Note: building gcc from source takes 30-60 minutes depending on hardware.
+# If you already have gcc >= 15.x, use spack_env.yaml.
+#
+# Fortran dependencies (pic, test-drive) are fetched automatically
+# by CMake FetchContent — they are NOT managed here.
+
+spack:
+  specs:
+    - "cmake@4.1:"
+    - netcdf-fortran
+    - netcdf-c ~mpi ~parallel-netcdf
+    - hdf5 ~mpi +fortran +hl
+
+  packages:
+    c:
+      require: "gcc@15:"
+    cxx:
+      require: "gcc@15:"
+    fortran:
+      require: "gcc@15:"
+    gcc:
+      require: "@15:"
+      buildable: false
+      externals:
+        - spec: gcc@15
+          prefix: /path/to/spack/opt/spack/.../gcc-15  # filled by step 1
+
+  concretizer:
+    unify: true

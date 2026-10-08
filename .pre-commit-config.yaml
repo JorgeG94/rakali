@@ -1,0 +1,110 @@
+
+---
+repos:
+  - repo: https://github.com/cheshirekow/cmake-format-precommit
+    rev: v0.6.13
+    hooks:
+      - id: cmake-format
+        name: CMake Format
+        entry: cmake-format
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-shebang-scripts-are-executable
+      - id: check-executables-have-shebangs
+      - id: check-json
+      - id: check-yaml
+      - id: check-symlinks
+      - id: detect-private-key
+      - id: end-of-file-fixer
+        exclude: '\.patch$'
+      - id: check-case-conflict
+      - id: mixed-line-ending
+      - id: trailing-whitespace
+        exclude: '\.patch$'
+  - repo: local
+    hooks:
+      - id: fprettify
+        name: fprettify
+        entry: fprettify --silent
+        language: system
+        types: [file]
+        files: '\.(f|F|f90|F90)$'
+        exclude: 'tdl_boundary\.F90'
+      - id: fortitude
+        name: fortitude
+        entry: fortitude check --config-file fortitude.toml
+        language: system
+        types: [file]
+        files: '\.(f|F|f90|F90)$'
+        exclude: '(benchmarks/|tests/|tdl_boundary\.F90|tdl_state\.F90)'
+      - id: dc-intrinsic-shadow
+        name: No intrinsic-shadowing locals in do concurrent (NVHPC/ifx codegen bug)
+        entry: tools/dc_intrinsic_shadow_lint.py
+        language: system
+        files: '\.(f|F|f90|F90)$'
+        exclude: '^tools/'
+      - id: decl-order
+        name: Integer dims declared before explicit-shape arrays (ifx #8586)
+        entry: tools/decl_order_lint.py
+        language: system
+        files: '\.(f|F|f90|F90)$'
+        exclude: '^tools/'
+      - id: dc-transfer
+        name: No transfer() inside do concurrent (nvfortran -stdpar=gpu miscompile)
+        # nvfortran 26.5 gets ~95% of elements WRONG for `transfer()` in a
+        # `do concurrent` body -- a shifted-index miscompile, silent, no crash.
+        # The same expression under `!$acc parallel loop` is correct, so the
+        # fix is to keep such loops on OpenACC.  Repro: tools/mre_transfer.F90
+        entry: python3 tools/dc_transfer_lint.py
+        language: system
+        files: \.F90$
+        pass_filenames: false
+        args: [src]
+
+      - id: dc-assumed-shape
+        name: No assumed-shape dummies in do concurrent kernels (NVHPC descriptor-walk memcpys)
+        # Diff-aware against origin/main so only newly-introduced offenders fail —
+        # pre-existing waivers on main stay non-blocking.  The wrapper resolves an
+        # available base ref and skips cleanly when none exists (shallow CI clones,
+        # fresh worktrees) so it never aborts on a missing origin/main.
+        entry: tools/dc_assumed_shape_precommit.sh
+        language: system
+        pass_filenames: false
+        files: '^(src|app)/.*\.(f|F|f90|F90)$'
+      - id: openmp-portability
+        name: OpenMP portability (no NEW ifx-breaking !$acc directive shapes)
+        # Mirrors .github/workflows/openmp-portability-lint.yml: diff-aware
+        # against origin/main so only newly-introduced offenders fail —
+        # pre-existing deep-struct-chain attaches on main stay non-blocking
+        # (no backfill sweep required). The wrapper resolves an available
+        # base ref and skips cleanly when none exists (shallow CI clones,
+        # fresh worktrees) so it never aborts on a missing origin/main.
+        entry: tools/openmp_portability_precommit.sh
+        language: system
+        pass_filenames: false
+        files: '^(src|app)/.*\.(f|F|f90|F90)$'
+      - id: check-closure-matrix
+        name: Closure matrix drift (config knobs / CLOSURE_MATRIX.md / tests in sync)
+        entry: tools/check_closure_matrix.py
+        language: system
+        pass_filenames: false
+        files: '^(src/core/rki_config\.F90|docs/CLOSURE_MATRIX\.md|tests/CMakeLists\.txt)$'
+      - id: test-regime-labels
+        name: Every rakali ctest entry carries a regime label (coastal/ocean/core)
+        entry: python3 tools/check_test_regime_labels.py
+        language: system
+        pass_filenames: false
+        files: '^tests/CMakeLists\.txt$'
+      - id: check-bytes-accounting
+        name: Memory-accounting drift (every array is counted in its type's bytes())
+        entry: tools/check_bytes_accounting.py
+        language: system
+        pass_filenames: false
+        files: '^src/.*\.F90$'
+      - id: no-bulk-adds
+        name: No accidental bulk `git add -A` (unrelated untracked files)
+        entry: tools/check_no_bulk_adds.py
+        language: system
+        pass_filenames: false
+        always_run: true

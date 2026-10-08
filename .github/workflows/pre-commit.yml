@@ -1,0 +1,44 @@
+name: Check pre-commit hooks
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  pre-commit:
+    name: Run pre-commit hooks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          # Full history so the openmp-portability hook can diff against
+          # origin/main (it skips gracefully if the ref is still absent).
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        # `fprettify` and `fortitude-lint` are referenced as `language:
+        # system` in .pre-commit-config.yaml, so they must be on PATH
+        # before `pre-commit run` invokes them. `cmake-format` is pulled
+        # in by the cmake-format-precommit hook automatically.
+        run: |
+          python -m pip install --upgrade pip
+          pip install pre-commit fprettify fortitude-lint
+
+      - name: Run pre-commit checks
+        run: |
+          pre-commit install
+          pre-commit run --all-files --show-diff-on-failure
+      # Note: fortitude runs as part of `pre-commit run --all-files`
+      # above (see `.pre-commit-config.yaml`).  A separate standalone
+      # fortitude job was removed to avoid double execution.  If
+      # inline PR annotations become valuable, re-add it under a
+      # `linter_fortitude` job using `gha3mi/setup-fortran-conda` with
+      # `fortitude-settings: "--output-format github"`.
