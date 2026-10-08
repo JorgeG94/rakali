@@ -51,7 +51,7 @@ module rki_ml_kpp_unstr
 
 contains
 
-   pure subroutine ml_kpp_boundary_layer_unstr(state, hS_layer)
+   subroutine ml_kpp_boundary_layer_unstr(state, hS_layer)
       !! Pass 1: per-cell u_*, B_0, and the bulk-Ri boundary-layer depth.
       !! Mirrors `ml_kpp_boundary_layer` (structured) on the cell-centric
       !! layout.  u_* uses the uniform barotropic wind stress; B_0 uses
@@ -84,12 +84,8 @@ contains
       tau_x = state%barotropic%wind_tau_x
       tau_y = state%barotropic%wind_tau_y
 
-      do concurrent(cell=1:n) &
-         local(k, h_col, h_top, s_top, f_t_kin, f_s_kin, b_0, us, &
-               u_ref, v_ref, b_ref, d_centre_ref, h_b_lagged, &
-               wstar3_lagged, w_s_col, u_k, v_k, b_k, d_centre_k, &
-               delta_d, delta_b, n_brunt, vt2, shear2, ri_bulk, ri_prev, &
-               d_prev, denom, frac, h_b, h_k, h_k1, crossing_found)
+      !$omp target teams distribute parallel do private(k, h_col, h_top, s_top, f_t_kin, f_s_kin, b_0, us, u_ref, v_ref, b_ref, d_centre_ref, h_b_lagged, wstar3_lagged, w_s_col, u_k, v_k, b_k, d_centre_k, delta_d, delta_b, n_brunt, vt2, shear2, ri_bulk, ri_prev, d_prev, denom, frac, h_b, h_k, h_k1, crossing_found)
+      do cell = 1, n
          h_col = 0.0_wp
          do k = 1, nz
             h_col = h_col + state%multilayer%h_layer(k, cell)
@@ -176,9 +172,10 @@ contains
          if (.not. crossing_found) h_b = h_col
          state%multilayer%kpp_bl_depth(cell) = h_b
       end do
+      !$omp end target teams distribute parallel do
    end subroutine ml_kpp_boundary_layer_unstr
 
-   pure subroutine ml_kpp_viscosity_unstr(state, dt)
+   subroutine ml_kpp_viscosity_unstr(state, dt)
       !! Pass 2 (momentum): PP81 interior viscosity with the KPP shape-
       !! function overlay max'd in, then the explicit CFL-clamped
       !! diffusive flux applied to hu/hv (two-pass, mirroring
@@ -198,11 +195,8 @@ contains
       n = state%ncells_owned
       if (nz < 2) return
 
-      do concurrent(cell=1:n) &
-         local(k, h_k, h_k1, h_avg, u_k, v_k, u_k1, v_k1, du, dv, drho, &
-               Ri, denom, nu_t, h_col, h_b, b_0, us, wstar3, w_star, w_s, &
-               d_below, d_iface, sigma, g_shape, nu_kpp, &
-               flux_u_iface, flux_v_iface)
+      !$omp target teams distribute parallel do private(k, h_k, h_k1, h_avg, u_k, v_k, u_k1, v_k1, du, dv, drho, Ri, denom, nu_t, h_col, h_b, b_0, us, wstar3, w_star, w_s, d_below, d_iface, sigma, g_shape, nu_kpp, flux_u_iface, flux_v_iface)
+      do cell = 1, n
          if (state%barotropic%height_cv(cell) < ML_MIN_DEPTH_UNSTR) cycle
 
          h_col = 0.0_wp
@@ -283,9 +277,10 @@ contains
          state%multilayer%hu_layer(nz, cell) = state%multilayer%hu_layer(nz, cell) - flux_u_iface(nz - 1)
          state%multilayer%hv_layer(nz, cell) = state%multilayer%hv_layer(nz, cell) - flux_v_iface(nz - 1)
       end do
+      !$omp end target teams distribute parallel do
    end subroutine ml_kpp_viscosity_unstr
 
-   pure subroutine ml_kpp_diffusion_tracers_unstr(state, hS_layer, hT_layer, &
+   subroutine ml_kpp_diffusion_tracers_unstr(state, hS_layer, hT_layer, &
                                                   kappa_S_bg, kappa_T_bg, dt)
       !! Pass 2 (tracers): PP81 cubic interior diffusivity with the KPP
       !! overlay max'd in, plus the non-local counter-gradient transport
@@ -322,12 +317,8 @@ contains
 
       cs_nl = state%multilayer%kpp_cs_nonlocal
 
-      do concurrent(cell=1:n) &
-         local(k, h_k, h_k1, h_avg, u_k, v_k, u_k1, v_k1, &
-               s_k, s_k1, t_k, t_k1, du, dv, drho, Ri, denom, &
-               kappa_S, kappa_T, h_col, h_b, b_0, us, wstar3, w_star, w_s, &
-               h_top, s_top, f_t_kin, f_s_kin, d_below, d_iface, sigma, &
-               g_shape, nu_kpp, destabilizing, flux_s_iface, flux_t_iface)
+      !$omp target teams distribute parallel do private(k, h_k, h_k1, h_avg, u_k, v_k, u_k1, v_k1, s_k, s_k1, t_k, t_k1, du, dv, drho, Ri, denom, kappa_S, kappa_T, h_col, h_b, b_0, us, wstar3, w_star, w_s, h_top, s_top, f_t_kin, f_s_kin, d_below, d_iface, sigma, g_shape, nu_kpp, destabilizing, flux_s_iface, flux_t_iface)
+      do cell = 1, n
          if (state%barotropic%height_cv(cell) < ML_MIN_DEPTH_UNSTR) cycle
 
          h_col = 0.0_wp
@@ -433,6 +424,7 @@ contains
          hS_layer(nz, cell) = hS_layer(nz, cell) - flux_s_iface(nz - 1)
          hT_layer(nz, cell) = hT_layer(nz, cell) - flux_t_iface(nz - 1)
       end do
+      !$omp end target teams distribute parallel do
    end subroutine ml_kpp_diffusion_tracers_unstr
 
 end module rki_ml_kpp_unstr

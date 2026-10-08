@@ -239,11 +239,11 @@ contains
          t_bc = state%time + SI_UNSTR_THETA*dt
          eta_bc = TIDE_AMP*sin(om*t_bc)
          state%bc_eta_ext(WEST_GROUP) = H0 + eta_bc
-         !$acc update device(state%bc_eta_ext)
+         !$omp target update to(state%bc_eta_ext)
 
          call solver_unstr_step(state, mesh, dt)
 
-         !$acc update self(state%barotropic%stage_cv)
+         !$omp target update from(state%barotropic%stage_cv)
          mean_max = max(mean_max, mean_eta(state, mesh))
          mean_min = min(mean_min, mean_eta(state, mesh))
          bc_max = max(bc_max, eta_bc)

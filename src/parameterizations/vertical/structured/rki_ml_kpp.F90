@@ -44,7 +44,7 @@ contains
       g = sigma*(1.0_wp - sigma)*(1.0_wp - sigma)
    end function kpp_shape
 
-   pure subroutine ml_kpp_boundary_layer(h_layer, hu_layer, hv_layer, rho_layer, &
+   subroutine ml_kpp_boundary_layer(h_layer, hu_layer, hv_layer, rho_layer, &
                                          hS_layer, rho_0, alpha_T, beta_S, cp, &
                                          wind_x, wind_y, heat_flux, evap_minus_precip, &
                                          ri_crit, c_vt2, &
@@ -89,12 +89,9 @@ contains
 
       if (nz < 2) return
 
-      do concurrent(j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) &
-         local(k, kk, h_col, h_top, s_top, f_t_kin, f_s_kin, b_0, us, &
-               u_ref, v_ref, b_ref, d_centre_ref, h_b_lagged, &
-               wstar3_lagged, w_s_col, u_k, v_k, b_k, d_centre_k, &
-               delta_d, delta_b, n_brunt, vt2, shear2, ri_bulk, ri_prev, &
-               d_prev, denom, frac, h_b, h_k, h_k1, crossing_found)
+      !$omp target teams distribute parallel do collapse(2) private(k, kk, h_col, h_top, s_top, f_t_kin, f_s_kin, b_0, us, u_ref, v_ref, b_ref, d_centre_ref, h_b_lagged, wstar3_lagged, w_s_col, u_k, v_k, b_k, d_centre_k, delta_d, delta_b, n_brunt, vt2, shear2, ri_bulk, ri_prev, d_prev, denom, frac, h_b, h_k, h_k1, crossing_found)
+      do j = nghost + 1, ny - nghost
+      do i = nghost + 1, nx - nghost
          h_col = 0.0_wp
          do kk = 1, nz
             h_col = h_col + h_layer(i, j, kk)
@@ -188,9 +185,11 @@ contains
          if (.not. crossing_found) h_b = h_col
          bl_depth(i, j) = h_b
       end do
+      end do
+      !$omp end target teams distribute parallel do
    end subroutine ml_kpp_boundary_layer
 
-   pure subroutine ml_kpp_viscosity(h_layer, hu_layer, hv_layer, rho_layer, &
+   subroutine ml_kpp_viscosity(h_layer, hu_layer, hv_layer, rho_layer, &
                                     rho_0, nu_max, nu_bg, ri_alpha, &
                                     u_star, buoy_flux, bl_depth, &
                                     grid, nz, dt)
@@ -223,10 +222,9 @@ contains
 
       if (nz < 2) return
 
-      do concurrent(j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) &
-         local(k, kk, h_k, h_k1, h_avg, u_k, v_k, u_k1, v_k1, du, dv, drho, &
-               Ri, denom, nu_t, flux_u, flux_v, h_col, h_b, b_0, us, &
-               wstar3, w_star, w_s, d_below, d_iface, sigma, g_shape, nu_kpp)
+      !$omp target teams distribute parallel do collapse(2) private(k, kk, h_k, h_k1, h_avg, u_k, v_k, u_k1, v_k1, du, dv, drho, Ri, denom, nu_t, flux_u, flux_v, h_col, h_b, b_0, us, wstar3, w_star, w_s, d_below, d_iface, sigma, g_shape, nu_kpp)
+      do j = nghost + 1, ny - nghost
+      do i = nghost + 1, nx - nghost
          h_col = 0.0_wp
          do kk = 1, nz
             h_col = h_col + h_layer(i, j, kk)
@@ -299,9 +297,11 @@ contains
             end do
          end if
       end do
+      end do
+      !$omp end target teams distribute parallel do
    end subroutine ml_kpp_viscosity
 
-   pure subroutine ml_kpp_diffusion_tracers(h_layer, hu_layer, hv_layer, &
+   subroutine ml_kpp_diffusion_tracers(h_layer, hu_layer, hv_layer, &
                                             hS_layer, hT_layer, rho_layer, rho_0, &
                                             nu_max, kappa_S_bg, kappa_T_bg, ri_alpha, &
                                             cs_nonlocal, heat_flux, evap_minus_precip, &
@@ -352,13 +352,9 @@ contains
 
       if (nz < 2) return
 
-      do concurrent(j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) &
-         local(k, kk, h_k, h_k1, h_avg, u_k, v_k, u_k1, v_k1, h_col, &
-               s_k, s_k1, t_k, t_k1, du, dv, drho, Ri, denom, &
-               kappa_S, kappa_T, flux_S, flux_T, h_b, b_0, us, &
-               wstar3, w_star, w_s, h_top, s_top, f_t_kin, f_s_kin, &
-               d_below, d_iface, sigma, g_shape, nu_kpp, gamma_T, gamma_S, &
-               destabilizing)
+      !$omp target teams distribute parallel do collapse(2) private(k, kk, h_k, h_k1, h_avg, u_k, v_k, u_k1, v_k1, h_col, s_k, s_k1, t_k, t_k1, du, dv, drho, Ri, denom, kappa_S, kappa_T, flux_S, flux_T, h_b, b_0, us, wstar3, w_star, w_s, h_top, s_top, f_t_kin, f_s_kin, d_below, d_iface, sigma, g_shape, nu_kpp, gamma_T, gamma_S, destabilizing)
+      do j = nghost + 1, ny - nghost
+      do i = nghost + 1, nx - nghost
          h_col = 0.0_wp
          do kk = 1, nz
             h_col = h_col + h_layer(i, j, kk)
@@ -473,6 +469,8 @@ contains
             end if
          end if
       end do
+      end do
+      !$omp end target teams distribute parallel do
    end subroutine ml_kpp_diffusion_tracers
 
 end module rki_ml_kpp

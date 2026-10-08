@@ -35,7 +35,7 @@ module rki_ml_pressure
 contains
 
    pure function rho_ref_at(z, rho_ref, dz, nz_ref, rho_0) result(rho)
-      !$acc routine seq
+      !$omp declare target
       !! Linear interpolation of the reference-density profile at depth z.
       !! Out-of-range falls back to the nearest endpoint. When the profile
       !! is unset (`dz == 0`) returns rho_0 so the kernel reduces to the
@@ -60,7 +60,7 @@ contains
          rho = (1.0_wp - frac)*rho_ref(i) + frac*rho_ref(i + 1)
       end if
    end function rho_ref_at
-   pure subroutine ml_baroclinic_pressure_gradient(h_layer, rho_layer, &
+   subroutine ml_baroclinic_pressure_gradient(h_layer, rho_layer, &
                                                    hu_layer, hv_layer, &
                                                    rho_0, rho_ref, rho_ref_dz, nz_ref, &
                                                    grid, nz, dt)
@@ -117,10 +117,9 @@ contains
       ! Process each interior cell
       ! We need the internal pressure at (i,j), (i±1,j), (i,j±1) for
       ! central differences. Compute all five columns per cell.
-      do concurrent(j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) &
-         local(k, kk, acc, p_int, p_int_ip1, p_int_im1, p_int_jp1, p_int_jm1, &
-               dp_dx, dp_dy, h_col, h_col_im1, h_col_ip1, h_col_jm1, h_col_jp1, &
-               z_top, z_bot, z_mid_lay)
+      !$omp target teams distribute parallel do collapse(2) private(k, kk, acc, p_int, p_int_ip1, p_int_im1, p_int_jp1, p_int_jm1, dp_dx, dp_dy, h_col, h_col_im1, h_col_ip1, h_col_jm1, h_col_jp1, z_top, z_bot, z_mid_lay)
+      do j = nghost + 1, ny - nghost
+      do i = nghost + 1, nx - nghost
 
          ! Compute total column depth for this cell and its neighbours
          h_col = 0.0_wp
@@ -253,9 +252,11 @@ contains
             end if
          end do
       end do
+      end do
+      !$omp end target teams distribute parallel do
 
    end subroutine ml_baroclinic_pressure_gradient
-   pure subroutine ml_baroclinic_pressure_gradient_jacobian(h_layer, rho_layer, &
+   subroutine ml_baroclinic_pressure_gradient_jacobian(h_layer, rho_layer, &
                                                             hu_layer, hv_layer, &
                                                             rho_0, rho_ref, rho_ref_dz, nz_ref, &
                                                             grid, nz, dt)
@@ -307,13 +308,9 @@ contains
       inv_2dy = 0.5_wp/dy
       inv_rho0 = 1.0_wp/rho_0
 
-      do concurrent(j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) &
-         local(k, kk, kn, z_if, p_if, &
-               zn_if_ip1, pn_if_ip1, zn_if_im1, pn_if_im1, &
-               zn_if_jp1, pn_if_jp1, zn_if_jm1, pn_if_jm1, &
-               z_mid, z_mid_lay, p_here, p_nbr, &
-               dp_dx, dp_dy, frac, acc, &
-               h_col, h_col_im1, h_col_ip1, h_col_jm1, h_col_jp1)
+      !$omp target teams distribute parallel do collapse(2) private(k, kk, kn, z_if, p_if, zn_if_ip1, pn_if_ip1, zn_if_im1, pn_if_im1, zn_if_jp1, pn_if_jp1, zn_if_jm1, pn_if_jm1, z_mid, z_mid_lay, p_here, p_nbr, dp_dx, dp_dy, frac, acc, h_col, h_col_im1, h_col_ip1, h_col_jm1, h_col_jp1)
+      do j = nghost + 1, ny - nghost
+      do i = nghost + 1, nx - nghost
 
          ! Compute total column depth for this cell and its neighbours
          h_col = 0.0_wp
@@ -515,11 +512,13 @@ contains
             end if
          end do
       end do
+      end do
+      !$omp end target teams distribute parallel do
 
    end subroutine ml_baroclinic_pressure_gradient_jacobian
    pure logical function all_neighbours_wet(h_col, h_col_ip1, h_col_im1, &
                                             h_col_jp1, h_col_jm1) result(all_wet)
-      !$acc routine seq
+      !$omp declare target
       !! Returns `.true.` if the centre cell and its four face-neighbours all
       !! have a total column depth at or above `ML_MIN_DEPTH`.
       !!

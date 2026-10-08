@@ -25,7 +25,7 @@ module rki_kernel_pressure
 
 contains
 
-   pure subroutine compute_depth_averaged_momentum(h, u_layer, v_layer, dsig, &
+   subroutine compute_depth_averaged_momentum(h, u_layer, v_layer, dsig, &
                                                    hu, hv, grid, nz)
       !! Compute depth-integrated momentum from per-layer velocities
       !! hu = h * sum(dsig_k * u_k), hv = h * sum(dsig_k * v_k)
@@ -45,8 +45,9 @@ contains
       ny = grid%ny_total
       nghost = grid%nghost
 
-      do concurrent(j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) &
-         local(u_avg, v_avg, k)
+      !$omp target teams distribute parallel do collapse(2) private(u_avg, v_avg, k)
+      do j = nghost + 1, ny - nghost
+      do i = nghost + 1, nx - nghost
          u_avg = 0.0_wp
          v_avg = 0.0_wp
          do k = 1, nz
@@ -56,10 +57,12 @@ contains
          hu(i, j) = h(i, j)*u_avg
          hv(i, j) = h(i, j)*v_avg
       end do
+      end do
+      !$omp end target teams distribute parallel do
 
    end subroutine compute_depth_averaged_momentum
 
-   pure subroutine save_barotropic_state(hu, hv, hu_pre, hv_pre, grid)
+   subroutine save_barotropic_state(hu, hv, hu_pre, hv_pre, grid)
       !! Save barotropic momentum before HLL update
       type(hgrid_t), intent(in) :: grid
       real(wp), intent(in) :: hu(grid%nx_total, grid%ny_total)
@@ -72,14 +75,18 @@ contains
       nx = grid%nx_total
       ny = grid%ny_total
 
-      do concurrent(j=1:ny, i=1:nx)
+      !$omp target teams distribute parallel do collapse(2)
+      do j = 1, ny
+      do i = 1, nx
          hu_pre(i, j) = hu(i, j)
          hv_pre(i, j) = hv(i, j)
       end do
+      end do
+      !$omp end target teams distribute parallel do
 
    end subroutine save_barotropic_state
 
-   pure subroutine compute_layer_from_barotropic(h, hu, hv, hu_pre, hv_pre, &
+   subroutine compute_layer_from_barotropic(h, hu, hv, hu_pre, hv_pre, &
                                                  u_layer, v_layer, dsig, &
                                                  grid, nz, dt)
       !! Distribute barotropic acceleration (hu_new - hu_pre)/h uniformly
@@ -101,8 +108,9 @@ contains
       ny = grid%ny_total
       nghost = grid%nghost
 
-      do concurrent(j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) &
-         local(h_val, du, dv, k)
+      !$omp target teams distribute parallel do collapse(2) private(h_val, du, dv, k)
+      do j = nghost + 1, ny - nghost
+      do i = nghost + 1, nx - nghost
          h_val = h(i, j)
          if (h_val > NH_MIN_DEPTH) then
             du = (hu(i, j) - hu_pre(i, j))/h_val
@@ -118,10 +126,12 @@ contains
             end do
          end if
       end do
+      end do
+      !$omp end target teams distribute parallel do
 
    end subroutine compute_layer_from_barotropic
 
-   pure subroutine compute_vertical_velocity(h, u_layer, v_layer, b, dsig, w, &
+   subroutine compute_vertical_velocity(h, u_layer, v_layer, b, dsig, w, &
                                              grid, nz)
       !! Integrate continuity equation bottom-up to get vertical velocity
       !!
@@ -147,8 +157,9 @@ contains
       dx = grid%dx
       dy = grid%dy
 
-      do concurrent(j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) &
-         local(div_hu, div_hv, k)
+      !$omp target teams distribute parallel do collapse(2) private(div_hu, div_hv, k)
+      do j = nghost + 1, ny - nghost
+      do i = nghost + 1, nx - nghost
          w(i, j, 1) = 0.0_wp
          if (h(i, j) > NH_MIN_DEPTH) then
             do k = 1, nz
@@ -164,10 +175,12 @@ contains
             end do
          end if
       end do
+      end do
+      !$omp end target teams distribute parallel do
 
    end subroutine compute_vertical_velocity
 
-   pure subroutine compute_nh_rhs(h, w, dsig, rhs, nx, ny, nz, nghost, dx, dy, dt)
+   subroutine compute_nh_rhs(h, w, dsig, rhs, nx, ny, nz, nghost, dx, dy, dt)
       !! Public only for the unit-test suite (no production module imports it).
       !! Compute RHS of NH Poisson equation from velocity divergence
       !!
@@ -182,8 +195,9 @@ contains
       integer :: i, j, k
       real(wp) :: h_val
 
-      do concurrent(j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) &
-         local(h_val, k)
+      !$omp target teams distribute parallel do collapse(2) private(h_val, k)
+      do j = nghost + 1, ny - nghost
+      do i = nghost + 1, nx - nghost
          h_val = h(i, j)
          if (h_val > NH_MIN_DEPTH) then
             do k = 1, nz
@@ -196,10 +210,12 @@ contains
             end do
          end if
       end do
+      end do
+      !$omp end target teams distribute parallel do
 
    end subroutine compute_nh_rhs
 
-   pure subroutine apply_poisson_operator(h, dsig, p, Ap, nx, ny, nz, nghost, dx, dy, dt)
+   subroutine apply_poisson_operator(h, dsig, p, Ap, nx, ny, nz, nghost, dx, dy, dt)
       !! Public only for the unit-test suite (no production module imports it).
       !! Matrix-free Poisson operator: Ap = A * p
       !!
@@ -220,8 +236,9 @@ contains
       inv_dy2 = 1.0_wp/(dy*dy)
       inv_dt2 = 1.0_wp/(dt*dt)
 
-      do concurrent(j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) &
-         local(h_val, horiz, vert_lo, vert_hi, k)
+      !$omp target teams distribute parallel do collapse(2) private(h_val, horiz, vert_lo, vert_hi, k)
+      do j = nghost + 1, ny - nghost
+      do i = nghost + 1, nx - nghost
          h_val = h(i, j)
          if (h_val > NH_MIN_DEPTH) then
             do k = 1, nz
@@ -249,6 +266,8 @@ contains
             end do
          end if
       end do
+      end do
+      !$omp end target teams distribute parallel do
 
    end subroutine apply_poisson_operator
 
@@ -281,7 +300,7 @@ contains
 
    end subroutine compute_vert_coefficients
 
-   pure subroutine apply_poisson_operator_fast(h, p, Ap, nx, ny, nz, nghost, &
+   subroutine apply_poisson_operator_fast(h, p, Ap, nx, ny, nz, nghost, &
                                                inv_dx2, inv_dy2, vert_lo, vert_hi)
       !! Poisson operator (Ap = A*p) using pre-computed dsig-dependent
       !! vertical coefficients to avoid divisions; horizontal 5-point
@@ -297,8 +316,9 @@ contains
       integer :: i, j, k
       real(wp) :: h_val, horiz, vl, vh
 
-      do concurrent(j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) &
-         local(h_val, horiz, vl, vh, k)
+      !$omp target teams distribute parallel do collapse(2) private(h_val, horiz, vl, vh, k)
+      do j = nghost + 1, ny - nghost
+      do i = nghost + 1, nx - nghost
          h_val = h(i, j)
          if (h_val > NH_MIN_DEPTH) then
             do k = 1, nz
@@ -324,10 +344,12 @@ contains
             end do
          end if
       end do
+      end do
+      !$omp end target teams distribute parallel do
 
    end subroutine apply_poisson_operator_fast
 
-   pure subroutine apply_nh_correction(h, u_layer, v_layer, w, q_nh, dsig, &
+   subroutine apply_nh_correction(h, u_layer, v_layer, w, q_nh, dsig, &
                                        grid, nz, dt)
       !! Apply NH pressure gradient to correct layer velocities
       !!
@@ -354,8 +376,9 @@ contains
       dx = grid%dx
       dy = grid%dy
 
-      do concurrent(j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) &
-         local(dqdx, dqdy, h_val, k)
+      !$omp target teams distribute parallel do collapse(2) private(dqdx, dqdy, h_val, k)
+      do j = nghost + 1, ny - nghost
+      do i = nghost + 1, nx - nghost
          h_val = h(i, j)
          if (h_val > NH_MIN_DEPTH) then
             do k = 1, nz
@@ -381,10 +404,12 @@ contains
             end do
          end if
       end do
+      end do
+      !$omp end target teams distribute parallel do
 
    end subroutine apply_nh_correction
 
-   pure subroutine compute_rk2_average_layers(u_layer, v_layer, w, &
+   subroutine compute_rk2_average_layers(u_layer, v_layer, w, &
                                               u_layer0, v_layer0, w0, &
                                               grid, nz)
       !! RK2 averaging for layer fields: 0.5 * (old + new)
@@ -403,18 +428,30 @@ contains
       ny = grid%ny_total
       nghost = grid%nghost
 
-      do concurrent(k=1:nz, j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost)
+      !$omp target teams distribute parallel do collapse(3)
+      do k = 1, nz
+      do j = nghost + 1, ny - nghost
+      do i = nghost + 1, nx - nghost
          u_layer(i, j, k) = 0.5_wp*(u_layer0(i, j, k) + u_layer(i, j, k))
          v_layer(i, j, k) = 0.5_wp*(v_layer0(i, j, k) + v_layer(i, j, k))
       end do
+      end do
+      end do
+      !$omp end target teams distribute parallel do
 
-      do concurrent(k=1:nz + 1, j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost)
+      !$omp target teams distribute parallel do collapse(3)
+      do k = 1, nz + 1
+      do j = nghost + 1, ny - nghost
+      do i = nghost + 1, nx - nghost
          w(i, j, k) = 0.5_wp*(w0(i, j, k) + w(i, j, k))
       end do
+      end do
+      end do
+      !$omp end target teams distribute parallel do
 
    end subroutine compute_rk2_average_layers
 
-   pure subroutine apply_vertical_preconditioner(h, dsig, r, z, nx, ny, nz, nghost, dx, dy, dt)
+   subroutine apply_vertical_preconditioner(h, dsig, r, z, nx, ny, nz, nghost, dx, dy, dt)
       !! Public only for the unit-test suite (no production module imports it).
       !! Vertical-line preconditioner: solve M*z = r per (i,j) column
       !!
@@ -441,8 +478,9 @@ contains
       ! Horizontal diagonal contribution (same for all layers)
       h_diag = 2.0_wp*inv_dx2 + 2.0_wp*inv_dy2
 
-      do concurrent(j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) &
-         local(h_val, a_k, c_k, d_k, cp, dp, k)
+      !$omp target teams distribute parallel do collapse(2) private(h_val, a_k, c_k, d_k, cp, dp, k)
+      do j = nghost + 1, ny - nghost
+      do i = nghost + 1, nx - nghost
          h_val = h(i, j)
          if (h_val > NH_MIN_DEPTH) then
             ! Forward sweep (Thomas algorithm)
@@ -482,6 +520,8 @@ contains
             end do
          end if
       end do
+      end do
+      !$omp end target teams distribute parallel do
 
    end subroutine apply_vertical_preconditioner
 
@@ -545,34 +585,64 @@ contains
       call apply_poisson_operator_fast(h, q_nh, cg_Ap, nx, ny, nz, nghost, &
                                        inv_dx2, inv_dy2, vlo, vhi)
 
-      do concurrent(k=1:nz, j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost)
+      !$omp target teams distribute parallel do collapse(3)
+      do k = 1, nz
+      do j = nghost + 1, ny - nghost
+      do i = nghost + 1, nx - nghost
          cg_r(i, j, k) = cg_r(i, j, k) - cg_Ap(i, j, k)
       end do
+      end do
+      end do
+      !$omp end target teams distribute parallel do
 
       ! Check if already converged (unpreconditioned residual)
       rr = 0.0_wp
-      do concurrent(k=1:nz, j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) reduce(+:rr)
+      !$omp target teams distribute parallel do collapse(3)
+      do k = 1, nz
+      do j = nghost + 1, ny - nghost
+      do i = nghost + 1, nx - nghost
          rr = rr + cg_r(i, j, k)*cg_r(i, j, k)
       end do
+      end do
+      end do
+      !$omp end target teams distribute parallel do
 
       if (rr < tol2) return
 
       if (use_pc) then
          ! PCG: z = M^{-1} r, p = z
          call apply_vertical_preconditioner(h, dsig, cg_r, cg_z, nx, ny, nz, nghost, dx, dy, dt)
-         do concurrent(k=1:nz, j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost)
+         !$omp target teams distribute parallel do collapse(3)
+         do k = 1, nz
+         do j = nghost + 1, ny - nghost
+         do i = nghost + 1, nx - nghost
             cg_p(i, j, k) = cg_z(i, j, k)
          end do
+         end do
+         end do
+         !$omp end target teams distribute parallel do
          ! rz = dot(r, z)
          rz = 0.0_wp
-         do concurrent(k=1:nz, j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) reduce(+:rz)
+         !$omp target teams distribute parallel do collapse(3)
+         do k = 1, nz
+         do j = nghost + 1, ny - nghost
+         do i = nghost + 1, nx - nghost
             rz = rz + cg_r(i, j, k)*cg_z(i, j, k)
          end do
+         end do
+         end do
+         !$omp end target teams distribute parallel do
       else
          ! Plain CG: p = r, rz = rr
-         do concurrent(k=1:nz, j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost)
+         !$omp target teams distribute parallel do collapse(3)
+         do k = 1, nz
+         do j = nghost + 1, ny - nghost
+         do i = nghost + 1, nx - nghost
             cg_p(i, j, k) = cg_r(i, j, k)
          end do
+         end do
+         end do
+         !$omp end target teams distribute parallel do
          rz = rr
       end if
 
@@ -583,9 +653,15 @@ contains
 
          ! pAp = dot(p, Ap)
          pAp = 0.0_wp
-         do concurrent(k=1:nz, j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) reduce(+:pAp)
+         !$omp target teams distribute parallel do collapse(3)
+         do k = 1, nz
+         do j = nghost + 1, ny - nghost
+         do i = nghost + 1, nx - nghost
             pAp = pAp + cg_p(i, j, k)*cg_Ap(i, j, k)
          end do
+         end do
+         end do
+         !$omp end target teams distribute parallel do
 
          if (abs(pAp) < 1.0e-30_wp) exit
 
@@ -593,16 +669,28 @@ contains
 
          ! q_nh += alpha * p
          ! r -= alpha * Ap
-         do concurrent(k=1:nz, j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost)
+         !$omp target teams distribute parallel do collapse(3)
+         do k = 1, nz
+         do j = nghost + 1, ny - nghost
+         do i = nghost + 1, nx - nghost
             q_nh(i, j, k) = q_nh(i, j, k) + alpha*cg_p(i, j, k)
             cg_r(i, j, k) = cg_r(i, j, k) - alpha*cg_Ap(i, j, k)
          end do
+         end do
+         end do
+         !$omp end target teams distribute parallel do
 
          ! Convergence check on unpreconditioned residual
          rr = 0.0_wp
-         do concurrent(k=1:nz, j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) reduce(+:rr)
+         !$omp target teams distribute parallel do collapse(3)
+         do k = 1, nz
+         do j = nghost + 1, ny - nghost
+         do i = nghost + 1, nx - nghost
             rr = rr + cg_r(i, j, k)*cg_r(i, j, k)
          end do
+         end do
+         end do
+         !$omp end target teams distribute parallel do
 
          iter_out = iter
 
@@ -612,29 +700,47 @@ contains
             ! PCG: z = M^{-1} r, rz_new = dot(r, z)
             call apply_vertical_preconditioner(h, dsig, cg_r, cg_z, nx, ny, nz, nghost, dx, dy, dt)
             rz_new = 0.0_wp
-            do concurrent(k=1:nz, j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) reduce(+:rz_new)
+            !$omp target teams distribute parallel do collapse(3)
+            do k = 1, nz
+            do j = nghost + 1, ny - nghost
+            do i = nghost + 1, nx - nghost
                rz_new = rz_new + cg_r(i, j, k)*cg_z(i, j, k)
             end do
+            end do
+            end do
+            !$omp end target teams distribute parallel do
             beta = rz_new/rz
             rz = rz_new
             ! p = z + beta * p
-            do concurrent(k=1:nz, j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost)
+            !$omp target teams distribute parallel do collapse(3)
+            do k = 1, nz
+            do j = nghost + 1, ny - nghost
+            do i = nghost + 1, nx - nghost
                cg_p(i, j, k) = cg_z(i, j, k) + beta*cg_p(i, j, k)
             end do
+            end do
+            end do
+            !$omp end target teams distribute parallel do
          else
             ! Plain CG: rz_new = rr
             beta = rr/rz
             rz = rr
             ! p = r + beta * p
-            do concurrent(k=1:nz, j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost)
+            !$omp target teams distribute parallel do collapse(3)
+            do k = 1, nz
+            do j = nghost + 1, ny - nghost
+            do i = nghost + 1, nx - nghost
                cg_p(i, j, k) = cg_r(i, j, k) + beta*cg_p(i, j, k)
             end do
+            end do
+            end do
+            !$omp end target teams distribute parallel do
          end if
       end do
 
    end subroutine solve_nh_pressure
 
-   pure subroutine compute_nh_baro_tendency(h, q_nh, dsig, tend_x, tend_y, &
+   subroutine compute_nh_baro_tendency(h, q_nh, dsig, tend_x, tend_y, &
                                             grid, nz)
       !! Compute depth-averaged NH pressure gradient for barotropic forcing
       !!
@@ -661,8 +767,9 @@ contains
       inv_2dx = 1.0_wp/(2.0_wp*dx)
       inv_2dy = 1.0_wp/(2.0_wp*dy)
 
-      do concurrent(j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) &
-         local(tx, ty, dqdx, dqdy, k)
+      !$omp target teams distribute parallel do collapse(2) private(tx, ty, dqdx, dqdy, k)
+      do j = nghost + 1, ny - nghost
+      do i = nghost + 1, nx - nghost
          tx = 0.0_wp
          ty = 0.0_wp
          if (h(i, j) > NH_MIN_DEPTH) then
@@ -676,10 +783,12 @@ contains
          tend_x(i, j) = tx
          tend_y(i, j) = ty
       end do
+      end do
+      !$omp end target teams distribute parallel do
 
    end subroutine compute_nh_baro_tendency
 
-   pure subroutine apply_baro_nh_tendency(hu, hv, h, tend_x, tend_y, &
+   subroutine apply_baro_nh_tendency(hu, hv, h, tend_x, tend_y, &
                                           grid, dt)
       !! Add NH barotropic tendency as forcing during barotropic subcycling
       !!
@@ -699,10 +808,14 @@ contains
       ny = grid%ny_total
       nghost = grid%nghost
 
-      do concurrent(j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost)
+      !$omp target teams distribute parallel do collapse(2)
+      do j = nghost + 1, ny - nghost
+      do i = nghost + 1, nx - nghost
          hu(i, j) = hu(i, j) + dt*h(i, j)*tend_x(i, j)
          hv(i, j) = hv(i, j) + dt*h(i, j)*tend_y(i, j)
       end do
+      end do
+      !$omp end target teams distribute parallel do
 
    end subroutine apply_baro_nh_tendency
 

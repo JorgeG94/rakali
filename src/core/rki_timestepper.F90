@@ -57,7 +57,7 @@ module rki_timestepper
 
 contains
 
-   pure function make_timestepper(scheme) result(ts)
+   function make_timestepper(scheme) result(ts)
       !! Build the coefficient table for a scheme tag.
       integer, intent(in) :: scheme
       type(timestepper_t) :: ts

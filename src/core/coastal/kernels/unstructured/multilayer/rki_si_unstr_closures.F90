@@ -56,7 +56,7 @@ module rki_si_unstr_closures
 
 contains
 
-   pure subroutine si_unstr_fill_nu_iface_from_keps(nz, nzp1, nct, nco, &
+   subroutine si_unstr_fill_nu_iface_from_keps(nz, nzp1, nct, nco, &
                                                     h_layer, keps_nut, nu_iface)
       !! Copy the k-epsilon interface viscosity into the SI column-solve slot.
       !! `keps_nut` and `nu_iface` share the interface convention (m=1 bed,
@@ -83,7 +83,8 @@ contains
       integer :: c, k
       real(wp) :: hk, hkp1
 
-      do concurrent(c=1:nco) local(k, hk, hkp1)
+      !$omp target teams distribute parallel do private(k, hk, hkp1)
+      do c = 1, nco
          nu_iface(1, c) = 0.0_wp
          nu_iface(nz + 1, c) = 0.0_wp
          do k = 1, nz - 1
@@ -96,9 +97,10 @@ contains
             end if
          end do
       end do
+      !$omp end target teams distribute parallel do
    end subroutine si_unstr_fill_nu_iface_from_keps
 
-   pure subroutine si_unstr_keps_copy_iface(nzp1, nct, nco, src, dst)
+   subroutine si_unstr_keps_copy_iface(nzp1, nct, nco, src, dst)
       !! Interface-array copy (nzp1, nct) for the `keps_si_picard > 1`
       !! save/restore: the Picard loop re-runs `ml_keps_update_unstr` from
       !! the SAME pre-step k / eps with the refreshed nu_t production
@@ -117,12 +119,16 @@ contains
 
       integer :: c, m
 
-      do concurrent(m=1:nzp1, c=1:nco)
+      !$omp target teams distribute parallel do collapse(2)
+      do m = 1, nzp1
+      do c = 1, nco
          dst(m, c) = src(m, c)
       end do
+      end do
+      !$omp end target teams distribute parallel do
    end subroutine si_unstr_keps_copy_iface
 
-   pure subroutine si_unstr_build_nu_interface_kpp(nz, nzp1, nct, nco, &
+   subroutine si_unstr_build_nu_interface_kpp(nz, nzp1, nct, nco, &
                                                    h_layer, hu_layer, hv_layer, &
                                                    rho_layer, rho_0, nu_max, &
                                                    nu_bg, ri_alpha, u_star, &
@@ -175,11 +181,8 @@ contains
       real(wp) :: h_b, b_0, us, wstar3_val, w_star, w_s
       real(wp) :: d_below, d_iface, sig, g_shape, nu_kpp
 
-      do concurrent(c=1:nco) &
-         local(k, h_col, hk, hkp1, h_avg, uk, ukp1, vk, vkp1, &
-               du, dv, drho, ri_num, denom_ri, nu_t, &
-               h_b, b_0, us, wstar3_val, w_star, w_s, &
-               d_below, d_iface, sig, g_shape, nu_kpp)
+      !$omp target teams distribute parallel do private(k, h_col, hk, hkp1, h_avg, uk, ukp1, vk, vkp1, du, dv, drho, ri_num, denom_ri, nu_t, h_b, b_0, us, wstar3_val, w_star, w_s, d_below, d_iface, sig, g_shape, nu_kpp)
+      do c = 1, nco
          nu_iface(1, c) = 0.0_wp
          nu_iface(nz + 1, c) = 0.0_wp
 
@@ -234,9 +237,10 @@ contains
             end do
          end if
       end do
+      !$omp end target teams distribute parallel do
    end subroutine si_unstr_build_nu_interface_kpp
 
-   pure subroutine si_unstr_kpp_diffusion_tracers(nz, nzp1, nct, nco, h_layer, &
+   subroutine si_unstr_kpp_diffusion_tracers(nz, nzp1, nct, nco, h_layer, &
                                                   hu_layer, hv_layer, hS_layer, &
                                                   hT_layer, rho_layer, rho_0, &
                                                   nu_max, kappa_S_bg, kappa_T_bg, &
@@ -318,14 +322,8 @@ contains
 
       if (nz < 2) return
 
-      do concurrent(c=1:nco) &
-         local(k, h_col, hk, hkp1, h_avg, uk, ukp1, vk, vkp1, &
-               du, dv, drho, ri_num, denom_ri, kap, &
-               h_b, b_0, us, wstar3_val, w_star, w_s, &
-               d_below, d_iface, sig, g_shape, nu_kpp, &
-               h_top, s_top, f_t_kin, f_s_kin, gamma_t, gamma_s, &
-               cd_val, cu_val, dz_dn, dz_up, kapS_k, kapT_k, &
-               kapS, kapT, aa, bb, cc, rS, rT, cpv, destabilizing)
+      !$omp target teams distribute parallel do private(k, h_col, hk, hkp1, h_avg, uk, ukp1, vk, vkp1, du, dv, drho, ri_num, denom_ri, kap, h_b, b_0, us, wstar3_val, w_star, w_s, d_below, d_iface, sig, g_shape, nu_kpp, h_top, s_top, f_t_kin, f_s_kin, gamma_t, gamma_s, cd_val, cu_val, dz_dn, dz_up, kapS_k, kapT_k, kapS, kapT, aa, bb, cc, rS, rT, cpv, destabilizing)
+      do c = 1, nco
 
          h_col = 0.0_wp
          do k = 1, nz
@@ -490,10 +488,11 @@ contains
             end if
          end if
       end do
+      !$omp end target teams distribute parallel do
    end subroutine si_unstr_kpp_diffusion_tracers
 
    pure subroutine si_unstr_tridiag_noflux(a, b, c, rhs, cpv, n)
-      !$acc routine seq
+      !$omp declare target
       !! In-place Thomas solve over rows 1..n with the boundary closure
       !! baked into a/b/c by the caller (the no-flux tridiagonal closure).
       !! `rhs` returns the solution.

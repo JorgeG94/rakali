@@ -43,9 +43,9 @@ contains
 
       call grid%init(NX - 2*NG, NY - 2*NG, NG, 1.0_wp, 1.0_wp)
 
-      !$acc data copy( h, hu, hv) copyin( flux_h, flux_hu, flux_hv)
+      !$omp target data map(tofrom:  h, hu, hv) map(to:  flux_h, flux_hu, flux_hv)
       call compute_update(h, hu, hv, flux_h, flux_hu, flux_hv, grid, DT)
-      !$acc end data
+      !$omp end target data
 
       ! Interior cell (4,4): h = 1.0 + 0.1*2.0 = 1.2
       call check(error, abs(h(4, 4) - 1.2_wp) < 1.0e-14_wp, &
@@ -78,9 +78,9 @@ contains
 
       call grid%init(NX - 2*NG, NY - 2*NG, NG, 1.0_wp, 1.0_wp)
 
-      !$acc data copy( h, hu, hv) copyin( flux_h, flux_hu, flux_hv)
+      !$omp target data map(tofrom:  h, hu, hv) map(to:  flux_h, flux_hu, flux_hv)
       call compute_update(h, hu, hv, flux_h, flux_hu, flux_hv, grid, 0.1_wp)
-      !$acc end data
+      !$omp end target data
 
       call check(error, abs(h(4, 4) - 2.5_wp) < 1.0e-14_wp, &
                  "h should be unchanged with zero flux")
@@ -107,9 +107,9 @@ contains
 
       call grid%init(NX - 2*NG, NY - 2*NG, NG, 1.0_wp, 1.0_wp)
 
-      !$acc data copy( h, hu, hv) copyin( h0, hu0, hv0)
+      !$omp target data map(tofrom:  h, hu, hv) map(to:  h0, hu0, hv0)
       call compute_rk2_average(h, hu, hv, h0, hu0, hv0, grid)
-      !$acc end data
+      !$omp end target data
 
       call check(error, abs(h(4, 4) - 1.5_wp) < 1.0e-14_wp, &
                  "Average of identical states should be unchanged")
@@ -136,9 +136,9 @@ contains
 
       call grid%init(NX - 2*NG, NY - 2*NG, NG, 1.0_wp, 1.0_wp)
 
-      !$acc data copy( h, hu, hv) copyin( h0, hu0, hv0)
+      !$omp target data map(tofrom:  h, hu, hv) map(to:  h0, hu0, hv0)
       call compute_rk2_average(h, hu, hv, h0, hu0, hv0, grid)
-      !$acc end data
+      !$omp end target data
 
       ! h = 0.5*(1.0 + 3.0) = 2.0
       call check(error, abs(h(4, 4) - 2.0_wp) < 1.0e-14_wp, &
@@ -176,9 +176,9 @@ contains
 
       call grid%init(NX - 2*NG, NY - 2*NG, NG, 1.0_wp, 1.0_wp)
 
-      !$acc data copy( h, hu, hv) copyin( h0, hu0, hv0)
+      !$omp target data map(tofrom:  h, hu, hv) map(to:  h0, hu0, hv0)
       call compute_rk2_average(h, hu, hv, h0, hu0, hv0, grid)
-      !$acc end data
+      !$omp end target data
 
       call check(error, abs(h(4, 4) - h_expected) < 1.0e-15_wp, &
                  "Small positive h preserved for mass conservation")
@@ -208,9 +208,9 @@ contains
 
       call grid%init(NX - 2*NG, NY - 2*NG, NG, 1.0_wp, 1.0_wp)
 
-      !$acc data copy( h, hu, hv) copyin( flux_h, flux_hu, flux_hv)
+      !$omp target data map(tofrom:  h, hu, hv) map(to:  flux_h, flux_hu, flux_hv)
       call compute_update(h, hu, hv, flux_h, flux_hu, flux_hv, grid, 0.1_wp)
-      !$acc end data
+      !$omp end target data
 
       ! Ghost cell at (1,1) should be untouched
       call check(error, abs(h(1, 1) - h_ghost_before) < 1.0e-15_wp, &

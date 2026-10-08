@@ -19,7 +19,7 @@ module rki_ml_truncate_unstr
 
 contains
 
-   pure subroutine ml_truncate_velocity_unstr(state, mesh, dt, cfl_trunc)
+   subroutine ml_truncate_velocity_unstr(state, mesh, dt, cfl_trunc)
       !! Clip any layer velocity with CFL > cfl_trunc to
       !! `0.9*cfl_trunc*radius/dt`, per owned cell and layer. Skips layers
       !! thinner than THIN_LAYER_THRESHOLD (already zeroed upstream).
@@ -39,7 +39,8 @@ contains
       inv_dt = 1.0_wp/max(dt, 1.0e-10_wp)
       coef = 0.9_wp*cfl_trunc*inv_dt
 
-      do concurrent(cell=1:n) local(k, vel_max, h_k, u_abs, v_abs)
+      !$omp target teams distribute parallel do private(k, vel_max, h_k, u_abs, v_abs)
+      do cell = 1, n
          vel_max = coef*mesh%radius(cell)
          do k = 1, nz
             h_k = state%multilayer%h_layer(k, cell)
@@ -58,6 +59,7 @@ contains
             end if
          end do
       end do
+      !$omp end target teams distribute parallel do
 
    end subroutine ml_truncate_velocity_unstr
 

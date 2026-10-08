@@ -62,9 +62,11 @@ contains
       end do
 
       got = 0_int64
-      do concurrent(i=1:N)
+      !$omp target teams distribute parallel do
+      do i = 1, N
          got(i) = transfer(x(i), 0_int64)   ! dc-transfer-ok: this IS the probe
       end do
+      !$omp end target teams distribute parallel do
 
       bad = count(got /= want)
       call check(error, bad == 0, "transfer() in do concurrent must be bit-exact")

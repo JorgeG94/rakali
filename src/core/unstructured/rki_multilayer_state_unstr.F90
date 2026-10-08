@@ -481,60 +481,60 @@ contains
       !! (in `rki_state_unstr`).
       class(unstr_multilayer_state_t), intent(inout) :: this
 
-      !$acc enter data copyin(this%dsig_ml, &
-      !$acc&                  this%h_layer, this%hu_layer, this%hv_layer, &
-      !$acc&                  this%rho_layer, this%w_interface, &
-      !$acc&                  this%h_layer0, this%hu_layer0, this%hv_layer0, &
-      !$acc&                  this%rho_ref, &
-      !$acc&                  this%kpp_bl_depth, this%kpp_u_star, this%kpp_buoy_flux)
-      !$acc enter data create(this%xmom_pre, this%ymom_pre, &
-      !$acc&                  this%tracer_advect_scratch, &
-      !$acc&                  this%ml_lgrad_x, this%ml_lgrad_y, &
-      !$acc&                  this%ml_hdiff_hTr_pre, &
-      !$acc&                  this%ml_horvisc_hu_pre, this%ml_horvisc_hv_pre)
-      !$acc enter data copyin(this%keps_tke, this%keps_eps, this%keps_nut, &
-      !$acc&                  this%keps_kt, this%keps_ustar_s, this%keps_ustar_b)
+      !$omp target enter data map(to: this%dsig_ml, &
+      !$omp&                  this%h_layer, this%hu_layer, this%hv_layer, &
+      !$omp&                  this%rho_layer, this%w_interface, &
+      !$omp&                  this%h_layer0, this%hu_layer0, this%hv_layer0, &
+      !$omp&                  this%rho_ref, &
+      !$omp&                  this%kpp_bl_depth, this%kpp_u_star, this%kpp_buoy_flux)
+      !$omp target enter data map(alloc: this%xmom_pre, this%ymom_pre, &
+      !$omp&                  this%tracer_advect_scratch, &
+      !$omp&                  this%ml_lgrad_x, this%ml_lgrad_y, &
+      !$omp&                  this%ml_hdiff_hTr_pre, &
+      !$omp&                  this%ml_horvisc_hu_pre, this%ml_horvisc_hv_pre)
+      !$omp target enter data map(to: this%keps_tke, this%keps_eps, this%keps_nut, &
+      !$omp&                  this%keps_kt, this%keps_ustar_s, this%keps_ustar_b)
       if (allocated(this%keps_tke0)) then
-         !$acc enter data copyin(this%keps_tke0, this%keps_eps0)
+         !$omp target enter data map(to: this%keps_tke0, this%keps_eps0)
       end if
       if (allocated(this%vcoord_z_ref)) then
-         !$acc enter data copyin(this%vcoord_z_ref)
+         !$omp target enter data map(to: this%vcoord_z_ref)
       end if
       if (allocated(this%vcoord_z_ref_col)) then
-         !$acc enter data copyin(this%vcoord_z_ref_col)
+         !$omp target enter data map(to: this%vcoord_z_ref_col)
       end if
       if (allocated(this%remap_dz_old)) then
-         !$acc enter data create(this%remap_dz_old)
+         !$omp target enter data map(alloc: this%remap_dz_old)
       end if
    end subroutine unstr_multilayer_enter_data
 
    subroutine unstr_multilayer_exit_data(this)
       class(unstr_multilayer_state_t), intent(inout) :: this
 
-      !$acc exit data copyout(this%h_layer, this%hu_layer, this%hv_layer, &
-      !$acc&                  this%rho_layer, this%w_interface)
-      !$acc exit data delete(this%dsig_ml, &
-      !$acc&                 this%h_layer0, this%hu_layer0, this%hv_layer0, &
-      !$acc&                 this%xmom_pre, this%ymom_pre, &
-      !$acc&                 this%tracer_advect_scratch, &
-      !$acc&                 this%ml_lgrad_x, this%ml_lgrad_y, &
-      !$acc&                 this%ml_hdiff_hTr_pre, &
-      !$acc&                 this%ml_horvisc_hu_pre, this%ml_horvisc_hv_pre, &
-      !$acc&                 this%rho_ref, &
-      !$acc&                 this%kpp_bl_depth, this%kpp_u_star, this%kpp_buoy_flux)
-      !$acc exit data delete(this%keps_tke, this%keps_eps, this%keps_nut, &
-      !$acc&                 this%keps_kt, this%keps_ustar_s, this%keps_ustar_b)
+      !$omp target exit data map(from: this%h_layer, this%hu_layer, this%hv_layer, &
+      !$omp&                  this%rho_layer, this%w_interface)
+      !$omp target exit data map(delete: this%dsig_ml, &
+      !$omp&                 this%h_layer0, this%hu_layer0, this%hv_layer0, &
+      !$omp&                 this%xmom_pre, this%ymom_pre, &
+      !$omp&                 this%tracer_advect_scratch, &
+      !$omp&                 this%ml_lgrad_x, this%ml_lgrad_y, &
+      !$omp&                 this%ml_hdiff_hTr_pre, &
+      !$omp&                 this%ml_horvisc_hu_pre, this%ml_horvisc_hv_pre, &
+      !$omp&                 this%rho_ref, &
+      !$omp&                 this%kpp_bl_depth, this%kpp_u_star, this%kpp_buoy_flux)
+      !$omp target exit data map(delete: this%keps_tke, this%keps_eps, this%keps_nut, &
+      !$omp&                 this%keps_kt, this%keps_ustar_s, this%keps_ustar_b)
       if (allocated(this%keps_tke0)) then
-         !$acc exit data delete(this%keps_tke0, this%keps_eps0)
+         !$omp target exit data map(delete: this%keps_tke0, this%keps_eps0)
       end if
       if (allocated(this%vcoord_z_ref_col)) then
-         !$acc exit data delete(this%vcoord_z_ref_col)
+         !$omp target exit data map(delete: this%vcoord_z_ref_col)
       end if
       if (allocated(this%vcoord_z_ref)) then
-         !$acc exit data delete(this%vcoord_z_ref)
+         !$omp target exit data map(delete: this%vcoord_z_ref)
       end if
       if (allocated(this%remap_dz_old)) then
-         !$acc exit data delete(this%remap_dz_old)
+         !$omp target exit data map(delete: this%remap_dz_old)
       end if
    end subroutine unstr_multilayer_exit_data
 

@@ -52,7 +52,7 @@ module rki_ml_keps
 
 contains
 
-   pure subroutine ml_keps_update(h_layer, hu_layer, hv_layer, rho_layer, &
+   subroutine ml_keps_update(h_layer, hu_layer, hv_layer, rho_layer, &
                                   tke, eps, nut, kt, rho_0, dt, grid, nz, &
                                   ustar_b, ustar_s, scheme)
       !! Advance k and eps one step per column and recover nu_t / kappa_t.
@@ -107,11 +107,9 @@ contains
       scheme_eff = KEPS_STAB_CONSTANT
       if (present(scheme)) scheme_eff = scheme
 
-      do concurrent(j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) &
-         local(m, h_col, u_dn, u_up, v_dn, v_up, dudz, dvdz, drho, &
-               prod, buoy, ktx, dd, du, denom, sink, src, eok, &
-               k_wb, k_ws, e_wb, e_ws, cmu_m, cmup_m, &
-               S2, N2, dz_if, a, b, c, rhs, cp)
+      !$omp target teams distribute parallel do collapse(2) private(m, h_col, u_dn, u_up, v_dn, v_up, dudz, dvdz, drho, prod, buoy, ktx, dd, du, denom, sink, src, eok, k_wb, k_ws, e_wb, e_ws, cmu_m, cmup_m, S2, N2, dz_if, a, b, c, rhs, cp)
+      do j = nghost + 1, ny - nghost
+      do i = nghost + 1, nx - nghost
 
          h_col = 0.0_wp
          do m = 1, nz
@@ -223,11 +221,13 @@ contains
             end do
          end if
       end do
+      end do
+      !$omp end target teams distribute parallel do
 
    end subroutine ml_keps_update
 
    pure subroutine keps_tridiag_solve(a, b, c, rhs, cp, ni)
-      !$acc routine seq
+      !$omp declare target
       !! In-place Thomas solve over interfaces 1..ni with zero-gradient
       !! (no-flux) boundary rows.  `rhs` returns the solution; `cp` scratch.
       integer, intent(in) :: ni
@@ -257,7 +257,7 @@ contains
       end do
    end subroutine keps_tridiag_solve
 
-   pure subroutine ml_keps_apply_momentum(h_layer, hu_layer, hv_layer, nut, &
+   subroutine ml_keps_apply_momentum(h_layer, hu_layer, hv_layer, nut, &
                                           grid, nz, dt)
       !! Apply k-epsilon eddy viscosity `nut` (interface-shaped nz+1, from
       !! `ml_keps_update`) to layer momentum via an implicit (Thomas) vertical-
@@ -283,9 +283,9 @@ contains
       ny = grid%ny_total
       nghost = grid%nghost
 
-      do concurrent(j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) &
-         local(k, h_col, h_k, h_dn, h_up, dz_dn, dz_up, cd, cu, &
-               a, b, c, ru, rv, cp)
+      !$omp target teams distribute parallel do collapse(2) private(k, h_col, h_k, h_dn, h_up, dz_dn, dz_up, cd, cu, a, b, c, ru, rv, cp)
+      do j = nghost + 1, ny - nghost
+      do i = nghost + 1, nx - nghost
 
          h_col = 0.0_wp
          do k = 1, nz
@@ -347,10 +347,12 @@ contains
             end do
          end if
       end do
+      end do
+      !$omp end target teams distribute parallel do
 
    end subroutine ml_keps_apply_momentum
 
-   pure subroutine ml_keps_apply_diffusion_tracer(h_layer, hTr, kt, kappa_bg, &
+   subroutine ml_keps_apply_diffusion_tracer(h_layer, hTr, kt, kappa_bg, &
                                                   grid, nz, dt)
       !! Implicit (Thomas) vertical diffusion of one tracer using k-eps
       !! diffusivity `kt` (interface-shaped) plus background floor `kappa_bg`.
@@ -374,8 +376,9 @@ contains
       ny = grid%ny_total
       nghost = grid%nghost
 
-      do concurrent(j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) &
-         local(k, h_col, h_k, h_dn, h_up, dz_dn, dz_up, cd, cu, a, b, c, r, cp)
+      !$omp target teams distribute parallel do collapse(2) private(k, h_col, h_k, h_dn, h_up, dz_dn, dz_up, cd, cu, a, b, c, r, cp)
+      do j = nghost + 1, ny - nghost
+      do i = nghost + 1, nx - nghost
 
          h_col = 0.0_wp
          do k = 1, nz
@@ -427,10 +430,12 @@ contains
             end do
          end if
       end do
+      end do
+      !$omp end target teams distribute parallel do
 
    end subroutine ml_keps_apply_diffusion_tracer
 
-   pure subroutine ml_keps_friction_velocities(wind_x, wind_y, h_layer, &
+   subroutine ml_keps_friction_velocities(wind_x, wind_y, h_layer, &
                                                hu_layer, hv_layer, manning_n, &
                                                use_linear_drag, drag_r, rho_0, &
                                                ustar_s, ustar_b, grid, nz)
@@ -461,8 +466,9 @@ contains
       ny = grid%ny_total
       nghost = grid%nghost
 
-      do concurrent(j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) &
-         local(m, h_col, h_b, u_b, v_b, speed_b, cf)
+      !$omp target teams distribute parallel do collapse(2) private(m, h_col, h_b, u_b, v_b, speed_b, cf)
+      do j = nghost + 1, ny - nghost
+      do i = nghost + 1, nx - nghost
 
          ! surface: wind-stress magnitude -> u_*s = sqrt(|tau|/rho_0)
          ustar_s(i, j) = sqrt(sqrt(wind_x(i, j)*wind_x(i, j) &
@@ -488,11 +494,13 @@ contains
             ustar_b(i, j) = 0.0_wp
          end if
       end do
+      end do
+      !$omp end target teams distribute parallel do
 
    end subroutine ml_keps_friction_velocities
 
    pure subroutine keps_tridiag_solve_noflux(a, b, c, rhs, cp, n)
-      !$acc routine seq
+      !$omp declare target
       !! In-place Thomas solve over rows 1..n with the boundary closure
       !! already baked into a/b/c by the caller (no row override, unlike
       !! `keps_tridiag_solve`).  `rhs` returns the solution; `cp` scratch.

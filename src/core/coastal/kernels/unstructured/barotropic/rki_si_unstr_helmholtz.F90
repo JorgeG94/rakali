@@ -59,7 +59,7 @@ contains
       !! the back-substituted edge transports satisfy discrete continuity
       !! identically (mass consistency).  `!$acc routine seq` for device
       !! do-concurrent bodies.
-      !$acc routine seq
+      !$omp declare target
       real(wp), intent(in) :: hf
          !! Frozen edge effective depth Hf_e.
       real(wp), intent(in) :: eta_c, eta_nbr
@@ -77,14 +77,14 @@ contains
       !! the gated-mean rule (`face_depth_wetdry`) in its
       !! all-wet limit — it reduces EXACTLY to the linear edge depth.  Wall edges never call
       !! this (Hf stays 0); Dirichlet edges pass the ghost `h`.
-      !$acc routine seq
+      !$omp declare target
       real(wp), intent(in) :: h_c, h_nbr
       real(wp) :: hf
 
       hf = 0.5_wp*(h_c + h_nbr)
    end function si_unstr_face_depth_linear
 
-   pure subroutine si_unstr_face_depths(mesh, ncell_total, ncell_owned, n_bc, &
+   subroutine si_unstr_face_depths(mesh, ncell_total, ncell_owned, n_bc, &
                                         height, bed, bc_type, bc_eta_ext, &
                                         Hf_edge, eta_ghost_edge)
       !! Build the per-edge frozen effective depth Hf_e (2D all-wet path) AND
@@ -125,7 +125,8 @@ contains
       integer :: k, i, kn, g, bt
       real(wp) :: h_ghost, eta_bc
 
-      do concurrent(k=1:ncell_owned) local(i, kn, g, bt, h_ghost, eta_bc)
+      !$omp target teams distribute parallel do private(i, kn, g, bt, h_ghost, eta_bc)
+      do k = 1, ncell_owned
          do i = 1, EDGES_PER_TRI
             eta_ghost_edge(i, k) = 0.0_wp
             kn = mesh%neighbours(i, k)
@@ -147,9 +148,10 @@ contains
             end if
          end do
       end do
+      !$omp end target teams distribute parallel do
    end subroutine si_unstr_face_depths
 
-   pure subroutine si_unstr_apply_helmholtz(mesh, ncell_total, ncell_owned, &
+   subroutine si_unstr_apply_helmholtz(mesh, ncell_total, ncell_owned, &
                                             eta, Ap, Hf_edge, g_theta2_dt2, &
                                             mass_diag)
       !! Matrix-free apply `Ap = A*eta` for the SPD TPFA Helmholtz operator:
@@ -185,7 +187,8 @@ contains
 
       have_mass = present(mass_diag)
 
-      do concurrent(k=1:ncell_owned) local(i, kn, div_flux, ke, mass_k)
+      !$omp target teams distribute parallel do private(i, kn, div_flux, ke, mass_k)
+      do k = 1, ncell_owned
          div_flux = 0.0_wp
          do i = 1, EDGES_PER_TRI
             if (Hf_edge(i, k) > 0.0_wp) then
@@ -212,9 +215,10 @@ contains
          end if
          Ap(k) = mass_k*eta(k) - g_theta2_dt2*div_flux/mesh%area(k)
       end do
+      !$omp end target teams distribute parallel do
    end subroutine si_unstr_apply_helmholtz
 
-   pure subroutine si_unstr_compute_diag(mesh, ncell_total, ncell_owned, &
+   subroutine si_unstr_compute_diag(mesh, ncell_total, ncell_owned, &
                                          Hf_edge, eta_diag, g_theta2_dt2, &
                                          mass_diag)
       !! Precompute the reciprocal of the TPFA Helmholtz operator diagonal
@@ -238,7 +242,8 @@ contains
 
       have_mass = present(mass_diag)
 
-      do concurrent(k=1:ncell_owned) local(i, ksum, ke, mass_k, diag_k)
+      !$omp target teams distribute parallel do private(i, ksum, ke, mass_k, diag_k)
+      do k = 1, ncell_owned
          ksum = 0.0_wp
          do i = 1, EDGES_PER_TRI
             if (Hf_edge(i, k) > 0.0_wp) then
@@ -255,6 +260,7 @@ contains
          diag_k = mass_k + g_theta2_dt2*ksum/mesh%area(k)
          eta_diag(k) = 1.0_wp/diag_k
       end do
+      !$omp end target teams distribute parallel do
    end subroutine si_unstr_compute_diag
 
    subroutine si_unstr_compute_rhs(mesh, ncell_total, ncell_owned, &
@@ -296,7 +302,8 @@ contains
 
       one_m_theta = 1.0_wp - theta
 
-      do concurrent(k=1:ncell_owned) local(i, kn, divU, flux_e, ghost_sum, ke)
+      !$omp target teams distribute parallel do private(i, kn, divU, flux_e, ghost_sum, ke)
+      do k = 1, ncell_owned
          divU = 0.0_wp
          ghost_sum = 0.0_wp
          do i = 1, EDGES_PER_TRI
@@ -315,6 +322,7 @@ contains
          rhs(k) = eta_n(k) - dt*divU/mesh%area(k) &
                   + g_theta2_dt2*ghost_sum/mesh%area(k)
       end do
+      !$omp end target teams distribute parallel do
    end subroutine si_unstr_compute_rhs
 
    subroutine si_unstr_cg_solve(mesh, ncell_total, ncell_owned, &
@@ -378,16 +386,20 @@ contains
 
       ! ||rhs||_A^2 for the relative test (cg_r still holds the RHS).
       rhs2 = 0.0_wp
-      do concurrent(k=1:ncell_owned) reduce(+:rhs2)
+      !$omp target teams distribute parallel do
+      do k = 1, ncell_owned
          rhs2 = rhs2 + mesh%area(k)*cg_r(k)*cg_r(k)
       end do
+      !$omp end target teams distribute parallel do
       tol2 = max(rtol*rtol*rhs2, 1.0e-60_wp)
 
       ! Zero the full search direction (ghost/halo band stays 0 so a
       ! Dirichlet ghost is never a CG unknown).
-      do concurrent(k=1:ncell_total)
+      !$omp target teams distribute parallel do
+      do k = 1, ncell_total
          cg_p(k) = 0.0_wp
       end do
+      !$omp end target teams distribute parallel do
 
       ! r = rhs - A*eta (warm start eta = eta^n).
       if (have_mass) then
@@ -398,20 +410,26 @@ contains
          call si_unstr_apply_helmholtz(mesh, ncell_total, ncell_owned, eta, &
                                        cg_Ap, Hf_edge, g_theta2_dt2)
       end if
-      do concurrent(k=1:ncell_owned)
+      !$omp target teams distribute parallel do
+      do k = 1, ncell_owned
          cg_r(k) = cg_r(k) - cg_Ap(k)
       end do
+      !$omp end target teams distribute parallel do
 
       rr = 0.0_wp
-      do concurrent(k=1:ncell_owned) reduce(+:rr)
+      !$omp target teams distribute parallel do
+      do k = 1, ncell_owned
          rr = rr + mesh%area(k)*cg_r(k)*cg_r(k)
       end do
+      !$omp end target teams distribute parallel do
 
       if (rr < tol2) then
          res_sum = 0.0_wp
-         do concurrent(k=1:ncell_owned) reduce(+:res_sum)
+         !$omp target teams distribute parallel do
+         do k = 1, ncell_owned
             res_sum = res_sum + mesh%area(k)*cg_r(k)
          end do
+         !$omp end target teams distribute parallel do
          mass_res_out = res_sum
          return
       end if
@@ -419,17 +437,23 @@ contains
       if (use_pc) then
          call si_unstr_precond_apply(mesh, ncell_total, ncell_owned, cg_r, cg_z, &
                                      eta_diag, use_mg, mg)
-         do concurrent(k=1:ncell_owned)
+         !$omp target teams distribute parallel do
+         do k = 1, ncell_owned
             cg_p(k) = cg_z(k)
          end do
+         !$omp end target teams distribute parallel do
          rz = 0.0_wp
-         do concurrent(k=1:ncell_owned) reduce(+:rz)
+         !$omp target teams distribute parallel do
+         do k = 1, ncell_owned
             rz = rz + mesh%area(k)*cg_r(k)*cg_z(k)
          end do
+         !$omp end target teams distribute parallel do
       else
-         do concurrent(k=1:ncell_owned)
+         !$omp target teams distribute parallel do
+         do k = 1, ncell_owned
             cg_p(k) = cg_r(k)
          end do
+         !$omp end target teams distribute parallel do
          rz = rr
       end if
 
@@ -444,22 +468,28 @@ contains
          end if
 
          pAp = 0.0_wp
-         do concurrent(k=1:ncell_owned) reduce(+:pAp)
+         !$omp target teams distribute parallel do
+         do k = 1, ncell_owned
             pAp = pAp + mesh%area(k)*cg_p(k)*cg_Ap(k)
          end do
+         !$omp end target teams distribute parallel do
 
          if (abs(pAp) < 1.0e-30_wp) exit
          alpha = rz/pAp
 
-         do concurrent(k=1:ncell_owned)
+         !$omp target teams distribute parallel do
+         do k = 1, ncell_owned
             eta(k) = eta(k) + alpha*cg_p(k)
             cg_r(k) = cg_r(k) - alpha*cg_Ap(k)
          end do
+         !$omp end target teams distribute parallel do
 
          rr = 0.0_wp
-         do concurrent(k=1:ncell_owned) reduce(+:rr)
+         !$omp target teams distribute parallel do
+         do k = 1, ncell_owned
             rr = rr + mesh%area(k)*cg_r(k)*cg_r(k)
          end do
+         !$omp end target teams distribute parallel do
 
          iter_out = iter
          if (rr < tol2) exit
@@ -468,27 +498,35 @@ contains
             call si_unstr_precond_apply(mesh, ncell_total, ncell_owned, cg_r, &
                                         cg_z, eta_diag, use_mg, mg)
             rz_new = 0.0_wp
-            do concurrent(k=1:ncell_owned) reduce(+:rz_new)
+            !$omp target teams distribute parallel do
+            do k = 1, ncell_owned
                rz_new = rz_new + mesh%area(k)*cg_r(k)*cg_z(k)
             end do
+            !$omp end target teams distribute parallel do
             beta = rz_new/rz
             rz = rz_new
-            do concurrent(k=1:ncell_owned)
+            !$omp target teams distribute parallel do
+            do k = 1, ncell_owned
                cg_p(k) = cg_z(k) + beta*cg_p(k)
             end do
+            !$omp end target teams distribute parallel do
          else
             beta = rr/rz
             rz = rr
-            do concurrent(k=1:ncell_owned)
+            !$omp target teams distribute parallel do
+            do k = 1, ncell_owned
                cg_p(k) = cg_r(k) + beta*cg_p(k)
             end do
+            !$omp end target teams distribute parallel do
          end if
       end do
 
       res_sum = 0.0_wp
-      do concurrent(k=1:ncell_owned) reduce(+:res_sum)
+      !$omp target teams distribute parallel do
+      do k = 1, ncell_owned
          res_sum = res_sum + mesh%area(k)*cg_r(k)
       end do
+      !$omp end target teams distribute parallel do
       mass_res_out = res_sum
    end subroutine si_unstr_cg_solve
 
@@ -523,9 +561,11 @@ contains
          call agglom_unstr_vcycle_precond(mg, r, z, mesh%area, ncell_total, &
                                           ncell_owned)
       else
-         do concurrent(k=1:ncell_owned)
+         !$omp target teams distribute parallel do
+         do k = 1, ncell_owned
             z(k) = eta_diag(k)*r(k)
          end do
+         !$omp end target teams distribute parallel do
       end if
    end subroutine si_unstr_precond_apply
 

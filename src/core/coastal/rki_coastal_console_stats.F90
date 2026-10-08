@@ -145,10 +145,14 @@ contains
       call interior_bounds(grid, i_lo, i_hi, j_lo, j_hi)
       ke_acc = 0.0_wp
       cfl_acc = 0.0_wp
-      do concurrent(j=j_lo:j_hi, i=i_lo:i_hi) reduce(+:ke_acc) reduce(max:cfl_acc)
+      !$omp target teams distribute parallel do collapse(2)
+      do j = j_lo, j_hi
+      do i = i_lo, i_hi
          ke_acc = ke_acc + ke_cell(h(i, j), hu(i, j), hv(i, j), area)
          cfl_acc = max(cfl_acc, cfl_cell(h(i, j), hu(i, j), hv(i, j), dt, idx, idy))
       end do
+      end do
+      !$omp end target teams distribute parallel do
       ke = ke_acc
       mcfl = cfl_acc
    end subroutine reduce_barotropic
@@ -168,12 +172,18 @@ contains
       call interior_bounds(grid, i_lo, i_hi, j_lo, j_hi)
       ke_acc = 0.0_wp
       cfl_acc = 0.0_wp
-      do concurrent(k=1:nz, j=j_lo:j_hi, i=i_lo:i_hi) reduce(+:ke_acc) reduce(max:cfl_acc)
+      !$omp target teams distribute parallel do collapse(3)
+      do k = 1, nz
+      do j = j_lo, j_hi
+      do i = i_lo, i_hi
          ke_acc = ke_acc + ke_cell(h_layer(i, j, k), hu_layer(i, j, k), &
                                    hv_layer(i, j, k), area)
          cfl_acc = max(cfl_acc, cfl_cell(h_layer(i, j, k), hu_layer(i, j, k), &
                                          hv_layer(i, j, k), dt, idx, idy))
       end do
+      end do
+      end do
+      !$omp end target teams distribute parallel do
       ke = ke_acc
       mcfl = cfl_acc
    end subroutine reduce_multilayer
@@ -191,7 +201,7 @@ contains
    pure function ke_cell(h, hu, hv, area) result(v)
       !! Per-cell kinetic energy 0.5·(hu²+hv²)/h·area; 0 on a dry / NaN-guarded
       !! cell (the additive identity, so it drops out of the KE sum).
-      !$acc routine seq
+      !$omp declare target
       real(wp), intent(in) :: h, hu, hv, area
       real(wp) :: v
       if (h > 0.0_wp .and. h < 1.0e6_wp) then
@@ -204,7 +214,7 @@ contains
    pure function cfl_cell(h, hu, hv, dt, idx, idy) result(v)
       !! Per-cell advective CFL |u|·dt·idx + |v|·dt·idy; 0 on a dry / NaN-guarded
       !! cell (≤ any real CFL, so it drops out of the max).
-      !$acc routine seq
+      !$omp declare target
       real(wp), intent(in) :: h, hu, hv, dt, idx, idy
       real(wp) :: v
       if (h > 0.0_wp .and. h < 1.0e6_wp) then

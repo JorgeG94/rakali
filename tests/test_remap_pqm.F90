@@ -340,12 +340,14 @@ contains
          end do
       end do
 
-      !$acc data copyin(dz_old, dz_new, q_in) copyout(q_out)
-      !$acc parallel loop gang vector
-      do concurrent(i=1:ncol)
+      !$omp target data map(to: dz_old, dz_new, q_in) map(from: q_out)
+      !$omp target teams distribute parallel do
+      !$omp target teams distribute parallel do
+      do i = 1, ncol
          call remap_column_pqm(nz, dz_old, dz_new, q_in(:, i), q_out(:, i))
       end do
-      !$acc end data
+      !$omp end target teams distribute parallel do
+      !$omp end target data
 
       ok = .true.
       do i = 1, ncol

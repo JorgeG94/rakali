@@ -25,7 +25,7 @@ module rki_ml_pressure_unstr
 
 contains
 
-   pure subroutine ml_baroclinic_pressure_gradient_unstr(state, mesh, dt)
+   subroutine ml_baroclinic_pressure_gradient_unstr(state, mesh, dt)
       !! Apply baroclinic pressure gradient as explicit source term.
       !!
       !! The hydrostatic internal pressure anomaly at layer k center is:
@@ -79,11 +79,8 @@ contains
       rho_ref_dz = state%multilayer%rho_ref_dz
       nz_ref = state%multilayer%nz_ref
 
-      do concurrent(cell=1:n) local(k, kn, e, nbr, inv_area, acc, p_here, p_nbr, &
-                                    p_edge, dp_dx, dp_dy, n1, n2, L_e, &
-                                    g_prime, H_col, bpg_max, bpg_mag, bpg_scale, &
-                                    z_top, z_bot, z_mid_lay, &
-                                    p_int, p_int_nbr)
+      !$omp target teams distribute parallel do private(k, kn, e, nbr, inv_area, acc, p_here, p_nbr, p_edge, dp_dx, dp_dy, n1, n2, L_e, g_prime, H_col, bpg_max, bpg_mag, bpg_scale, z_top, z_bot, z_mid_lay, p_int, p_int_nbr)
+      do cell = 1, n
          ! Skip thin columns
          H_col = state%barotropic%height_cv(cell)
          if (H_col < ML_MIN_DEPTH_UNSTR) cycle
@@ -203,9 +200,10 @@ contains
             end if
          end do
       end do
+      !$omp end target teams distribute parallel do
    end subroutine ml_baroclinic_pressure_gradient_unstr
 
-   pure subroutine ml_baroclinic_pressure_gradient_jacobian_unstr(state, mesh, dt)
+   subroutine ml_baroclinic_pressure_gradient_jacobian_unstr(state, mesh, dt)
       !! Apply the Jacobian (Shchepetkin-McWilliams 2003) baroclinic
       !! pressure gradient as an explicit momentum source.
       !!
@@ -260,12 +258,8 @@ contains
       rho_ref_dz = state%multilayer%rho_ref_dz
       nz_ref = state%multilayer%nz_ref
 
-      do concurrent(cell=1:n) local(k, kn, e, nbr, inv_area, H_col, &
-                                    z_if, p_if, zn_if_e, pn_if_e, &
-                                    nbr_idx, nbr_valid, &
-                                    z_mid, z_mid_lay, p_here, p_nbr, p_edge, frac, &
-                                    dp_dx, dp_dy, n1, n2, L_e, &
-                                    g_prime, bpg_max, bpg_mag, bpg_scale)
+      !$omp target teams distribute parallel do private(k, kn, e, nbr, inv_area, H_col, z_if, p_if, zn_if_e, pn_if_e, nbr_idx, nbr_valid, z_mid, z_mid_lay, p_here, p_nbr, p_edge, frac, dp_dx, dp_dy, n1, n2, L_e, g_prime, bpg_max, bpg_mag, bpg_scale)
+      do cell = 1, n
          H_col = state%barotropic%height_cv(cell)
          if (H_col < ML_MIN_DEPTH_UNSTR) cycle
 
@@ -403,6 +397,7 @@ contains
             end if
          end do
       end do
+      !$omp end target teams distribute parallel do
    end subroutine ml_baroclinic_pressure_gradient_jacobian_unstr
 
 end module rki_ml_pressure_unstr

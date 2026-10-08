@@ -22,7 +22,7 @@ module rki_kernel_friction_unstr
 
 contains
 
-   pure subroutine apply_manning_friction_unstr(state, mesh, dt)
+   subroutine apply_manning_friction_unstr(state, mesh, dt)
       !! Semi-implicit Manning friction + explicit wind stress over
       !! every owned cell.
       type(unstr_state_t), intent(inout) :: state
@@ -45,8 +45,8 @@ contains
       tau_x_over_rho = state%barotropic%wind_tau_x/RHO_WATER
       tau_y_over_rho = state%barotropic%wind_tau_y/RHO_WATER
 
-      do concurrent(k=1:mesh%ncells_owned) &
-         local(h_val, u_val, v_val, speed, cf, denom)
+      !$omp target teams distribute parallel do private(h_val, u_val, v_val, speed, cf, denom)
+      do k = 1, mesh%ncells_owned
          h_val = state%barotropic%stage_cv(k) - state%barotropic%bed_cv(k)
          if (h_val > min_h) then
             if (has_friction) then
@@ -64,6 +64,7 @@ contains
             end if
          end if
       end do
+      !$omp end target teams distribute parallel do
    end subroutine apply_manning_friction_unstr
 
 end module rki_kernel_friction_unstr

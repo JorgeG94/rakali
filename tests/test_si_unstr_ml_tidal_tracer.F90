@@ -228,13 +228,13 @@ contains
          t_bc = state%time + SI_UNSTR_THETA*dt
          eta_bc = TIDE_AMP*sin(om*t_bc)
          state%bc_eta_ext(WEST_GROUP) = H0 + eta_bc
-         !$acc update device(state%bc_eta_ext)
+         !$omp target update to(state%bc_eta_ext)
 
          call solver_unstr_step(state, mesh, dt)
 
-         !$acc update self(state%barotropic%stage_cv)
-         !$acc update self(state%multilayer%h_layer)
-         !$acc update self(state%multilayer%tracers(it_s)%hTr)
+         !$omp target update from(state%barotropic%stage_cv)
+         !$omp target update from(state%multilayer%h_layer)
+         !$omp target update from(state%multilayer%tracers(it_s)%hTr)
          mean_e = 0.0_wp
          do k = 1, mesh%ncells_owned
             mean_e = mean_e + (state%barotropic%stage_cv(k) - H0)

@@ -22,7 +22,7 @@ module rki_ml_friction
 
 contains
 
-   pure subroutine ml_apply_bottom_friction(h_layer, hu_layer, hv_layer, &
+   subroutine ml_apply_bottom_friction(h_layer, hu_layer, hv_layer, &
                                             manning_n, use_linear_drag, drag_r, &
                                             grid, nz, dt)
       !! Apply bottom friction to the lowest active layer (k=1, bottom-up) using
@@ -54,8 +54,9 @@ contains
          if (manning_n <= 0.0_wp) return
       end if
 
-      do concurrent(j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) &
-         local(k_bot, kk, h_k, h_total, u_b, v_b, speed_b, cf, denom)
+      !$omp target teams distribute parallel do collapse(2) private(k_bot, kk, h_k, h_total, u_b, v_b, speed_b, cf, denom)
+      do j = nghost + 1, ny - nghost
+      do i = nghost + 1, nx - nghost
 
          ! Find the lowest active layer (k_bot).  For VCOORD_SIGMA /
          ! ZSIGMA / ZSTAR (lite), k=1 is always active (the deepest
@@ -96,10 +97,12 @@ contains
          hu_layer(i, j, k_bot) = hu_layer(i, j, k_bot)/denom
          hv_layer(i, j, k_bot) = hv_layer(i, j, k_bot)/denom
       end do
+      end do
+      !$omp end target teams distribute parallel do
 
    end subroutine ml_apply_bottom_friction
 
-   pure subroutine ml_apply_coriolis(h_layer, hu_layer, hv_layer, grid, nz, dt, f)
+   subroutine ml_apply_coriolis(h_layer, hu_layer, hv_layer, grid, nz, dt, f)
       !! Per-layer Coriolis rotation: rotate every layer's `(hu_k, hv_k)`
       !! through angle `f*dt` via the closed-form (energy-conserving, det=1)
       !! rotation matrix
@@ -126,8 +129,9 @@ contains
       cosf = cos(f*dt)
       sinf = sin(f*dt)
 
-      do concurrent(j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) &
-         local(k, hu_old, hv_old)
+      !$omp target teams distribute parallel do collapse(2) private(k, hu_old, hv_old)
+      do j = nghost + 1, ny - nghost
+      do i = nghost + 1, nx - nghost
          do k = 1, nz
             if (h_layer(i, j, k) > THIN_LAYER_THRESHOLD) then
                hu_old = hu_layer(i, j, k)
@@ -137,6 +141,8 @@ contains
             end if
          end do
       end do
+      end do
+      !$omp end target teams distribute parallel do
 
    end subroutine ml_apply_coriolis
 

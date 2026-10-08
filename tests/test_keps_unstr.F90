@@ -55,13 +55,13 @@ contains
       height_cv = real(NZ, wp)*1.0_wp
       nstep = nint(T_END/DT)
 
-      !$acc data copyin(h, hu, hv, rho, ustar_s, ustar_b, height_cv) copy(tke, eps, nut, kt)
+      !$omp target data map(to: h, hu, hv, rho, ustar_s, ustar_b, height_cv) map(tofrom: tke, eps, nut, kt)
       do step = 1, nstep
          call ml_keps_update_unstr_impl(NZ, N, h, hu, hv, rho, tke, eps, nut, kt, &
                                         ustar_s, ustar_b, height_cv, 1025.0_wp, DT, &
                                         .false., KEPS_STAB_CONSTANT)
       end do
-      !$acc end data
+      !$omp end target data
 
       k_exact = K0*(1.0_wp + (CE2 - 1.0_wp)*E0/K0*T_END)**(-1.0_wp/(CE2 - 1.0_wp))
       call check(error, abs(tke(3, 4) - k_exact)/k_exact < 0.02_wp, &
@@ -90,13 +90,13 @@ contains
       ustar_b = 0.0_wp
       height_cv = real(NZ, wp)*2.0_wp
 
-      !$acc data copyin(h, hu, hv, rho, ustar_s, ustar_b, height_cv) copy(tke, eps, nut, kt)
+      !$omp target data map(to: h, hu, hv, rho, ustar_s, ustar_b, height_cv) map(tofrom: tke, eps, nut, kt)
       do step = 1, 200
          call ml_keps_update_unstr_impl(NZ, N, h, hu, hv, rho, tke, eps, nut, kt, &
                                         ustar_s, ustar_b, height_cv, 1025.0_wp, 100.0_wp, &
                                         .false., KEPS_STAB_CONSTANT)
       end do
-      !$acc end data
+      !$omp end target data
 
       call check(error, all(tke > 0.0_wp), "k stays positive under strong shear + large dt")
       if (allocated(error)) return
@@ -130,13 +130,13 @@ contains
       ustar_s = USS
       height_cv = real(NZ, wp)*2.0_wp
 
-      !$acc data copyin(h, hu, hv, rho, ustar_s, ustar_b, height_cv) copy(tke, eps, nut, kt)
+      !$omp target data map(to: h, hu, hv, rho, ustar_s, ustar_b, height_cv) map(tofrom: tke, eps, nut, kt)
       do step = 1, 5
          call ml_keps_update_unstr_impl(NZ, N, h, hu, hv, rho, tke, eps, nut, kt, &
                                         ustar_s, ustar_b, height_cv, 1025.0_wp, 10.0_wp, &
                                         .true., KEPS_STAB_CONSTANT)
       end do
-      !$acc end data
+      !$omp end target data
 
       k_wb_exp = USB*USB/sqrt(CMU)
       k_ws_exp = USS*USS/sqrt(CMU)
@@ -171,22 +171,22 @@ contains
       eps = 5.0e-3_wp
       nut = 1.0e-3_wp
       kt = 1.0e-3_wp
-      !$acc data copyin(h, hu, hv, rho, ustar_s, ustar_b, height_cv) copy(tke, eps, nut, kt)
+      !$omp target data map(to: h, hu, hv, rho, ustar_s, ustar_b, height_cv) map(tofrom: tke, eps, nut, kt)
       call ml_keps_update_unstr_impl(NZ, N, h, hu, hv, rho, tke, eps, nut, kt, &
                                      ustar_s, ustar_b, height_cv, 1025.0_wp, 10.0_wp, &
                                      .false., KEPS_STAB_CONSTANT)
-      !$acc end data
+      !$omp end target data
       nut_c = nut(3, 4)
 
       tke = 0.05_wp
       eps = 5.0e-3_wp
       nut = 1.0e-3_wp
       kt = 1.0e-3_wp
-      !$acc data copyin(h, hu, hv, rho, ustar_s, ustar_b, height_cv) copy(tke, eps, nut, kt)
+      !$omp target data map(to: h, hu, hv, rho, ustar_s, ustar_b, height_cv) map(tofrom: tke, eps, nut, kt)
       call ml_keps_update_unstr_impl(NZ, N, h, hu, hv, rho, tke, eps, nut, kt, &
                                      ustar_s, ustar_b, height_cv, 1025.0_wp, 10.0_wp, &
                                      .false., KEPS_STAB_GALPERIN)
-      !$acc end data
+      !$omp end target data
       nut_g = nut(3, 4)
 
       call check(error, nut_g < nut_c, &
@@ -220,11 +220,11 @@ contains
       ustar_b = 0.0_wp
       height_cv = real(NZ, wp)*2.0_wp
 
-      !$acc data copyin(h, hu, hv, rho, ustar_s, ustar_b, height_cv) copy(tke, eps, nut, kt)
+      !$omp target data map(to: h, hu, hv, rho, ustar_s, ustar_b, height_cv) map(tofrom: tke, eps, nut, kt)
       call ml_keps_update_unstr_impl(NZ, N, h, hu, hv, rho, tke, eps, nut, kt, &
                                      ustar_s, ustar_b, height_cv, 1025.0_wp, 10.0_wp, &
                                      .false., KEPS_STAB_CANUTO)
-      !$acc end data
+      !$omp end target data
       nut_c = nut(3, 4)
       kt_c = kt(3, 4)
 
@@ -254,11 +254,11 @@ contains
       sum_u0 = sum(hu(:, 4))
       sum_v0 = sum(hv(:, 4))
 
-      !$acc data copyin(h, nut, height_cv) copy(hu, hv)
+      !$omp target data map(to: h, nut, height_cv) map(tofrom: hu, hv)
       do step = 1, 10
          call ml_keps_apply_momentum_unstr_impl(NZ, N, h, hu, hv, nut, height_cv, DT)
       end do
-      !$acc end data
+      !$omp end target data
 
       sum_u1 = sum(hu(:, 4))
       sum_v1 = sum(hv(:, 4))
@@ -288,11 +288,11 @@ contains
       u_mean = sum(hu(:, 4))/sum(h(:, 4))
       spread0 = maxval(hu(:, 4)/h(:, 4)) - minval(hu(:, 4)/h(:, 4))
 
-      !$acc data copyin(h, nut, height_cv) copy(hu, hv)
+      !$omp target data map(to: h, nut, height_cv) map(tofrom: hu, hv)
       do step = 1, 500
          call ml_keps_apply_momentum_unstr_impl(NZ, N, h, hu, hv, nut, height_cv, DT)
       end do
-      !$acc end data
+      !$omp end target data
 
       spread1 = maxval(hu(:, 4)/h(:, 4)) - minval(hu(:, 4)/h(:, 4))
       call check(error, spread1 < 0.01_wp*spread0, &
@@ -321,11 +321,11 @@ contains
       tr_mean = sum0/sum(h(:, 4))
       spread0 = maxval(hTr(:, 4)/h(:, 4)) - minval(hTr(:, 4)/h(:, 4))
 
-      !$acc data copyin(h, kt, height_cv) copy(hTr)
+      !$omp target data map(to: h, kt, height_cv) map(tofrom: hTr)
       do step = 1, 500
          call ml_keps_apply_diffusion_tracer_unstr_impl(NZ, N, h, hTr, kt, KAPPA_BG, height_cv, DT)
       end do
-      !$acc end data
+      !$omp end target data
 
       sum1 = sum(hTr(:, 4))
       spread1 = maxval(hTr(:, 4)/h(:, 4)) - minval(hTr(:, 4)/h(:, 4))

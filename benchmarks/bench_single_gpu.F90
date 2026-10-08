@@ -277,11 +277,15 @@ contains
 
       integer :: i, j
 
-      do concurrent(j=1:ny, i=1:nx)
+      !$omp target teams distribute parallel do collapse(2)
+      do j = 1, ny
+      do i = 1, nx
          h0(i, j) = h(i, j)
          hu0(i, j) = hu(i, j)
          hv0(i, j) = hv(i, j)
       end do
+      end do
+      !$omp end target teams distribute parallel do
 
    end subroutine save_state_bench
 

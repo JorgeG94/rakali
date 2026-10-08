@@ -55,7 +55,7 @@ module rki_ml_dynamics
 
 contains
 
-   pure subroutine ml_distribute_barotropic(h, hu, hv, hu_pre, hv_pre, &
+   subroutine ml_distribute_barotropic(h, hu, hv, hu_pre, hv_pre, &
                                             dsig, h_layer, hu_layer, hv_layer, &
                                             grid, nz)
       !! Distribute barotropic HLL acceleration to layers, preserving
@@ -89,8 +89,9 @@ contains
       ny = grid%ny_total
       nghost = grid%nghost
 
-      do concurrent(j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) &
-         local(k, h_val, du, dv, h_k_old, u_k, v_k)
+      !$omp target teams distribute parallel do collapse(2) private(k, h_val, du, dv, h_k_old, u_k, v_k)
+      do j = nghost + 1, ny - nghost
+      do i = nghost + 1, nx - nghost
          h_val = h(i, j)
          if (h_val > DRY_TOLERANCE) then
             du = (hu(i, j) - hu_pre(i, j))/h_val
@@ -122,6 +123,8 @@ contains
             end if
          end do
       end do
+      end do
+      !$omp end target teams distribute parallel do
 
    end subroutine ml_distribute_barotropic
 
@@ -169,17 +172,22 @@ contains
       call remap_workspace_ensure(nx, ny, nz)
 
       ! Save old layer thicknesses for the per-tracer remap.
-      do concurrent(k=1:nz, j=1:ny, i=1:nx)
+      !$omp target teams distribute parallel do collapse(3)
+      do k = 1, nz
+      do j = 1, ny
+      do i = 1, nx
          remap_dz_old(i, j, k) = h_layer(i, j, k)
       end do
+      end do
+      end do
+      !$omp end target teams distribute parallel do
 
       ! !$acc parallel loop (not do concurrent): the body calls
       ! vcoord_target_dz_column from another module (rki_vcoord), which
       ! NVHPC stdpar GPU offload does not lower from inside do concurrent.
-      !$acc parallel loop collapse(2) &
-      !$acc&   present(h, hu, hv, hu_pre, hv_pre, dsig, z_ref, &
-      !$acc&           h_layer, hu_layer, hv_layer, remap_dz_old) &
-      !$acc&   private(k, h_val, du, dv, h_k_old, u_k, v_k, dz_new)
+      !$omp target teams distribute parallel do collapse(2) &
+      !$omp& &
+      !$omp&   private(k, h_val, du, dv, h_k_old, u_k, v_k, dz_new)
       do j = nghost + 1, ny - nghost
       do i = nghost + 1, nx - nghost
 
@@ -223,7 +231,7 @@ contains
 
    end subroutine ml_distribute_with_remap
 
-   pure subroutine ml_apply_wind_to_surface_layer(hu_layer, hv_layer, h_layer, &
+   subroutine ml_apply_wind_to_surface_layer(hu_layer, hv_layer, h_layer, &
                                                   wind_x, wind_y, grid, nz, dt)
       !! Apply the surface wind stress to the TOP layer (k=nz) momentum only,
       !! so the wind is surface-concentrated and generates vertical shear that
@@ -247,12 +255,16 @@ contains
       ny = grid%ny_total
       nghost = grid%nghost
 
-      do concurrent(j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost)
+      !$omp target teams distribute parallel do collapse(2)
+      do j = nghost + 1, ny - nghost
+      do i = nghost + 1, nx - nghost
          if (h_layer(i, j, nz) > THIN_LAYER_THRESHOLD) then
             hu_layer(i, j, nz) = hu_layer(i, j, nz) + dt*wind_x(i, j)/RHO_WATER
             hv_layer(i, j, nz) = hv_layer(i, j, nz) + dt*wind_y(i, j)/RHO_WATER
          end if
       end do
+      end do
+      !$omp end target teams distribute parallel do
 
    end subroutine ml_apply_wind_to_surface_layer
 
@@ -279,10 +291,10 @@ contains
       ny = grid%ny_total
       nghost = grid%nghost
 
-      !$acc parallel loop collapse(2) &
-      !$acc&   present(hTr, h, h_layer, remap_dz_old) &
-      !$acc&   private(k, h_val, h_old_total, scale_old, tr_col_sum, &
-      !$acc&           tr_col_mean, dz_old_col, dz_new_col, tr_old, tr_new)
+      !$omp target teams distribute parallel do collapse(2) &
+      !$omp& &
+      !$omp&   private(k, h_val, h_old_total, scale_old, tr_col_sum, &
+      !$omp&           tr_col_mean, dz_old_col, dz_new_col, tr_old, tr_new)
       do j = nghost + 1, ny - nghost
       do i = nghost + 1, nx - nghost
 
@@ -365,15 +377,20 @@ contains
 
       call remap_workspace_ensure(nx, ny, nz)
 
-      do concurrent(k=1:nz, j=1:ny, i=1:nx)
+      !$omp target teams distribute parallel do collapse(3)
+      do k = 1, nz
+      do j = 1, ny
+      do i = 1, nx
          remap_dz_old(i, j, k) = h_layer(i, j, k)
       end do
+      end do
+      end do
+      !$omp end target teams distribute parallel do
 
-      !$acc parallel loop collapse(2) &
-      !$acc&   present(h, hu, hv, hu_pre, hv_pre, z_ref_col, &
-      !$acc&           h_layer, hu_layer, hv_layer, remap_dz_old) &
-      !$acc&   private(k, h_val, du, dv, h_k_old, u_k, v_k, &
-      !$acc&           dz_new, z_ref_local)
+      !$omp target teams distribute parallel do collapse(2) &
+      !$omp& &
+      !$omp&   private(k, h_val, du, dv, h_k_old, u_k, v_k, &
+      !$omp&           dz_new, z_ref_local)
       do j = nghost + 1, ny - nghost
       do i = nghost + 1, nx - nghost
 
@@ -422,7 +439,7 @@ contains
 
    end subroutine ml_distribute_with_remap_full
 
-   pure subroutine ml_compute_total_depth(h_layer, h, grid, nz)
+   subroutine ml_compute_total_depth(h_layer, h, grid, nz)
       !! Compute total water depth: H = sum_k h_k
       type(hgrid_t), intent(in) :: grid
       integer, intent(in) :: nz
@@ -436,18 +453,21 @@ contains
       ny = grid%ny_total
       nghost = grid%nghost
 
-      do concurrent(j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) &
-         local(k, total)
+      !$omp target teams distribute parallel do collapse(2) private(k, total)
+      do j = nghost + 1, ny - nghost
+      do i = nghost + 1, nx - nghost
          total = 0.0_wp
          do k = 1, nz
             total = total + h_layer(i, j, k)
          end do
          h(i, j) = total
       end do
+      end do
+      !$omp end target teams distribute parallel do
 
    end subroutine ml_compute_total_depth
 
-   pure subroutine ml_compute_barotropic_momentum(h_layer, hu_layer, hv_layer, &
+   subroutine ml_compute_barotropic_momentum(h_layer, hu_layer, hv_layer, &
                                                   hu, hv, grid, nz)
       !! Compute depth-integrated momentum: hu = sum_k hu_k, hv = sum_k hv_k
       type(hgrid_t), intent(in) :: grid
@@ -465,8 +485,9 @@ contains
       ny = grid%ny_total
       nghost = grid%nghost
 
-      do concurrent(j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) &
-         local(k, su, sv)
+      !$omp target teams distribute parallel do collapse(2) private(k, su, sv)
+      do j = nghost + 1, ny - nghost
+      do i = nghost + 1, nx - nghost
          su = 0.0_wp
          sv = 0.0_wp
          do k = 1, nz
@@ -476,10 +497,12 @@ contains
          hu(i, j) = su
          hv(i, j) = sv
       end do
+      end do
+      !$omp end target teams distribute parallel do
 
    end subroutine ml_compute_barotropic_momentum
 
-   pure subroutine ml_compute_vertical_velocity(h_layer, hu_layer, hv_layer, &
+   subroutine ml_compute_vertical_velocity(h_layer, hu_layer, hv_layer, &
                                                 dsig, w, grid, nz)
       !! DIASURFACE (sigma-relative) vertical mass-transport velocity from
       !! per-layer continuity, integrated bottom-up.
@@ -534,9 +557,9 @@ contains
       inv_2dx = 0.5_wp/dx
       inv_2dy = 0.5_wp/dy
 
-      do concurrent(j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) &
-         local(k, kk, div_hu, div_hv, div_col, &
-               h_col, h_col_im1, h_col_ip1, h_col_jm1, h_col_jp1)
+      !$omp target teams distribute parallel do collapse(2) private(k, kk, div_hu, div_hv, div_col, h_col, h_col_im1, h_col_ip1, h_col_jm1, h_col_jp1)
+      do j = nghost + 1, ny - nghost
+      do i = nghost + 1, nx - nghost
          w(i, j, 1) = 0.0_wp
          ! Compute total column depth for this cell and its neighbours
          h_col = 0.0_wp
@@ -576,10 +599,12 @@ contains
             end do
          end if
       end do
+      end do
+      !$omp end target teams distribute parallel do
 
    end subroutine ml_compute_vertical_velocity
 
-   pure subroutine ml_compute_vertical_exchange(h_layer, hu_layer, hv_layer, &
+   subroutine ml_compute_vertical_exchange(h_layer, hu_layer, hv_layer, &
                                                 w, grid, nz, dt)
       !! Vertical momentum exchange using upwind advection at layer interfaces.
       !! Transfers momentum between adjacent layers based on diagnostic w.
@@ -602,8 +627,9 @@ contains
       if (nz < 2) return
 
       ! Each thread processes its full column — no cross-column dependency
-      do concurrent(j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) &
-         local(k, kk, w_face, u_up, v_up, flux_u, flux_v, h_val, h_col)
+      !$omp target teams distribute parallel do collapse(2) private(k, kk, w_face, u_up, v_up, flux_u, flux_v, h_val, h_col)
+      do j = nghost + 1, ny - nghost
+      do i = nghost + 1, nx - nghost
          ! Compute total column depth
          h_col = 0.0_wp
          do kk = 1, nz
@@ -665,10 +691,12 @@ contains
             end do
          end if
       end do
+      end do
+      !$omp end target teams distribute parallel do
 
    end subroutine ml_compute_vertical_exchange
 
-   pure subroutine ml_rk2_average_layers(h_layer, hu_layer, hv_layer, &
+   subroutine ml_rk2_average_layers(h_layer, hu_layer, hv_layer, &
                                          h_layer0, hu_layer0, hv_layer0, &
                                          grid, nz)
       !! SSP-RK2 averaging: U^{n+1} = 0.5*(U^n + U**)
@@ -687,7 +715,10 @@ contains
       ny = grid%ny_total
       nghost = grid%nghost
 
-      do concurrent(k=1:nz, j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost)
+      !$omp target teams distribute parallel do collapse(3)
+      do k = 1, nz
+      do j = nghost + 1, ny - nghost
+      do i = nghost + 1, nx - nghost
          h_layer(i, j, k) = 0.5_wp*(h_layer0(i, j, k) + h_layer(i, j, k))
          hu_layer(i, j, k) = 0.5_wp*(hu_layer0(i, j, k) + hu_layer(i, j, k))
          hv_layer(i, j, k) = 0.5_wp*(hv_layer0(i, j, k) + hv_layer(i, j, k))
@@ -701,10 +732,13 @@ contains
             hv_layer(i, j, k) = 0.0_wp
          end if
       end do
+      end do
+      end do
+      !$omp end target teams distribute parallel do
 
    end subroutine ml_rk2_average_layers
 
-   pure subroutine ml_init_layers_from_barotropic(h, hu, hv, dsig, &
+   subroutine ml_init_layers_from_barotropic(h, hu, hv, dsig, &
                                                   h_layer, hu_layer, hv_layer, &
                                                   grid, nz)
       !! Initialise layer variables from barotropic state.
@@ -724,15 +758,21 @@ contains
       nx = grid%nx_total
       ny = grid%ny_total
 
-      do concurrent(k=1:nz, j=1:ny, i=1:nx)
+      !$omp target teams distribute parallel do collapse(3)
+      do k = 1, nz
+      do j = 1, ny
+      do i = 1, nx
          h_layer(i, j, k) = dsig(k)*h(i, j)
          hu_layer(i, j, k) = dsig(k)*hu(i, j)
          hv_layer(i, j, k) = dsig(k)*hv(i, j)
       end do
+      end do
+      end do
+      !$omp end target teams distribute parallel do
 
    end subroutine ml_init_layers_from_barotropic
 
-   pure subroutine ml_save_layer_state(h_layer, hu_layer, hv_layer, &
+   subroutine ml_save_layer_state(h_layer, hu_layer, hv_layer, &
                                        h_layer0, hu_layer0, hv_layer0, &
                                        grid, nz)
       !! Save layer state for RK2 averaging
@@ -750,15 +790,21 @@ contains
       nx = grid%nx_total
       ny = grid%ny_total
 
-      do concurrent(k=1:nz, j=1:ny, i=1:nx)
+      !$omp target teams distribute parallel do collapse(3)
+      do k = 1, nz
+      do j = 1, ny
+      do i = 1, nx
          h_layer0(i, j, k) = h_layer(i, j, k)
          hu_layer0(i, j, k) = hu_layer(i, j, k)
          hv_layer0(i, j, k) = hv_layer(i, j, k)
       end do
+      end do
+      end do
+      !$omp end target teams distribute parallel do
 
    end subroutine ml_save_layer_state
 
-   pure subroutine ml_apply_layer_bcs(h_layer, hu_layer, hv_layer, &
+   subroutine ml_apply_layer_bcs(h_layer, hu_layer, hv_layer, &
                                       h, hu, hv, dsig, &
                                       grid, nz, &
                                       bc_west, bc_east, bc_south, bc_north)
@@ -831,17 +877,25 @@ contains
       do g = 1, nghost
          m = 2*nghost + 1 - g
          if (wall_w) then
-            do concurrent(j=1:ny, k=1:nz)
+            !$omp target teams distribute parallel do collapse(2)
+            do j = 1, ny
+            do k = 1, nz
                h_layer(g, j, k) = h_layer(m, j, k)
                hu_layer(g, j, k) = -hu_layer(m, j, k)
                hv_layer(g, j, k) = hv_layer(m, j, k)
             end do
+            end do
+            !$omp end target teams distribute parallel do
          else
-            do concurrent(j=1:ny, k=1:nz)
+            !$omp target teams distribute parallel do collapse(2)
+            do j = 1, ny
+            do k = 1, nz
                h_layer(g, j, k) = dsig(k)*h(g, j)
                hu_layer(g, j, k) = dsig(k)*hu(g, j)
                hv_layer(g, j, k) = dsig(k)*hv(g, j)
             end do
+            end do
+            !$omp end target teams distribute parallel do
          end if
       end do
 
@@ -849,17 +903,25 @@ contains
       do g = nx - nghost + 1, nx
          m = 2*(nx - nghost) + 1 - g
          if (wall_e) then
-            do concurrent(j=1:ny, k=1:nz)
+            !$omp target teams distribute parallel do collapse(2)
+            do j = 1, ny
+            do k = 1, nz
                h_layer(g, j, k) = h_layer(m, j, k)
                hu_layer(g, j, k) = -hu_layer(m, j, k)
                hv_layer(g, j, k) = hv_layer(m, j, k)
             end do
+            end do
+            !$omp end target teams distribute parallel do
          else
-            do concurrent(j=1:ny, k=1:nz)
+            !$omp target teams distribute parallel do collapse(2)
+            do j = 1, ny
+            do k = 1, nz
                h_layer(g, j, k) = dsig(k)*h(g, j)
                hu_layer(g, j, k) = dsig(k)*hu(g, j)
                hv_layer(g, j, k) = dsig(k)*hv(g, j)
             end do
+            end do
+            !$omp end target teams distribute parallel do
          end if
       end do
 
@@ -867,17 +929,25 @@ contains
       do g = 1, nghost
          m = 2*nghost + 1 - g
          if (wall_s) then
-            do concurrent(i=1:nx, k=1:nz)
+            !$omp target teams distribute parallel do collapse(2)
+            do i = 1, nx
+            do k = 1, nz
                h_layer(i, g, k) = h_layer(i, m, k)
                hu_layer(i, g, k) = hu_layer(i, m, k)
                hv_layer(i, g, k) = -hv_layer(i, m, k)
             end do
+            end do
+            !$omp end target teams distribute parallel do
          else
-            do concurrent(i=1:nx, k=1:nz)
+            !$omp target teams distribute parallel do collapse(2)
+            do i = 1, nx
+            do k = 1, nz
                h_layer(i, g, k) = dsig(k)*h(i, g)
                hu_layer(i, g, k) = dsig(k)*hu(i, g)
                hv_layer(i, g, k) = dsig(k)*hv(i, g)
             end do
+            end do
+            !$omp end target teams distribute parallel do
          end if
       end do
 
@@ -885,17 +955,25 @@ contains
       do g = ny - nghost + 1, ny
          m = 2*(ny - nghost) + 1 - g
          if (wall_n) then
-            do concurrent(i=1:nx, k=1:nz)
+            !$omp target teams distribute parallel do collapse(2)
+            do i = 1, nx
+            do k = 1, nz
                h_layer(i, g, k) = h_layer(i, m, k)
                hu_layer(i, g, k) = hu_layer(i, m, k)
                hv_layer(i, g, k) = -hv_layer(i, m, k)
             end do
+            end do
+            !$omp end target teams distribute parallel do
          else
-            do concurrent(i=1:nx, k=1:nz)
+            !$omp target teams distribute parallel do collapse(2)
+            do i = 1, nx
+            do k = 1, nz
                h_layer(i, g, k) = dsig(k)*h(i, g)
                hu_layer(i, g, k) = dsig(k)*hu(i, g)
                hv_layer(i, g, k) = dsig(k)*hv(i, g)
             end do
+            end do
+            !$omp end target teams distribute parallel do
          end if
       end do
 
@@ -934,10 +1012,9 @@ contains
       nghost = grid%nghost
 
       ! West ghost cells
-      !$acc parallel loop collapse(2) &
-      !$acc&   present(h_layer, hu_layer, hv_layer, h, hu, hv, dsig, &
-      !$acc&           vcoord_z_ref_col) &
-      !$acc&   private(k, dz_col, z_ref_local)
+      !$omp target teams distribute parallel do collapse(2) &
+      !$omp& &
+      !$omp&   private(k, dz_col, z_ref_local)
       do g = 1, nghost
          do j = 1, ny
             do k = 0, nz
@@ -955,10 +1032,9 @@ contains
       end do
 
       ! East ghost cells
-      !$acc parallel loop collapse(2) &
-      !$acc&   present(h_layer, hu_layer, hv_layer, h, hu, hv, dsig, &
-      !$acc&           vcoord_z_ref_col) &
-      !$acc&   private(k, dz_col, z_ref_local)
+      !$omp target teams distribute parallel do collapse(2) &
+      !$omp& &
+      !$omp&   private(k, dz_col, z_ref_local)
       do g = nx - nghost + 1, nx
          do j = 1, ny
             do k = 0, nz
@@ -976,10 +1052,9 @@ contains
       end do
 
       ! South ghost cells
-      !$acc parallel loop collapse(2) &
-      !$acc&   present(h_layer, hu_layer, hv_layer, h, hu, hv, dsig, &
-      !$acc&           vcoord_z_ref_col) &
-      !$acc&   private(k, dz_col, z_ref_local)
+      !$omp target teams distribute parallel do collapse(2) &
+      !$omp& &
+      !$omp&   private(k, dz_col, z_ref_local)
       do g = 1, nghost
          do i = 1, nx
             do k = 0, nz
@@ -997,10 +1072,9 @@ contains
       end do
 
       ! North ghost cells
-      !$acc parallel loop collapse(2) &
-      !$acc&   present(h_layer, hu_layer, hv_layer, h, hu, hv, dsig, &
-      !$acc&           vcoord_z_ref_col) &
-      !$acc&   private(k, dz_col, z_ref_local)
+      !$omp target teams distribute parallel do collapse(2) &
+      !$omp& &
+      !$omp&   private(k, dz_col, z_ref_local)
       do g = ny - nghost + 1, ny
          do i = 1, nx
             do k = 0, nz
@@ -1035,19 +1109,19 @@ contains
 
       if (need_alloc) then
          allocate (remap_dz_old(nx, ny, nz))
-         !$acc enter data create(remap_dz_old)
+         !$omp target enter data map(alloc: remap_dz_old)
       end if
    end subroutine remap_workspace_ensure
 
    subroutine remap_workspace_cleanup()
       if (.not. allocated(remap_dz_old)) return
-      !$acc exit data delete(remap_dz_old)
+      !$omp target exit data map(delete: remap_dz_old)
       deallocate (remap_dz_old)
    end subroutine remap_workspace_cleanup
 
    pure logical function all_neighbours_wet(h_col, h_col_ip1, h_col_im1, &
                                             h_col_jp1, h_col_jm1) result(all_wet)
-      !$acc routine seq
+      !$omp declare target
       !! Returns `.true.` if the centre cell and its four face-neighbours all
       !! have total column depth >= `ML_MIN_DEPTH`. Guards central-difference
       !! operators (BPG, divergence) against spurious gradients at dry cells.
@@ -1082,7 +1156,7 @@ contains
 
       integer :: i, j
 
-      !$acc update self(b) if_present
+      !$omp target update from(b)
 
       do j = 1, grid%ny_total
          do i = 1, grid%nx_total
@@ -1096,7 +1170,7 @@ contains
          end do
       end do
 
-      !$acc update device(vcoord_z_ref_col) if_present
+      !$omp target update to(vcoord_z_ref_col)
    end subroutine ml_build_vcoord_zstar_full
 
    subroutine ml_dynamics_workspaces_cleanup()

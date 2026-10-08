@@ -587,7 +587,7 @@ contains
    subroutine level_coeffs_to_device(lev)
       !! Push the host-refreshed coefficient arrays to the device.
       type(agglom_level_unstr_t), intent(inout) :: lev
-      !$acc update device(lev%ke, lev%diag, lev%dinv)
+      !$omp target update to(lev%ke, lev%diag, lev%dinv)
    end subroutine level_coeffs_to_device
 
    ! ======================================================================
@@ -610,13 +610,15 @@ contains
       integer :: k, s
       real(wp) :: acc
 
-      do concurrent(k=1:nc) local(s, acc)
+      !$omp target teams distribute parallel do private(s, acc)
+      do k = 1, nc
          acc = diag(k)*e_old(k)
          do s = 1, mv
             acc = acc - ke(s, k)*e_old(nbr(s, k))
          end do
          e_new(k) = e_old(k) + omega*(r(k) - acc)*dinv(k)
       end do
+      !$omp end target teams distribute parallel do
    end subroutine agglom_jacobi_one
 
    subroutine agglom_jacobi_sweeps(e, r, tmp, nbr, ke, diag, dinv, &
@@ -656,13 +658,15 @@ contains
       integer :: k, s
       real(wp) :: acc
 
-      do concurrent(k=1:nc) local(s, acc)
+      !$omp target teams distribute parallel do private(s, acc)
+      do k = 1, nc
          acc = diag(k)*e(k)
          do s = 1, mv
             acc = acc - ke(s, k)*e(nbr(s, k))
          end do
          res(k) = r(k) - acc
       end do
+      !$omp end target teams distribute parallel do
    end subroutine agglom_residual
 
    subroutine agglom_restrict(rf, rc, mstart, mlist, ncc, ncf)
@@ -677,13 +681,15 @@ contains
       integer :: capI, i
       real(wp) :: acc
 
-      do concurrent(capI=1:ncc) local(i, acc)
+      !$omp target teams distribute parallel do private(i, acc)
+      do capI = 1, ncc
          acc = 0.0_wp
          do i = mstart(capI), mstart(capI + 1) - 1
             acc = acc + rf(mlist(i))
          end do
          rc(capI) = acc
       end do
+      !$omp end target teams distribute parallel do
    end subroutine agglom_restrict
 
    subroutine agglom_prolong_add(ec, ef, agg_of, ncf, ncc)
@@ -696,9 +702,11 @@ contains
 
       integer :: k
 
-      do concurrent(k=1:ncf)
+      !$omp target teams distribute parallel do
+      do k = 1, ncf
          ef(k) = ef(k) + ec(agg_of(k))
       end do
+      !$omp end target teams distribute parallel do
    end subroutine agglom_prolong_add
 
    subroutine agglom_copy(src, dst, nc)
@@ -706,18 +714,22 @@ contains
       real(wp), intent(in) :: src(nc)
       real(wp), intent(out) :: dst(nc)
       integer :: k
-      do concurrent(k=1:nc)
+      !$omp target teams distribute parallel do
+      do k = 1, nc
          dst(k) = src(k)
       end do
+      !$omp end target teams distribute parallel do
    end subroutine agglom_copy
 
    subroutine agglom_zero(a, nc)
       integer, intent(in) :: nc
       real(wp), intent(out) :: a(nc)
       integer :: k
-      do concurrent(k=1:nc)
+      !$omp target teams distribute parallel do
+      do k = 1, nc
          a(k) = 0.0_wp
       end do
+      !$omp end target teams distribute parallel do
    end subroutine agglom_zero
 
    ! ======================================================================
@@ -802,9 +814,11 @@ contains
       real(wp), intent(in) :: src(nct), fac(nct)
       real(wp), intent(out) :: dst(nco)
       integer :: k
-      do concurrent(k=1:nco)
+      !$omp target teams distribute parallel do
+      do k = 1, nco
          dst(k) = fac(k)*src(k)
       end do
+      !$omp end target teams distribute parallel do
    end subroutine agglom_scale_into_shim
 
    subroutine agglom_copy_out(src, dst, nct, nco)
@@ -813,9 +827,11 @@ contains
       real(wp), intent(in) :: src(nco)
       real(wp), intent(inout) :: dst(nct)
       integer :: k
-      do concurrent(k=1:nco)
+      !$omp target teams distribute parallel do
+      do k = 1, nco
          dst(k) = src(k)
       end do
+      !$omp end target teams distribute parallel do
    end subroutine agglom_copy_out
 
    ! ======================================================================
@@ -832,13 +848,13 @@ contains
 
    subroutine agglom_level_enter_data_impl(lev)
       type(agglom_level_unstr_t), intent(inout) :: lev
-      !$acc enter data copyin(lev%nbr, lev%n_nbr, lev%ke, lev%diag, lev%dinv)
-      !$acc enter data copyin(lev%e, lev%r, lev%tmp)
+      !$omp target enter data map(to: lev%nbr, lev%n_nbr, lev%ke, lev%diag, lev%dinv)
+      !$omp target enter data map(to: lev%e, lev%r, lev%tmp)
       if (allocated(lev%agg_of)) then
-         !$acc enter data copyin(lev%agg_of)
+         !$omp target enter data map(to: lev%agg_of)
       end if
       if (allocated(lev%mstart)) then
-         !$acc enter data copyin(lev%mstart, lev%mlist)
+         !$omp target enter data map(to: lev%mstart, lev%mlist)
       end if
    end subroutine agglom_level_enter_data_impl
 
@@ -853,13 +869,13 @@ contains
    subroutine agglom_level_exit_data_impl(lev)
       type(agglom_level_unstr_t), intent(inout) :: lev
       if (allocated(lev%mstart)) then
-         !$acc exit data delete(lev%mstart, lev%mlist)
+         !$omp target exit data map(delete: lev%mstart, lev%mlist)
       end if
       if (allocated(lev%agg_of)) then
-         !$acc exit data delete(lev%agg_of)
+         !$omp target exit data map(delete: lev%agg_of)
       end if
-      !$acc exit data delete(lev%e, lev%r, lev%tmp)
-      !$acc exit data delete(lev%nbr, lev%n_nbr, lev%ke, lev%diag, lev%dinv)
+      !$omp target exit data map(delete: lev%e, lev%r, lev%tmp)
+      !$omp target exit data map(delete: lev%nbr, lev%n_nbr, lev%ke, lev%diag, lev%dinv)
    end subroutine agglom_level_exit_data_impl
 
    subroutine agglom_level_destroy(this)

@@ -60,7 +60,7 @@ module rki_si_unstr_wetdry
 
 contains
 
-   pure subroutine si_unstr_wetdry_fill_bsub(mesh, nsub, nct, nco, bed, &
+   subroutine si_unstr_wetdry_fill_bsub(mesh, nsub, nct, nco, bed, &
                                              bsub_fill, b_sub, b_min)
       !! Fill the per-cell sub-bottom table from the plain bed.  v1
       !! (n_sub=1): b_sub(1,:) = bed, b_min = bed — always, regardless of
@@ -94,16 +94,19 @@ contains
       real(wp) :: half, b_lo, span, frac, dmax
 
       if (bsub_fill /= SI_BSUB_FILL_LINEAR .or. nsub < 2) then
-         do concurrent(c=1:nco) local(s)
+         !$omp target teams distribute parallel do private(s)
+         do c = 1, nco
             do s = 1, nsub
                b_sub(s, c) = bed(c)
             end do
             b_min(c) = bed(c)
          end do
+         !$omp end target teams distribute parallel do
          return
       end if
 
-      do concurrent(c=1:nco) local(s, i, kn, half, b_lo, span, frac, dmax)
+      !$omp target teams distribute parallel do private(s, i, kn, half, b_lo, span, frac, dmax)
+      do c = 1, nco
          dmax = 0.0_wp
          do i = 1, EDGES_PER_TRI
             kn = mesh%neighbours(i, c)
@@ -118,9 +121,10 @@ contains
          end do
          b_min(c) = b_lo
       end do
+      !$omp end target teams distribute parallel do
    end subroutine si_unstr_wetdry_fill_bsub
 
-   pure subroutine si_unstr_wetdry_volume(nsub, nct, nco, eta, b_sub, v_cell)
+   subroutine si_unstr_wetdry_volume(nsub, nct, nco, eta, b_sub, v_cell)
       !! Per-cell wetted mean depth v_c(eta) = (1/n_sub) sum_s max(eta-b^s,0)
       !! (m; per unit cell area).  n_sub=1: v = max(eta-b,0) = the
       !! still-water total depth.
@@ -138,16 +142,18 @@ contains
       real(wp) :: acc, inv_nsub
 
       inv_nsub = 1.0_wp/real(nsub, wp)
-      do concurrent(c=1:nco) local(s, acc)
+      !$omp target teams distribute parallel do private(s, acc)
+      do c = 1, nco
          acc = 0.0_wp
          do s = 1, nsub
             acc = acc + max(eta(c) - b_sub(s, c), 0.0_wp)
          end do
          v_cell(c) = acc*inv_nsub
       end do
+      !$omp end target teams distribute parallel do
    end subroutine si_unstr_wetdry_volume
 
-   pure subroutine si_unstr_wetdry_wetfrac(nsub, nct, nco, eta, b_sub, a_cell)
+   subroutine si_unstr_wetdry_wetfrac(nsub, nct, nco, eta, b_sub, a_cell)
       !! Per-cell wet fraction a_c(eta) = v' in [0,1] — the Newton diagonal.
       !! RIGHT-continuous at breakpoints (`eta >= b_sub` counts wet), the
       !! sub-derivative that keeps Newton-on-convex-V monotone.
@@ -165,16 +171,18 @@ contains
       real(wp) :: inv_nsub
 
       inv_nsub = 1.0_wp/real(nsub, wp)
-      do concurrent(c=1:nco) local(s, cnt)
+      !$omp target teams distribute parallel do private(s, cnt)
+      do c = 1, nco
          cnt = 0
          do s = 1, nsub
             if (eta(c) >= b_sub(s, c)) cnt = cnt + 1
          end do
          a_cell(c) = real(cnt, wp)*inv_nsub
       end do
+      !$omp end target teams distribute parallel do
    end subroutine si_unstr_wetdry_wetfrac
 
-   pure subroutine si_unstr_wetdry_mass_diag(nct, nco, a_cell, Hf_edge, mass_diag)
+   subroutine si_unstr_wetdry_mass_diag(nct, nco, a_cell, Hf_edge, mass_diag)
       !! Assemble the Newton mass diagonal M = a + floor (Casulli R5): the
       !! wet fraction a plus a +1 identity for a fully-decoupled dry row
       !! (a <= tol AND all three edge stiffness coefficients Hf <= tol).
@@ -191,7 +199,8 @@ contains
       integer :: c, i
       real(wp) :: stiff_sum, floor_c
 
-      do concurrent(c=1:nco) local(i, stiff_sum, floor_c)
+      !$omp target teams distribute parallel do private(i, stiff_sum, floor_c)
+      do c = 1, nco
          stiff_sum = 0.0_wp
          do i = 1, EDGES_PER_TRI
             stiff_sum = stiff_sum + Hf_edge(i, c)
@@ -203,9 +212,10 @@ contains
          end if
          mass_diag(c) = a_cell(c) + floor_c
       end do
+      !$omp end target teams distribute parallel do
    end subroutine si_unstr_wetdry_mass_diag
 
-   pure subroutine si_unstr_wetdry_face_depths(mesh, nct, nco, n_bc, eta, &
+   subroutine si_unstr_wetdry_face_depths(mesh, nct, nco, n_bc, eta, &
                                                b_min, bc_type, bc_eta_ext, &
                                                Hf_edge, eta_ghost_edge)
       !! FROZEN wet/dry edge depths — the GATED-MEAN conveyance rule per
@@ -243,7 +253,8 @@ contains
       integer :: c, i, kn, g, bt
       real(wp) :: eta_bc
 
-      do concurrent(c=1:nco) local(i, kn, g, bt, eta_bc)
+      !$omp target teams distribute parallel do private(i, kn, g, bt, eta_bc)
+      do c = 1, nco
          do i = 1, EDGES_PER_TRI
             eta_ghost_edge(i, c) = 0.0_wp
             kn = mesh%neighbours(i, c)
@@ -265,13 +276,14 @@ contains
             end if
          end do
       end do
+      !$omp end target teams distribute parallel do
    end subroutine si_unstr_wetdry_face_depths
 
    pure function edge_depth_wetdry(eta_l, eta_r, b_l, b_r) result(hf)
       !! Frozen wet/dry edge conveyance: the arithmetic-mean water depth of
       !! the two adjacent cells, gated to 0 by the max-eta/sill wet test.
       !! `!$acc routine seq` so device do-concurrent bodies can call it.
-      !$acc routine seq
+      !$omp declare target
       real(wp), intent(in) :: eta_l, eta_r, b_l, b_r
       real(wp) :: hf
 
@@ -303,14 +315,18 @@ contains
       integer :: c
       real(wp) :: res2
 
-      do concurrent(c=1:nco)
+      !$omp target teams distribute parallel do
+      do c = 1, nco
          res(c) = v_cell(c) + (Jeta(c) - mass_diag(c)*eta(c)) - rhs(c)
       end do
+      !$omp end target teams distribute parallel do
 
       res2 = 0.0_wp
-      do concurrent(c=1:nco) reduce(+:res2)
+      !$omp target teams distribute parallel do
+      do c = 1, nco
          res2 = res2 + res(c)*res(c)
       end do
+      !$omp end target teams distribute parallel do
       res2_out = res2
    end subroutine si_unstr_wetdry_newton_residual
 
@@ -331,11 +347,13 @@ contains
       integer :: c, s, cnt
 
       cnt = 0
-      do concurrent(c=1:nco) reduce(+:cnt)
+      !$omp target teams distribute parallel do
+      do c = 1, nco
          do s = 1, nsub
             if (eta(c) >= b_sub(s, c)) cnt = cnt + 1
          end do
       end do
+      !$omp end target teams distribute parallel do
       count_out = cnt
    end subroutine si_unstr_wetdry_wetcount
 

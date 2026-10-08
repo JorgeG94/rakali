@@ -66,11 +66,11 @@ contains
          v_layer(:, :, k) = 0.0_wp
       end do
 
-      !$acc data copyin( h, hu, hv, u_layer, v_layer, dsig)
+      !$omp target data map(to:  h, hu, hv, u_layer, v_layer, dsig)
       call compute_timestep(h, hu, hv, grid, CFL, dt_fast)
       call compute_timestep_baroclinic(h, u_layer, v_layer, dsig, &
                                        grid, NZ, CFL, dt_slow)
-      !$acc end data
+      !$omp end target data
 
       ! dt_slow should be larger because c_int < c_barotropic
       call check(error, dt_slow > dt_fast, &
@@ -111,10 +111,10 @@ contains
       ! Expected: tend_x = -sum(dsig_k * dq/dx) = -sum(1/nz * 2.0) = -2.0
       expected_tend_x = -2.0_wp
 
-      !$acc data copyin( h, q_nh, dsig) copy( tend_x, tend_y)
+      !$omp target data map(to:  h, q_nh, dsig) map(tofrom:  tend_x, tend_y)
       call compute_nh_baro_tendency(h, q_nh, dsig, tend_x, tend_y, &
                                     grid, NZ)
-      !$acc end data
+      !$omp end target data
 
       call check(error, abs(tend_x(5, 5) - expected_tend_x) < 1.0e-10_wp, &
                  "NH baro tendency x should match analytical gradient")
@@ -142,10 +142,10 @@ contains
       ! Expected: hu += dt * h * tend_x = 5 + 0.1 * 2 * 1 = 5.2
       expected_hu = 5.0_wp + DT*2.0_wp*1.0_wp
 
-      !$acc data copy( hu, hv) copyin( h, tend_x, tend_y)
+      !$omp target data map(tofrom:  hu, hv) map(to:  h, tend_x, tend_y)
       call apply_baro_nh_tendency(hu, hv, h, tend_x, tend_y, &
                                   grid, DT)
-      !$acc end data
+      !$omp end target data
 
       call check(error, abs(hu(5, 5) - expected_hu) < 1.0e-12_wp, &
                  "hu += dt*h*tend_x")
@@ -177,10 +177,10 @@ contains
       ! Expected: hu = h * sum(dsig * u) = 3 * (1/3*1 + 1/3*2 + 1/3*3) = 3 * 2 = 6
       expected_hu = 3.0_wp*2.0_wp
 
-      !$acc data copyin( h, u_layer, v_layer, dsig) copy( hu, hv)
+      !$omp target data map(to:  h, u_layer, v_layer, dsig) map(tofrom:  hu, hv)
       call reconcile_barotropic(h, hu, hv, u_layer, v_layer, dsig, &
                                 grid, NZ)
-      !$acc end data
+      !$omp end target data
 
       call check(error, abs(hu(5, 5) - expected_hu) < 1.0e-12_wp, &
                  "hu = h * sum(dsig*u) = 6 after reconciliation")
@@ -318,11 +318,11 @@ contains
       u_layer(:, :, 1) = 1.0_wp
       v_layer(:, :, 1) = 0.0_wp
 
-      !$acc data copyin( h, hu, hv, u_layer, v_layer, dsig)
+      !$omp target data map(to:  h, hu, hv, u_layer, v_layer, dsig)
       call compute_timestep(h, hu, hv, grid, CFL, dt_fast)
       call compute_timestep_baroclinic(h, u_layer, v_layer, dsig, &
                                        grid, 1, CFL, dt_slow)
-      !$acc end data
+      !$omp end target data
 
       ! With nz=1, wave speed is the same (sqrt(g*H)), but baroclinic uses
       ! raw |u_layer| while barotropic uses desingularized velocity, so

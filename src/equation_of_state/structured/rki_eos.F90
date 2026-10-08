@@ -389,7 +389,7 @@ contains
       end select
    end subroutine eos_compute_arrays
 
-   pure subroutine eos_linear_impl(h_layer, hS_layer, hT_layer, rho_layer, &
+   subroutine eos_linear_impl(h_layer, hS_layer, hT_layer, rho_layer, &
                                    rho_0, beta_S, S_ref, &
                                    alpha_T, T_ref, &
                                    nx, ny, nz)
@@ -427,7 +427,10 @@ contains
       integer :: i, j, k
       real(wp) :: inv_h, S_k, T_k
 
-      do concurrent(k=1:nz, j=1:ny, i=1:nx) local(inv_h, S_k, T_k)
+      !$omp target teams distribute parallel do collapse(3) private(inv_h, S_k, T_k)
+      do k = 1, nz
+      do j = 1, ny
+      do i = 1, nx
          if (h_layer(i, j, k) > H_VANISHED) then
             inv_h = 1.0_wp/h_layer(i, j, k)
             S_k = hS_layer(i, j, k)*inv_h
@@ -438,9 +441,12 @@ contains
          end if
          rho_layer(i, j, k) = rho_0 + beta_S*(S_k - S_ref) - alpha_T*(T_k - T_ref)
       end do
+      end do
+      end do
+      !$omp end target teams distribute parallel do
    end subroutine eos_linear_impl
 
-   pure subroutine eos_wright_impl(h_layer, hS_layer, hT_layer, rho_layer, &
+   subroutine eos_wright_impl(h_layer, hS_layer, hT_layer, rho_layer, &
                                    rho_0, p_ref, nx, ny, nz)
       !! Wright (1997) rational EOS evaluated at a single reference
       !! pressure `p_ref`.  Same outer-shim signature as
@@ -467,9 +473,10 @@ contains
       real(wp) :: inv_h, S_k, T_k, T_sq, T_cu
       real(wp) :: alpha_0, p_0, lambda, p_plus_p0, denom
 
-      do concurrent(k=1:nz, j=1:ny, i=1:nx) &
-         local(inv_h, S_k, T_k, T_sq, T_cu, &
-               alpha_0, p_0, lambda, p_plus_p0, denom)
+      !$omp target teams distribute parallel do collapse(3) private(inv_h, S_k, T_k, T_sq, T_cu, alpha_0, p_0, lambda, p_plus_p0, denom)
+      do k = 1, nz
+      do j = 1, ny
+      do i = 1, nx
          if (h_layer(i, j, k) > H_VANISHED) then
             inv_h = 1.0_wp/h_layer(i, j, k)
             S_k = hS_layer(i, j, k)*inv_h
@@ -490,9 +497,12 @@ contains
             rho_layer(i, j, k) = rho_0
          end if
       end do
+      end do
+      end do
+      !$omp end target teams distribute parallel do
    end subroutine eos_wright_impl
 
-   pure subroutine eos_roquet_spv_impl(h_layer, hS_layer, hT_layer, rho_layer, &
+   subroutine eos_roquet_spv_impl(h_layer, hS_layer, hT_layer, rho_layer, &
                                        rho_0, p_ref, nx, ny, nz)
       !! Roquet et al. (2015) SpV EOS evaluated at a single reference
       !! pressure `p_ref`.  Same outer-shim signature as
@@ -517,8 +527,10 @@ contains
       integer :: i, j, k
       real(wp) :: inv_h, S_k, T_k, sv_k, d_dum1, d_dum2
 
-      do concurrent(k=1:nz, j=1:ny, i=1:nx) &
-         local(inv_h, S_k, T_k, sv_k, d_dum1, d_dum2)
+      !$omp target teams distribute parallel do collapse(3) private(inv_h, S_k, T_k, sv_k, d_dum1, d_dum2)
+      do k = 1, nz
+      do j = 1, ny
+      do i = 1, nx
          if (h_layer(i, j, k) > H_VANISHED) then
             inv_h = 1.0_wp/h_layer(i, j, k)
             S_k = hS_layer(i, j, k)*inv_h
@@ -529,9 +541,12 @@ contains
             rho_layer(i, j, k) = rho_0
          end if
       end do
+      end do
+      end do
+      !$omp end target teams distribute parallel do
    end subroutine eos_roquet_spv_impl
 
-   pure subroutine eos_wright_pgf_column_sweep_impl(h_layer, hS_layer, hT_layer, &
+   subroutine eos_wright_pgf_column_sweep_impl(h_layer, hS_layer, hT_layer, &
                                                     rho_layer_seed, p_edge_out, &
                                                     rho_insitu_out, gravity, rho_0, &
                                                     nx, ny, nz)
@@ -584,9 +599,9 @@ contains
       real(wp) :: p_above, p_centre_seed, inv_h, S_k, T_k, T_sq, T_cu
       real(wp) :: alpha_0, p_0, lambda, p_plus_p0, denom, rho_k
 
-      do concurrent(j=1:ny, i=1:nx) &
-         local(k, p_above, p_centre_seed, inv_h, S_k, T_k, T_sq, T_cu, &
-               alpha_0, p_0, lambda, p_plus_p0, denom, rho_k)
+      !$omp target teams distribute parallel do collapse(2) private(k, p_above, p_centre_seed, inv_h, S_k, T_k, T_sq, T_cu, alpha_0, p_0, lambda, p_plus_p0, denom, rho_k)
+      do j = 1, ny
+      do i = 1, nx
          p_edge_out(i, j, nz + 1) = 0.0_wp
          p_above = 0.0_wp
          do k = nz, 1, -1
@@ -616,6 +631,8 @@ contains
             p_edge_out(i, j, k) = p_above
          end do
       end do
+      end do
+      !$omp end target teams distribute parallel do
    end subroutine eos_wright_pgf_column_sweep_impl
 
    pure subroutine roquet_spv_point(T_pt, S_sp, p, sv, dsv_dt_model, dsv_ds_model)
@@ -653,7 +670,7 @@ contains
       !! Transcribed from the verified prototype roquet_spv_eos.py.  One
       !! sqrt for zs (shared by SV and both derivatives) + one sqrt for
       !! the ct_from_pt poly normalisation.
-      !$acc routine seq
+      !$omp declare target
       real(wp), intent(in) :: T_pt, S_sp, p
       real(wp), intent(out) :: sv, dsv_dt_model, dsv_ds_model
 
@@ -811,7 +828,7 @@ contains
       !! The `else` is unreachable-by-contract: `eos_validate`
       !! guarantees `eos%variant` is in the device-callable set at
       !! configure time (device code cannot `error stop`).
-      !$acc routine seq
+      !$omp declare target
       type(eos_t), intent(in) :: eos
          !! Shared EOS handle (variant + scalar coeffs), by value.
       real(wp), intent(in) :: T, S
@@ -859,7 +876,7 @@ contains
       !! diagnostics.  Takes the shared `eos_t` handle by value.
       !! The `else` is unreachable-by-contract (see
       !! `eos_validate`).
-      !$acc routine seq
+      !$omp declare target
       type(eos_t), intent(in) :: eos
       real(wp), intent(in) :: T, S, p
       real(wp) :: rho
@@ -903,7 +920,7 @@ contains
       !! polynomial slots in later as an `eos%variant ==
       !! EOS_VARIANT_ROQUET_SPV / EOS_VARIANT_TEOS10` branch, mirroring
       !! the dispatch in `eos_density_point`.
-      !$acc routine seq
+      !$omp declare target
       type(eos_t), intent(in) :: eos
          !! Shared EOS handle (variant tag), by value.  Read for the
          !! future per-variant dispatch; every variant takes the linear

@@ -41,7 +41,7 @@ contains
 
       if (need_alloc) then
          allocate (horvisc_hu_pre(nx, ny, nz), horvisc_hv_pre(nx, ny, nz))
-         !$acc enter data create(horvisc_hu_pre, horvisc_hv_pre)
+         !$omp target enter data map(alloc: horvisc_hu_pre, horvisc_hv_pre)
       end if
    end subroutine horvisc_workspace_ensure
 
@@ -56,14 +56,14 @@ contains
       else if (size(bih_lap_u, 1) /= nx .or. &
                size(bih_lap_u, 2) /= ny .or. &
                size(bih_lap_u, 3) /= nz) then
-         !$acc exit data delete(bih_lap_u, bih_lap_v)
+         !$omp target exit data map(delete: bih_lap_u, bih_lap_v)
          deallocate (bih_lap_u, bih_lap_v)
          need_alloc = .true.
       end if
 
       if (need_alloc) then
          allocate (bih_lap_u(nx, ny, nz), bih_lap_v(nx, ny, nz))
-         !$acc enter data create(bih_lap_u, bih_lap_v)
+         !$omp target enter data map(alloc: bih_lap_u, bih_lap_v)
       end if
    end subroutine bih_workspace_ensure
 
@@ -71,11 +71,11 @@ contains
       !! Release the lateral-viscosity persistent workspaces.  Called by the
       !! solver at simulation end.
       if (allocated(horvisc_hu_pre)) then
-         !$acc exit data delete(horvisc_hu_pre, horvisc_hv_pre)
+         !$omp target exit data map(delete: horvisc_hu_pre, horvisc_hv_pre)
          deallocate (horvisc_hu_pre, horvisc_hv_pre)
       end if
       if (allocated(bih_lap_u)) then
-         !$acc exit data delete(bih_lap_u, bih_lap_v)
+         !$omp target exit data map(delete: bih_lap_u, bih_lap_v)
          deallocate (bih_lap_u, bih_lap_v)
       end if
    end subroutine ml_horizontal_viscosity_cleanup
@@ -126,15 +126,20 @@ contains
 
          ! Snapshot the input momentum so neighbour reads come from the
          ! pre-update image on every backend.
-         do concurrent(k=1:nz, j=1:ny, i=1:nx)
+         !$omp target teams distribute parallel do collapse(3)
+         do k = 1, nz
+         do j = 1, ny
+         do i = 1, nx
             hu_pre(i, j, k) = hu_layer(i, j, k)
             hv_pre(i, j, k) = hv_layer(i, j, k)
          end do
+         end do
+         end do
+         !$omp end target teams distribute parallel do
 
-         do concurrent(j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) &
-            local(k, kk, h_k, u_c, v_c, u_ip, u_im, u_jp, u_jm, &
-                  v_ip, v_im, v_jp, v_jm, dudx, dvdy, dudy, dvdx, &
-                  strain, nu_h, lap_u, lap_v, h_col)
+         !$omp target teams distribute parallel do collapse(2) private(k, kk, h_k, u_c, v_c, u_ip, u_im, u_jp, u_jm, v_ip, v_im, v_jp, v_jm, dudx, dvdy, dudy, dvdx, strain, nu_h, lap_u, lap_v, h_col)
+         do j = nghost + 1, ny - nghost
+         do i = nghost + 1, nx - nghost
 
             h_col = 0.0_wp
             do kk = 1, nz
@@ -204,6 +209,8 @@ contains
                hv_layer(i, j, k) = hv_pre(i, j, k) + dt*h_k*nu_h*lap_v
             end do
          end do
+         end do
+         !$omp end target teams distribute parallel do
 
       end associate
 
@@ -246,8 +253,9 @@ contains
       call bih_workspace_ensure(nx, ny, nz)
 
       ! ---- Pass 1: L = del^2(u), over interior + one ghost ring ----
-      do concurrent(j=nghost:ny - nghost + 1, i=nghost:nx - nghost + 1) &
-         local(k, h_k, u_c, v_c, u_ip, u_im, u_jp, u_jm, v_ip, v_im, v_jp, v_jm)
+      !$omp target teams distribute parallel do collapse(2) private(k, h_k, u_c, v_c, u_ip, u_im, u_jp, u_jm, v_ip, v_im, v_jp, v_jm)
+      do j = nghost, ny - nghost + 1
+      do i = nghost, nx - nghost + 1
          do k = 1, nz
             h_k = h_layer(i, j, k)
             if (h_k < THIN_LAYER_THRESHOLD) then
@@ -291,11 +299,13 @@ contains
                                  + (v_jp - 2.0_wp*v_c + v_jm)*inv_dy2
          end do
       end do
+      end do
+      !$omp end target teams distribute parallel do
 
       ! ---- Pass 2: hu -= dt*h*nu_4*del^2(L), over the interior ----
-      do concurrent(j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) &
-         local(k, h_k, lu_c, lu_ip, lu_im, lu_jp, lu_jm, &
-               lv_c, lv_ip, lv_im, lv_jp, lv_jm, lap2_u, lap2_v)
+      !$omp target teams distribute parallel do collapse(2) private(k, h_k, lu_c, lu_ip, lu_im, lu_jp, lu_jm, lv_c, lv_ip, lv_im, lv_jp, lv_jm, lap2_u, lap2_v)
+      do j = nghost + 1, ny - nghost
+      do i = nghost + 1, nx - nghost
          do k = 1, nz
             h_k = h_layer(i, j, k)
             if (h_k < THIN_LAYER_THRESHOLD) cycle
@@ -337,6 +347,8 @@ contains
             hv_layer(i, j, k) = hv_layer(i, j, k) - dt*h_k*nu4_eff*lap2_v
          end do
       end do
+      end do
+      !$omp end target teams distribute parallel do
 
    end subroutine ml_horizontal_viscosity_biharmonic
 

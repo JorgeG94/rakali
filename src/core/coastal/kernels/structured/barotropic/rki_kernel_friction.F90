@@ -13,7 +13,7 @@ module rki_kernel_friction
 
 contains
 
-   pure subroutine apply_friction(h, hu, hv, grid, dt, &
+   subroutine apply_friction(h, hu, hv, grid, dt, &
                                   manning_n, wind_x, wind_y, &
                                   atm_pressure, precipitation, &
                                   forcing_active, include_wind)
@@ -60,8 +60,9 @@ contains
 
       if (.not. has_forcing) then
          ! Fast path: friction only, no forcing array reads
-         do concurrent(j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) &
-            local(u_val, v_val, speed, cf, denom, h_val)
+         !$omp target teams distribute parallel do collapse(2) private(u_val, v_val, speed, cf, denom, h_val)
+         do j = nghost + 1, ny - nghost
+         do i = nghost + 1, nx - nghost
             h_val = h(i, j)
             if (h_val > DRY_TOLERANCE) then
                u_val = hu(i, j)/h_val
@@ -73,10 +74,13 @@ contains
                hv(i, j) = hv(i, j)/denom
             end if
          end do
+         end do
+         !$omp end target teams distribute parallel do
       else
          ! Full path: friction + wind + pressure + precipitation
-         do concurrent(j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) &
-            local(u_val, v_val, speed, cf, denom, h_val, dpdx, dpdy)
+         !$omp target teams distribute parallel do collapse(2) private(u_val, v_val, speed, cf, denom, h_val, dpdx, dpdy)
+         do j = nghost + 1, ny - nghost
+         do i = nghost + 1, nx - nghost
             h_val = h(i, j)
 
             if (h_val > DRY_TOLERANCE) then
@@ -109,11 +113,13 @@ contains
             ! Precipitation: mass source (applied to all cells including dry)
             h(i, j) = h(i, j) + dt*precipitation(i, j)
          end do
+         end do
+         !$omp end target teams distribute parallel do
       end if
 
    end subroutine apply_friction
 
-   pure subroutine apply_coriolis(h, hu, hv, grid, dt, f)
+   subroutine apply_coriolis(h, hu, hv, grid, dt, f)
       !! Apply Coriolis via the exact (energy-conserving) rotation:
       !!   hu_new =  hu*cos(f*dt) + hv*sin(f*dt)
       !!   hv_new = -hu*sin(f*dt) + hv*cos(f*dt)
@@ -137,8 +143,9 @@ contains
       cosf = cos(f*dt)
       sinf = sin(f*dt)
 
-      do concurrent(j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) &
-         local(hu_old, hv_old)
+      !$omp target teams distribute parallel do collapse(2) private(hu_old, hv_old)
+      do j = nghost + 1, ny - nghost
+      do i = nghost + 1, nx - nghost
          if (h(i, j) > DRY_TOLERANCE) then
             hu_old = hu(i, j)
             hv_old = hv(i, j)
@@ -146,6 +153,8 @@ contains
             hv(i, j) = -hu_old*sinf + hv_old*cosf
          end if
       end do
+      end do
+      !$omp end target teams distribute parallel do
 
    end subroutine apply_coriolis
 

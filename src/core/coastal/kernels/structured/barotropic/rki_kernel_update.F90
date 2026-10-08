@@ -32,7 +32,7 @@ module rki_kernel_update
 
 contains
 
-   pure subroutine compute_update(h, hu, hv, flux_h, flux_hu, flux_hv, &
+   subroutine compute_update(h, hu, hv, flux_h, flux_hu, flux_hv, &
                                   grid, dt)
       !! Forward Euler update U = U + dt*RHS (each SSP-RK2 stage). Also
       !! enforces non-negative depth, zeroes momentum in dry cells, and
@@ -55,8 +55,9 @@ contains
       nghost = grid%nghost
       eps4 = DESING_EPS**4
 
-      do concurrent(j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) &
-         local(h4, u_val, v_val, speed_sq, fr_max_sq, fr_scale)
+      !$omp target teams distribute parallel do collapse(2) private(h4, u_val, v_val, speed_sq, fr_max_sq, fr_scale)
+      do j = nghost + 1, ny - nghost
+      do i = nghost + 1, nx - nghost
          h(i, j) = h(i, j) + dt*flux_h(i, j)
          hu(i, j) = hu(i, j) + dt*flux_hu(i, j)
          hv(i, j) = hv(i, j) + dt*flux_hv(i, j)
@@ -92,10 +93,12 @@ contains
             end if
          end if
       end do
+      end do
+      !$omp end target teams distribute parallel do
 
    end subroutine compute_update
 
-   pure subroutine compute_rk2_average(h, hu, hv, h0, hu0, hv0, grid)
+   subroutine compute_rk2_average(h, hu, hv, h0, hu0, hv0, grid)
       !! SSP-RK2 averaging step: U^{n+1} = 0.5*(U^n + U**), averaging the
       !! original state (h0, hu0, hv0) with the twice-advanced (h, hu, hv).
       type(hgrid_t), intent(in) :: grid
@@ -114,8 +117,9 @@ contains
       nghost = grid%nghost
       eps4 = DESING_EPS**4
 
-      do concurrent(j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) &
-         local(h4, u_val, v_val, speed_sq, fr_max_sq, fr_scale)
+      !$omp target teams distribute parallel do collapse(2) private(h4, u_val, v_val, speed_sq, fr_max_sq, fr_scale)
+      do j = nghost + 1, ny - nghost
+      do i = nghost + 1, nx - nghost
          h(i, j) = 0.5_wp*(h0(i, j) + h(i, j))
          hu(i, j) = 0.5_wp*(hu0(i, j) + hu(i, j))
          hv(i, j) = 0.5_wp*(hv0(i, j) + hv(i, j))
@@ -146,10 +150,12 @@ contains
             end if
          end if
       end do
+      end do
+      !$omp end target teams distribute parallel do
 
    end subroutine compute_rk2_average
 
-   pure subroutine compute_ssp_combine(h, hu, hv, h0, hu0, hv0, a_n, grid)
+   subroutine compute_ssp_combine(h, hu, hv, h0, hu0, hv0, a_n, grid)
       !! Generalized SSP Shu-Osher combine: U = a_n*U^n + (1 - a_n)*U,
       !! where U is the post-Euler-stage iterate and (h0,hu0,hv0) = U^n.
       !! Reduces exactly to compute_rk2_average for a_n = 0.5.  Applies the
@@ -174,8 +180,9 @@ contains
       a_prev = 1.0_wp - a_n
       eps4 = DESING_EPS**4
 
-      do concurrent(j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) &
-         local(h4, u_val, v_val, speed_sq, fr_max_sq, fr_scale)
+      !$omp target teams distribute parallel do collapse(2) private(h4, u_val, v_val, speed_sq, fr_max_sq, fr_scale)
+      do j = nghost + 1, ny - nghost
+      do i = nghost + 1, nx - nghost
          h(i, j) = a_n*h0(i, j) + a_prev*h(i, j)
          hu(i, j) = a_n*hu0(i, j) + a_prev*hu(i, j)
          hv(i, j) = a_n*hv0(i, j) + a_prev*hv(i, j)
@@ -204,6 +211,8 @@ contains
             end if
          end if
       end do
+      end do
+      !$omp end target teams distribute parallel do
 
    end subroutine compute_ssp_combine
 

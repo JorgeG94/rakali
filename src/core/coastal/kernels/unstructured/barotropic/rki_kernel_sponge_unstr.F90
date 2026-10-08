@@ -37,7 +37,7 @@ module rki_kernel_sponge_unstr
 
 contains
 
-   pure subroutine apply_sponge_unstr(state, mesh, dt)
+   subroutine apply_sponge_unstr(state, mesh, dt)
       !! Apply sponge relaxation to all owned cells adjacent to a BC_SPONGE edge.
       !!
       !! Relaxes `h = stage_cv - bed_cv` toward `bc_sponge_h_ref(g)` and
@@ -50,8 +50,8 @@ contains
       integer :: cell, e, g
       real(wp) :: alpha, h_ref_best, h_water, h_new
 
-      do concurrent(cell=1:state%ncells_owned) &
-         local(e, g, alpha, h_ref_best, h_water, h_new)
+      !$omp target teams distribute parallel do private(e, g, alpha, h_ref_best, h_water, h_new)
+      do cell = 1, state%ncells_owned
 
          ! Scan all three edges for the highest-strength sponge group.
          alpha = 0.0_wp
@@ -78,6 +78,7 @@ contains
          end if
 
       end do
+      !$omp end target teams distribute parallel do
 
    end subroutine apply_sponge_unstr
 

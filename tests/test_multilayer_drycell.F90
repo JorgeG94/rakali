@@ -360,10 +360,10 @@ contains
 
       hu_before = hu_layer(5, 5, 1)
 
-      !$acc data copyin( h_layer, w) copy( hu_layer, hv_layer)
+      !$omp target data map(to:  h_layer, w) map(tofrom:  hu_layer, hv_layer)
       call ml_compute_vertical_exchange(h_layer, hu_layer, hv_layer, &
                                         w, grid, LNZ, dt)
-      !$acc end data
+      !$omp end target data
 
       hu_after = hu_layer(5, 5, 1)
 

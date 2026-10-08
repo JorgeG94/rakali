@@ -118,7 +118,7 @@ contains
       end do
       ! keps_nut/tke are delete-mapped (not copyout) -- pull them back for the
       ! host-side assertions before exit_data tears the device copy down.
-      !$acc update self(state%multilayer%keps_nut, state%multilayer%keps_tke)
+      !$omp target update from(state%multilayer%keps_nut, state%multilayer%keps_tke)
       call state_unstr_exit_data(state)
       call mesh_unstr_exit_data(mesh)
    end subroutine run_keps_unstr

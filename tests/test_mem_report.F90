@@ -168,7 +168,7 @@ contains
 
       allocate (probe(1024*1024))  ! 4 MB
       probe = 0.0_wp
-      !$acc enter data copyin(probe)
+      !$omp target enter data map(to: probe)
 
       used = mem_device_used_bytes()
       total = mem_device_total_bytes()
@@ -187,7 +187,7 @@ contains
                     "device used must be -1 when no OpenACC runtime is present")
       end if
 
-      !$acc exit data delete(probe)
+      !$omp target exit data map(delete: probe)
       deallocate (probe)
    end subroutine test_device_used
 
@@ -206,13 +206,13 @@ contains
 
       allocate (workspace(2*1024*1024))  ! 8 MB
       workspace = 1.0_wp
-      !$acc enter data copyin(workspace)
+      !$omp target enter data map(to: workspace)
 
       call mem_log_device_actuals("test state mapped")
       call mem_log_device_growth("test status", quiet=.true.)
       call mem_log_device_growth("test end of run")
 
-      !$acc exit data delete(workspace)
+      !$omp target exit data map(delete: workspace)
       deallocate (workspace)
 
       ! Reaching here without a crash is the assertion.

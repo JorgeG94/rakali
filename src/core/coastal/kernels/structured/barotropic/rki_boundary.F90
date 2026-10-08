@@ -217,7 +217,7 @@ contains
 
    end subroutine apply_boundary_conditions
 
-   pure subroutine bc_wall_edge(h, hu, hv, b, grid, ed)
+   subroutine bc_wall_edge(h, hu, hv, b, grid, ed)
       !! Wall / sponge ghost fill for one edge: mirror the BED and the
       !! surface, negate the NORMAL momentum, copy the tangential.
       !! Geometry comes from `ed`; its scalars are hoisted to locals so the
@@ -269,7 +269,9 @@ contains
       n_tan = ed%n_tan
       nu = ed%normal_is_u
 
-      do concurrent(t=1:n_tan, k=1:nghost) local(ig, jg, im, jm)
+      !$omp target teams distribute parallel do collapse(2) private(ig, jg, im, jm)
+      do t = 1, n_tan
+      do k = 1, nghost
          ig = ig0 + (k - 1)*din + (t - 1)*dit       ! ghost cell
          jg = jg0 + (k - 1)*djn + (t - 1)*djt
          im = ig - (2*k - 1)*din                    ! mirror interior cell
@@ -288,9 +290,11 @@ contains
             hu(ig, jg) = hu(im, jm)
          end if
       end do
+      end do
+      !$omp end target teams distribute parallel do
    end subroutine bc_wall_edge
 
-   pure subroutine bc_flather_edge(h, hu, hv, b, grid, ed, eta_ext, prescribe_h)
+   subroutine bc_flather_edge(h, hu, hv, b, grid, ed, eta_ext, prescribe_h)
       !! Flather radiation for one edge.  Shared by OPEN (eta_ext = 0,
       !! prescribe_h = .false. -> zero-gradient ghost depth) and TIDAL
       !! (eta_ext = tidal_eta, prescribe_h = .true. -> ghost depth from
@@ -322,8 +326,9 @@ contains
       nu = ed%normal_is_u
       sgn = ed%nrm_sign
 
-      do concurrent(t=1:n_tan, k=1:nghost) &
-         local(ig, jg, ii, ji, h_int, eta_int, speed, hmax, h_ghost)
+      !$omp target teams distribute parallel do collapse(2) private(ig, jg, ii, ji, h_int, eta_int, speed, hmax, h_ghost)
+      do t = 1, n_tan
+      do k = 1, nghost
          ig = ig0 + (k - 1)*din + (t - 1)*dit
          jg = jg0 + (k - 1)*djn + (t - 1)*djt
          ii = ig0 + (t - 1)*dit - din       ! first interior cell at this tangential index
@@ -342,9 +347,11 @@ contains
             hu(ig, jg) = hu(ii, ji)
          end if
       end do
+      end do
+      !$omp end target teams distribute parallel do
    end subroutine bc_flather_edge
 
-   pure subroutine bc_inflow_edge(h, hu, hv, b, grid, ed, vel)
+   subroutine bc_inflow_edge(h, hu, hv, b, grid, ed, vel)
       !! Inflow: zero-gradient ghost depth; the NORMAL momentum is the
       !! prescribed inward transport h_ghost*vel (inward = -ed%nrm_sign);
       !! tangential momentum copied from the first interior cell.
@@ -372,7 +379,9 @@ contains
       nu = ed%normal_is_u
       in_sgn = -ed%nrm_sign
 
-      do concurrent(t=1:n_tan, k=1:nghost) local(ig, jg, ii, ji, h_int)
+      !$omp target teams distribute parallel do collapse(2) private(ig, jg, ii, ji, h_int)
+      do t = 1, n_tan
+      do k = 1, nghost
          ig = ig0 + (k - 1)*din + (t - 1)*dit
          jg = jg0 + (k - 1)*djn + (t - 1)*djt
          ii = ig0 + (t - 1)*dit - din
@@ -387,9 +396,11 @@ contains
             hu(ig, jg) = hu(ii, ji)
          end if
       end do
+      end do
+      !$omp end target teams distribute parallel do
    end subroutine bc_inflow_edge
 
-   pure subroutine bc_disch_edge(h, hu, hv, b, grid, ed, flux)
+   subroutine bc_disch_edge(h, hu, hv, b, grid, ed, flux)
       !! Discharge: zero-gradient ghost depth; the NORMAL momentum (the
       !! depth-integrated transport) is set directly to the prescribed
       !! inward flux (inward = -ed%nrm_sign); tangential momentum copied.
@@ -417,7 +428,9 @@ contains
       nu = ed%normal_is_u
       in_sgn = -ed%nrm_sign
 
-      do concurrent(t=1:n_tan, k=1:nghost) local(ig, jg, ii, ji)
+      !$omp target teams distribute parallel do collapse(2) private(ig, jg, ii, ji)
+      do t = 1, n_tan
+      do k = 1, nghost
          ig = ig0 + (k - 1)*din + (t - 1)*dit
          jg = jg0 + (k - 1)*djn + (t - 1)*djt
          ii = ig0 + (t - 1)*dit - din
@@ -431,9 +444,11 @@ contains
             hu(ig, jg) = hu(ii, ji)
          end if
       end do
+      end do
+      !$omp end target teams distribute parallel do
    end subroutine bc_disch_edge
 
-   pure subroutine bc_clamped_edge(h, hu, hv, b, grid, ed, eta)
+   subroutine bc_clamped_edge(h, hu, hv, b, grid, ed, eta)
       !! Clamped (Dirichlet surface): prescribe the ghost depth from the
       !! clamped elevation; copy BOTH momenta from the first interior
       !! cell (no normal/tangential distinction).
@@ -457,7 +472,9 @@ contains
       djt = ed%dj_t
       n_tan = ed%n_tan
 
-      do concurrent(t=1:n_tan, k=1:nghost) local(ig, jg, ii, ji)
+      !$omp target teams distribute parallel do collapse(2) private(ig, jg, ii, ji)
+      do t = 1, n_tan
+      do k = 1, nghost
          ig = ig0 + (k - 1)*din + (t - 1)*dit
          jg = jg0 + (k - 1)*djn + (t - 1)*djt
          ii = ig0 + (t - 1)*dit - din
@@ -466,9 +483,11 @@ contains
          hu(ig, jg) = hu(ii, ji)
          hv(ig, jg) = hv(ii, ji)
       end do
+      end do
+      !$omp end target teams distribute parallel do
    end subroutine bc_clamped_edge
 
-   pure subroutine bc_chapman_edge(h, hu, hv, b, grid, ed, eta_old, dt, dx, dy)
+   subroutine bc_chapman_edge(h, hu, hv, b, grid, ed, eta_old, dt, dx, dy)
       !! Chapman / Orlanski radiation for one edge.  The ghost surface
       !! advects at a clamped, non-negative phase speed estimated from the
       !! interior eta tendency and along-normal gradient; the momentum is
@@ -507,9 +526,9 @@ contains
       sgn = ed%nrm_sign
       dd = merge(dx, dy, nu)
 
-      do concurrent(t=1:n_tan, k=1:nghost) &
-         local(ig, jg, ii, ji, i2, j2, h_int, eta_int, eta_old_val, speed, &
-               hmax, deta_dt, deta_dx, c_phase, eta_ghost_new, h_ghost)
+      !$omp target teams distribute parallel do collapse(2) private(ig, jg, ii, ji, i2, j2, h_int, eta_int, eta_old_val, speed, hmax, deta_dt, deta_dx, c_phase, eta_ghost_new, h_ghost)
+      do t = 1, n_tan
+      do k = 1, nghost
          ig = ig0 + (k - 1)*din + (t - 1)*dit
          jg = jg0 + (k - 1)*djn + (t - 1)*djt
          ii = ig0 + (t - 1)*dit - din          ! first interior cell
@@ -549,9 +568,11 @@ contains
             hu(ig, jg) = hu(ii, ji)
          end if
       end do
+      end do
+      !$omp end target teams distribute parallel do
    end subroutine bc_chapman_edge
 
-   pure subroutine apply_nh_boundary_conditions(q_nh, u_layer, v_layer, w, h, b, &
+   subroutine apply_nh_boundary_conditions(q_nh, u_layer, v_layer, w, h, b, &
                                                 grid, nz, bc)
       !! Fill ghost cells for non-hydrostatic variables
       !!
@@ -588,7 +609,10 @@ contains
       bc_n = bc%north
 
       ! ---- West boundary ----
-      do concurrent(k=1:nz, j=1:ny, g=1:nghost)
+      !$omp target teams distribute parallel do collapse(3)
+      do k = 1, nz
+      do j = 1, ny
+      do g = 1, nghost
          select case (bc_w)
          case (BC_WALL)
             q_nh(i_first - g, j, k) = q_nh(i_first + g - 1, j, k)
@@ -600,12 +624,24 @@ contains
             v_layer(i_first - g, j, k) = v_layer(i_first + g - 1, j, k)
          end select
       end do
-      do concurrent(k=1:nz + 1, j=1:ny, g=1:nghost)
+      end do
+      end do
+      !$omp end target teams distribute parallel do
+      !$omp target teams distribute parallel do collapse(3)
+      do k = 1, nz + 1
+      do j = 1, ny
+      do g = 1, nghost
          w(i_first - g, j, k) = w(i_first + g - 1, j, k)
       end do
+      end do
+      end do
+      !$omp end target teams distribute parallel do
 
       ! ---- East boundary ----
-      do concurrent(k=1:nz, j=1:ny, g=1:nghost)
+      !$omp target teams distribute parallel do collapse(3)
+      do k = 1, nz
+      do j = 1, ny
+      do g = 1, nghost
          select case (bc_e)
          case (BC_WALL)
             q_nh(i_last + g, j, k) = q_nh(i_last - g + 1, j, k)
@@ -617,12 +653,24 @@ contains
             v_layer(i_last + g, j, k) = v_layer(i_last - g + 1, j, k)
          end select
       end do
-      do concurrent(k=1:nz + 1, j=1:ny, g=1:nghost)
+      end do
+      end do
+      !$omp end target teams distribute parallel do
+      !$omp target teams distribute parallel do collapse(3)
+      do k = 1, nz + 1
+      do j = 1, ny
+      do g = 1, nghost
          w(i_last + g, j, k) = w(i_last - g + 1, j, k)
       end do
+      end do
+      end do
+      !$omp end target teams distribute parallel do
 
       ! ---- South boundary ----
-      do concurrent(k=1:nz, i=1:nx, g=1:nghost)
+      !$omp target teams distribute parallel do collapse(3)
+      do k = 1, nz
+      do i = 1, nx
+      do g = 1, nghost
          select case (bc_s)
          case (BC_WALL)
             q_nh(i, j_first - g, k) = q_nh(i, j_first + g - 1, k)
@@ -634,12 +682,24 @@ contains
             v_layer(i, j_first - g, k) = v_layer(i, j_first + g - 1, k)
          end select
       end do
-      do concurrent(k=1:nz + 1, i=1:nx, g=1:nghost)
+      end do
+      end do
+      !$omp end target teams distribute parallel do
+      !$omp target teams distribute parallel do collapse(3)
+      do k = 1, nz + 1
+      do i = 1, nx
+      do g = 1, nghost
          w(i, j_first - g, k) = w(i, j_first + g - 1, k)
       end do
+      end do
+      end do
+      !$omp end target teams distribute parallel do
 
       ! ---- North boundary ----
-      do concurrent(k=1:nz, i=1:nx, g=1:nghost)
+      !$omp target teams distribute parallel do collapse(3)
+      do k = 1, nz
+      do i = 1, nx
+      do g = 1, nghost
          select case (bc_n)
          case (BC_WALL)
             q_nh(i, j_last + g, k) = q_nh(i, j_last - g + 1, k)
@@ -651,9 +711,18 @@ contains
             v_layer(i, j_last + g, k) = v_layer(i, j_last - g + 1, k)
          end select
       end do
-      do concurrent(k=1:nz + 1, i=1:nx, g=1:nghost)
+      end do
+      end do
+      !$omp end target teams distribute parallel do
+      !$omp target teams distribute parallel do collapse(3)
+      do k = 1, nz + 1
+      do i = 1, nx
+      do g = 1, nghost
          w(i, j_last + g, k) = w(i, j_last - g + 1, k)
       end do
+      end do
+      end do
+      !$omp end target teams distribute parallel do
 
    end subroutine apply_nh_boundary_conditions
 

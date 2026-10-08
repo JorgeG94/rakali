@@ -131,7 +131,7 @@ contains
       !! lives here rather than at each call site.
       type(scratch_3d_buffer_t), intent(inout) :: this
       if (.not. allocated(this%data)) return
-      !$acc enter data create(this%data)
+      !$omp target enter data map(alloc: this%data)
    end subroutine scratch_3d_buffer_enter_data_impl
 
    subroutine scratch_3d_buffer_exit_data(this)
@@ -150,7 +150,7 @@ contains
       !! `scratch_3d_buffer_enter_data_impl`'s gate).
       type(scratch_3d_buffer_t), intent(inout) :: this
       if (.not. allocated(this%data)) return
-      !$acc exit data delete(this%data)
+      !$omp target exit data map(delete: this%data)
    end subroutine scratch_3d_buffer_exit_data_impl
 
    pure function scratch_3d_buffer_bytes(this) result(nbytes)

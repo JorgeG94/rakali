@@ -166,13 +166,15 @@ contains
 
       ! ---- 1. Save U^n; refresh height h = max(stage - b, 0); eta^n = stage
       !         at circumcentres (stage = h + b already, so eta == stage) ----
-      do concurrent(k=1:nco)
+      !$omp target teams distribute parallel do
+      do k = 1, nco
          do i = 1, EDGES_PER_TRI
             u_n_edge(i, k) = u_edge(i, k)
          end do
          height(k) = max(stage(k) - bed(k), 0.0_wp)
          eta(k) = stage(k)
       end do
+      !$omp end target teams distribute parallel do
 
       ! ---- 2. Frozen Hf + per-edge Dirichlet ghost eta ----
       call si_unstr_face_depths(mesh, nct, nco, n_bc, height, bed, bc_type, &
@@ -182,7 +184,7 @@ contains
       !          (host build from the live Hf; structures static).  Once per
       !          step, NOT per V-cycle. ----
       if (precond == SI_PRECOND_MG .and. present(mg)) then
-         !$acc update self(Hf_edge)
+         !$omp target update from(Hf_edge)
          call agglom_hierarchy_unstr_refresh(mg, mesh, nco, g_theta2_dt2, &
                                              Hf_edge(:, 1:nco))
       end if
@@ -190,7 +192,8 @@ contains
       ! ---- 3. EDGE predictor U*_e (dead edges => 0) + wind ----
       ! U^n_e = the saved edge transport; the wind stress projects onto the
       ! outward edge-normal.  Wall edges (Hf=0) stay exactly 0.
-      do concurrent(k=1:nco) local(i, kn, inv_delta, dgdn, un_e, tau_n)
+      !$omp target teams distribute parallel do private(i, kn, inv_delta, dgdn, un_e, tau_n)
+      do k = 1, nco
          do i = 1, EDGES_PER_TRI
             if (Hf_edge(i, k) > 0.0_wp) then
                inv_delta = 1.0_wp/max(mesh%edge_delta(i, k), DELTA_EPS)
@@ -213,6 +216,7 @@ contains
             end if
          end do
       end do
+      !$omp end target teams distribute parallel do
 
       ! ---- 4. theta-blend RHS (+ Dirichlet ghost fold) ----
       call si_unstr_compute_rhs(mesh, nct, nco, eta, u_star, u_n_edge, eta_r, &
@@ -230,7 +234,8 @@ contains
       end if
 
       ! ---- 6. EDGE back-substitution with the SAME frozen Hf ----
-      do concurrent(k=1:nco) local(i, kn, inv_delta, dgdn)
+      !$omp target teams distribute parallel do private(i, kn, inv_delta, dgdn)
+      do k = 1, nco
          do i = 1, EDGES_PER_TRI
             if (Hf_edge(i, k) > 0.0_wp) then
                inv_delta = 1.0_wp/max(mesh%edge_delta(i, k), DELTA_EPS)
@@ -247,14 +252,17 @@ contains
             end if
          end do
       end do
+      !$omp end target teams distribute parallel do
 
       ! ---- 7. Reconstruct A-grid cell momenta + recover h^{n+1} ----
       call si_unstr_reconstruct_cell_momenta(mesh, nct, nco, u_edge, xmom, ymom)
 
-      do concurrent(k=1:nco)
+      !$omp target teams distribute parallel do
+      do k = 1, nco
          stage(k) = eta(k)
          height(k) = max(eta(k) - bed(k), 0.0_wp)
       end do
+      !$omp end target teams distribute parallel do
    end subroutine si_unstr_advance
 
    subroutine si_unstr_advance_wetdry(state, mesh, nct, nco, n_bc, dt, theta, &
@@ -299,13 +307,15 @@ contains
          ! ---- 0. Sub-bottom table; save U^n; eta^n = stage; height ----
          call si_unstr_wetdry_fill_bsub(mesh, si%n_sub, nct, nco, baro%bed_cv, &
                                         si%bsub_fill, si%b_sub, si%b_min)
-         do concurrent(k=1:nco) local(i)
+         !$omp target teams distribute parallel do private(i)
+         do k = 1, nco
             do i = 1, EDGES_PER_TRI
                si%u_n_edge(i, k) = si%u_edge(i, k)
             end do
             baro%height_cv(k) = max(baro%stage_cv(k) - baro%bed_cv(k), 0.0_wp)
             si%eta(k) = baro%stage_cv(k)
          end do
+         !$omp end target teams distribute parallel do
 
          ! ---- 1. Freeze Hf (gated-mean/sill rule) + Dirichlet ghost ----
          call si_unstr_wetdry_face_depths(mesh, nct, nco, n_bc, si%eta, &
@@ -314,7 +324,8 @@ contains
                                           si%eta_ghost_edge)
 
          ! ---- 2. EDGE predictor (dead edges => exactly 0) + wind (R3) ----
-         do concurrent(k=1:nco) local(i, kn, inv_delta, dgdn, tau_n)
+         !$omp target teams distribute parallel do private(i, kn, inv_delta, dgdn, tau_n)
+         do k = 1, nco
             do i = 1, EDGES_PER_TRI
                if (si%Hf_edge(i, k) > 0.0_wp) then
                   inv_delta = 1.0_wp/max(mesh%edge_delta(i, k), DELTA_EPS)
@@ -336,6 +347,7 @@ contains
                end if
             end do
          end do
+         !$omp end target teams distribute parallel do
 
          ! ---- 3. rhs_d = v(eta^n) - dt*div[blend] (+ Dirichlet fold) ----
          ! Reuse the linear RHS (leading eta^n + ghost fold via the frozen
@@ -345,15 +357,19 @@ contains
                                    si%Hf_edge, si%eta_ghost_edge, g_theta2_dt2)
          call si_unstr_wetdry_volume(si%n_sub, nct, nco, si%eta, si%b_sub, &
                                      si%v_cell)
-         do concurrent(k=1:nco)
+         !$omp target teams distribute parallel do
+         do k = 1, nco
             si%rhs_d(k) = si%eta_r(k) + (si%v_cell(k) - si%eta(k))
          end do
+         !$omp end target teams distribute parallel do
 
          ! ---- 4. Newton outer loop ----
          rhs2 = 0.0_wp
-         do concurrent(k=1:nco) reduce(+:rhs2)
+         !$omp target teams distribute parallel do
+         do k = 1, nco
             rhs2 = rhs2 + si%rhs_d(k)*si%rhs_d(k)
          end do
+         !$omp end target teams distribute parallel do
          tol2 = max(SI_UNSTR_NEWTON_TOL*SI_UNSTR_NEWTON_TOL*rhs2, 1.0e-60_wp)
 
          cg_it_total = 0
@@ -384,21 +400,27 @@ contains
 
             ! Solve J*dz = -F from zero (full-array zero so the ghost band
             ! of the search space stays 0); eta += dz.
-            do concurrent(k=1:nct)
+            !$omp target teams distribute parallel do
+            do k = 1, nct
                si%newton_dz(k) = 0.0_wp
             end do
-            do concurrent(k=1:nco)
+            !$omp end target teams distribute parallel do
+            !$omp target teams distribute parallel do
+            do k = 1, nco
                si%eta_r(k) = -si%newton_F(k)
             end do
+            !$omp end target teams distribute parallel do
             call si_unstr_cg_solve(mesh, nct, nco, si%newton_dz, si%eta_r, &
                                    si%eta_p, si%eta_Ap, si%eta_z, si%eta_diag, &
                                    si%Hf_edge, g_theta2_dt2, si%precond, &
                                    si%rtol, cg_it, mass_res, &
                                    mass_diag=si%mass_diag)
             cg_it_total = cg_it_total + cg_it
-            do concurrent(k=1:nco)
+            !$omp target teams distribute parallel do
+            do k = 1, nco
                si%eta(k) = si%eta(k) + si%newton_dz(k)
             end do
+            !$omp end target teams distribute parallel do
          end do
 
          si%newton_iters = min(nit, SI_UNSTR_NEWTON_MAX)
@@ -409,7 +431,8 @@ contains
          end if
 
          ! ---- 5. EDGE back-substitution with the SAME frozen Hf (R2) ----
-         do concurrent(k=1:nco) local(i, kn, inv_delta, dgdn)
+         !$omp target teams distribute parallel do private(i, kn, inv_delta, dgdn)
+         do k = 1, nco
             do i = 1, EDGES_PER_TRI
                if (si%Hf_edge(i, k) > 0.0_wp) then
                   inv_delta = 1.0_wp/max(mesh%edge_delta(i, k), DELTA_EPS)
@@ -427,20 +450,23 @@ contains
                end if
             end do
          end do
+         !$omp end target teams distribute parallel do
 
          ! ---- 6. Cell momenta + thickness (dry cells clamp h to 0) ----
          call si_unstr_reconstruct_cell_momenta(mesh, nct, nco, si%u_edge, &
                                                 baro%xmom_cv, baro%ymom_cv)
-         do concurrent(k=1:nco)
+         !$omp target teams distribute parallel do
+         do k = 1, nco
             baro%stage_cv(k) = si%eta(k)
             baro%height_cv(k) = max(si%eta(k) - baro%bed_cv(k), 0.0_wp)
          end do
+         !$omp end target teams distribute parallel do
       end associate
 
       iter_out = cg_it_total
    end subroutine si_unstr_advance_wetdry
 
-   pure subroutine si_unstr_reconstruct_cell_momenta(mesh, nct, nco, u_edge, &
+   subroutine si_unstr_reconstruct_cell_momenta(mesh, nct, nco, u_edge, &
                                                      xmom, ymom)
       !! Least-squares reconstruction of the cell-centre transport vector
       !! (hu, hv) from the three edge-normal transports U_e = (hu,hv)·n_e:
@@ -463,8 +489,8 @@ contains
       integer :: k, i
       real(wp) :: m11, m12, m22, rx, ry, det, wlen, enx, eny, ue
 
-      do concurrent(k=1:nco) &
-         local(i, m11, m12, m22, rx, ry, det, wlen, enx, eny, ue)
+      !$omp target teams distribute parallel do private(i, m11, m12, m22, rx, ry, det, wlen, enx, eny, ue)
+      do k = 1, nco
          m11 = 0.0_wp
          m12 = 0.0_wp
          m22 = 0.0_wp
@@ -494,6 +520,7 @@ contains
             ymom(k) = 0.0_wp
          end if
       end do
+      !$omp end target teams distribute parallel do
    end subroutine si_unstr_reconstruct_cell_momenta
 
 end module rki_si_unstr_step

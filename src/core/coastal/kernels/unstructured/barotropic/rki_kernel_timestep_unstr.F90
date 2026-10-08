@@ -38,12 +38,14 @@ contains
 
       dt_local = TIMESTEP_LARGE
 
-      do concurrent(k=1:mesh%ncells_owned) reduce(min:dt_local)
+      !$omp target teams distribute parallel do
+      do k = 1, mesh%ncells_owned
          if (state%barotropic%max_speed(k) > TIMESTEP_EPSILON) then
             cell_dt = mesh%radius(k)/state%barotropic%max_speed(k)
             if (cell_dt < dt_local) dt_local = cell_dt
          end if
       end do
+      !$omp end target teams distribute parallel do
 
       ! Clamp +inf back to TIMESTEP_LARGE: NVHPC's reduction(min:..) can
       ! return +inf when the loop never updates the accumulator (all

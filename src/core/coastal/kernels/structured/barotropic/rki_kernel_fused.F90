@@ -19,7 +19,7 @@ module rki_kernel_fused
 
 contains
 
-   pure subroutine fused_update_stage_generic(h, hu, hv, &
+   subroutine fused_update_stage_generic(h, hu, hv, &
                                               flux_h, flux_hu, flux_hv, &
                                               grid, dt, &
                                               manning_n, wind_x, wind_y, &
@@ -75,9 +75,9 @@ contains
          sinf = sin(coriolis_f*dt)
       end if
 
-      do concurrent(j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) &
-         local(h_val, hu_val, hv_val, h4, speed_sq, fr_max_sq, fr_scale, &
-               u_val, v_val, speed, cf, denom, dpdx, dpdy, hu_old, hv_old)
+      !$omp target teams distribute parallel do collapse(2) private(h_val, hu_val, hv_val, h4, speed_sq, fr_max_sq, fr_scale, u_val, v_val, speed, cf, denom, dpdx, dpdy, hu_old, hv_old)
+      do j = nghost + 1, ny - nghost
+      do i = nghost + 1, nx - nghost
 
          ! ---- Read state ----
          h_val = h(i, j)
@@ -158,10 +158,12 @@ contains
          hu(i, j) = hu_val
          hv(i, j) = hv_val
       end do
+      end do
+      !$omp end target teams distribute parallel do
 
    end subroutine fused_update_stage_generic
 
-   pure subroutine fused_update_stage1(h, hu, hv, h0, hu0, hv0, &
+   subroutine fused_update_stage1(h, hu, hv, h0, hu0, hv0, &
                                        flux_h, flux_hu, flux_hv, &
                                        grid, dt, &
                                        manning_n, wind_x, wind_y, &
@@ -213,9 +215,9 @@ contains
          sinf = sin(coriolis_f*dt)
       end if
 
-      do concurrent(j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) &
-         local(h_val, hu_val, hv_val, h4, speed_sq, fr_max_sq, fr_scale, &
-               u_val, v_val, speed, cf, denom, dpdx, dpdy, hu_old, hv_old)
+      !$omp target teams distribute parallel do collapse(2) private(h_val, hu_val, hv_val, h4, speed_sq, fr_max_sq, fr_scale, u_val, v_val, speed, cf, denom, dpdx, dpdy, hu_old, hv_old)
+      do j = nghost + 1, ny - nghost
+      do i = nghost + 1, nx - nghost
 
          ! ---- Read + save backup ----
          h_val = h(i, j)
@@ -299,10 +301,12 @@ contains
          hu(i, j) = hu_val
          hv(i, j) = hv_val
       end do
+      end do
+      !$omp end target teams distribute parallel do
 
    end subroutine fused_update_stage1
 
-   pure subroutine fused_update_stage2(h, hu, hv, h0, hu0, hv0, &
+   subroutine fused_update_stage2(h, hu, hv, h0, hu0, hv0, &
                                        flux_h, flux_hu, flux_hv, &
                                        grid, dt, &
                                        manning_n, wind_x, wind_y, &
@@ -354,9 +358,9 @@ contains
          sinf = sin(coriolis_f*dt)
       end if
 
-      do concurrent(j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) &
-         local(h_val, hu_val, hv_val, h4, speed_sq, fr_max_sq, fr_scale, &
-               u_val, v_val, speed, cf, denom, dpdx, dpdy, hu_old, hv_old)
+      !$omp target teams distribute parallel do collapse(2) private(h_val, hu_val, hv_val, h4, speed_sq, fr_max_sq, fr_scale, u_val, v_val, speed, cf, denom, dpdx, dpdy, hu_old, hv_old)
+      do j = nghost + 1, ny - nghost
+      do i = nghost + 1, nx - nghost
 
          ! ---- Read state ----
          h_val = h(i, j)
@@ -467,6 +471,8 @@ contains
          hu(i, j) = hu_val
          hv(i, j) = hv_val
       end do
+      end do
+      !$omp end target teams distribute parallel do
 
    end subroutine fused_update_stage2
 

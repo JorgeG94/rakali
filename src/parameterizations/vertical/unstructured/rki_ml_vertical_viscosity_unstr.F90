@@ -21,7 +21,7 @@ module rki_ml_vertical_viscosity_unstr
 
 contains
 
-   pure subroutine ml_vertical_viscosity_unstr(state, dt)
+   subroutine ml_vertical_viscosity_unstr(state, dt)
       !! Ri-dependent vertical viscosity for momentum.
       !! Computes gradient Richardson number at each interface and applies
       !! turbulent diffusive flux: nu_t = nu_max / (1 + alpha*Ri)^2 + nu_bg.
@@ -42,10 +42,8 @@ contains
       n = state%ncells_owned
       if (nz < 2) return
 
-      do concurrent(cell=1:n) &
-         local(k, h_k, h_k1, h_avg, u_k, v_k, u_k1, v_k1, &
-               du, dv, drho, Ri, denom, nu_t, flux_u, flux_v, &
-               flux_u_iface, flux_v_iface)
+      !$omp target teams distribute parallel do private(k, h_k, h_k1, h_avg, u_k, v_k, u_k1, v_k1, du, dv, drho, Ri, denom, nu_t, flux_u, flux_v, flux_u_iface, flux_v_iface)
+      do cell = 1, n
 
          if (state%barotropic%height_cv(cell) < ML_MIN_DEPTH_UNSTR) cycle
 
@@ -119,6 +117,7 @@ contains
          state%multilayer%hv_layer(nz, cell) = state%multilayer%hv_layer(nz, cell) &
                                                - flux_v_iface(nz - 1)
       end do
+      !$omp end target teams distribute parallel do
 
    end subroutine ml_vertical_viscosity_unstr
 

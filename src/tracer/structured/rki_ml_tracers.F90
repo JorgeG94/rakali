@@ -85,7 +85,7 @@ module rki_ml_tracers
 
 contains
 
-   pure subroutine ml_advect_tracer(h_layer, hu_layer, hv_layer, &
+   subroutine ml_advect_tracer(h_layer, hu_layer, hv_layer, &
                                     mass_flux_x, mass_flux_y, &
                                     hTr_layer, adv_hTr_snap, &
                                     grid, nz, dt)
@@ -190,20 +190,19 @@ contains
 
       ! Jacobi snapshot: freeze hTr_layer before the main kernel so that
       ! all neighbour reads come from the pre-step values.  See docstring.
-      do concurrent(k=1:nz, j=1:ny, i=1:nx)
+      !$omp target teams distribute parallel do collapse(3)
+      do k = 1, nz
+      do j = 1, ny
+      do i = 1, nx
          adv_hTr_snap(i, j, k) = hTr_layer(i, j, k)
       end do
+      end do
+      end do
+      !$omp end target teams distribute parallel do
 
-      do concurrent(j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) &
-         local(k, kk, h_val, tr_here, h_col, &
-               f_layer, tr_up, &
-               flux_x_left, flux_x_right, flux_y_bot, flux_y_top, &
-               corr_xL, corr_xR, corr_yB, corr_yT, &
-               H_active_xL, H_active_xR, H_active_yB, H_active_yT, &
-               inv_H_xL, inv_H_xR, inv_H_yB, inv_H_yT, &
-               v_xL, v_xR, v_yB, v_yT, &
-               hf_xL, hf_xR, hf_yB, hf_yT, &
-               h_iL, h_iR, h_jB, h_jT)
+      !$omp target teams distribute parallel do collapse(2) private(k, kk, h_val, tr_here, h_col, f_layer, tr_up, flux_x_left, flux_x_right, flux_y_bot, flux_y_top, corr_xL, corr_xR, corr_yB, corr_yT, H_active_xL, H_active_xR, H_active_yB, H_active_yT, inv_H_xL, inv_H_xR, inv_H_yB, inv_H_yT, v_xL, v_xR, v_yB, v_yT, hf_xL, hf_xR, hf_yB, hf_yT, h_iL, h_iR, h_jB, h_jT)
+      do j = nghost + 1, ny - nghost
+      do i = nghost + 1, nx - nghost
          h_col = 0.0_wp
          do kk = 1, nz
             h_col = h_col + h_layer(i, j, kk)
@@ -357,10 +356,12 @@ contains
             end do
          end if
       end do
+      end do
+      !$omp end target teams distribute parallel do
 
    end subroutine ml_advect_tracer
 
-   pure subroutine ml_advect_tracer_ppm(h_layer, hu_layer, hv_layer, &
+   subroutine ml_advect_tracer_ppm(h_layer, hu_layer, hv_layer, &
                                         mass_flux_x, mass_flux_y, &
                                         hTr_layer, &
                                         ppm_tr_snap, ppm_ql_x, ppm_qr_x, &
@@ -445,7 +446,10 @@ contains
          ! ---- Phase 0: concentration snapshot + fallback initialisation ----
          ! Ghost cells keep ql = qr = cell average (piecewise constant),
          ! so boundary faces degrade gracefully to first-order upwind.
-         do concurrent(j=1:ny, i=1:nx, k=1:nz)
+         !$omp target teams distribute parallel do collapse(3)
+         do j = 1, ny
+         do i = 1, nx
+         do k = 1, nz
             if (h_layer(i, j, k) > DRY_TOLERANCE) then
                tr_snap(i, j, k) = hTr_layer(i, j, k)/h_layer(i, j, k)
             else
@@ -456,11 +460,15 @@ contains
             ql_y(i, j, k) = tr_snap(i, j, k)
             qr_y(i, j, k) = tr_snap(i, j, k)
          end do
+         end do
+         end do
+         !$omp end target teams distribute parallel do
 
          ! ---- Phase 1: PPM reconstruction for interior cells ----
          ! Stencil: i-2..i+2, fits within nghost=2.
-         do concurrent(j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) &
-            local(k, kk, q_im2, q_im1, q_i, q_ip1, q_ip2, q_L, q_R, dq, q6, h_col)
+         !$omp target teams distribute parallel do collapse(2) private(k, kk, q_im2, q_im1, q_i, q_ip1, q_ip2, q_L, q_R, dq, q6, h_col)
+         do j = nghost + 1, ny - nghost
+         do i = nghost + 1, nx - nghost
             h_col = 0.0_wp
             do kk = 1, nz
                h_col = h_col + h_layer(i, j, kk)
@@ -531,18 +539,13 @@ contains
                end do
             end if
          end do
+         end do
+         !$omp end target teams distribute parallel do
 
          ! ---- Phase 2: flux computation and conservative update ----
-         do concurrent(j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) &
-            local(k, kk, h_val, f_layer, u_eff, h_face, sigma, &
-                  q_L_up, q_R_up, dq_up, q6_up, tr_avg_up, &
-                  flux_left, flux_right, flux_bot, flux_top, h_col, &
-                  corr_xL, corr_xR, corr_yB, corr_yT, &
-                  H_active_xL, H_active_xR, H_active_yB, H_active_yT, &
-                  inv_H_xL, inv_H_xR, inv_H_yB, inv_H_yT, &
-                  v_xL, v_xR, v_yB, v_yT, &
-                  hf_xL, hf_xR, hf_yB, hf_yT, &
-                  h_iL, h_iR, h_jB, h_jT)
+         !$omp target teams distribute parallel do collapse(2) private(k, kk, h_val, f_layer, u_eff, h_face, sigma, q_L_up, q_R_up, dq_up, q6_up, tr_avg_up, flux_left, flux_right, flux_bot, flux_top, h_col, corr_xL, corr_xR, corr_yB, corr_yT, H_active_xL, H_active_xR, H_active_yB, H_active_yT, inv_H_xL, inv_H_xR, inv_H_yB, inv_H_yT, v_xL, v_xR, v_yB, v_yT, hf_xL, hf_xR, hf_yB, hf_yT, h_iL, h_iR, h_jB, h_jT)
+         do j = nghost + 1, ny - nghost
+         do i = nghost + 1, nx - nghost
             h_col = 0.0_wp
             do kk = 1, nz
                h_col = h_col + h_layer(i, j, kk)
@@ -768,6 +771,8 @@ contains
                end do
             end if
          end do
+         end do
+         !$omp end target teams distribute parallel do
 
       end associate
 
@@ -840,11 +845,11 @@ contains
       if (allocated(arr)) then
          if (size(arr, 1) == nx .and. size(arr, 2) == ny .and. &
              size(arr, 3) == nz) return
-         !$acc exit data delete(arr)
+         !$omp target exit data map(delete: arr)
          deallocate (arr)
       end if
       allocate (arr(nx, ny, nz))
-      !$acc enter data create(arr)
+      !$omp target enter data map(alloc: arr)
    end subroutine scratch_array_ensure
 
    subroutine scratch_array_destroy(arr)
@@ -852,11 +857,11 @@ contains
       real(wp), allocatable, intent(inout) :: arr(:, :, :)
 
       if (.not. allocated(arr)) return
-      !$acc exit data delete(arr)
+      !$omp target exit data map(delete: arr)
       deallocate (arr)
    end subroutine scratch_array_destroy
 
-   pure subroutine ml_distribute_tracer(h_layer, hTr_layer, dsig, h_new, &
+   subroutine ml_distribute_tracer(h_layer, hTr_layer, dsig, h_new, &
                                         grid, nz)
       !! Update hTr through the barotropic step: preserve tracer Tr,
       !! set h_k = dsig_k * H_new, hTr_k = h_k_new * Tr_k_old.
@@ -879,8 +884,9 @@ contains
       ny = grid%ny_total
       nghost = grid%nghost
 
-      do concurrent(j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) &
-         local(k, tr_k, h_k_old, h_k_new)
+      !$omp target teams distribute parallel do collapse(2) private(k, tr_k, h_k_old, h_k_new)
+      do j = nghost + 1, ny - nghost
+      do i = nghost + 1, nx - nghost
          do k = 1, nz
             h_k_old = h_layer(i, j, k)
             h_k_new = dsig(k)*h_new(i, j)
@@ -892,10 +898,12 @@ contains
             hTr_layer(i, j, k) = h_k_new*tr_k
          end do
       end do
+      end do
+      !$omp end target teams distribute parallel do
 
    end subroutine ml_distribute_tracer
 
-   pure subroutine ml_vertical_exchange_tracer(h_layer, hTr_layer, w, &
+   subroutine ml_vertical_exchange_tracer(h_layer, hTr_layer, w, &
                                                grid, nz, dt)
       !! Vertical tracer exchange using upwind advection at interfaces.
       type(hgrid_t), intent(in) :: grid
@@ -914,8 +922,9 @@ contains
 
       if (nz < 2) return
 
-      do concurrent(j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) &
-         local(k, kk, w_face, tr_up, flux_tr, h_val, h_col)
+      !$omp target teams distribute parallel do collapse(2) private(k, kk, w_face, tr_up, flux_tr, h_val, h_col)
+      do j = nghost + 1, ny - nghost
+      do i = nghost + 1, nx - nghost
          h_col = 0.0_wp
          do kk = 1, nz
             h_col = h_col + h_layer(i, j, kk)
@@ -957,10 +966,12 @@ contains
             end do
          end if
       end do
+      end do
+      !$omp end target teams distribute parallel do
 
    end subroutine ml_vertical_exchange_tracer
 
-   pure subroutine ml_settling_tracer(h_layer, hTr_layer, bed, w_s, grid, nz, dt)
+   subroutine ml_settling_tracer(h_layer, hTr_layer, bed, w_s, grid, nz, dt)
       !! Constant-velocity downward settling of one tracer (e.g. suspended
       !! sediment), conservative + positivity-preserving.  Bottom-up
       !! convention: k=1 is the bed layer, k=nz the surface.  The whole
@@ -1003,8 +1014,9 @@ contains
       nghost = grid%nghost
       settle = w_s*dt
 
-      do concurrent(j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) &
-         local(k, h_col, mass_old, mass_new, dz_src, dz_tgt, c_src, c_tgt)
+      !$omp target teams distribute parallel do collapse(2) private(k, h_col, mass_old, mass_new, dz_src, dz_tgt, c_src, c_tgt)
+      do j = nghost + 1, ny - nghost
+      do i = nghost + 1, nx - nghost
          ! Skip dry columns — nothing to settle.
          h_col = 0.0_wp
          do k = 1, nz
@@ -1048,10 +1060,12 @@ contains
             bed(i, j) = bed(i, j) + (mass_old - mass_new)
          end if
       end do
+      end do
+      !$omp end target teams distribute parallel do
 
    end subroutine ml_settling_tracer
 
-   pure subroutine ml_erode_bed_sediment(h_layer, hu_layer, hv_layer, hTr_sed, bed, &
+   subroutine ml_erode_bed_sediment(h_layer, hu_layer, hv_layer, hTr_sed, bed, &
                                          manning_n, rho_0, tau_ce, e_rate, porosity, &
                                          grid, nz, dt)
       !! Ariathurai-Arulanandan (1978) bed erosion of suspended sediment.
@@ -1090,8 +1104,9 @@ contains
       ny = grid%ny_total
       nghost = grid%nghost
 
-      do concurrent(j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) &
-         local(kk, k_bot, h_k, h_total, u_b, v_b, speed_b, cf, tau_b, dm)
+      !$omp target teams distribute parallel do collapse(2) private(kk, k_bot, h_k, h_total, u_b, v_b, speed_b, cf, tau_b, dm)
+      do j = nghost + 1, ny - nghost
+      do i = nghost + 1, nx - nghost
          ! Lowest active layer (mirrors ml_apply_bottom_friction).
          k_bot = 1
          do kk = 1, nz
@@ -1124,10 +1139,12 @@ contains
          bed(i, j) = bed(i, j) - dm
          hTr_sed(i, j, k_bot) = hTr_sed(i, j, k_bot) + dm
       end do
+      end do
+      !$omp end target teams distribute parallel do
 
    end subroutine ml_erode_bed_sediment
 
-   pure subroutine ml_clamp_tracer(hTr_layer, h_layer, tr_min, tr_max, &
+   subroutine ml_clamp_tracer(hTr_layer, h_layer, tr_min, tr_max, &
                                    grid, nz)
       !! Enforce physical tracer bounds tr_min <= Tr <= tr_max
       !! conservatively within each column.
@@ -1183,10 +1200,9 @@ contains
       ny = grid%ny_total
       nghost = grid%nghost
 
-      do concurrent(j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) &
-         local(k, tr_k, h_k, room_k, &
-               excess_above, deficit_below, cap_to_add, cap_to_remove, &
-               net, frac, col_hTr, col_h)
+      !$omp target teams distribute parallel do collapse(2) private(k, tr_k, h_k, room_k, excess_above, deficit_below, cap_to_add, cap_to_remove, net, frac, col_hTr, col_h)
+      do j = nghost + 1, ny - nghost
+      do i = nghost + 1, nx - nghost
 
          ! Pass 0: column mean.  The two-pass clip+redistribute below is
          ! EXACTLY conservative if and only if the column-mean concentration
@@ -1284,10 +1300,12 @@ contains
             end do
          end if
       end do
+      end do
+      !$omp end target teams distribute parallel do
 
    end subroutine ml_clamp_tracer
 
-   pure subroutine ml_horizontal_diffusion_tracer(h_layer, hTr_layer, kappa, &
+   subroutine ml_horizontal_diffusion_tracer(h_layer, hTr_layer, kappa, &
                                                   hdiff_hTr_pre, &
                                                   grid, nz, dt)
       !! Horizontal Laplacian diffusion of a scalar tracer in flux form,
@@ -1352,13 +1370,19 @@ contains
 
       associate (hTr_pre => hdiff_hTr_pre)
 
-         do concurrent(k=1:nz, j=1:ny, i=1:nx)
+         !$omp target teams distribute parallel do collapse(3)
+         do k = 1, nz
+         do j = 1, ny
+         do i = 1, nx
             hTr_pre(i, j, k) = hTr_layer(i, j, k)
          end do
+         end do
+         end do
+         !$omp end target teams distribute parallel do
 
-         do concurrent(j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) &
-            local(k, kk, tr_c, tr_ip, tr_im, tr_jp, tr_jm, h_col, h_self, &
-                  flux_x_right, flux_x_left, flux_y_top, flux_y_bot)
+         !$omp target teams distribute parallel do collapse(2) private(k, kk, tr_c, tr_ip, tr_im, tr_jp, tr_jm, h_col, h_self, flux_x_right, flux_x_left, flux_y_top, flux_y_bot)
+         do j = nghost + 1, ny - nghost
+         do i = nghost + 1, nx - nghost
 
             h_col = 0.0_wp
             do kk = 1, nz
@@ -1409,12 +1433,14 @@ contains
                                           + (flux_y_top - flux_y_bot)*inv_dy)
             end do
          end do
+         end do
+         !$omp end target teams distribute parallel do
 
       end associate
 
    end subroutine ml_horizontal_diffusion_tracer
 
-   pure subroutine ml_init_tracer(h_layer, hTr_layer, tr_init, &
+   subroutine ml_init_tracer(h_layer, hTr_layer, tr_init, &
                                   grid, nz)
       !! Initialise hTr = h_k * tr_init for all layers
       type(hgrid_t), intent(in) :: grid
@@ -1428,13 +1454,19 @@ contains
       nx = grid%nx_total
       ny = grid%ny_total
 
-      do concurrent(k=1:nz, j=1:ny, i=1:nx)
+      !$omp target teams distribute parallel do collapse(3)
+      do k = 1, nz
+      do j = 1, ny
+      do i = 1, nx
          hTr_layer(i, j, k) = h_layer(i, j, k)*tr_init
       end do
+      end do
+      end do
+      !$omp end target teams distribute parallel do
 
    end subroutine ml_init_tracer
 
-   pure subroutine ml_init_tracer_stratified(h_layer, hTr_layer, tr_bottom, &
+   subroutine ml_init_tracer_stratified(h_layer, hTr_layer, tr_bottom, &
                                              tr_surface, grid, nz)
       !! Seed a tracer with a linear vertical profile: `tr_bottom` at k=1
       !! (bed) to `tr_surface` at k=nz (surface), per the bottom-up layer
@@ -1456,14 +1488,20 @@ contains
       ny = grid%ny_total
       dtr = (tr_surface - tr_bottom)/real(nz - 1, wp)
 
-      do concurrent(k=1:nz, j=1:ny, i=1:nx)
+      !$omp target teams distribute parallel do collapse(3)
+      do k = 1, nz
+      do j = 1, ny
+      do i = 1, nx
          hTr_layer(i, j, k) = h_layer(i, j, k) &
                               *(tr_bottom + dtr*real(k - 1, wp))
       end do
+      end do
+      end do
+      !$omp end target teams distribute parallel do
 
    end subroutine ml_init_tracer_stratified
 
-   pure subroutine ml_seed_tracer(h_layer, hTr_layer, tr_uniform, &
+   subroutine ml_seed_tracer(h_layer, hTr_layer, tr_uniform, &
                                   tr_bottom, tr_surface, grid, nz)
       !! Seed one tracer's `hTr` field, dispatching between the uniform and
       !! the linear-stratified profile from the tracer's IC scalars.  When
@@ -1488,7 +1526,7 @@ contains
 
    end subroutine ml_seed_tracer
 
-   pure subroutine ml_save_tracer(hTr_layer, hTr_layer0, grid, nz)
+   subroutine ml_save_tracer(hTr_layer, hTr_layer0, grid, nz)
       !! Save tracer field for RK2 averaging
       type(hgrid_t), intent(in) :: grid
       integer, intent(in) :: nz
@@ -1500,13 +1538,19 @@ contains
       nx = grid%nx_total
       ny = grid%ny_total
 
-      do concurrent(k=1:nz, j=1:ny, i=1:nx)
+      !$omp target teams distribute parallel do collapse(3)
+      do k = 1, nz
+      do j = 1, ny
+      do i = 1, nx
          hTr_layer0(i, j, k) = hTr_layer(i, j, k)
       end do
+      end do
+      end do
+      !$omp end target teams distribute parallel do
 
    end subroutine ml_save_tracer
 
-   pure subroutine ml_rk2_average_tracer(hTr_layer, hTr_layer0, &
+   subroutine ml_rk2_average_tracer(hTr_layer, hTr_layer0, &
                                          grid, nz)
       !! SSP-RK2 averaging for a tracer: hTr = 0.5*(hTr0 + hTr).
       !! Clamps the result to >= 0 inline; additional bounds (upper and/or
@@ -1523,10 +1567,16 @@ contains
       ny = grid%ny_total
       nghost = grid%nghost
 
-      do concurrent(k=1:nz, j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost)
+      !$omp target teams distribute parallel do collapse(3)
+      do k = 1, nz
+      do j = nghost + 1, ny - nghost
+      do i = nghost + 1, nx - nghost
          hTr_layer(i, j, k) = 0.5_wp*(hTr_layer0(i, j, k) + hTr_layer(i, j, k))
          if (hTr_layer(i, j, k) < 0.0_wp) hTr_layer(i, j, k) = 0.0_wp
       end do
+      end do
+      end do
+      !$omp end target teams distribute parallel do
 
    end subroutine ml_rk2_average_tracer
 
@@ -1544,7 +1594,7 @@ contains
                     .or. edge_type == BC_CLAMPED)
    end function edge_prescribes
 
-   pure subroutine ml_apply_tracer_bcs(hTr_layer, h_layer, tr_inflow, &
+   subroutine ml_apply_tracer_bcs(hTr_layer, h_layer, tr_inflow, &
                                        grid, nz, bc)
       !! Set a scalar tracer in ghost cells.
       !!
@@ -1583,66 +1633,98 @@ contains
       do g = 1, nghost
          i_int = nghost + 1
          if (prescribe_west) then
-            do concurrent(j=1:ny, k=1:nz)
+            !$omp target teams distribute parallel do collapse(2)
+            do j = 1, ny
+            do k = 1, nz
                hTr_layer(g, j, k) = h_layer(g, j, k)*tr_inflow
             end do
+            end do
+            !$omp end target teams distribute parallel do
          else
-            do concurrent(j=1:ny, k=1:nz)
+            !$omp target teams distribute parallel do collapse(2)
+            do j = 1, ny
+            do k = 1, nz
                hTr_layer(g, j, k) = hTr_layer(i_int, j, k) &
                                     *h_layer(g, j, k) &
                                     /max(h_layer(i_int, j, k), DRY_TOLERANCE)
             end do
+            end do
+            !$omp end target teams distribute parallel do
          end if
       end do
       ! East
       do g = nx - nghost + 1, nx
          i_int = nx - nghost
          if (prescribe_east) then
-            do concurrent(j=1:ny, k=1:nz)
+            !$omp target teams distribute parallel do collapse(2)
+            do j = 1, ny
+            do k = 1, nz
                hTr_layer(g, j, k) = h_layer(g, j, k)*tr_inflow
             end do
+            end do
+            !$omp end target teams distribute parallel do
          else
-            do concurrent(j=1:ny, k=1:nz)
+            !$omp target teams distribute parallel do collapse(2)
+            do j = 1, ny
+            do k = 1, nz
                hTr_layer(g, j, k) = hTr_layer(i_int, j, k) &
                                     *h_layer(g, j, k) &
                                     /max(h_layer(i_int, j, k), DRY_TOLERANCE)
             end do
+            end do
+            !$omp end target teams distribute parallel do
          end if
       end do
       ! South
       do g = 1, nghost
          i_int = nghost + 1
          if (prescribe_south) then
-            do concurrent(i=1:nx, k=1:nz)
+            !$omp target teams distribute parallel do collapse(2)
+            do i = 1, nx
+            do k = 1, nz
                hTr_layer(i, g, k) = h_layer(i, g, k)*tr_inflow
             end do
+            end do
+            !$omp end target teams distribute parallel do
          else
-            do concurrent(i=1:nx, k=1:nz)
+            !$omp target teams distribute parallel do collapse(2)
+            do i = 1, nx
+            do k = 1, nz
                hTr_layer(i, g, k) = hTr_layer(i, i_int, k) &
                                     *h_layer(i, g, k) &
                                     /max(h_layer(i, i_int, k), DRY_TOLERANCE)
             end do
+            end do
+            !$omp end target teams distribute parallel do
          end if
       end do
       ! North
       do g = ny - nghost + 1, ny
          i_int = ny - nghost
          if (prescribe_north) then
-            do concurrent(i=1:nx, k=1:nz)
+            !$omp target teams distribute parallel do collapse(2)
+            do i = 1, nx
+            do k = 1, nz
                hTr_layer(i, g, k) = h_layer(i, g, k)*tr_inflow
             end do
+            end do
+            !$omp end target teams distribute parallel do
          else
-            do concurrent(i=1:nx, k=1:nz)
+            !$omp target teams distribute parallel do collapse(2)
+            do i = 1, nx
+            do k = 1, nz
                hTr_layer(i, g, k) = hTr_layer(i, i_int, k) &
                                     *h_layer(i, g, k) &
                                     /max(h_layer(i, i_int, k), DRY_TOLERANCE)
             end do
+            end do
+            !$omp end target teams distribute parallel do
          end if
       end do
 
    end subroutine ml_apply_tracer_bcs
 
-   pure subroutine ml_vertical_diffusion_tracer(h_layer, hu_layer, hv_layer, &
+   subroutine ml_vertical_diffusion_tracer(h_layer, hu_layer, hv_layer, &
                                                 hTr_layer, rho_layer, &
                                                 rho_0, nu_max, kappa_bg, ri_alpha, &
                                                 grid, nz, dt)
@@ -1677,9 +1759,9 @@ contains
 
       if (nz < 2) return
 
-      do concurrent(j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) &
-         local(k, kk, h_k, h_k1, h_avg, u_k, v_k, u_k1, v_k1, tr_k, tr_k1, &
-               du, dv, dtr, drho, Ri, denom, kappa_t, flux_tr, h_col)
+      !$omp target teams distribute parallel do collapse(2) private(k, kk, h_k, h_k1, h_avg, u_k, v_k, u_k1, v_k1, tr_k, tr_k1, du, dv, dtr, drho, Ri, denom, kappa_t, flux_tr, h_col)
+      do j = nghost + 1, ny - nghost
+      do i = nghost + 1, nx - nghost
          h_col = 0.0_wp
          do kk = 1, nz
             h_col = h_col + h_layer(i, j, kk)
@@ -1743,10 +1825,12 @@ contains
             end do
          end if
       end do
+      end do
+      !$omp end target teams distribute parallel do
 
    end subroutine ml_vertical_diffusion_tracer
 
-   pure subroutine ml_apply_surface_tracer_fluxes(hS_layer, hT_layer, h_layer, &
+   subroutine ml_apply_surface_tracer_fluxes(hS_layer, hT_layer, h_layer, &
                                                   hu_layer, hv_layer, &
                                                   heat_flux, evap_minus_precip, &
                                                   evap_mass_sink, evap_latent_cooling, &
@@ -1846,8 +1930,9 @@ contains
       latent_gain = 0.0_wp
       if (evap_latent_cooling) latent_gain = RHO_WATER*LATENT_HEAT_VAPORIZATION*inv_rho0cp
 
-      do concurrent(j=nghost + 1:ny - nghost, i=nghost + 1:nx - nghost) &
-         local(kk, h_top, kin_heat_flux, S_top, h_col, dh_req, dh_eff, fac)
+      !$omp target teams distribute parallel do collapse(2) private(kk, h_top, kin_heat_flux, S_top, h_col, dh_req, dh_eff, fac)
+      do j = nghost + 1, ny - nghost
+      do i = nghost + 1, nx - nghost
          h_col = 0.0_wp
          do kk = 1, nz
             h_col = h_col + h_layer(i, j, kk)
@@ -1888,6 +1973,8 @@ contains
             end if
          end if
       end do
+      end do
+      !$omp end target teams distribute parallel do
 
    end subroutine ml_apply_surface_tracer_fluxes
 
